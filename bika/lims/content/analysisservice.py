@@ -36,19 +36,14 @@ def getContainers(instance,
     the container list, as well as being used as the AT field vocabulary.
 
     Returns a tuple of tuples: ((object_uid, object_title), ())
-    Objects in result can be containers, container types, or both.
 
-    >>> bsc = self.portal.bika_setup_catalog
+    If the partition is flagged 'Separate', only containers are displayed.
+    If the Separate flag is false, displays container types.
 
-    >>> obj = bsc(getKeyword='Moist')[0].getObject()
-    >>> u'Canvas bag' in obj.getContainers().values()
-    True
-
-    >>> obj = bsc(getKeyword='Aflatox')[0].getObject()
-    >>> u'20 ml glass vial' in obj.getContainers().values()
-    True
-    >>> u'Canvas bag' in obj.getContainers().values()
-    False
+    XXX bsc = self.portal.bika_setup_catalog
+    XXX obj = bsc(getKeyword='Moist')[0].getObject()
+    XXX u'Container Type: Canvas bag' in obj.getContainers().values()
+    XXX True
 
     """
 
@@ -81,7 +76,8 @@ def getContainers(instance,
             if not container.getContainerType():
                 items.append((container.UID(), container.Title()))
 
-    cat_str = instance.translate(_('Container Type'))
+    ts = getToolByName(instance, 'translation_service').translate
+    cat_str = ts(_('Container Type'))
     containertypes = [c.getContainerType() for c in containers]
     containertypes = dict([(ct.UID(), ct.Title())
                            for ct in containertypes if ct])
@@ -219,7 +215,7 @@ schema = BikaSchema.copy() + Schema((
                             "defined results calculations"),
         ),
     ),
-    ReferenceField('Method',
+    HistoryAwareReferenceField('Method',
         schemata = "Method",
         required = 0,
         searchable = True,
@@ -596,9 +592,9 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
 
     def getAnalysisCategories(self):
         bsc = getToolByName(self, 'bika_setup_catalog')
-        items = [('','')] + [(o.UID, o.Title) for o in
-                               bsc(portal_type='AnalysisCategory',
-                                   inactive_state = 'active')]
+        items = [(o.UID, o.Title) for o in
+                 bsc(portal_type='AnalysisCategory',
+                     inactive_state = 'active')]
         o = self.getCategory()
         if o and o.UID() not in [i[0] for i in items]:
             items.append((o.UID(), o.Title()))

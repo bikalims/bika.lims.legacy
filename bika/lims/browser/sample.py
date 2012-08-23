@@ -1,6 +1,7 @@
 from AccessControl import getSecurityManager
 from DateTime import DateTime
 from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.Archetypes.public import DisplayList
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -39,7 +40,6 @@ class SamplePartitionsView(BikaListingView):
         self.show_sort_column = False
         self.show_column_toggles = False
         self.show_select_row = False
-        self.setoddeven = False
         self.show_select_column = True
         self.pagesize = 1000
         self.form_id = "partitions"
@@ -310,6 +310,11 @@ class SampleEdit(BrowserView):
             self.context.bika_setup.getSamplingWorkflowEnabled()
         samplers = getUsers(sample, ['Sampler', 'LabManager', 'Manager'])
 
+        samplingdeviations = DisplayList(
+            [(sd.UID, sd.title) for sd \
+             in bsc(portal_type = 'SamplingDeviation',
+                    inactive_review_state = 'active')])
+
         self.header_columns = 3
         self.header_rows = [
             {'id': 'ClientReference',
@@ -337,10 +342,22 @@ class SampleEdit(BrowserView):
              'condition':True,
              'type': 'text',
              'required': True},
+            {'id': 'SampleMatrix',
+             'title': _('Sample Matrix'),
+             'allow_edit': False,
+             'value': st.getSampleMatrix() and st.getSampleMatrix().Title() or '',
+             'condition':True,
+             'type': 'text'},
             {'id': 'SamplePoint',
              'title': _('Sample Point'),
              'allow_edit': self.allow_edit and allow_sample_edit,
              'value': sp and sp.Title() or '',
+             'condition':True,
+             'type': 'text'},
+            {'id': 'Creator',
+             'title': PMF('Creator'),
+             'allow_edit': False,
+             'value': pretty_user_name_or_id(self.context, self.context.Creator()),
              'condition':True,
              'type': 'text'},
             {'id': 'Composite',
@@ -349,12 +366,12 @@ class SampleEdit(BrowserView):
              'value': self.context.getComposite(),
              'condition':True,
              'type': 'boolean'},
-            {'id': 'Creator',
-             'title': PMF('Creator'),
-             'allow_edit': False,
-             'value': pretty_user_name_or_id(self.context, self.context.Creator()),
+            {'id': 'AdHoc',
+             'title': _('Ad-Hoc'),
+             'allow_edit': self.allow_edit and allow_sample_edit,
+             'value': self.context.getAdHoc(),
              'condition':True,
-             'type': 'text'},
+             'type': 'boolean'},
             {'id': 'DateCreated',
              'title': PMF('Date Created'),
              'allow_edit': False,
@@ -388,6 +405,14 @@ class SampleEdit(BrowserView):
              'vocabulary': samplers,
              'type': 'choices',
              'required': True},
+            {'id': 'SamplingDeviation',
+             'title': _('Sampling Deviation'),
+             'allow_edit': self.allow_edit and allow_sample_edit,
+             'value': sample.getSamplingDeviation() and sample.getSamplingDeviation().UID() or '',
+             'formatted_value': sample.getSamplingDeviation() and sample.getSamplingDeviation().Title() or '',
+             'condition':True,
+             'vocabulary': samplingdeviations,
+             'type': 'choices'},
             {'id': 'DateReceived',
              'title': _('Date Received'),
              'allow_edit': False,
@@ -451,17 +476,22 @@ class SampleEdit(BrowserView):
 
                 values[row['id']] = value
 
-            # boolean - checkboxes are 'true' or 'false in form.
+            # boolean - checkboxes are 'true'/'on' or 'false'/missing in form.
             for row in [r for r in self.header_rows if r.get('type', '') == 'boolean']:
                 value = form.get(row['id'], 'false')
-                values[row['id']] = value == 'true' and True or False
+                values[row['id']] = value == 'true' and True or value == 'on' and True or False
 
             if not message:
                 self.context.edit(**values)
                 self.context.reindexObject()
                 ars = self.context.getAnalysisRequests()
+                # Analyses and AnalysisRequets have calculated fields
+                # that are indexed; re-index all these objects.
                 for ar in ars:
                     ar.reindexObject()
+                    analyses = self.context.getAnalyses(full_objects=True)
+                    for a in analyses:
+                        a.reindexObject()
                 message = PMF("Changes saved.")
 
             # If this sample was "To Be Sampled", and the
@@ -470,6 +500,8 @@ class SampleEdit(BrowserView):
             if workflow.getInfoFor(sample, "review_state") == "to_be_sampled" \
                and form.get("Sampler", None) \
                and form.get("DateSampled", None):
+                # This transition does not invoke the regular WorkflowAction
+                # in analysisrequest.py
                 workflow.doActionFor(sample, "sample")
                 sample.reindexObject()
 
@@ -585,6 +617,10 @@ class SamplesView(BikaListingView):
             'getSamplePointTitle': {'title': _('Sample Point'),
                                     'index': 'getSamplePointTitle',
                                     'toggle': False},
+            'SamplingDeviation': {'title': _('Sampling Deviation'),
+                                  'toggle': False},
+            'AdHoc': {'title': _('Ad-Hoc'),
+                      'toggle': False},
             'getSamplingDate': {'title': _('Sampling Date'),
                                 'index':'getSamplingDate',
                                 'toggle': True},
@@ -621,6 +657,8 @@ class SamplesView(BikaListingView):
                          'getClientSampleID',
                          'getSampleTypeTitle',
                          'getSamplePointTitle',
+                         'SamplingDeviation',
+                         'AdHoc',
                          'getSamplingDate',
                          'getDateSampled',
                          'getSampler',
@@ -649,6 +687,8 @@ class SamplesView(BikaListingView):
                          'getPreserver',
                          'getSampleTypeTitle',
                          'getSamplePointTitle',
+                         'SamplingDeviation',
+                         'AdHoc',
                          'state_title']},
             {'id':'sample_received',
              'title': _('Received'),
@@ -664,6 +704,8 @@ class SamplesView(BikaListingView):
                          'getClientSampleID',
                          'getSampleTypeTitle',
                          'getSamplePointTitle',
+                         'SamplingDeviation',
+                         'AdHoc',
                          'getSamplingDate',
                          'getDateSampled',
                          'getSampler',
@@ -684,6 +726,8 @@ class SamplesView(BikaListingView):
                          'getClientSampleID',
                          'getSampleTypeTitle',
                          'getSamplePointTitle',
+                         'SamplingDeviation',
+                         'AdHoc',
                          'getSamplingDate',
                          'getDateSampled',
                          'getSampler',
@@ -704,6 +748,8 @@ class SamplesView(BikaListingView):
                          'getClientSampleID',
                          'getSampleTypeTitle',
                          'getSamplePointTitle',
+                         'SamplingDeviation',
+                         'AdHoc',
                          'getSamplingDate',
                          'getDateSampled',
                          'getSampler',
@@ -725,6 +771,8 @@ class SamplesView(BikaListingView):
                          'getClientSampleID',
                          'getSampleTypeTitle',
                          'getSamplePointTitle',
+                         'SamplingDeviation',
+                         'AdHoc',
                          'getSamplingDate',
                          'DateReceived',
                          'getDateSampled',
@@ -760,6 +808,11 @@ class SamplesView(BikaListingView):
 
             items[x]['DateReceived'] = TimeOrDate(self.context,
                                                   obj.getDateReceived())
+
+            deviation = obj.getSamplingDeviation()
+            items[x]['SamplingDeviation'] = deviation and deviation.Title() or ''
+
+            items[x]['AdHoc'] = obj.getAdHoc() and True or ''
 
             samplingdate = obj.getSamplingDate()
 

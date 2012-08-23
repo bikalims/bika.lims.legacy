@@ -283,7 +283,7 @@ def logged_in_client(context, member=None):
                 client = obj
     return client
 
-def changeWorkflowState(content, state_id, acquire_permissions=False,
+def changeWorkflowState(content, wf_id, state_id, acquire_permissions=False,
                         portal_workflow=None, **kw):
     """Change the workflow state of an object
     @param content: Content obj which state will be changed
@@ -300,8 +300,13 @@ def changeWorkflowState(content, state_id, acquire_permissions=False,
         portal_workflow = getToolByName(content, 'portal_workflow')
 
     # Might raise IndexError if no workflow is associated to this type
-    wf_def = portal_workflow.getWorkflowsFor(content)[0]
-    wf_id= wf_def.getId()
+    found_wf = 0
+    for wf_def in portal_workflow.getWorkflowsFor(content):
+        if wf_id == wf_def.getId():
+            found_wf = 1
+            break
+    if not found_wf:
+        logger.error("%s: Cannot find workflow id %s" % (content, wf_id))
 
     wf_state = {
         'action': None,
@@ -359,7 +364,6 @@ class bika_browserdata(BrowserView):
                                 inactive_state = "active")])
 
         for uid, service in services.items():
-
             ## Store categories
             ## data['categories'][poc_catUID]: [uid, uid]
             key = "%s_%s" % (service.getPointOfCapture(),
@@ -382,7 +386,8 @@ class bika_browserdata(BrowserView):
                         backrefs.append(item)
                     if item not in skip:
                         skip.append(item)
-                        walk(item.getBackReferences())
+                        brefs = item.getBackReferences('AnalysisServiceCalculation')
+                        walk(brefs)
             walk([service, ])
 
             ## Get dependencies
@@ -475,6 +480,7 @@ class bika_browserdata(BrowserView):
             data['st_uids'][st.Title()] = {
                 'uid':st.UID(),
                 'minvol': st.getJSMinimumVolume(),
+                'containertype': st.getContainerType() and st.getContainerType().UID() or '',
                 'samplepoints': [sp.Title() for sp in st.getSamplePoints()]
             }
 

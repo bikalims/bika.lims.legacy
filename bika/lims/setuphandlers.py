@@ -40,6 +40,7 @@ class BikaGenerator:
                        'invoices',
                        'pricelists',
                        'bika_setup',
+                       'methods',
                        'analysisrequests',
                        'referencesamples',
                        'samples',
@@ -61,10 +62,12 @@ class BikaGenerator:
                        'bika_preservations',
                        'bika_instruments',
                        'bika_analysisspecs',
-                       'bika_arprofiles',
+                       'bika_analysisprofiles',
                        'bika_artemplates',
                        'bika_labcontacts',
                        'bika_labproducts',
+                       'bika_samplematrices',
+                       'bika_samplingdeviations',
                        'bika_samplepoints',
                        'bika_sampletypes',
                        'bika_referencedefinitions',
@@ -74,9 +77,6 @@ class BikaGenerator:
             obj = bika_setup._getOb(obj_id)
             obj.unmarkCreationFlag()
             obj.reindexObject()
-        obj = portal._getOb('bika_methods')
-        obj.unmarkCreationFlag()
-        obj.reindexObject()
 
         lab = bika_setup.laboratory
         lab.edit(title = _('Laboratory'))
@@ -153,7 +153,7 @@ class BikaGenerator:
 
         # Root permissions
         mp = portal.manage_permission
-        mp(AddARProfile, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
+        mp(AddAnalysisProfile, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
         mp(AddARTemplate, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
         mp(AddAnalysis, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler'], 1)
         mp(AddAnalysisRequest, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler'], 1)
@@ -503,13 +503,15 @@ class BikaGenerator:
         at.setCatalogsByType('AnalysisCategory', ['bika_setup_catalog', ])
         at.setCatalogsByType('AnalysisService', ['bika_setup_catalog', ])
         at.setCatalogsByType('AnalysisSpec', ['bika_setup_catalog', ])
+        at.setCatalogsByType('SampleMatrix', ['bika_setup_catalog', ])
         at.setCatalogsByType('SampleType', ['bika_setup_catalog', ])
         at.setCatalogsByType('SamplePoint', ['bika_setup_catalog', ])
+        at.setCatalogsByType('SamplingDeviation', ['bika_setup_catalog', ])
         at.setCatalogsByType('Instrument', ['bika_setup_catalog', ])
         at.setCatalogsByType('Method', ['bika_setup_catalog', ])
         at.setCatalogsByType('AttachmentType', ['bika_setup_catalog', ])
         at.setCatalogsByType('Calculation', ['bika_setup_catalog', ])
-        at.setCatalogsByType('ARProfile', ['bika_setup_catalog', ])
+        at.setCatalogsByType('AnalysisProfile', ['bika_setup_catalog', ])
         at.setCatalogsByType('ARTemplate', ['bika_setup_catalog', ])
         at.setCatalogsByType('LabProduct', ['bika_setup_catalog', ])
         at.setCatalogsByType('LabContact', ['bika_setup_catalog', ])
@@ -669,4 +671,7 @@ def setupVarious(context):
         pass
     gen.setupCatalogs(site)
 
-
+    # Plone's jQuery gets clobbered when jsregistry is loaded.
+    setup = site.portal_setup
+    setup.runImportStepFromProfile('profile-plone.app.jquery:default', 'jsregistry')
+    setup.runImportStepFromProfile('profile-plone.app.jquerytools:default', 'jsregistry')

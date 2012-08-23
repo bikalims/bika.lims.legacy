@@ -28,7 +28,6 @@ class ARTemplateAnalysesView(BikaListingView):
         self.show_select_all_checkbox = False
         self.show_column_toggles = False
         self.show_select_column = True
-        self.setoddeven = False
         self.pagesize = 1000
         self.allow_edit = allow_edit
         self.form_id = "analyses"
@@ -155,7 +154,7 @@ class ARTemplateAnalysesWidget(TypesWidget):
             consumption.
         """
         bsc = getToolByName(instance, 'bika_setup_catalog')
-        value = empty_marker
+        value = []
         service_uids = form.get('uids', None)
         Partitions = form.get('Partition', None)
 
@@ -166,8 +165,7 @@ class ARTemplateAnalysesWidget(TypesWidget):
                    and Partitions[service_uid] != '':
                     value.append({'service_uid':service_uid,
                                   'partition':Partitions[service_uid]})
-        if value:
-            return value, {}
+        return value, {}
 
     security.declarePublic('Analyses')
     def Analyses(self, field, allow_edit = False):
@@ -180,14 +178,14 @@ class ARTemplateAnalysesWidget(TypesWidget):
                                       allow_edit = allow_edit)
         return view.contents_table(table_only = True)
 
-    security.declarePublic('ARProfiles')
-    def ARProfiles(self):
-        """generate the ARProfiles hidden field value
-        contains service details for each ARProfile
+    security.declarePublic('AnalysisProfiles')
+    def AnalysisProfiles(self):
+        """generate the AnalysisProfiles hidden field value
+        contains service details for each AnalysisProfile
         """
         bsc = getToolByName(self, 'bika_setup_catalog')
         items = {}
-        for p in bsc(portal_type='ARProfile',
+        for p in bsc(portal_type='AnalysisProfile',
                       inactive_state='active',
                       sort_on = 'sortable_title'):
             p = p.getObject()

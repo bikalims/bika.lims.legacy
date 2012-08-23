@@ -13,14 +13,14 @@ import plone
 
 class ResultsPerSamplePoint(BrowserView):
     implements(IViewView)
-    template = ViewPageTemplateFile("report_out.pt")
+    template = ViewPageTemplateFile("templates/report_out.pt")
 
     def __init__(self, context, request):
         BrowserView.__init__(self, context, request)
 
     def __call__(self):
         # get all the data into datalines
-        
+
         bsc = getToolByName(self.context, 'bika_setup_catalog')
         bac = getToolByName(self.context, 'bika_analysis_catalog')
         rc = getToolByName(self.context, 'reference_catalog')
@@ -37,7 +37,7 @@ class ResultsPerSamplePoint(BrowserView):
         query = {'portal_type' : "Analysis",
                  'review_state': 'published',
                  'sort_on'     : 'getDateAnalysisPublished'}
-                 
+
         if self.request.form.has_key('getSamplePointUID'):
             sp_uid = self.request.form['getSamplePointUID']
             query['getSamplePointUID'] = sp_uid
@@ -74,7 +74,7 @@ class ResultsPerSamplePoint(BrowserView):
             # multiple services were selected
             service_uids = list(service_uid)
             no_services = len(service_uids)
-        
+
         service_titles = []
         service_values = {}
         service_counts = {}
@@ -90,12 +90,12 @@ class ResultsPerSamplePoint(BrowserView):
             service_oor[service_uid] = 0
             service_joor[service_uid] = 0
             service_keys[service_uid] = service.getKeyword()
-         
-        
+
+
         date_query = formatDateQuery(self.context, 'DateAnalysisPublished')
         if date_query:
             query['getDateAnalysisPublished'] = date_query
-            published = formatDateParms(self.context, 'DateAnalysisPublished') 
+            published = formatDateParms(self.context, 'DateAnalysisPublished')
         else:
             published = 'Undefined'
         parms.append(
@@ -196,7 +196,7 @@ class ResultsPerSamplePoint(BrowserView):
                 # print the previous date
                 loadlines()
                 current = published
- 
+
             if analysis.getResult():
                 try:
                     result = float(analysis.getResult())
@@ -214,9 +214,9 @@ class ResultsPerSamplePoint(BrowserView):
                 if spec_min < result < spec_max:
                     pass
                 else:
-                    # check if in shoulder: out of range, 
+                    # check if in shoulder: out of range,
                     # but in acceptable error percentage
-                    error_amount = (result / 100) * spec_error 
+                    error_amount = (result / 100) * spec_error
                     error_min = result - error_amount
                     error_max = result + error_amount
                     if ((result < spec_min) and (error_max >= spec_min)) or \
@@ -238,11 +238,11 @@ class ResultsPerSamplePoint(BrowserView):
         footline = []
         footitem = {'value': _('Total analyses out of range'),
                     'colspan': 1,
-                    'class': 'total_label'} 
+                    'class': 'total_label'}
         footline.append(footitem)
         for service_uid in service_uids:
             footitem = {'value': service_oor[service_uid],
-                        'class': 'number'} 
+                        'class': 'number'}
             footline.append(footitem)
 
         footlines.append(footline)
@@ -250,26 +250,26 @@ class ResultsPerSamplePoint(BrowserView):
         footline = []
         footitem = {'value': _('Total analyses within error range'),
                     'colspan': 1,
-                    'class': 'total_label'} 
+                    'class': 'total_label'}
         footline.append(footitem)
         for service_uid in service_uids:
-            footitem = {'value': service_joor[service_uid], 
-                        'class': 'number'} 
+            footitem = {'value': service_joor[service_uid],
+                        'class': 'number'}
             footline.append(footitem)
         footlines.append(footline)
 
         footline = []
         footitem = {'value': _('Total number of analyses'),
                     'colspan': 1,
-                    'class': 'total_label'} 
+                    'class': 'total_label'}
         footline.append(footitem)
         for service_uid in service_uids:
             footitem = {'value': service_counts[service_uid],
-                        'class': 'number'} 
+                        'class': 'number'}
             footline.append(footitem)
         footlines.append(footline)
 
-        
+
 
         self.report_content = {
                 'headings': headings,
@@ -281,5 +281,5 @@ class ResultsPerSamplePoint(BrowserView):
 
         return self.template()
 
-    
+
 

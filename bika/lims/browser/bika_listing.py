@@ -147,7 +147,6 @@ class BikaListingView(BrowserView):
     contentFilter = {}
     allow_edit = True
     context_actions = {}
-    setoddeven = True
     show_select_column = False
     show_select_row = False
     show_select_all_checkbox = True
@@ -387,14 +386,14 @@ class BikaListingView(BrowserView):
                     if value.find(":") > -1:
                         try:
                             lohi = [DateTime(x) for x in value.split(":")]
-                        except SyntaxError:
-                            logger.error("Syntax error (And, DateIndex='%s', term='%s')"%(index,value))
+                        except:
+                            logger.error("Error (And, DateIndex='%s', term='%s')"%(index,value))
                         self.Or.append(Between(index, lohi[0], lohi[1]))
                     else:
                         try:
                             self.Or.append(Eq(index, DateTime(value)))
-                        except SyntaxError:
-                            logger.error("Syntax error (Or, DateIndex='%s', term='%s')"%(index,value))
+                        except:
+                            logger.error("Error (Or, DateIndex='%s', term='%s')"%(index,value))
                 else:
                     self.Or.append(Generic(index, value))
             self.Or.append(MatchRegexp('review_state', value))

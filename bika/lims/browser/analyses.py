@@ -29,7 +29,6 @@ class AnalysesView(BikaListingView):
         self.contentFilter['portal_type'] = 'Analysis'
         self.contentFilter['sort_on'] = 'sortable_title'
         self.context_actions = {}
-        self.setoddeven = True
         self.show_sort_column = False
         self.show_select_row = False
         self.show_select_column = False
@@ -143,6 +142,7 @@ class AnalysesView(BikaListingView):
             items[i]['Uncertainty'] = ''
             items[i]['retested'] = obj.getRetested()
             items[i]['class']['retested'] = 'center'
+            items[i]['result_captured'] = obj.getResultCaptureDate()
             items[i]['calculation'] = calculation and True or False
             try:
                 items[i]['Partition'] = obj.getSamplePartition().Title()
@@ -325,7 +325,7 @@ class AnalysesView(BikaListingView):
             if items[i]['obj'].portal_type != "DuplicateAnalysis":
                 if (not calculation or (calculation and not calculation.getDependentServices())) and \
                    items[i]['review_state'] not in ['to_be_sampled', 'to_be_preserved', 'sample_due', 'published'] and \
-                   items[i]['DueDate'] < DateTime():
+                   items[i]['result_captured'] > items[i]['DueDate']:
                     DueDate = TimeOrDate(self.context, item['DueDate'], long_format = 0)
                     if self.context.portal_type == 'AnalysisRequest':
                         items[i]['replace']['DueDate'] = '%s <img width="16" height="16" src="%s/++resource++bika.lims.images/late.png" title="%s"/>' % \

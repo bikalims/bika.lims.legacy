@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2012-06-20 09:26+0000\n"
-"PO-Revision-Date: 2012-05-11 14:41+0000\n"
+"POT-Creation-Date: 2012-07-17 10:58+0000\n"
+"PO-Revision-Date: 2012-07-05 13:18+0000\n"
 "Last-Translator: lemoene Smit <admin@bikalabs.com>\n"
 "Language-Team: Bika <bikasupport@bikalabs.com>\n"
 "MIME-Version: 1.0\n"
@@ -20,20 +20,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://github.com/bikalabs/Bika-LIMS/issues\n"
 "Language: af\n"
 
-#: ../profiles/default/types/ARProfile.xml
-msgid "AR Profile"
-msgstr "OV profiel"
-
-#: ../profiles/default/types/ARProfiles.xml
-msgid "AR Profiles"
-msgstr "OV profiele"
-
 #: ../profiles/default/types/ARTemplate.xml
-#: ../profiles/default/controlpanel.xml
 msgid "AR Template"
 msgstr ""
 
+#: ../profiles/default/controlpanel.xml
 #: ../profiles/default/types/ARTemplates.xml
+#: ../profiles/default/types/Client.xml
 msgid "AR Templates"
 msgstr ""
 
@@ -81,13 +74,19 @@ msgstr "Ontledings kategorieë"
 msgid "Analysis Category"
 msgstr "Ontledings kategorie"
 
+#: ../profiles/default/types/AnalysisProfile.xml
+msgid "Analysis Profile"
+msgstr "OV profiel"
+
+#: ../profiles/default/controlpanel.xml
+#: ../profiles/default/types/AnalysisProfiles.xml
+#: ../profiles/default/types/Client.xml
+msgid "Analysis Profiles"
+msgstr "Ontledingsversoek profiele"
+
 #: ../profiles/default/types/AnalysisRequest.xml
 msgid "Analysis Request"
 msgstr ""
-
-#: ../profiles/default/controlpanel.xml
-msgid "Analysis Profiles"
-msgstr "Ontledingsversoek profiele"
 
 #: ../profiles/default/actions.xml
 #: ../profiles/default/types/AnalysisRequestsFolder.xml
@@ -128,7 +127,7 @@ msgstr "Aanhangsel"
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
 #: ../profiles/default/workflows/bika_duplicateanalysis_workflow/definition.xml
 msgid "Attachment Outstanding"
-msgstr ""
+msgstr "Aanhangsel Uitstaande"
 
 #: ../profiles/default/types/AttachmentType.xml
 msgid "Attachment Type"
@@ -173,7 +172,7 @@ msgstr "Kliënte"
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
 #: ../profiles/default/workflows/bika_arimport_workflow/definition.xml
 msgid "Comments about the last transition"
-msgstr ""
+msgstr "Kommentaar op die laaste oorgang"
 
 #: ../profiles/default/types/Client.xml
 #: ../profiles/default/types/ReferenceSupplier.xml
@@ -258,7 +257,7 @@ msgstr ""
 
 #: ../profiles/default/workflows/bika_inactive_workflow/definition.xml
 msgid "Inactive"
-msgstr ""
+msgstr "Dormant"
 
 #: ../profiles/default/types/Instrument.xml
 msgid "Instrument"
@@ -322,7 +321,7 @@ msgstr ""
 msgid "Large Sticker"
 msgstr ""
 
-#: ../profiles/default/types/ARProfile.xml
+#: ../profiles/default/types/AnalysisProfile.xml
 #: ../profiles/default/types/AnalysisRequest.xml
 #: ../profiles/default/types/AnalysisService.xml
 msgid "Log"
@@ -356,7 +355,7 @@ msgstr "Metodes"
 
 #: ../profiles/default/workflows/bika_analysis_workflow/definition.xml
 msgid "Not requested"
-msgstr ""
+msgstr "Nie versoek"
 
 #: ../profiles/default/workflows/bika_worksheet_workflow/definition.xml
 msgid "Open"
@@ -411,10 +410,6 @@ msgstr ""
 #: ../profiles/default/types/ReportFolder.xml
 msgid "Productivity"
 msgstr ""
-
-#: ../profiles/default/types/Client.xml
-msgid "Profiles"
-msgstr "Profiele"
 
 #: ../profiles/default/types/ReportFolder.xml
 msgid "Quality Control"
@@ -484,16 +479,6 @@ msgstr "Verwysing Verskaffers"
 msgid "Registered"
 msgstr ""
 
-#: ../profiles/default/types/RejectAnalysis.xml
-msgid "Reject Analysis"
-msgstr ""
-
-#: ../profiles/default/workflows/bika_duplicateanalysis_workflow/definition.xml
-#: ../profiles/default/workflows/bika_referenceanalysis_workflow/definition.xml
-#: ../profiles/default/workflows/bika_worksheet_workflow/definition.xml
-msgid "Rejected"
-msgstr ""
-
 #: ../profiles/default/actions.xml
 #: ../profiles/default/types/Report.xml
 msgid "Report"
@@ -516,6 +501,15 @@ msgstr "Monster"
 #: ../profiles/default/workflows/bika_sample_workflow/definition.xml
 msgid "Sample Due"
 msgstr "Monster Verwag"
+
+#: ../profiles/default/controlpanel.xml
+#: ../profiles/default/types/SampleMatrices.xml
+msgid "Sample Matrices"
+msgstr ""
+
+#: ../profiles/default/types/SampleMatrix.xml
+msgid "Sample Matrix"
+msgstr ""
 
 #: ../profiles/default/types/SamplePartition.xml
 msgid "Sample Partition"
@@ -562,6 +556,15 @@ msgstr "Monsters"
 msgid "SamplesFolder"
 msgstr ""
 
+#: ../profiles/default/types/SamplingDeviation.xml
+msgid "Sampling Deviation"
+msgstr ""
+
+#: ../profiles/default/controlpanel.xml
+#: ../profiles/default/types/SamplingDeviations.xml
+msgid "Sampling Deviations"
+msgstr ""
+
 #: ../profiles/default/types/AnalysisRequest.xml
 #: ../profiles/default/types/Sample.xml
 #: ../profiles/default/types/SamplePartition.xml
@@ -574,7 +577,7 @@ msgstr ""
 
 #: ../profiles/default/workflows/bika_arimport_workflow/definition.xml
 msgid "Submitted"
-msgstr ""
+msgstr "Ingehandig"
 
 #: ../profiles/default/actions.xml
 msgid "Suppliers"
@@ -584,21 +587,17 @@ msgstr ""
 msgid "Supply Order"
 msgstr ""
 
-#: ../profiles/default/types/Client.xml
-msgid "Templates"
-msgstr ""
-
 #: ../profiles/default/workflows/bika_analysis_workflow/definition.xml
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
 #: ../profiles/default/workflows/bika_arimport_workflow/definition.xml
 msgid "The last transition"
-msgstr ""
+msgstr "Die laaste oorgang"
 
 #: ../profiles/default/workflows/bika_analysis_workflow/definition.xml
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
 #: ../profiles/default/workflows/bika_arimport_workflow/definition.xml
 msgid "Time of the last transition"
-msgstr ""
+msgstr "Tyd  van die laaste oorgang"
 
 #: ../profiles/default/workflows/bika_analysis_workflow/definition.xml
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
@@ -664,9 +663,8 @@ msgstr "Assign"
 #: ../profiles/default/workflows/bika_analysis_workflow/definition.xml
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
 #: ../profiles/default/workflows/bika_duplicateanalysis_workflow/definition.xml
-#, fuzzy
 msgid "attach_transition_title"
-msgstr "Attach"
+msgstr ""
 
 #. Default: "Cancel"
 #: ../profiles/default/workflows/bika_cancellation_workflow/definition.xml
@@ -688,6 +686,10 @@ msgstr "Dispatch order"
 #: ../profiles/default/workflows/bika_sample_workflow/definition.xml
 msgid "dispose_transition_title"
 msgstr "Dispose"
+
+#. Default: "Duplicate"
+msgid "duplicate_transition_title"
+msgstr "Duplicate"
 
 #. Default: "Expire"
 #: ../profiles/default/workflows/bika_referencesample_workflow/definition.xml
@@ -805,6 +807,10 @@ msgstr "Preserve"
 #: ../profiles/default/workflows/bika_ar_workflow/definition.xml
 msgid "publish_transition_title"
 msgstr "Publish"
+
+#. Default: "Reassign"
+msgid "reassign_transition_title"
+msgstr ""
 
 #. Default: "Receive sample"
 #: ../profiles/default/workflows/bika_analysis_workflow/definition.xml
