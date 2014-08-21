@@ -26,6 +26,8 @@ class AnalysisRequestAddView(AnalysisRequestViewView):
     """
     implements(IViewView, IAnalysisRequestAddView)
     template = ViewPageTemplateFile("templates/ar_add.pt")
+    ar_add_by_row_template = ViewPageTemplateFile('templates/ar_add_by_row.pt')
+    ar_add_by_col_template = ViewPageTemplateFile('templates/ar_add_by_col.pt')
 
     def __init__(self, context, request):
         AnalysisRequestViewView.__init__(self, context, request)
@@ -34,11 +36,12 @@ class AnalysisRequestAddView(AnalysisRequestViewView):
         self.can_edit_ar = True
         self.DryMatterService = self.context.bika_setup.getDryMatterService()
         request.set('disable_plone.rightcolumn', 1)
-        self.col_count = self.request.get('col_count', 4)
+        self.layout = self.request.get('layout', 'columns')
+        self.ar_count = self.request.get('ar_count', 4)
         try:
-            self.col_count = int(self.col_count)
+            self.ar_count = int(self.ar_count)
         except:
-            self.col_count = 4
+            self.ar_count = 4
 
     def __call__(self):
         self.request.set('disable_border', 1)
@@ -48,6 +51,7 @@ class AnalysisRequestAddView(AnalysisRequestViewView):
         adapter = getAdapter(self.context.aq_parent, name='getContacts')
         return adapter()
 
+        #import pdb; pdb.set_trace()
     def partitioned_services(self):
         bsc = getToolByName(self.context, 'bika_setup_catalog')
         ps = []
@@ -149,20 +153,32 @@ class ajaxAnalysisRequestSubmit():
         wftool = getToolByName(self.context, 'portal_workflow')
         uc = getToolByName(self.context, 'uid_catalog')
         bsc = getToolByName(self.context, 'bika_setup_catalog')
+        layout = form['layout']
 
         errors = {}
 
         form_parts = json.loads(self.request.form['parts'])
 
-        # First make a list of non-empty columns
-        columns = []
-        for column in range(int(form['col_count'])):
-            name = 'ar.%s' % column
-            ar = form.get(name, None)
-            if ar and 'Analyses' in ar.keys():
-                columns.append(column)
+        #Get header values out, get values, exclude from any loops below
+        headerfieldnames = ['Client', 'Client_uid', 'Contact', 'Contact_uid',
+                            'CCContact', 'CCContact_uid', 'CCEmails', 
+                            'Batch', 'Batch_uid', 
+                            'InvoiceContact', 'InvoiceContact_uid']
+        headers = {}
+        for field in form.keys():
+            if field in headerfieldnames:
+                headers[field] = form[field]
 
-        if len(columns) == 0:
+
+        # First make a list of non-empty fieldnames
+        fieldnames = []
+        for arnum in range(int(form['ar_count'])):
+            name = 'ar.%s' % arnum
+            ar = form.get(name, None)
+            if ar and 'Analyses' in ar.keys() and ar['Analyses'] != '':
+                fieldnames.append(arnum)
+
+        if len(fieldnames) == 0:
             ajax_form_error(errors, message=t(_("No analyses have been selected")))
             return json.dumps({'errors':errors})
 
@@ -171,8 +187,8 @@ class ajaxAnalysisRequestSubmit():
                            in AnalysisRequestSchema.fields()
                            if field.required]
 
-        for column in columns:
-            formkey = "ar.%s" % column
+        for fieldname in fieldnames:
+            formkey = "ar.%s" % fieldname
             ar = form[formkey]
 
             # check that required fields have values
@@ -186,8 +202,8 @@ class ajaxAnalysisRequestSubmit():
                     'SampleType'
                 ]:
                     continue
-                if not ar.get(field, ''):
-                    ajax_form_error(errors, field, column)
+                if not ar.get(field, '') and not headers.get(field,''):
+                    ajax_form_error(errors, field, fieldname)
         # Return errors if there are any
         if errors:
             return json.dumps({'errors': errors})
@@ -200,14 +216,14 @@ class ajaxAnalysisRequestSubmit():
         # this flag triggers the status message
         new_profile = None
         # The actual submission
-        for column in columns:
+        for fieldname in fieldnames:
             # Get partitions from the form data
             if form_parts:
-                partitions = form_parts[str(column)]
+                partitions = form_parts[str(fieldname)]
             else:
                 partitions = []
             # Get the form data using the appropriate form key
-            formkey = "ar.%s" % column
+            formkey = "ar.%s" % fieldname
             values = form[formkey].copy()
             # resolved values is formatted as acceptable by archetypes
             # widget machines
@@ -225,15 +241,16 @@ class ajaxAnalysisRequestSubmit():
                     resolved_values[k] = values[k]
             # Get the analyses from the form data
             analyses = values["Analyses"]
+
             # Gather the specifications from the form data
             # no defaults are applied here - the defaults should already be
             # present in the form data
             specifications = {}
             for analysis in analyses:
                 for service_uid in analyses:
-                    min_element_name = "ar.%s.min.%s"%(column, service_uid)
-                    max_element_name = "ar.%s.max.%s"%(column, service_uid)
-                    error_element_name = "ar.%s.error.%s"%(column, service_uid)
+                    min_element_name = "ar.%s.min.%s"%(fieldname, service_uid)
+                    max_element_name = "ar.%s.max.%s"%(fieldname, service_uid)
+                    error_element_name = "ar.%s.error.%s"%(fieldname, service_uid)
                     if min_element_name in form:
                         specifications[service_uid] = {
                             "min": form[min_element_name],
@@ -261,7 +278,10 @@ class ajaxAnalysisRequestSubmit():
                     if not partition.get("container", None):
                         partition['container'] = containers
             # Retrieve the catalogue reference to the client
-            client = uc(UID=resolved_values['Client'])[0].getObject()
+            if layout and layout == 'columns':
+                client = uc(UID=resolved_values['Client'])[0].getObject()
+            else:
+                client = uc(UID=headers['Client_uid'])[0].getObject()
             # Create the Analysis Request
             ar = create_analysisrequest(
                 client,
@@ -272,6 +292,18 @@ class ajaxAnalysisRequestSubmit():
                 specifications,
                 prices
             )
+            #Add Headers
+            for fieldname in headers.keys():
+                if headers[fieldname] != '' and not fieldname.endswith('_uid'):
+                    if headers.get(fieldname+'_uid'):
+                        field = ar.Schema()[fieldname];
+                        mutator = field.getMutator(ar)
+                        uid = headers[fieldname+'_uid']
+                        obj = uc(UID=uid)[0].getObject()
+                        mutator(obj)
+                    else:
+                        ar.edit(fieldname=headers[fieldname])
+
             # Add the created analysis request to the list
             ARs.append(ar.getId())
         # Display the appropriate message after creation

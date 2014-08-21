@@ -31,10 +31,14 @@ class AnalysisRequestsView(_ARV, _ARAV):
         self.context_actions = {}
         mtool = getToolByName(self.context, 'portal_membership')
         if mtool.checkPermission(AddAnalysisRequest, self.portal):
+            layout = 'columns'
+            ar_count = '4'
             self.context_actions[self.context.translate(_('Add new'))] = {
-                'url': self.context.absolute_url() + \
-                    "/portal_factory/"
-                    "AnalysisRequest/Request new analyses/ar_add?col_count=1",
+                    'url': '%(context_url)s/portal_factory/AnalysisRequest/Request new analyses/ar_add?layout=%(layout)s&ar_count=%(ar_count)s' % {
+                            'context_url': self.context.absolute_url(),
+                            'layout': layout,
+                            'ar_count': ar_count,
+                            }, 
                 'icon': '++resource++bika.lims.images/add.png'}
 
             # This is permitted from the global permission above, AddAnalysisRequest.

@@ -1053,6 +1053,11 @@ div.LSResult {
     top:75%;
 }
 
+table#add_analyses {
+    font-size: 120%;
+    line-height: 1.5em;
+}
+
 #bika-spinner {
     display:none;
     background-color: #fff;

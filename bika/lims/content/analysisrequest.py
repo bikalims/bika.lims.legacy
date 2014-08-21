@@ -147,6 +147,46 @@ schema = BikaSchema.copy() + Schema((
                      ],
         ),
     ),
+    ReferenceField(
+        'InvoiceContact',
+        multiValued=False,
+        vocabulary_display_path_bound=sys.maxsize,
+        allowed_types=('Contact',),
+        referenceClass=HoldingReference,
+        relationship='AnalysisRequestInvoiceContact',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=EditARContact,
+        widget=ReferenceWidget(
+            label=_("Invoice Contact"),
+            render_own_label=True,
+            size=20,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'edit',
+                     'header_table': 'prominent',
+                     'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'sampled':           {'view': 'visible', 'edit': 'visible'},
+                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
+                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
+                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
+                     'attachment_due':    {'view': 'visible', 'edit': 'visible'},
+                     'to_be_verified':    {'view': 'visible', 'edit': 'visible'},
+                     'verified':          {'view': 'visible', 'edit': 'invisible'},
+                     'published':         {'view': 'visible', 'edit': 'invisible'},
+                     'invalid':           {'view': 'visible', 'edit': 'invisible'},
+                     },
+
+            base_query={'inactive_state': 'active'},
+            showOn=True,
+            popup_width='400px',
+            colModel=[{'columnName': 'UID', 'hidden': True},
+                      {'columnName': 'Fullname', 'width': '50', 'label': _('Name')},
+                      {'columnName': 'EmailAddress', 'width': '50', 'label': _('Email Address')},
+                     ],
+        ),
+    ),    
     StringField(
         'CCEmails',
         mode="rw",
@@ -501,6 +541,41 @@ schema = BikaSchema.copy() + Schema((
             showOn=True,
         ),
     ),
+    
+    ReferenceField(
+        'SampleMatrix',
+        required=False,
+        allowed_types='SampleMatrix',
+        relationship='AnalysisRequestSampleMatrix',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=ReferenceWidget(
+            label=_("Sample Matrix"),
+            size=20,
+            render_own_label=True,
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'add': 'edit',
+                     'header_table': 'visible',
+                     'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                     'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
+                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
+                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
+                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
+                     'attachment_due':    {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_verified':    {'view': 'visible', 'edit': 'invisible'},
+                     'verified':          {'view': 'visible', 'edit': 'invisible'},
+                     'published':         {'view': 'visible', 'edit': 'invisible'},
+                     'invalid':           {'view': 'visible', 'edit': 'invisible'},
+                     },
+            catalog_name='bika_setup_catalog',
+            base_query={'inactive_state': 'active'},
+            showOn=True,
+        ),
+    ),
+
     ReferenceField(
         'Specification',
         required=0,
@@ -1804,6 +1879,22 @@ class AnalysisRequest(BaseFolder):
         if sample:
             return sample.getSampleType()
         return self.Schema().getField('SampleType').get(self)
+
+    security.declarePublic('setSampleMatrix')
+
+    def setSampleMatrix(self, value):
+        sample = self.getSample()
+        if sample and value:
+            sample.setSampleMatrix(value)
+        self.Schema()['SampleMatrix'].set(self, value)
+
+    security.declarePublic('getSampleMatrix')
+
+    def getSampleMatrix(self):
+        sample = self.getSample()
+        if sample:
+            return sample.getSampleMatrix()
+        return self.Schema().getField('SampleMatrix').get(self)
 
     security.declarePublic('setClientReference')
 
