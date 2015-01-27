@@ -525,4 +525,13 @@
         sortkey="1"
         profile="bika.lims:default"/>
 
+<genericsetup:upgradeStep
+        title="Allow to invalidate verified ARs"
+        description=""
+        source="3053"
+        destination="3054"
+        handler="bika.lims.upgrade.to3054.upgrade"
+        sortkey="1"
+        profile="bika.lims:default"/>
+
 </configure>
