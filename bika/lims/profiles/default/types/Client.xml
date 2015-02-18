@@ -17,6 +17,7 @@
  <property name="allowed_content_types">
   <element value="ARImport"/>
   <element value="ARTemplate"/>
+  <element value="SRTemplate"/>
   <element value="AnalysisProfile"/>
   <element value="AnalysisRequest"/>
   <element value="AnalysisSpec"/>
@@ -115,6 +116,18 @@
          icon_expr="string:${portal_url}/images/artemplate.png"
          link_target=""
          url_expr="string:${object_url}/artemplates"
+         i18n:attributes="title"
+         visible="True">
+  <permission value="View"/>
+ </action>
+
+ <action title="SR Templates"
+         action_id="srtemplates"
+         category="object"
+         condition_expr=""
+         icon_expr="string:${portal_url}/images/artemplate.png"
+         link_target=""
+         url_expr="string:${object_url}/srtemplates"
          i18n:attributes="title"
          visible="True">
   <permission value="View"/>
