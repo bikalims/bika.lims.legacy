@@ -185,7 +185,7 @@ function AnalysisRequestAddView() {
 	function set_specs(column){
 		// Get the spec for this column, and check if the hidden #spec input must be updated
 		var spec_uid = $("#ar_" + column + "_Specification_uid").val();
-		if (spec_uid == "" || spec_uid == undefined || spec_uid == null) {
+		if (!spec_uid) {
 			_set_specs(column)
 		}
 		var request_data = {
@@ -768,7 +768,8 @@ function AnalysisRequestAddView() {
 				other_elem.trigger("change");
 			}
 		}
-		$("[id*='_" + fieldName + "']").change();
+		//$("[id*='_" + fieldName + "']").change();
+
 	}
 
 	function copyButton(){
@@ -826,6 +827,10 @@ function AnalysisRequestAddView() {
 					if(fieldName == "SampleType"){
 						unsetTemplate(col);
 						calculate_parts(col);
+						set_Specification_from_SampleType(col);
+						// Fix filter for Specs to exclude Spec with non matching sample type
+						modify_Specification_field_filter(col);
+						// Fix the spec values to reflect the new specification ranges
 						set_specs(col);
 					}
 
@@ -997,7 +1002,7 @@ function AnalysisRequestAddView() {
 					var e = $("input[column='"+key.col+"']").filter("#"+service_uid);
 					$(e).prop("checked",true);
 					toggle_spec_fields(e);
-					set_specs(col)
+					set_specs(key.col)
 				}
 			} else {
 				// otherwise, toggleCat will take care of everything for us
@@ -1011,8 +1016,12 @@ function AnalysisRequestAddView() {
 		for(i=0; i<modified_cols.length; i+=1){
 			calculate_parts(modified_cols[i]);
 		}
-		$(dlg).dialog("close");
-		$("#messagebox").remove();
+		try{
+			$(dlg).dialog("close");
+			$("#messagebox").remove();
+		}catch(e){
+			console.log(e);
+		}
 
 
 	}
@@ -1088,6 +1097,7 @@ function AnalysisRequestAddView() {
 			}
 			// unselecting a service; discover back dependencies
 			else {
+				console.log('asd');
 				var Dependants = lims.AnalysisService.Dependants(service_uid);
 				if (Dependants.length > 0){
 					for (i=0; i<Dependants.length; i++){
@@ -1388,7 +1398,6 @@ function AnalysisRequestAddView() {
 		var element = $(this);
 		unsetAnalysisProfile(column);
 		unsetTemplate(column);
-
 		// Unselecting Dry Matter Service unsets 'Report Dry Matter'
 		if ($(this).val() == $("#getDryMatterService").val() && !$(this).prop("checked")) {
 			$("#ar_"+column+"_ReportDryMatter").prop("checked",false);
@@ -1399,7 +1408,7 @@ function AnalysisRequestAddView() {
 			$(".partnr_"+this.id).filter("[column='"+column+"']").empty();
 		}
 
-		calcdependencies([element]);
+		calcdependencies([element], 0);
 		recalc_prices();
 		calculate_parts(column);
 		toggle_spec_fields(element);

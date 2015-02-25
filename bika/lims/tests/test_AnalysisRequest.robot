@@ -59,9 +59,17 @@ Check the AR Add javascript
     click element                       xpath=.//th[@id="cat_lab_Microbiology"]
     wait until page contains            Clostridia
     click element                       xpath=.//th[@id="cat_lab_Microbiology"]
-    element should not be visible             Clostridia
+    element should not be visible       Clostridia
     click element                       xpath=.//th[@id="cat_lab_Microbiology"]
     page should contain                 Clostridia
+
+    #Check ReportDryMatter checkbox copies accross along with service dependancies
+    Select Checkbox                     ar_0_ReportDryMatter
+    click element                       css=.ReportDryMatterCopyButton
+    Checkbox Should Be Selected         ar_2_ReportDryMatter
+    Checkbox Should Be Selected         css=input[title='Dry Matter'][column='2']
+
+
 
 # XXX Automatic expanded categories
 # XXX Restricted categories
