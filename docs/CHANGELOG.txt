@@ -1,5 +1,6 @@
 3.2 (unreleased)
 ----------------
+LIMS-1724 Fixed missing start and end dates in reports
 LIMS-1675 WorkOrder tabs not showing when its WorkSheets tab is open
 LIMS-1674 AR create inside WorkOrders does not save
 LIMS-1669 Worksheet lists and creation inside Batches/WorkOrders
