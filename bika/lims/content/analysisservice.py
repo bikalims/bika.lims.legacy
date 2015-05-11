@@ -239,6 +239,45 @@ schema = BikaSchema.copy() + Schema((
                          "notation.  The default is 7."),
                  ),
     ),
+    FixedPointField('LowerDetectionLimit',
+                    schemata="Analysis",
+                    default='0.00',
+                    widget=DecimalWidget(
+                        label = _("Lower Detection Limit (LDL)"),
+                        description = _("The Lower Detection Limit is "
+                                        "the lowest value to which the "
+                                        "measured parameter can be "
+                                        "measured using the specified "
+                                        "testing methodology. Results "
+                                        "entered which are less than "
+                                        "this value will be reported "
+                                        "as < LDL")
+                    ),
+    ),
+    FixedPointField('UpperDetectionLimit',
+                schemata="Analysis",
+                default='1000.00',
+                widget=DecimalWidget(
+                    label = _("Upper Detection Limit (UDL)"),
+                    description = _("The Upper Detection Limit is the "
+                                    "highest value to which the "
+                                    "measured parameter can be measured "
+                                    "using the specified testing "
+                                    "methodology. Results entered "
+                                    "which are greater than this value "
+                                    "will be reported as > UDL")
+                ),
+    ),
+    BooleanField('AllowManualDetectionLimit',
+             schemata="Analysis",
+             default=False,
+             widget=BooleanWidget(
+                label = _("Allow Manual Detection Limit input"),
+                description = _("Allow the analyst to manually "
+                                "replace the default Detection Limits "
+                                "(LDL and UDL) on results entry views"),
+             ),
+    ),
     BooleanField('ReportDryMatter',
                  schemata="Analysis",
                  default=False,
@@ -709,6 +748,22 @@ schema = BikaSchema.copy() + Schema((
                                    "fixed precision set."),
                  ),
     ),
+
+    # If checked, an additional input with the default uncertainty will
+    # be displayed in the manage results view. The value set by the user
+    # in this field will override the default uncertainty for the analysis
+    # result
+    BooleanField('AllowManualUncertainty',
+                 schemata="Uncertainties",
+                 default=False,
+                 widget=BooleanWidget(
+                    label = _("Allow manual uncertainty value input"),
+                    description = _("Allow the analyst to manually "
+                                    "replace the default uncertainty "
+                                    "value."),
+                ),
+    ),
+
     RecordsField('ResultOptions',
                  schemata="Result Options",
                  type='resultsoptions',
@@ -788,6 +843,18 @@ schema = BikaSchema.copy() + Schema((
                                 "analysis service's default preservation per sample "
                                 "type here."),
                         ),
+    ),
+    BooleanField('Hidden',
+                 schemata="Analysis",
+                 default=False,
+                 widget=BooleanWidget(
+                     label = _("Hidden"),
+                     description = _(
+                        "If enabled, this analysis and its results "
+                        "will not be displayed by default in reports. "
+                        "This setting can be overrided in Analysis "
+                        "Profile and/or Analysis Request"),
+                 ),
     ),
 ))
 
@@ -1017,7 +1084,6 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         items.sort(lambda x, y: cmp(x[1], y[1]))
         return DisplayList(list(items))
 
-
     def getUncertainty(self, result=None):
         """
         Return the uncertainty value, if the result falls within
@@ -1051,6 +1117,25 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
                     return unc
         return None
 
+    def getLowerDetectionLimit(self):
+        """ Returns the Lower Detection Limit for this service as a
+            floatable
+        """
+        ldl = self.Schema().getField('LowerDetectionLimit').get(self)
+        try:
+            return float(ldl)
+        except ValueError:
+            return 0
+
+    def getUpperDetectionLimit(self):
+        """ Returns the Upper Detection Limit for this service as a
+            floatable
+        """
+        udl = self.Schema().getField('UpperDetectionLimit').get(self)
+        try:
+            return float(udl)
+        except ValueError:
+            return 0
 
     def getPrecision(self, result=None):
         """
@@ -1059,7 +1144,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         set, the method will return the precision value set in the
         Schema. Otherwise, will calculate the precision value
         according to the Uncertainty and the result.
-        If Calculate Preciosion to Uncertainty is set but no result
+        If Calculate Precision to Uncertainty is set but no result
         provided neither uncertainty values are set, returns the
         fixed precision.
 
@@ -1106,7 +1191,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         the method will return the exponential precision value set in
         the Schema. Otherwise, will calculate the precision value
         according to the Uncertainty and the result.
-        
+
         If Calculate Precision from the Uncertainty is set but no
         result provided neither uncertainty values are set, returns the
         fixed exponential precision.
