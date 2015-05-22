@@ -364,8 +364,8 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
                 analysis.setUncertainty(uncertainties[uid])
 
             # Need to save the detection limit?
-            if analysis_active and uid in dlimits and dlimits[uid]:
-                analysis.setDetectionLimitOperand(dlimits[uid])
+            if analysis_active:
+                analysis.setDetectionLimitOperand(dlimits.get(uid, None))
 
             if uid not in results or not results[uid]:
                 continue
@@ -527,7 +527,7 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
             return
         url = self.context.absolute_url() + "/portal_factory/" + \
             "AnalysisRequest/Request new analyses/ar_add" + \
-            "?ar_count={0}".format(len(objects)) + \
+            "?col_count={0}".format(len(objects)) + \
             "&copy_from={0}".format(",".join(objects.keys()))
         self.request.response.redirect(url)
         return

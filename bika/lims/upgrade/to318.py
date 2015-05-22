@@ -11,7 +11,6 @@ def upgrade(tool):
     setup = portal.portal_setup
 
     # Updated profile steps
-    setup.runImportStepFromProfile('profile-bika.lims:default', 'jsregistry')
 
     # Migrations
 

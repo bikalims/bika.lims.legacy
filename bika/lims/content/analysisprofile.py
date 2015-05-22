@@ -10,14 +10,12 @@ from bika.lims.browser.widgets import ServicesWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from Products.Archetypes.public import *
-from bika.lims.interfaces import IAnalysisProfile
 from Products.Archetypes.references import HoldingReference
 from Products.ATExtensions.field import RecordsField
 from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
 from zope.interface import Interface, implements
 import sys
-from bika.lims.interfaces import IAnalysisProfile
 
 schema = BikaSchema.copy() + Schema((
     StringField('ProfileKey',
@@ -123,7 +121,6 @@ class AnalysisProfile(BaseContent):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
-    implements(IAnalysisProfile)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

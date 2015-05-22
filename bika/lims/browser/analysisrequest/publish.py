@@ -793,7 +793,8 @@ class AnalysisRequestPublishView(BrowserView):
                 host = getToolByName(ar, 'MailHost')
                 host.send(mime_msg.as_string(), immediate=True)
             except SMTPServerDisconnected as msg:
-                logger.warn("SMTPServerDisconnected: %s." % msg)
+                if not debug_mode:
+                    raise SMTPServerDisconnected(msg)
             except SMTPRecipientsRefused as msg:
                 raise WorkflowException(str(msg))
 
