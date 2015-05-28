@@ -2,13 +2,12 @@
  */
 function AnalysisRequestAddView() {
 
+    var that = this
 
-	var that = this
-
-	that.load = function () {
+    that.load = function () {
 
 
-	}
+    }
 
 }
 
