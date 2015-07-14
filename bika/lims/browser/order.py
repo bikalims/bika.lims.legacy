@@ -8,6 +8,8 @@ from operator import itemgetter, methodcaller
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.utils import t
+from plone.app.layout.viewlets.common import ViewletBase
+from zope.component import getMultiAdapter
 
 class View(BrowserView):
 
@@ -40,7 +42,7 @@ class View(BrowserView):
 		    product = [pro for pro in products if pro.getId() == prodid][0]
 		    price = float(item['Price'])
 		    vat = float(item['VAT'])
-		    qty = float(item['Quantity'])
+		    qty = item['Quantity']
 		    self.items.append({
 		        'title': product.Title(),
 		        'description': product.Description(),
@@ -56,6 +58,7 @@ class View(BrowserView):
 
 	def getPreferredCurrencyAbreviation(self):
 		return self.context.bika_setup.getCurrency()
+
 
 class EditView(BrowserView):
 
@@ -80,12 +83,12 @@ class EditView(BrowserView):
             context.order_lineitems = []
             # Process the order item data
             for prodid, qty in request.form.items():
-                if prodid.startswith('product_') and float(qty) > 0:
+                if prodid.startswith('product_') and int(qty) > 0:
                     prodid = prodid.replace('product_', '')
                     product = [pro for pro in products if pro.getId() == prodid][0]
                     context.order_lineitems.append(
                             {'Product': prodid,
-                             'Quantity': qty,
+                             'Quantity': int(qty),
                              'Price': product.getPrice(),
                              'VAT': product.getVAT()})
 
@@ -128,3 +131,17 @@ class PrintView(View):
 
     def __call__(self):
         return View.__call__(self)
+
+
+class OrderPathBarViewlet(ViewletBase):
+    """Viewlet for overriding breadcrumbs in Order View"""
+
+    index = ViewPageTemplateFile('templates/path_bar.pt')
+
+    def update(self):
+        super(OrderPathBarViewlet, self).update()
+        self.is_rtl = self.portal_state.is_rtl()
+        breadcrumbs = getMultiAdapter((self.context, self.request),
+                                      name='breadcrumbs_view').breadcrumbs()
+        breadcrumbs[2]['absolute_url'] += '/orders'
+        self.breadcrumbs = breadcrumbs

@@ -30,7 +30,12 @@ def check_for_required_columns(name, data, required):
             message = _("%s has no '%s' column." % (name, column))
             raise Exception(t(message))
 
-
+def Int(thing):
+    try:
+        f = int(thing)
+    except ValueError:
+        f = 0
+    return f
 
 def Float(thing):
     try:
@@ -2049,7 +2054,7 @@ class Products(WorksheetImporter):
                 CAS=row.get('CAS', ''),
                 SupplierCatalogueID=row.get('SupplierCatalogueID', ''),
                 Hazardous=self.to_bool(row.get('Hazardous', '')),
-                Quantity="%02f" % Float(row.get('Quantity', '')),
+                Quantity= Int(row.get('Quantity', '')),
                 Unit=row.get('Unit', ''),
                 VAT="%02f" % Float(row.get('VAT', '')),
                 Price="%02f" % Float(row.get('Price', '')),

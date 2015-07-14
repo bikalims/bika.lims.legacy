@@ -28,4 +28,15 @@
       layer="bika.lims.interfaces.IBikaLIMS"
     />
 
+    <!-- Translated breadcrumbs -->
+    <browser:viewlet
+      for="bika.lims.interfaces.IOrder"
+      name="plone.path_bar"
+      manager="plone.app.layout.viewlets.interfaces.IAboveContent"
+      template="templates/path_bar.pt"
+      class="bika.lims.browser.order.OrderPathBarViewlet"
+      permission="zope2.View"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
 </configure>

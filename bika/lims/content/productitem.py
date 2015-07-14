@@ -15,6 +15,15 @@ from Products.CMFCore.utils import getToolByName
 import sys
 
 schema = BikaSchema.copy() + Schema((
+    StringField(
+        'ProductItemID',
+        searchable=True,
+        validators=('uniquefieldvalidator',),
+        widget=StringWidget(
+            visible=False,
+            label=_("Product Item ID"),
+        )
+    ),
     ReferenceField('Product',
         required=1,
         vocabulary_display_path_bound = sys.maxint,
@@ -87,8 +96,11 @@ schema = BikaSchema.copy() + Schema((
     ),
 ))
 
+schema['title'].required = False
+schema['title'].widget.visible = False
 schema['description'].schemata = 'default'
 schema['description'].widget.visible = True
+schema.moveField('ProductItemID', before='description')
 
 class ProductItem(BaseContent):
     implements(IProductItem)
@@ -102,5 +114,8 @@ class ProductItem(BaseContent):
 
     def getProductTitle(self):
         return self.getProduct().Title()
+
+    def getProductItemId(self):
+        return self.getId()
 
 registerType(ProductItem, config.PROJECTNAME)

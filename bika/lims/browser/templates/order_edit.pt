@@ -50,7 +50,7 @@
                         <td class="currency price center" tal:content="product/price"></td>
                         <td class="center item_vat" tal:content="product/vat"></td>
                         <td class="number">
-                            <input type="text" class="quantity numeric"
+                            <input type="number" min="0" class="quantity"
                                     tal:attributes="name string:product_${product/id};
                                     value product/quantity;
                                     data-product_title product/title" />

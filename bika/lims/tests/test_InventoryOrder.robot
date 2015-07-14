@@ -36,6 +36,18 @@ Test order as LabManager
     Then when I trigger store transition
     page should contain  Item state changed
 
+Test product reception workflow
+    Enable autologin as  LabManager
+    Given a blank order form in supplier-3
+     When I enter 7 for product Nitric acid
+      and I enter 5 for product Sulfuric acid
+      and I submit the new order
+      and I trigger dispatch transition
+      and I trigger receive transition
+     Then product items list has Nitric acid
+      and product items list has Sulfuric acid
+      and quantity of Sulfuric acid in Chemical category is 5
+
 
 *** Keywords ***
 
@@ -83,3 +95,12 @@ total is ${nr}
     [Documentation]  Verify the total is calculated correctly
     element text should be  css=span.total  ${nr}
 
+product items list has ${product}
+    go to  ${PLONEURL}/bika_setup/bika_suppliers/bika_productitems
+    page should contain  ${product}
+
+quantity of ${product} in ${category} category is ${quantity}
+    go to  ${PLONEURL}/bika_setup/bika_suppliers/supplier-3/products
+    click element  xpath=//th[contains(@cat, '${category}')]
+    click link  ${product}
+    page should contain element  xpath=//input[@id='Quantity' and @value='${quantity}']

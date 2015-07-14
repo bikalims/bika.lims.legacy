@@ -6,8 +6,10 @@ from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import ReferenceWidget as BikaReferenceWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IOrder
 from bika.lims.utils import t
+from bika.lims.utils import tmpID
 from DateTime import DateTime
 from persistent.mapping import PersistentMapping
 from decimal import Decimal
@@ -15,6 +17,7 @@ from Products.Archetypes import atapi
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.permissions import View
 from Products.CMFPlone.interfaces import IConstrainTypes
+from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.utils import safe_unicode
 from zope.component import getAdapter
 from zope.interface import implements
@@ -158,6 +161,20 @@ class Order(BaseFolder):
 
     def workflow_script_receive(self):
         """ receive order """
+        products = self.aq_parent.objectValues('Product')
+        items = self.order_lineitems
+        for item in items:
+            quantity = int(item['Quantity'])
+            if quantity < 1:
+                continue
+            product = [p for p in products if p.getId() == item['Product']][0]
+            folder = self.bika_setup.bika_productitems
+            for i in range(quantity):
+                pi = _createObjectByType('ProductItem', folder, tmpID())
+                pi.setProduct(product)
+                pi.unmarkCreationFlag()
+                renameAfterCreation(pi)
+            product.setQuantity(product.getQuantity() + quantity)
         self.setDateReceived(DateTime())
         self.reindexObject()
 

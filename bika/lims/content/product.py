@@ -52,10 +52,11 @@ schema = BikaSchema.copy() + Schema((
             description=_("Samples of this type should be treated as hazardous"),
         ),
     ),
-    FixedPointField('Quantity',
-        widget = DecimalWidget(
+    IntegerField('Quantity',
+        widget = IntegerWidget(
             label=_("Quantity"),
-            description=_("The quantity of the product already in storage eg. '10', '1.02'."),
+            description=_("The number of items of this product already in "
+                          "storage. eg. 15, 100"),
         ),
     ),
     StringField('Unit',

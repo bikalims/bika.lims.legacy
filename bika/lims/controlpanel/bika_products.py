@@ -102,7 +102,7 @@ class ProductsView(BikaListingView):
             items[x]['CAS'] = obj.getCAS()
             items[x]['Quantity'] = obj.getQuantity()
             if obj.getQuantity() and obj.getUnit():
-                items[x]['Quantity'] = str(obj.getQuantity()) + ' ' + obj.getUnit()
+                items[x]['Quantity'] = str(obj.getQuantity())
             items[x]['Toxicity'] = obj.getToxicity()
             items[x]['VATAmount'] = obj.getVATAmount()
             items[x]['Price'] = obj.getPrice()
