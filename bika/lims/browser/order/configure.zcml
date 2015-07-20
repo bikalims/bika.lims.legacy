@@ -1,0 +1,85 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bika">
+
+    <adapter
+      factory="bika.lims.browser.order.SupplierContactVocabularyFactory"
+      provides="bika.lims.interfaces.IDisplayListVocabulary"
+      for="bika.lims.interfaces.IOrder"
+      name="getContacts"
+    />
+
+    <adapter
+      for="bika.lims.interfaces.IOrder"
+      factory="bika.lims.browser.order.mailto_link_from_contacts"
+      provides="bika.lims.interfaces.IHeaderTableFieldRenderer"
+      name="Contact"
+    />
+    <adapter
+      for="bika.lims.interfaces.IOrder"
+      factory="bika.lims.browser.order.mailto_link_from_contacts"
+      provides="bika.lims.interfaces.IHeaderTableFieldRenderer"
+      name="CContact"
+    />
+
+    <adapter
+      for="bika.lims.interfaces.IOrder"
+      factory="bika.lims.browser.order.mailto_link_from_ccemails"
+      provides="bika.lims.interfaces.IHeaderTableFieldRenderer"
+      name="CCEmails"
+    />
+
+    <!-- main site/order view -->
+    <browser:page
+      for="bika.lims.interfaces.IOrderFolder"
+      name="base_view"
+      class="bika.lims.browser.order.orderfolder.OrderFolderView"
+      permission="zope2.View"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+
+    <!-- Workflow action button clicked inside Order >
+    <browser:page
+      for="bika.lims.interfaces.IOrder"
+      name="workflow_action"
+      class="bika.lims.browser.order.OrderWorkflowAction"
+      permission="zope.Public"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    / -->
+
+    <browser:page
+      for="bika.lims.interfaces.IOrder"
+      name="base_edit"
+      class="bika.lims.browser.order.order.EditView"
+      permission="cmf.ModifyPortalContent"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IOrder"
+      name="base_view"
+      class="bika.lims.browser.order.order.OrderView"
+      permission="cmf.ModifyPortalContent"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IOrder"
+      name="print"
+      class="bika.lims.browser.order.order.PrintView"
+      permission="cmf.ModifyPortalContent"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IOrder"
+      name="publish"
+      class="bika.lims.browser.order.publish.OrderPublishView"
+      permission="bika.lims.ManageBika"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+</configure>

@@ -30,7 +30,9 @@ Test order as LabManager
     vat is 0.00
     total is 24.22
     Then when I trigger dispatch transition
-    page should contain  Item state changed
+     and I publish the order
+    page should contain  Dispatched
+    Then I can print the order for supplier-3
     Then when I trigger receive transition
     page should contain  Item state changed
     Then when I trigger store transition
@@ -65,6 +67,9 @@ I trigger ${transitionId} transition
     Wait until keyword succeeds  1  5  Element Should Be Visible  css=dl#plone-contentmenu-workflow dd.actionMenuContent
     Click Link  workflow-transition-${transitionId}
 
+I publish the order
+    Click button  Publish
+
 # --- Then -------------------------------------------------------------------
 
 status message should be ${message}
@@ -83,3 +88,6 @@ total is ${nr}
     [Documentation]  Verify the total is calculated correctly
     element text should be  css=span.total  ${nr}
 
+I can print the order for ${supplier_id}
+    Page Should contain Link  ${PLONEURL}/bika_setup/bika_suppliers/${supplier_id}/order-1/print
+    # Can't display print here, as Robot framework can't close the print dialog box once it opens!

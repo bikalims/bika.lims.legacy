@@ -38,14 +38,15 @@
   <include file="supplier.zcml"/>
   <include file="supplyorder.zcml"/>
   <include file="supplyorderfolder.zcml"/>
-  <include file="order.zcml"/>
-  <include file="orderfolder.zcml"/>
+  
+  
   <include file="worksheet.zcml"/>
   <include file="worksheetfolder.zcml"/>
   <include file="viewlets.zcml"/>
   <include file="arimports.zcml"/>
 
   <include package=".analysisrequest"/>
+  <include package=".order"/>
   <include package=".batch"/>
 
   <include package=".fields"/>

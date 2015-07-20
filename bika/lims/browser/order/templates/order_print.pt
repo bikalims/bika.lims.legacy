@@ -1,0 +1,143 @@
+<!-- <html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+	metal:use-macro="here/print_template/macros/master"
+	i18n:domain="bika">
+
+	<body>
+
+		<metal:content fill-slot="content">
+			<span tal:replace="structure view/items"></span>
+		</metal:content>
+
+	</body>
+
+</html> -->
+<!-- <html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:metal="http://xml.zope.org/namespaces/metal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="bika">
+
+  <head>
+      <link rel="stylesheet" type="text/css" media="all" href=""
+            tal:attributes="href string:${view/portal_url}/++resource++bika.lims.css/print.css" />
+      <title tal:content="python:context.title"/>
+  </head>
+
+  <body onload="javascript:this.print();">
+    <div id="order_content" tal:content="view/items"/>
+  </body>
+
+</html> -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+	i18n:domain="bika">
+
+	<head>
+		<link rel="stylesheet" type="text/css" media="all" href=""
+            tal:attributes="href string:${view/portal_url}/++resource++bika.lims.css/print.css" />
+      	<title tal:content="python:context.title"/>
+	</head>
+
+	<body onload="javascript:this.print();">
+
+		<h1>
+			<span class="documentFirstHeading" tal:content="view/title" />
+		</h1>
+		<div id="section-order">
+            <table class="invoice-header">
+                <tbody>
+                <tr>
+                    <th i18n:translate="">Order Date:&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span tal:content="view/orderDate"></span>
+                    </th>
+                </tr>
+                </tbody>
+            </table>
+
+            <h1 i18n:translate="">Supplier Information</h1>
+                <table tal:define="supplier view/supplier">
+                    <tr><td id="supplier-name"><b tal:content="supplier/name"></b></td></tr>
+                    <tr><td id="supplier-address" tal:content="structure supplier/address"></td></tr>
+                    <tr tal:condition="python:supplier.get('email','') != ''">
+                        <td id="supplier-email">
+                            <span i18n:translate="">Email</span>:
+                            <a tal:content="supplier/email"
+                               tal:attributes="url python:'mailto:%s' % supplier['email'];"></a>
+                        </td>
+                    </tr>
+                    <tr tal:condition="supplier/phone">
+                        <td id="supplier-phone">
+                            <span i18n:translate="">Phone</span>:
+                            <span tal:content="supplier/phone"></span>
+                        </td>
+                    </tr>
+                    <tr tal:condition="supplier/fax">
+                        <td id="supplier-fax">
+                            <span i18n:translate="">Fax</span>:
+                            <span tal:content="supplier/fax"></span>
+                        </td>
+                    </tr>
+                </table>
+                <br/><br/><br/>
+            <table class="invoice-items items">
+                <thead>
+                <tr>
+                    <th i18n:translate="">Product</th>
+                    <th i18n:translate="">Description</th>
+                    <th i18n:translate="">Unit</th>
+                    <th i18n:translate="">Price</th>
+                    <th i18n:translate="">VAT</th>
+                    <th i18n:translate="">Quantity</th>
+                    <th class="currency" i18n:translate="">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tal:items repeat="item view/items">
+                    <tal:item>
+                        <tr>
+                            <td tal:content="item/title"></td>
+                            <td class="text center" tal:content="item/description"></td>
+                            <td class="center" tal:content="item/unit"></td>
+                            <td class="currency center">
+                                <span tal:content="item/price"></span>
+                            </td>
+                            <td class="center" tal:content="item/vat"></td>
+                            <td class="number" tal:content="item/quantity"></td>
+                            <td class="currency">
+                                <span tal:content="item/totalprice"></span>
+                            </td>
+                        </tr>
+                    </tal:item>
+                </tal:items>
+                <tr class="totals">
+                    <td colspan="6" i18n:translate="">Subtotal</td>
+                    <td class="currency">
+                        <span tal:content="python:view.getPreferredCurrencyAbreviation()">$</span>
+                        <span class="subtotal" tal:content="view/subtotal"></span>
+                    </td>
+                </tr>
+                <tr class="totals">
+                    <td colspan="6" i18n:translate="">VAT</td>
+                    <td class="currency">
+                        <span tal:content="python:view.getPreferredCurrencyAbreviation()">$</span>
+                        <span class="vat" tal:content="view/vat"></span>
+                    </td>
+                </tr>
+                <tr class="totals">
+                    <td colspan="6" i18n:translate="">Total</td>
+                    <td class="currency">
+                        <span tal:content="python:view.getPreferredCurrencyAbreviation()">$</span>
+                        <span class="total" tal:content="view/total"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+    	</div>
+	</body>
+
+</html>

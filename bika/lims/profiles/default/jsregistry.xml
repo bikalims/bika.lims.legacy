@@ -250,6 +250,17 @@
               inline="False"
               insert-after="*"/>
 
+  <javascript authenticated="False"
+              id="++resource++bika.lims.js/bika.lims.order.publish.js"
+              cacheable="True"
+              compression="safe"
+              conditionalcomment=""
+              cookable="True"
+              enabled="on"
+              expression=""
+              inline="False"
+              insert-after="*"/>
+
  <javascript authenticated="False"
               id="++resource++bika.lims.js/bika.lims.arimport.js"
               cacheable="True"

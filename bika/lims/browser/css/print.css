@@ -7,4 +7,14 @@ th {text-align: left; }
 .context_action_link {display: none !important;}
 .selected {display: none !important;}
 .noborder {display:none !important;}
+#section-order table tr td {
+    padding-left:5px;
+}
+#section-order tr td {
+    border-left-width: 0px;
+    border-bottom:1px solid #ccc;
+}
+ #section-order tr td.label {
+    width:60mm;
+}
 

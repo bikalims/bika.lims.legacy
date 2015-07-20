@@ -1,6 +1,7 @@
 /**
  * Controller class for OrderEditView
  */
+ 
 function OrderEditView() {
 
 	var that = this

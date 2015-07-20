@@ -1,5 +1,5 @@
 from Products.Archetypes.public import *
-
+from Acquisition import aq_inner
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import DateTimeWidget
@@ -18,6 +18,7 @@ from Products.CMFPlone.interfaces import IConstrainTypes
 from Products.CMFPlone.utils import safe_unicode
 from zope.component import getAdapter
 from zope.interface import implements
+from bika.lims.workflow import doActionFor
 
 
 schema = BikaSchema.copy() + Schema((
@@ -117,7 +118,6 @@ class Order(BaseFolder):
         return adapter()
 
     security.declareProtected(View, 'getTotalQty')
-
     def getTotalQty(self):
         """ Compute total qty """
         if self.order_lineitems:
@@ -126,7 +126,6 @@ class Order(BaseFolder):
         return 0
 
     security.declareProtected(View, 'getSubtotal')
-
     def getSubtotal(self):
         """ Compute Subtotal """
         if self.order_lineitems:
@@ -135,13 +134,11 @@ class Order(BaseFolder):
         return 0
 
     security.declareProtected(View, 'getVATAmount')
-
     def getVATAmount(self):
         """ Compute VAT """
         return Decimal(self.getTotal()) - Decimal(self.getSubtotal())
 
     security.declareProtected(View, 'getTotal')
-
     def getTotal(self):
         """ Compute TotalPrice """
         total = 0
@@ -155,6 +152,10 @@ class Order(BaseFolder):
         """ dispatch order """
         self.setDateDispatched(DateTime())
         self.reindexObject()
+        # Order publish preview
+        import zExceptions, transaction
+        transaction.commit()
+        raise zExceptions.Redirect(self.absolute_url() + "/publish")
 
     def workflow_script_receive(self):
         """ receive order """
@@ -167,7 +168,6 @@ class Order(BaseFolder):
         self.reindexObject()
 
     security.declareProtected(View, 'getProductUIDs')
-
     def getProductUIDs(self):
         """ return the uids of the products referenced by order items
         """
@@ -179,7 +179,6 @@ class Order(BaseFolder):
         return uids
 
     security.declarePublic('current_date')
-
     def current_date(self):
         """ return current date """
         return DateTime()

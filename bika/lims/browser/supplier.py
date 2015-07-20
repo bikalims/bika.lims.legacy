@@ -1,7 +1,7 @@
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.controlpanel.bika_instruments import InstrumentsView
 from bika.lims.controlpanel.bika_products import ProductsView
-from bika.lims.browser.orderfolder import OrderFolderView
+from bika.lims.browser.order.orderfolder import OrderFolderView
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.utils import to_utf8
