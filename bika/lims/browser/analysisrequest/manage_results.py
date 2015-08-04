@@ -1,6 +1,7 @@
 from AccessControl import getSecurityManager
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
+from bika.lims import logger
 from bika.lims.utils import t
 from bika.lims.browser.analyses import AnalysesView
 from bika.lims.config import POINTS_OF_CAPTURE
@@ -74,8 +75,17 @@ class AnalysisRequestManageResultsView(AnalysisRequestViewView):
             will be displayed.
         """
         invalid = []
-        ans = [a.getObject() for a in self.context.getAnalyses()]
+        ans = self.context.getAnalyses(full_objects=True)
         for an in ans:
+            try:
+                an = an.getObject()
+            except:
+                # Fixes the mystic error LIMS-1941.
+                # https://jira.bikalabs.com/browse/LIMS-1941
+                import traceback
+                logger.error(traceback.format_exc())
+                continue
+                
             valid = an.isInstrumentValid()
             if not valid:
                 inv = '%s (%s)' % (safe_unicode(an.Title()), safe_unicode(an.getInstrument().Title()))
