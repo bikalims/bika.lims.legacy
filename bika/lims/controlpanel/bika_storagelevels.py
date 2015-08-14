@@ -48,6 +48,12 @@ class StorageLevelsView(BikaListingView):
                       'index': 'sortable_title'},
             'Description': {'title': _('Description'),
                                 'toggle': True},
+            'Hierarchy': {'title': _('Hierarchy'),
+                                'toggle': False},
+            'ProductItemID': {'title': _('Product Item ID'),
+                                'toggle': True},
+            'IsOccupied': {'title': _('Is Occupied'),
+                                'toggle': False},
         }
         self.review_states = [
             {'id':'default',
@@ -55,35 +61,44 @@ class StorageLevelsView(BikaListingView):
              'contentFilter': {'inactive_state': 'active'},
              'transitions': [{'id':'deactivate'}, ],
              'columns': ['Title',
-                         'Description']},
+                         'Description',
+                         'Hierarchy',
+                         'ProductItemID',
+                         'IsOccupied']},
             {'id':'inactive',
              'title': _('Dormant'),
              'contentFilter': {'inactive_state': 'inactive'},
              'transitions': [{'id':'activate'}, ],
              'columns': ['Title',
-                         'Description']},
+                         'Description',
+                         'Hierarchy',
+                         'ProductItemID',
+                         'IsOccupied']},
             {'id':'all',
              'title': _('All'),
              'contentFilter':{},
              'columns': ['Title',
-                         'Description']},
+                         'Description',
+                         'Hierarchy',
+                         'ProductItemID',
+                         'IsOccupied']},
         ]
 
     def folderitems(self):
-        catalog = getToolByName(self.context, 'bika_setup_catalog')
-        from bika.lims.interfaces import IStorageLevelIsAssignable
-        print(catalog(object_provides=IStorageLevelIsAssignable))
         items = BikaListingView.folderitems(self)
         for x in range(len(items)):
             if not items[x].has_key('obj'): continue
             obj = items[x]['obj']
             items[x]['replace']['Title'] = "<a href='%s'>%s</a>" % \
                  (items[x]['url'], items[x]['Title'])
+            items[x]['ProductItemID'] = obj.getProductItemID()
+            items[x]['IsOccupied'] = 'yes' if obj.getIsOccupied() else 'no'
+            items[x]['Hierarchy'] = obj.getHierarchy()
         return items
 
 
 class AddStorageLevelView(BrowserView):
-    """ Handler for the "Add Storage levels" button in Storage levels 
+    """ Handler for the "Add Storage levels" button in Storage levels
         view.
     """
 

@@ -26,9 +26,28 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         widget=BooleanWidget(visible=False),
     ),
     IntegerField(
-        'NumberOfChildlessChildren',
+        'NumberOfAvailableChildren',
         default=0,
         widget=IntegerWidget(visible=False)
+    ),
+    ComputedField(
+        'StorageLevelID',
+        expression='context.getId()',
+        widget=ComputedWidget(visible=False),
+    ),
+    BooleanField(
+        'IsOccupied',
+        default=0,
+        widget=BooleanWidget(visible=False),
+    ),
+    StringField(
+        'ProductItemID',
+        widget=StringWidget(visible=False),
+    ),
+    ComputedField(
+        'Hierarchy',
+        expression='context.getHierarchy()',
+        widget=ComputedWidget(visible=False,),
     ),
 ))
 
@@ -51,10 +70,11 @@ class StorageLevel(ATFolder):
 
     def at_post_create_script(self):
         # Jira LIMS-1961
-        if hasattr(self.aq_parent, 'getNumberOfChildlessChildren'):
-            number = self.aq_parent.getNumberOfChildlessChildren()
-            self.aq_parent.setNumberOfChildlessChildren(number + 1)
+        if hasattr(self.aq_parent, 'getNumberOfAvailableChildren'):
+            number = self.aq_parent.getNumberOfAvailableChildren()
+            self.aq_parent.setNumberOfAvailableChildren(number + 1)
             alsoProvides(self.aq_parent, IStorageLevelIsAssignable)
+            self.aq_parent.reindexObject(idxs=['object_provides'])
 
         if hasattr(self.aq_parent, 'HasChildren') and not \
                 self.aq_parent.HasChildren:
@@ -62,13 +82,22 @@ class StorageLevel(ATFolder):
             grand_parent = self.aq_parent.aq_parent
 
             if hasattr(self.aq_parent, 'aq_parent') and \
-                    hasattr(grand_parent, 'getNumberOfChildlessChildren'):
-                number = grand_parent.getNumberOfChildlessChildren()
-                grand_parent.setNumberOfChildlessChildren(number - 1)
+                    hasattr(grand_parent, 'getNumberOfAvailableChildren'):
+                number = grand_parent.getNumberOfAvailableChildren()
+                grand_parent.setNumberOfAvailableChildren(number - 1)
 
                 if number <= 1:
                     noLongerProvides(grand_parent, IStorageLevelIsAssignable)
-        self.reindexObject(idxs=['object_provides'])
+                    grand_parent.reindexObject(idxs=['object_provides'])
 
+    def getHierarchy(self):
+        ancestors = []
+        ancestor = self
+        while(1):
+            ancestors.append(ancestor.Title())
+            if ancestor.portal_type == 'StorageUnit':
+                break
+            ancestor = ancestor.aq_parent
+        return ' > '.join(reversed(ancestors))
 
 registerType(StorageLevel, PROJECTNAME)
