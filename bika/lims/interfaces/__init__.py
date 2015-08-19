@@ -715,3 +715,9 @@ class IOrder(Interface):
 
 class IOrderFolder(Interface):
     "Interface for Order Folder for Inventory"
+
+class IStorageLevelIsAssignable(Interface):
+    """Just testing with alsoProvides and object_provides index
+    This interface should then be used to mark all storage levels
+    """
+

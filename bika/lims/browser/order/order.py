@@ -10,6 +10,7 @@ from bika.lims.browser import BrowserView
 from bika.lims.utils import t
 from plone.app.layout.viewlets.common import ViewletBase
 from zope.component import getMultiAdapter
+import itertools
 
 class OrderView(BrowserView):
     template = ViewPageTemplateFile('templates/order_view.pt')
@@ -41,6 +42,8 @@ class OrderView(BrowserView):
             price = float(item['Price'])
             vat = float(item['VAT'])
             qty = item['Quantity']
+            stored = item['Stored']
+            all_stored = qty == stored
             self.items.append({
 		        'title': product.Title(),
 		        'description': product.Description(),
@@ -48,7 +51,10 @@ class OrderView(BrowserView):
 		        'price': price,
 		        'vat': '%s%%' % vat,
 		        'quantity': qty,
-		        'totalprice': '%.2f' % (price * qty)
+		        'totalprice': '%.2f' % (price * qty),
+                'prodid': prodid,
+                'stored': stored,
+                'all_stored': all_stored,
 		    })
         self.items = sorted(self.items, key = itemgetter('title'))
         # Render the template
@@ -86,6 +92,7 @@ class EditView(BrowserView):
                     context.order_lineitems.append(
                             {'Product': prodid,
                              'Quantity': int(qty),
+                             'Stored': 0,
                              'Price': product.getPrice(),
                              'VAT': product.getVAT()})
 
@@ -180,6 +187,97 @@ class PrintView(OrderView):
 
     def getPreferredCurrencyAbreviation(self):
         return self.context.bika_setup.getCurrency()
+
+
+class OrderStore(BrowserView):
+
+    def __call__(self):
+        portal = self.portal
+        request = self.request
+        context = self.context
+        setup = portal.bika_setup
+        # Allow adding items to this context
+        context.setConstrainTypesMode(0)
+        bsc = getToolByName(self.context, 'bika_setup_catalog')
+        catalog = [pi.getObject() for pi in bsc(portal_type='ProductItem')]
+        # Remaining product items of this order
+        productitems = [pi for pi in catalog \
+                            if (pi.getOrderId() == self.context.getId() and
+                                pi.getIsStored() == False)]
+        # Organize items as per their product
+        products_dict = {}
+        for pi in productitems:
+            product_id = pi.getProduct().getId()
+            if not product_id in products_dict:
+                products_dict[product_id] = []
+            products_dict[product_id].append(pi)
+        # Product names against their IDs used for error messages
+        product_names = {}
+        products = context.aq_parent.objectValues('Product')
+        for pr in products:
+            product_names[pr.getId()] = pr.Title()
+
+        if not 'submit' in request:
+            request.response.redirect(context.absolute_url_path())
+            return
+        # Process form inputs
+        portal_factory = getToolByName(context, 'portal_factory')
+        context = portal_factory.doCreate(context, context.id)
+        context.processForm()
+        levels = [sl.getObject() for sl in bsc(portal_type='StorageLevel')]
+
+        for name in request.form:
+            if not name.startswith('storage-'):
+                continue
+            product_id = name.lstrip('storage-')
+            product_name = product_names[product_id]
+            # Get available storage levels under parent
+            hierarchy = request.form[name]
+            child_levels = [sl for sl in levels \
+                                if (hasattr(sl.aq_parent, 'getHierarchy') and
+                                    sl.aq_parent.getHierarchy() == hierarchy and
+                                    not sl.getHasChildren() and
+                                    not sl.getIsOccupied())]
+            productitems = products_dict[product_id]
+            # Get number of items to store
+            nid = 'number-' + product_id
+            if nid in request.form and request.form[nid]:
+                number = int(request.form[nid])
+            else:
+                continue
+            # Validate number and storage levels
+            if number < 1:
+                continue
+            message = ''
+            if number > len(productitems):
+                message = _('Number entered for ' + product_name + ' is invalid.')
+            if not child_levels:
+                message = 'Storage level is required. Please correct.'
+            if number > len(child_levels):
+                message = 'The number entered for %s is %d but the ' \
+                          'storage level ( %s ) only has %d spaces.' % (
+                             product_name, number, hierarchy, len(child_levels))
+            if message:
+                self.context.plone_utils.addPortalMessage(_(message), 'error')
+                continue
+
+            # Store product items in available levels
+            productitems = productitems[:number]
+            for i, pi in enumerate(productitems):
+                level = child_levels[i]
+                pi.setStorageLevelID(level.getId())
+                pi.setIsStored(True)
+                level.setProductItemID(pi.getId())
+                level.setIsOccupied(True)
+                # Decrement number of available children of parent
+                nac = level.aq_parent.getNumberOfAvailableChildren()
+                level.aq_parent.setNumberOfAvailableChildren(nac - 1)
+                # Increment number of items stored in Order view
+                for lineitem in self.context.order_lineitems:
+                    if lineitem['Product'] == product_id:
+                        lineitem['Stored'] = lineitem['Stored'] + 1
+        request.response.redirect(context.absolute_url_path())
+        return
 
 
 class OrderPathBarViewlet(ViewletBase):

@@ -70,6 +70,10 @@ class ProductItemsView(BikaListingView):
                        'toggle': False},
             'disposalDate': {'title': _('Disposal Date'),
                        'toggle': False},
+            'storageLevelId': {'title': _('Storage Level ID'),
+                       'toggle': False},
+            'isStored': {'title': _('Is Stored'),
+                       'toggle': False},
         }
         self.review_states = [
             {'id':'default',
@@ -84,6 +88,8 @@ class ProductItemsView(BikaListingView):
                          'supplier',
                          'productCategory',
                          'location',
+                         'storageLevelId',
+                         'isStored',
                          'dateReceived',
                          'dateOpened',
                          'expiryDate',
@@ -100,6 +106,8 @@ class ProductItemsView(BikaListingView):
                          'supplier',
                          'productCategory',
                          'location',
+                         'storageLevelId',
+                         'isStored',
                          'dateReceived',
                          'dateOpened',
                          'expiryDate',
@@ -115,6 +123,8 @@ class ProductItemsView(BikaListingView):
                          'Supplier',
                          'ProductCategory',
                          'location',
+                         'storageLevelId',
+                         'isStored',
                          'dateReceived',
                          'dateOpened',
                          'expiryDate',
@@ -133,6 +143,8 @@ class ProductItemsView(BikaListingView):
             items[x]['supplier'] = obj.getSupplierTitle()
             items[x]['productCategory'] = obj.getProductCategoryTitle()
             items[x]['location'] = obj.getLocation()
+            items[x]['storageLevelId'] = obj.getStorageLevelID()
+            items[x]['isStored'] = 'yes' if obj.getIsStored() else 'no'
             items[x]['dateReceived'] = self.ulocalized_time(obj.getDateReceived())
             items[x]['dateOpened'] = self.ulocalized_time(obj.getDateOpened())
             items[x]['expiryDate'] = self.ulocalized_time(obj.getExpiryDate())

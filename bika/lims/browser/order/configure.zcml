@@ -101,4 +101,12 @@
      layer="bika.lims.interfaces.IBikaLIMS"
     />
 
+    <browser:page
+      for="bika.lims.interfaces.IOrder"
+      name="store"
+      class="bika.lims.browser.order.order.OrderStore"
+      permission="cmf.ModifyPortalContent"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
 </configure>

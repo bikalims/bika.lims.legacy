@@ -21,7 +21,8 @@
         <img tal:condition="view/getPriorityIcon | nothing"
              src="" tal:attributes="src view/getPriorityIcon"/>
         <span style="position:relative;top:-0.2em;" class="documentFirstHeading" tal:content="python:view.context.translate(view.title)"/>
-        <tal:add_actions repeat="add_item python:view.context_actions.keys()">
+        <tal:add_actions repeat="add_item python:view.context_actions.keys()"
+                         tal:condition="python: not view.context.getIsOccupied()">
             <a tal:attributes="
                 style python:'background: url(%s) 2px 50%% no-repeat'%(view.context_actions[add_item]['icon']);
                 href python:view.context_actions[add_item]['url'];
@@ -43,6 +44,7 @@
         tal:condition="view/description"/>
 
     <div class="storagelevel_add_controls"
+        tal:condition="python: not view.context.getIsOccupied()"
         style="padding-top: 10px;">
         <form name="storagelevel-add-form" action="storagelevel_add" method="POST">
             <input name="storagelevel-title"

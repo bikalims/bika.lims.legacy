@@ -784,6 +784,7 @@ class BikaGenerator:
         addIndex(bsc, 'created', 'DateIndex')
         addIndex(bsc, 'Creator', 'FieldIndex')
         addIndex(bsc, 'getObjPositionInParent', 'GopipIndex')
+        addIndex(bsc, 'object_provides', 'KeywordIndex')
 
         addIndex(bsc, 'title', 'FieldIndex', 'Title')
         addIndex(bsc, 'sortable_title', 'FieldIndex')

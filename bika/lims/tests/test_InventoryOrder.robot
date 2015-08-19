@@ -39,17 +39,22 @@ Test order as LabManager
     Then when I trigger store transition
     page should contain  Item state changed
 
-Test order reception as LabManager
+Test product reception and storage as LabManager
     Enable autologin as  LabManager
     Disable auto print inventory stickers
+    Add storage levels
     # https://jira.bikalabs.com/browse/LIMS-1936
 
     Given a dispatched order in supplier-3 with 5 items of Nitric acid
      When I trigger receive transition
      Then new product items appear in the list under order-1
       and quantity of the Chemical named Nitric acid supplied by supplier-3 is 5
-      and I can print stickers by clicking an icon in order-1 of supplier-3
 
+     When I store 3 items of Nitric acid in Freezer > Drawer-1
+     Then page should contain  5 (3)
+      and products items are assigned to containers in Drawer-1 of Freezer
+     When I store 2 items of Nitric acid in Warehouse > Row-1 > Shelf-1
+     Then page should contain  5 (5)
 
 *** Keywords ***
 
@@ -90,6 +95,12 @@ I trigger ${transitionId} transition
 I publish the order
     Click button  Publish
 
+I store ${number} items of Nitric acid in ${storage}
+    Go to  ${PLONEURL}/bika_setup/bika_suppliers/supplier-3/order-1
+    input text  number-product-8  ${number}
+    select from dropdown  storage-product-8  ${storage}
+    click button  Store
+
 # --- Then -------------------------------------------------------------------
 
 status message should be ${message}
@@ -126,7 +137,29 @@ I can print stickers by clicking an icon in ${order} of ${supplier}
     click element  //img[@title='Small Sticker']
     location should be  ${PLONEURL}/bika_setup/bika_suppliers/${supplier}/${order}/stickers
 
+products items are assigned to containers in Drawer-1 of Freezer
+    go to  ${PLONEURL}/bika_setup/bika_storageunits
+    click link  Freezer
+    click link  Drawer-1
+    page should contain  P-0001
+    page should contain  P-0003
+
 # --- Other -------------------------------------------------------------------
+
+Add storage levels
+    Add Freezer as storage unit
+    Add 3 storage levels with title Drawer
+    click link  Drawer-1
+    Add 10 storage levels with title Container
+
+    Add Warehouse as storage unit
+    Add 2 storage levels with title Row
+    click link  Row-1
+    Add 2 storage levels with title Shelf
+    click link  Shelf-1
+    Add 10 storage levels with title Container
+    Go to Shelf-2 in Row-1 of Warehouse
+    Add 10 storage levels with title Container
 
 Disable auto print inventory stickers
     go to  ${PLONEURL}/bika_setup/
@@ -134,3 +167,23 @@ Disable auto print inventory stickers
     unselect checkbox  css=#AutoPrintInventoryStickers
     click button  Save
     wait until page contains  saved
+
+
+Add ${title} as storage unit
+    go to  ${PLONEURL}/bika_setup/bika_storageunits/portal_factory/StorageUnit/xxx/edit
+    wait until page contains  xxx
+    input text  css=#title  ${title}
+    click button  Save
+    wait until page contains  saved
+
+Add ${number} storage levels with title ${title}
+    input text  css=.storagelevel-title  ${title}
+    input text  css=.storagelevel-number  ${number}
+    click button  Add storage levels
+    wait until page contains  saved
+
+Go to ${level2} in ${level1} of ${storageunit}
+    Go to  ${PLONEURL}/bika_setup/bika_storageunits
+    click link  ${storageunit}
+    click link  ${level1}
+    click link  ${level2}

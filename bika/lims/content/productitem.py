@@ -94,6 +94,16 @@ schema = BikaSchema.copy() + Schema((
             label = 'Disposal Date'
         ),
     ),
+    BooleanField(
+        'IsStored',
+        default=False,
+        widget=BooleanWidget(visible=False),
+    ),
+    StringField('StorageLevelID',
+        widget = StringWidget(
+            label=_("Location"),
+        )
+    ),
 ))
 
 schema['title'].required = False
