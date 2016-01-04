@@ -1,0 +1,37 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bika">
+
+    <!-- The ISetupDataSetList adapter is registered against IPloneSiteRoot! -->
+    <adapter
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      factory="bika.lims.controlpanel.bika_setupdata.SetupDataSetList"
+      provides="bika.lims.interfaces.ISetupDataSetList"/>
+
+    <browser:page
+      for="bika.lims.interfaces.IBikaSetup"
+      name="bika_setupdata"
+      class=".bika_setupdata.SetupDataView"
+      permission="bika.lims.ManageBika"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IBikaSetup"
+      name="export-lims-data"
+      class=".bika_setupdata.ExportLimsData"
+      permission="bika.lims.ManageBika"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
+      for="bika.lims.interfaces.IBikaSetup"
+      name="import-lims-data"
+      class=".bika_setupdata.ImportLimsData"
+      permission="bika.lims.ManageBika"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+</configure>

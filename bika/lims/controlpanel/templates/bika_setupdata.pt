@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="bika">
+<body>
+
+<metal:content-title fill-slot="content-title">
+    <h1>
+            <span class="documentFirstHeading" i18n:translate="">
+                Import or Export LIMS Data
+            </span>
+    </h1>
+</metal:content-title>
+
+<metal:content-core fill-slot="content-core">
+
+    <dl class="enableFormTabbing">
+
+        <dt id="fieldsetlegend-import-lims-data">Import</dt>
+        <dd id="fieldset-import-lims-data">
+            <form action="import-lims-data">
+
+                <dl class="collapsible">
+                    <dt class="collapsibleHeader" i18n:translate="">
+                        Select a zip file on your computer which contains
+                        exported LIMS data.
+                    </dt>
+                    <dd class="collapsibleContent">
+                        <input type="file" name="file"/>
+                        <input type="hidden" name="import_submitted"/>
+                        <input name="setupfile"
+                               type="submit"
+                               value="Import"
+                               i18n:attributes="value"/>
+                    </dd>
+                </dl>
+
+                <dl class="collapsible" tal:condition="view/datasets">
+                    <dt class="collapsibleHeader" i18n:translate="">
+                        Select one of the built-in datasets which are distributed
+                        with the installation.
+                    </dt>
+                    <dd class="collapsibleContent">
+                        <select
+                            name="existing"
+                            id="existing">
+                            <tal:options tal:repeat="option view/datasets">
+                                <option tal:attributes="value python:'%(projectname)s:%(dataset)s'%(option)">
+                                    <span tal:content="python:'%(projectname)s: %(dataset)s'%(option)"/>
+                                </option>
+                            </tal:options>
+                        </select>
+                        <input name="setupexisting"
+                               type="submit"
+                               value="Import"
+                               i18n:attributes="value"/>
+                    </dd>
+                </dl>
+
+
+
+
+            </form>
+        </dd>
+
+        <dt id="fieldsetlegend-export-lims-data">Export</dt>
+        <dd id="fieldset-export-lims-data">
+            <form action="export-lims-data">
+                <p>
+                    <input type="checkbox"
+                           id='bika_setup_types'
+                           name="bika_setup_types">
+                    <label for="bika_setup_types" i18n:translate="">
+                        Export Bika Setup types
+                    </label>
+                </p>
+                <p i18n:translate="">
+                    Bika Setup types are all the items found in site-setup,
+                    including the Bika Setup values, and Laboratory information.
+                </p>
+                <p>
+                    <input type="checkbox"
+                           id="bika_transactional_types"
+                           name="bika_transactional_types">
+                    <label for="bika_transactional_types" i18n:translate="">
+                        Export Transactional objects
+                    </label>
+                </p>
+                <p i18n:translate="">
+                    Transactional objects are those created during routine
+                    usage, like AnalysisRequests, Samples, Worksheets and
+                    Batches.
+                </p>
+                <input type="hidden" name="export_submitted"/>
+                <input type="submit"
+                       value="Export"
+                       name="export"
+                       i18n:attributes="value"/>
+            </form>
+        </dd>
+
+    </dl>
+
+</metal:content-core>
+
+</body>
+</html>
+

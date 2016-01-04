@@ -4,6 +4,8 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     i18n_domain="bika">
 
+    <include file="bika_setupdata.zcml"/>
+
     <browser:page
       for="bika.lims.interfaces.IContainers"
       name="folder_view"
