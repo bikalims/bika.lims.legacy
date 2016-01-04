@@ -9,8 +9,11 @@ from Products.Archetypes.public import ReferenceField, FileField, \
         StringField, Schema, BaseFolder
 from plone.app.blob.field import BlobField
 from Products.Archetypes.references import HoldingReference
+from zope.interface import implements
+
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import ITransactionalType
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField('AnalysisRequest',
@@ -40,6 +43,7 @@ class ARReport(BaseFolder):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(ITransactionalType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

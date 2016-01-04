@@ -19,7 +19,7 @@ from bika.lims.browser.widgets import DateTimeWidget as bika_DateTimeWidget
 from bika.lims.browser.widgets import ReferenceResultsWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IReferenceSample
+from bika.lims.interfaces import IReferenceSample, ITransactionalType
 from bika.lims.utils import sortable_title, tmpID
 from bika.lims.utils import to_unicode as _u
 from bika.lims.utils import to_utf8
@@ -158,7 +158,7 @@ schema = BikaSchema.copy() + Schema((
 schema['title'].schemata = 'Description'
 
 class ReferenceSample(BaseFolder):
-    implements(IReferenceSample)
+    implements(IReferenceSample, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

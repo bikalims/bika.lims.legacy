@@ -3,7 +3,7 @@ from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaFolderSchema
-from bika.lims.interfaces import IBatch, IClient
+from bika.lims.interfaces import IBatch, IClient, ITransactionalType
 from bika.lims.workflow import skip, BatchState, StateFlow, getCurrentState,\
     CancellationState
 from bika.lims.browser.widgets import DateTimeWidget
@@ -201,7 +201,7 @@ schema.moveField('Client', after='title')
 
 
 class Batch(ATFolder):
-    implements(IBatch)
+    implements(IBatch, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

@@ -19,7 +19,8 @@ from bika.lims.browser.fields import ARAnalysesField
 from bika.lims.config import PROJECTNAME
 from bika.lims.permissions import *
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IAnalysisRequest, ISamplePrepWorkflow
+from bika.lims.interfaces import IAnalysisRequest, ISamplePrepWorkflow, \
+    ITransactionalType
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.widgets import DateTimeWidget, DecimalWidget
 from bika.lims.browser.widgets import ReferenceWidget
@@ -1424,7 +1425,7 @@ schema.moveField('ResultsInterpretation', pos='bottom')
 schema.moveField('ResultsInterpretationDepts', pos='bottom')
 
 class AnalysisRequest(BaseFolder):
-    implements(IAnalysisRequest, ISamplePrepWorkflow)
+    implements(IAnalysisRequest, ISamplePrepWorkflow, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

@@ -11,6 +11,7 @@ from Products.CMFPlone.utils import safe_unicode
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import ITransactionalType
 from bika.lims.utils import t
 from zope.interface import implements
 
@@ -69,6 +70,7 @@ class Attachment(BaseFolder):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(ITransactionalType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):
