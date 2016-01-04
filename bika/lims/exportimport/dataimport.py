@@ -16,25 +16,6 @@ from zope.component import getAdapters
 import plone
 
 
-class SetupDataSetList:
-
-    implements(ISetupDataSetList)
-
-    def __init__(self, context):
-        self.context = context
-
-    def __call__(self, projectname="bika.lims"):
-        datasets = []
-        for f in resource_listdir(projectname, 'setupdata'):
-            fn = f+".xlsx"
-            try:
-                if fn in resource_listdir(projectname, 'setupdata/%s' % f):
-                    datasets.append({"projectname": projectname, "dataset": f})
-            except OSError:
-                pass
-        return datasets
-
-
 class ImportView(BrowserView):
 
     """

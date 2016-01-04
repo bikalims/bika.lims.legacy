@@ -1,4 +1,3 @@
-from bika.lims.exportimport.dataimport import SetupDataSetList as SDL
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import ISetupDataSetList
 from Products.CMFPlone.utils import safe_unicode, _createObjectByType
@@ -50,14 +49,6 @@ def read_file(path):
         if os.path.isfile(out):
             return open(out, "rb").read()
     raise IOError("File not found: %s. Allowed extensions: %s" % (path, ','.join(allowed_ext)))
-
-
-class SetupDataSetList(SDL):
-
-    implements(ISetupDataSetList)
-
-    def __call__(self):
-        return SDL.__call__(self, projectname="bika.lims")
 
 
 class WorksheetImporter:

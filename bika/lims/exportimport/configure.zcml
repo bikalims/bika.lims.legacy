@@ -24,9 +24,4 @@
     layer="bika.lims.interfaces.IBikaLIMS"
   />
 
-  <adapter
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    factory="bika.lims.exportimport.dataimport.SetupDataSetList"
-    provides="bika.lims.interfaces.ISetupDataSetList"/>
-
 </configure>
