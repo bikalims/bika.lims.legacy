@@ -4,8 +4,11 @@ from Products.Archetypes.public import DisplayList
 from Products.Archetypes.public import Schema
 from Products.Archetypes.public import registerType
 from Products.CMFCore.utils import getToolByName
+from zope.interface import implements
+
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import IBikaSetupType
 
 schema = BikaSchema.copy() + Schema((
 
@@ -19,6 +22,7 @@ class SampleCondition(BaseFolder):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
 

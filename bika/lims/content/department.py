@@ -8,6 +8,7 @@ from bika.lims.content.bikaschema import BikaSchema
 from AccessControl import ClassSecurityInfo
 import sys
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from zope.interface import implements
 
@@ -53,6 +54,7 @@ class Department(BaseContent):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

@@ -10,7 +10,7 @@ from bika.lims.idserver import renameAfterCreation
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.ATExtensions.field.records import RecordsField
-from bika.lims.interfaces import ISamplingRoundTemplate
+from bika.lims.interfaces import ISamplingRoundTemplate, IBikaSetupType
 from Products.CMFCore.utils import getToolByName
 from zope.interface import implements
 
@@ -90,7 +90,7 @@ schema['title']._validationLayer()
 
 
 class SRTemplate(BaseContent):
-    implements(ISamplingRoundTemplate)
+    implements(ISamplingRoundTemplate, IBikaSetupType)
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False

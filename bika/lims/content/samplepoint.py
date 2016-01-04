@@ -17,6 +17,8 @@ import json
 import plone
 import sys
 
+from bika.lims.interfaces import IBikaSetupType
+
 schema = BikaSchema.copy() + Schema((
     CoordinateField('Latitude',
         schemata = 'Location',
@@ -91,6 +93,7 @@ class SamplePoint(BaseContent, HistoryAwareMixin):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

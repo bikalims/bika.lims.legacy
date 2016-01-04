@@ -11,7 +11,7 @@ from bika.lims.config import PROJECTNAME
 import sys
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
-from bika.lims.interfaces import IMethod
+from bika.lims.interfaces import IMethod, IBikaSetupType
 from bika.lims.utils import to_utf8
 from zope.interface import implements
 
@@ -126,7 +126,7 @@ schema['description'].widget.label = _("Description")
 schema['description'].widget.description = _("Describes the method in layman terms. This information is made available to lab clients")
 
 class Method(BaseFolder):
-    implements(IMethod)
+    implements(IMethod, IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

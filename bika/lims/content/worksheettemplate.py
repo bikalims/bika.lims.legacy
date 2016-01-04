@@ -13,6 +13,8 @@ from bika.lims import PMF, bikaMessageFactory as _
 from zope.interface import implements
 import sys
 
+from bika.lims.interfaces import IBikaSetupType
+
 schema = BikaSchema.copy() + Schema((
     RecordsField('Layout',
         schemata = 'Layout',
@@ -80,6 +82,7 @@ class WorksheetTemplate(BaseContent):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

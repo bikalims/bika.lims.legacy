@@ -175,6 +175,15 @@ class IBikaSetup(Interface):
 
     ""
 
+class IBikaSetupType(Interface):
+    """This marker will apply to any item which is considered a "setup"
+    object.  This makes it easy to select them all together for exportation.
+    """
+
+class ITransactionalType(Interface):
+    """This marker will apply to any item which is considered a "transactional"
+    object.  This makes it easy to select them all together for exportation.
+    """
 
 class IAnalysisCategory(Interface):
 

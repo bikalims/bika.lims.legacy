@@ -1,5 +1,9 @@
 from AccessControl import ClassSecurityInfo
+
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from bika.lims.browser.fields import DurationField
 from bika.lims.browser.widgets import DurationWidget
@@ -42,6 +46,7 @@ class Preservation(BaseContent):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
 

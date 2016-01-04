@@ -6,9 +6,12 @@ from Products.CMFCore.permissions import ListFolderContents, \
 from plone.app import folder
 from Products.Archetypes.public import *
 from Products.CMFPlone.utils import safe_unicode
+from zope.interface import implements
+
 from bika.lims.content.organisation import Organisation
 from bika.lims.config import ManageBika, PROJECTNAME
 from bika.lims import PMF, bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 
 schema = Organisation.schema.copy() + Schema((
     StringField('LabURL',

@@ -1,14 +1,18 @@
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import BaseContent
 from Products.Archetypes.public import registerType
+from zope.interface import implements
+
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
+from bika.lims.interfaces import IBikaSetupType
 
 schema = BikaSchema.copy()
 schema['description'].widget.visible = False
 schema['description'].schemata = 'default'
 
 class BatchLabel(BaseContent):
+    implements(IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

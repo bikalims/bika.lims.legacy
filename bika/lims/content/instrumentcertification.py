@@ -2,7 +2,10 @@ from AccessControl import ClassSecurityInfo
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
 from Products.Archetypes.public import *
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from bika.lims.browser.widgets import DateTimeWidget, ReferenceWidget
 from bika.lims.config import PROJECTNAME
@@ -141,6 +144,7 @@ class InstrumentCertification(BaseFolder):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

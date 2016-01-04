@@ -13,7 +13,7 @@ from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema, BikaFolderSchema
-from bika.lims.interfaces import IInstrument
+from bika.lims.interfaces import IInstrument, IBikaSetupType
 from bika.lims.utils import to_utf8
 from plone.app.folder.folder import ATFolder
 from zope.interface import implements
@@ -272,7 +272,7 @@ def getCalibrationAgents(context):
     return DisplayList(agents);
 
 class Instrument(ATFolder):
-    implements(IInstrument)
+    implements(IInstrument, IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

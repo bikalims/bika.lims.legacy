@@ -20,7 +20,7 @@ from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.widgets import AnalysisSpecificationWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IAnalysisSpec
+from bika.lims.interfaces import IAnalysisSpec, IBikaSetupType
 from types import ListType, TupleType
 from zope.interface import implements
 from zope.i18n import translate
@@ -100,7 +100,7 @@ schema['description'].widget.visible = True
 schema['title'].required = True
 
 class AnalysisSpec(BaseFolder, HistoryAwareMixin):
-    implements(IAnalysisSpec)
+    implements(IAnalysisSpec, IBikaSetupType)
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False

@@ -5,7 +5,10 @@ from Products.Archetypes import atapi
 from Products.Archetypes.public import *
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.config import PROJECTNAME
@@ -130,6 +133,7 @@ class InstrumentMaintenanceTask(BaseFolder):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):
