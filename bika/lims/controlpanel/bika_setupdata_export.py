@@ -93,7 +93,7 @@ class Export(BrowserView):
         """
         instance = self.portal.bika_setup
         fields = self.get_fields(instance.schema)
-        fn = os.path.join(self.tempdir, 'Laboratory.csv')
+        fn = os.path.join(self.tempdir, 'BikaSetup.csv')
         with open(fn, mode='w') as f:
             writer = csv.writer(f)
             writer.writerow(['field', 'value'])
