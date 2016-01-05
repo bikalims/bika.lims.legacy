@@ -21,7 +21,7 @@
     <browser:page
       for="bika.lims.interfaces.IBikaSetup"
       name="export-lims-data"
-      class=".bika_setupdata.ExportLimsData"
+      class=".bika_setupdata_export.Export"
       permission="bika.lims.ManageBika"
       layer="bika.lims.interfaces.IBikaLIMS"
     />

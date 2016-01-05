@@ -62,18 +62,17 @@ class Export(BrowserView):
         # All other types flagged with IBikaSetupType or ITransactionalType
         # will be exported now:
         if 'bika_setup_types' in self.request.form:
-            self.export_content(IBikaSetupType)
+            self.export_content('bika.lims.interfaces.IBikaSetupType')
         if 'bika_transactional_types' in self.request.form:
-            self.export_content(ITransactionalType)
+            self.export_content('bika.lims.interfaces.ITransactionalType')
 
         zfn = self.create_zipfile()
 
         setheader = self.request.RESPONSE.setHeader
-        setheader('Content-Length', os.stat('somefile.txt').st_size)
+        setheader('Content-Length', os.stat(zfn).st_size)
         setheader('Content-Type', 'application/zip')
         setheader('Content-Disposition', 'inline; filename=bikalims.zip')
         self.request.RESPONSE.write(open(zfn, 'rb').read())
-
 
     def export_laboratory(self):
         """Write the laboratory data in non-standard CSV format:
@@ -81,14 +80,12 @@ class Export(BrowserView):
         """
         instance = self.portal.bika_setup.laboratory
         fields = self.get_fields(instance.schema)
-        data = {}
-        for field in fields:
-            data.update({'field': field.getName(),
-                         'value': self.mutate(instance, field)})
         fn = os.path.join(self.tempdir, 'Laboratory.csv')
-        with open(fn, newline='', encoding='utf-8', mode='w') as f:
-            csv.DictWriter(f, ['field', 'value'], **data)
-
+        with open(fn, mode='w') as f:
+            writer = csv.writer(f)
+            writer.writerow(['field', 'value'])
+            for field in fields:
+                writer.writerow([field.getName(), self.mutate(instance, field)])
 
     def export_bika_setup(self):
         """Write the BikaSetup field data in non-standard CSV format:
@@ -96,14 +93,12 @@ class Export(BrowserView):
         """
         instance = self.portal.bika_setup
         fields = self.get_fields(instance.schema)
-        data = {}
-        for field in fields:
-            data.update({'field': field.getName(),
-                         'value': self.mutate(instance, field)})
-        fn = os.path.join(self.tempdir, 'BikaSetup.csv')
-        with open(fn, newline='', encoding='utf-8', mode='w') as f:
-            csv.DictWriter(f, ['field', 'value'], **data)
-
+        fn = os.path.join(self.tempdir, 'Laboratory.csv')
+        with open(fn, mode='w') as f:
+            writer = csv.writer(f)
+            writer.writerow(['field', 'value'])
+            for field in fields:
+                writer.writerow([field.getName(), self.mutate(instance, field)])
 
     def export_content(self, interface):
         """Scan for and export objects implementing 'interface'
@@ -112,7 +107,6 @@ class Export(BrowserView):
             catalog = self.portal[catalog]
             for brain in catalog(object_provides=interface):
                 self.contenttype_write_values(brain)
-
 
     def contenttype_write_values(self, brain):
         """Write field values for the specified object into CSV file
@@ -123,16 +117,15 @@ class Export(BrowserView):
         self.contenttype_init_csv(instance)
         path = '/'.join(instance.getPhysicalPath()[:-1])
         # path and uid are required values
-        values = {'path': path.replace(self.portal_path, ''),
-                  'uid': instance.UID()}
+        values = [path.replace(self.portal_path, ''),
+                  instance.UID()]
         # then collect up schema field values
         fields = self.csvinfo[portal_type]['fields']
         for field in fields:
-            values[field.getName()] = self.mutate(instance, field)
+            values.append(self.mutate(instance, field))
         # and write them away.
         writer = self.csvinfo[portal_type]['writer']
         writer.writerow(values)
-
 
     def contenttype_init_csv(self, instance):
         """Create the file descriptor and headers list for the
@@ -144,16 +137,15 @@ class Export(BrowserView):
         headers = ['path', 'uid'] + [f.getName() for f in fields]
         if portal_type not in self.csvinfo:
             fn = os.path.join(self.tempdir, portal_type + '.csv')
-            file = open(fn, newline='', encoding='utf-8', mode='w')
-            writer = csv.writer(file)
+            fd = open(fn, mode='w')
+            writer = csv.writer(fd)
             self.csvinfo[portal_type] = {
-                'file': file,
+                'file': fd,
                 'writer': writer,
                 'headers': headers,
                 'fields': fields,
             }
             writer.writerow(headers)
-
 
     def dictfield_write_values(self, instance, field):
         """This is called when a field with a dictionary value (or list of
@@ -183,7 +175,6 @@ class Export(BrowserView):
             # write away the row
             writer.writerow(rowvalues)
 
-
     def dictfield_init_csv(self, instance, field, headers):
         """Create the file descriptor and headers list for field values
         which are dictionaries or lists of dictionaries.
@@ -193,15 +184,14 @@ class Export(BrowserView):
         fnkey = '%s_%s' % (portal_type, fieldname)
         if fnkey not in self.csvinfo:
             fn = os.path.join(self.tempdir, fnkey + '.csv')
-            file = open(fn, newline='', encoding='utf-8', mode='w')
-            writer = csv.writer(file)
+            fd = open(fn, mode='w')
+            writer = csv.writer(fd)
             self.csvinfo[fnkey] = {
-                'file': file,
+                'file': fd,
                 'writer': writer,
                 'headers': headers,
             }
             writer.writerow(headers)
-
 
     def reference_write_values(self, instance, field):
         """This is called when a multiValued reference field is
@@ -209,13 +199,12 @@ class Export(BrowserView):
         """
         values = field.get(instance)
         # check that the csv and headers are initialised for this field
-        self.reference_init_csv(instance, field)
+        self.reference_init_csv(field)
         writer = self.csvinfo[field.relationship]['writer']
         for value in values:
             # ['source_uid', 'source_id', 'target_uid', 'target_id']
-            rowvalues = [instance.UID(), instance.id, value.UID, value.id]
-            writer.writerow[rowvalues]
-
+            rowvalues = [instance.UID(), instance.id, value.UID(), value.id]
+            writer.writerow(rowvalues)
 
     def reference_init_csv(self, field):
         """Create the file descriptor and headers list for multiValued
@@ -224,15 +213,14 @@ class Export(BrowserView):
         headers = ['source_uid', 'source_id', 'target_uid', 'target_id']
         if field.relationship not in self.csvinfo:
             fn = os.path.join(self.tempdir, field.relationship + '.csv')
-            file = open(fn, newline='', encoding='utf-8', mode='w')
-            writer = csv.writer(file)
+            fd = open(fn, mode='w')
+            writer = csv.writer(fd)
             self.csvinfo[field.relationship] = {
-                'file': file,
+                'file': fd,
                 'writer': writer,
                 'headers': headers,
             }
             writer.writerow(headers)
-
 
     def get_fields(self, schema):
         """Return a simple list of fields.
@@ -247,7 +235,6 @@ class Export(BrowserView):
             fields.append(field)
         return fields
 
-
     def get_extension(self, mimetype):
         """Return first extension for mimetype, if any is found.
         If no extension found, return ''
@@ -259,16 +246,18 @@ class Export(BrowserView):
                 extension = ext
         return extension
 
-
     def create_zipfile(self):
+        # close all open files in self.csvinfo...
+        for v in self.csvinfo.values():
+            v['file'].close()
         # Create zip file
-        zf = zipfile.ZipFile(self.args.outputfile, 'w', zipfile.ZIP_DEFLATED)
+        tmpfile = tempfile.mktemp(suffix='.zip')
+        z = zipfile.ZipFile(tmpfile, 'w', zipfile.ZIP_DEFLATED)
+        # toss all the files into the zip
         for fname in os.listdir(self.tempdir):
-            zf.write(os.path.join(self.tempdir, fname), fname)
-        zf.close()
-        # Remove tempdir
-        shutil.rmtree(self.tempdir)
-
+            z.write(os.path.join(self.tempdir, fname), fname)
+        z.close()
+        return tmpfile
 
     def mutate(self, instance, field):
         value = field.get(instance)
@@ -309,7 +298,7 @@ class Export(BrowserView):
             else:
                 # singleValued references just take the uid for
                 # identification of the target
-                return value.id
+                return value.UID()
         elif Field.ILinesField.providedBy(field):
             return "\n".join(value)
         # depend on value of field, to decide mutation.

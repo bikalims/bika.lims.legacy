@@ -52,18 +52,6 @@ class SetupDataView(BrowserView):
         return datasets
 
 
-class ExportLimsData(BrowserView):
-    template = ViewPageTemplateFile('templates/export-lims-data.pt')
-
-    def __init__(self, context, request):
-        super(ExportLimsData, self).__init__(context, request)
-
-    def __call__(self):
-        import pdb;
-        pdb.set_trace()
-        return self.template()
-
-
 class ImportLimsData(BrowserView):
     template = ViewPageTemplateFile('templates/import-lims-data.pt')
 
