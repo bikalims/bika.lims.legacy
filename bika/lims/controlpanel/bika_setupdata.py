@@ -50,15 +50,3 @@ class SetupDataView(BrowserView):
         for name, adapter in adapters:
             datasets.extend(adapter())
         return datasets
-
-
-class ImportLimsData(BrowserView):
-    template = ViewPageTemplateFile('templates/import-lims-data.pt')
-
-    def __init__(self, context, request):
-        super(ImportLimsData, self).__init__(context, request)
-
-    def __call__(self):
-        import pdb;
-        pdb.set_trace()
-        return self.template()

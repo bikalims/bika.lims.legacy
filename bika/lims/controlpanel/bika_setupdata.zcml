@@ -29,7 +29,7 @@
     <browser:page
       for="bika.lims.interfaces.IBikaSetup"
       name="import-lims-data"
-      class=".bika_setupdata.ImportLimsData"
+      class=".bika_setupdata_import.Import"
       permission="bika.lims.ManageBika"
       layer="bika.lims.interfaces.IBikaLIMS"
     />
