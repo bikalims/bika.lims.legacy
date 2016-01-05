@@ -20,7 +20,7 @@
 
         <dt id="fieldsetlegend-import-lims-data">Import</dt>
         <dd id="fieldset-import-lims-data">
-            <form action="import-lims-data">
+            <form action="import-lims-data" method="POST" enctype="multipart/form-data">
 
                 <dl class="collapsible">
                     <dt class="collapsibleHeader" i18n:translate="">
@@ -58,9 +58,6 @@
                                i18n:attributes="value"/>
                     </dd>
                 </dl>
-
-
-
 
             </form>
         </dd>
