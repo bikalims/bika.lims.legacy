@@ -300,7 +300,7 @@ class Export(BrowserView):
                 # identification of the target
                 return value.UID()
         elif Field.ILinesField.providedBy(field):
-            return "\n".join(value)
+            return "\\n".join(value)
         # depend on value of field, to decide mutation.
         else:
             value = field.get(instance)
