@@ -293,10 +293,18 @@ class Export(BrowserView):
                 return ''
             extension = self.get_extension(value.content_type)
             # The filename will be munged slightly to prevent duplications.
-            fn = instance.id + '__' + field.getName() + \
-                 '__' + value.filename + extension
+            fn = instance.id + '__' + field.getName()
+            # Some files are stored without a filename attribute,
+            # so we compromise and add the mime derived extension
+            if value.filename:
+                fn += "__" + value.filename
+            else:
+                fn += "." + extension
             of = open(os.path.join(self.tempdir, fn), 'wb')
-            of.write(value.data)
+            data = value.data
+            if hasattr(data, 'data'):
+                data = data.data
+            of.write(data)
             of.close()
             return fn
         elif Field.IReferenceField.providedBy(field):
