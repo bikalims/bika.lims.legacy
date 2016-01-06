@@ -48,6 +48,11 @@ class Export(BrowserView):
         # rather than reopening and rediscovering them
         self.csvinfo = {}
 
+        # Some objects are exported when their contenttype is exported,
+        # and an attempt is also made when they are reference targets.
+        # This keeps track to avoid duplications
+        self.exported_uids = []
+
     def __call__(self):
         """Export LIMS content to a zip file containing a bunch of CSV files.
         Any attachments, files, images, will also be included.
@@ -106,6 +111,9 @@ class Export(BrowserView):
         for catalog in self.catalogs:
             catalog = self.portal[catalog]
             for brain in catalog(object_provides=interface):
+                if brain.UID in self.exported_uids:
+                    continue
+                self.exported_uids.append(brain.UID)
                 self.contenttype_write_values(brain)
 
     def contenttype_write_values(self, brain):
