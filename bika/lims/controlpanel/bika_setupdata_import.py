@@ -308,12 +308,16 @@ class Import(BrowserView):
         fieldvalue = []
         for record in self.records[key]:
             if record['instance_id'] == instance.id:
-                fieldvalue.append(record)
-        # Only going to return a single value for single valued fields
+                fieldvalue.append(record.copy())
+        # Remove export admin keys from the output dictionaries,
+        # or they will be inserted into the database
+        for i in range(len(fieldvalue)):
+            del(fieldvalue[i]['instance_id'])
+            del(fieldvalue[i]['instance_uid'])
+        #Only going to return a single value for single valued fields
         if type(field.default) == dict:
-            return fieldvalue[0] if fieldvalue else {}
-        else:
-            return fieldvalue
+            fieldvalue = fieldvalue[0] if fieldvalue else {}
+        return fieldvalue
 
     def records_lookup_init(self, instance, field):
         """When I resolve Records and Record fields (dict or list of dict)
