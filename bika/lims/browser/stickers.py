@@ -95,7 +95,7 @@ class Sticker(BrowserView):
                  'title': <teamplate_title>,
                  'selected: True/False'}
         """
-        seltemplate = self.getSelectedTemplate()
+        path, seltemplate = self.getSelectedTemplate()
         templates = []
         for temp in getStickerTemplates():
             out = temp
@@ -120,15 +120,14 @@ class Sticker(BrowserView):
             bs_template = self.context.bika_setup.getLargeStickerTemplate()
         rq_template = self.request.get('template', bs_template)
         # Check if the template exists. If not, fallback to default's
-        if rq_template.find(':') >= 0:
+        if ':' in rq_template:
             prefix, rq_template = rq_template.split(':')
-            templates_dir = queryResourceDirectory('stickers', prefix).directory
         else:
-            this_dir = os.path.dirname(os.path.abspath(__file__))
-            templates_dir = os.path.join(this_dir, 'templates/stickers/')
+            prefix, rq_template = 'bika.lims', rq_template
+        templates_dir = queryResourceDirectory('stickers', prefix).directory
         if not os.path.isfile(os.path.join(templates_dir, rq_template)):
             rq_template = 'Code_128_1x48mm.pt'
-        return rq_template
+        return templates_dir, rq_template
 
     def getSelectedTemplateCSS(self):
         """ Looks for the CSS file from the selected template and return its
@@ -136,23 +135,13 @@ class Sticker(BrowserView):
             file named default.css in the stickers path and return its contents.
             If no CSS file found, retrns an empty string
         """
-        template = self.getSelectedTemplate()
+        templates_dir, template = self.getSelectedTemplate()
         # Look for the CSS
         content = ''
-        if template.find(':') >= 0:
-            # A template from another add-on
-            prefix, template = template.split(':')
-            resource = queryResourceDirectory('stickers', prefix)
-            css = '{0}.css'.format(template[:-3])
-            if css in resource.listDirectory():
-                content = resource.readFile(css)
-        else:
-            this_dir = os.path.dirname(os.path.abspath(__file__))
-            templates_dir = os.path.join(this_dir, 'templates/stickers/')
-            path = '%s/%s.css' % (templates_dir, template[:-3])
-            if os.path.isfile(path):
-                with open(path, 'r') as content_file:
-                    content = content_file.read()
+        fn = '{0}.css'.format(os.path.splitext(template)[0])
+        fullfn = os.path.join(templates_dir, fn)
+        if os.path.exists(fullfn):
+            content = open(fullfn, 'r').read()
         return content
 
     def nextItem(self):
@@ -175,8 +164,7 @@ class Sticker(BrowserView):
             bika.lims' Code_128_1x48mm.pt template (was sticker_small.pt).
         """
         curritem = self.nextItem()
-        templates_dir = 'templates/stickers'
-        embedt = self.getSelectedTemplate()
+        templates_dir, embedt = self.getSelectedTemplate()
         if embedt.find(':') >= 0:
             prefix, embedt = embedt.split(':')
             templates_dir = queryResourceDirectory('stickers', prefix).directory
