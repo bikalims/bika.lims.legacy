@@ -9,21 +9,12 @@ python:
 addons:
   apt:
     packages:
-    - build-essential
-    - gcc
-    - python-dev
-    - git-core
     - libpcre3
     - libpcre3-dev
-    - libtool
     - pkg-config
-    - zlib1g-dev
     - libssl-dev
     - libexpat1-dev
-    - libxslt1.1
     - gnuplot
-    - libcairo2
-    - libpango1.0-0
     - libgdk-pixbuf2.0-0
 before_script:
   - export DISPLAY=99.0
@@ -35,7 +26,7 @@ before_install:
   - echo "eggs-directory = $TRAVIS_BUILD_DIR/buildout-cache/eggs" >> $TRAVIS_BUILD_DIR/default.cfg
   - echo "[versions]" > $TRAVIS_BUILD_DIR/default.cfg
   - echo "zc.buildout = 2.5.0" > $TRAVIS_BUILD_DIR/default.cfg
-  - echo "setuptools = 20.0.2 > $TRAVIS_BUILD_DIR/default.cfg
+  - echo "setuptools = 20.0.2" > $TRAVIS_BUILD_DIR/default.cfg
   - virtualenv .
   - bin/pip install --upgrade pip setuptools zc.buildout
 install:
