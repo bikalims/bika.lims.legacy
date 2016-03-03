@@ -9,9 +9,6 @@ python:
 addons:
   apt:
     packages:
-    - build-essential
-    - gcc
-    - python-dev
     - git-core
     - libffi-dev
     - libpcre3
