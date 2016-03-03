@@ -3,12 +3,15 @@ sudo: false
 cache:
   pip: true
   directories:
-    - buildout-cache
+    - $TRAVIS_BUILD_DIR/buildout-cache
 python:
   - 2.7
 addons:
   apt:
     packages:
+    - build-essential
+    - gcc
+    - python-dev
     - git-core
     - libffi-dev
     - libpcre3
@@ -28,16 +31,13 @@ before_script:
   - export DISPLAY=99.0
   - sh -e /etc/init.d/xvfb start
 before_install:
-  - mkdir -p buildout-cache/{eggs,downloads}
-  - echo "[buildout]" > default.cfg
-  - echo "download-cache = buildout-cache/downloads" >> default.cfg
-  - echo "eggs-directory = buildout-cache/eggs" >> default.cfg
-  - echo "[versions]" > default.cfg
-  - echo "zc.buildout = 2.5.0" > default.cfg
-  - echo "setuptools = 18.5" > default.cfg
+  - mkdir -p $TRAVIS_BUILD_DIR/buildout-cache/{eggs,downloads}
+  - echo "[buildout]" > $TRAVIS_BUILD_DIR/default.cfg
+  - echo "download-cache = $TRAVIS_BUILD_DIR/buildout-cache/downloads" >> $TRAVIS_BUILD_DIR/default.cfg
+  - echo "eggs-directory = $TRAVIS_BUILD_DIR/buildout-cache/eggs" >> $TRAVIS_BUILD_DIR/default.cfg
   - virtualenv .
   - bin/pip install --upgrade pip setuptools zc.buildout
-  install:
+install:
   - bin/buildout -N -t 3 -c travis.cfg
 script:
   - bin/test
