@@ -36,8 +36,6 @@ before_install:
   - echo "[buildout]" > $HOME/.buildout/default.cfg
   - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
   - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
-  - virtualenv .
-  - bin/pip install --upgrade pip setuptools zc.buildout coveralls createcoverage
 install:
   - bin/buildout -N -t 3 -c travis.cfg
 script:
