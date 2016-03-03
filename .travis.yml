@@ -1,0 +1,44 @@
+language: python
+sudo: false
+cache:
+  pip: true
+  directories:
+    - $HOME/buildout-cache
+python:
+  - 2.7
+addons:
+  apt:
+    packages:
+    - build-essential
+    - gcc
+    - python-dev
+    - git-core
+    - libffi-dev
+    - libpcre3
+    - libpcre3-dev
+    - autoconf
+    - libtool
+    - pkg-config
+    - zlib1g-dev
+    - libssl-dev
+    - libexpat1-dev
+    - libxslt1.1
+    - gnuplot
+    - libcairo2
+    - libpango1.0-0
+    - libgdk-pixbuf2.0-0
+before_script:
+  - export DISPLAY=99.0
+  - sh -e /etc/init.d/xvfb start
+before_install:
+  - mkdir -p $HOME/buildout-cache/{eggs,downloads}
+  - mkdir $HOME/.buildout
+  - echo "[buildout]" > $HOME/.buildout/default.cfg
+  - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
+  - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
+  - virtualenv .
+  - bin/pip install --upgrade pip setuptools zc.buildout coveralls createcoverage
+install:
+  - bin/buildout -N -t 3 -c travis.cfg
+script:
+  - bin/test
