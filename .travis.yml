@@ -13,10 +13,8 @@ addons:
     - gcc
     - python-dev
     - git-core
-    - libffi-dev
     - libpcre3
     - libpcre3-dev
-    - autoconf
     - libtool
     - pkg-config
     - zlib1g-dev
@@ -35,6 +33,9 @@ before_install:
   - echo "[buildout]" > $TRAVIS_BUILD_DIR/default.cfg
   - echo "download-cache = $TRAVIS_BUILD_DIR/buildout-cache/downloads" >> $TRAVIS_BUILD_DIR/default.cfg
   - echo "eggs-directory = $TRAVIS_BUILD_DIR/buildout-cache/eggs" >> $TRAVIS_BUILD_DIR/default.cfg
+  - echo "[versions]" > $TRAVIS_BUILD_DIR/default.cfg
+  - echo "zc.buildout = 2.5.0" > $TRAVIS_BUILD_DIR/default.cfg
+  - echo "setuptools = 20.0.2 > $TRAVIS_BUILD_DIR/default.cfg
   - virtualenv .
   - bin/pip install --upgrade pip setuptools zc.buildout
 install:
