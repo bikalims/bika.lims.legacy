@@ -3,7 +3,7 @@ sudo: false
 cache:
   pip: true
   directories:
-    - $HOME/buildout-cache
+    - $TRAVIS_BUILD_DIR/buildout-cache
 python:
   - 2.7
 addons:
@@ -31,12 +31,11 @@ before_script:
   - export DISPLAY=99.0
   - sh -e /etc/init.d/xvfb start
 before_install:
-  - mkdir -p $HOME/buildout-cache/{eggs,downloads}
-  - mkdir $HOME/.buildout
-  - echo "[buildout]" > $HOME/.buildout/default.cfg
-  - echo "download-cache = $HOME/buildout-cache/downloads" >> $HOME/.buildout/default.cfg
-  - echo "eggs-directory = $HOME/buildout-cache/eggs" >> $HOME/.buildout/default.cfg
+  - mkdir -p $TRAVIS_BUILD_DIR/buildout-cache/{eggs,downloads}
+  - echo "[buildout]" > $TRAVIS_BUILD_DIR/default.cfg
+  - echo "download-cache = $TRAVIS_BUILD_DIR/buildout-cache/downloads" >> $TRAVIS_BUILD_DIR/default.cfg
+  - echo "eggs-directory = $TRAVIS_BUILD_DIR/buildout-cache/eggs" >> $TRAVIS_BUILD_DIR/default.cfg
 install:
-  - bin/buildout -N -t 3 -c travis.cfg
+  - $TRAVIS_BUILD_DIR/bin/buildout -N -t 3 -c $TRAVIS_BUILD_DIR/travis.cfg
 script:
-  - bin/test
+  - $TRAVIS_BUILD_DIR/bin/test
