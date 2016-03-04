@@ -9,14 +9,14 @@ python:
 addons:
   apt:
     packages:
+    - chromedriver
+    - chromium
     - libpcre3
     - libpcre3-dev
     - libssl-dev
     - libexpat1-dev
     - gnuplot
     - libgdk-pixbuf2.0-0
-    - chromedriver
-    - chromium
 before_script:
   - export DISPLAY=99.0
   - sh -e /etc/init.d/xvfb start
