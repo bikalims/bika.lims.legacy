@@ -39,6 +39,6 @@ Test that workflow transitions invoked from /edit views take effect
 *** Keywords ***
 
 Start browser
-    Open browser                        ${PLONEURL}  chrome
+    Open browser                        ${PLONEURL}
     Set selenium speed                  ${SELENIUM_SPEED}
 
