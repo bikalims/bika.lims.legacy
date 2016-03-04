@@ -42,7 +42,7 @@ Test import Horiba Jobin Yvon ICP csv
 *** Keywords ***
 
 Start browser
-    Open browser                        ${PLONEURL}  chrome
+    Open browser                        ${PLONEURL}
     Set selenium speed                  ${SELENIUM_SPEED}
 
 Create Analysis Service

@@ -40,5 +40,5 @@ Test show_more button
 *** Keywords ***
 
 Start browser
-    Open browser                        ${PLONEURL}  chrome
+    Open browser                        ${PLONEURL}
     Set selenium speed                  ${SELENIUM_SPEED}
