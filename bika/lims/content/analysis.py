@@ -40,6 +40,7 @@ from bika.lims.workflow import skip
 from bika.lims.workflow import doActionFor
 from decimal import Decimal
 from zope.interface import implements
+import cgi
 import datetime
 import math
 
@@ -48,6 +49,15 @@ def Priority(instance):
     priority = instance.getPriority()
     if priority:
         return priority.getSortKey()
+
+@indexer(IAnalysis)
+def sortable_title_with_sort_key(instance):
+    service = instance.getService()
+    if service:
+        sort_key = service.getSortKey()
+        if sort_key:
+            return "{:010.3f}{}".format(sort_key, service.Title())
+        return service.Title()
 
 schema = BikaSchema.copy() + Schema((
     HistoryAwareReferenceField('Service',
@@ -430,10 +440,12 @@ class Analysis(BaseContent):
         return dep_analyses
 
     def setResult(self, value, **kw):
+        """ :value: must be a string
+        """
         # Always update ResultCapture date when this field is modified
         self.setResultCaptureDate(DateTime())
         # Only allow DL if manually enabled in AS
-        val = value
+        val = str(value)
         if val and (val.strip().startswith('>') or val.strip().startswith('<')):
             self.Schema().getField('DetectionLimitOperand').set(self, None)
             oper = '<' if val.strip().startswith('<') else '>'
@@ -824,7 +836,7 @@ class Analysis(BaseContent):
             if self.getInstrument() else self.getDefaultInstrument()
         return instr.getMethod() if instr else None
 
-    def getFormattedResult(self, specs=None, decimalmark='.', sciformat=1):
+    def getFormattedResult(self, specs=None, decimalmark='.', sciformat=1, html=True):
         """Formatted result:
         1. If the result is a detection limit, returns '< LDL' or '> UDL'
         2. Print ResultText of matching ResultOptions
@@ -846,6 +858,8 @@ class Analysis(BaseContent):
                           4. The sci notation has to be formatted as a·10^b
                           5. As 4, but with super html entity for exp
                           By default 1
+        :param html: if true, returns an string with the special characters
+            escaped: e.g: '<' and '>' (LDL and UDL for results like < 23.4).
         """
         result = self.getResult()
 
@@ -855,7 +869,9 @@ class Analysis(BaseContent):
             try:
                 res = float(result) # required, check if floatable
                 res = drop_trailing_zeros_decimal(res)
-                return formatDecimalMark('%s %s' % (dl, res), decimalmark)
+                fdm = formatDecimalMark(res, decimalmark)
+                hdl = cgi.escape(dl) if html else dl
+                return '%s %s' % (hdl, fdm)
             except:
                 logger.warn("The result for the analysis %s is a "
                             "detection limit, but not floatable: %s" %
@@ -897,11 +913,13 @@ class Analysis(BaseContent):
 
         # 4.1. If result is below min and hidemin enabled, return '<min'
         if belowmin:
-            return formatDecimalMark('< %s' % hidemin, decimalmark)
+            fdm = formatDecimalMark('< %s' % hidemin, decimalmark)
+            return fdm.replace('< ', '&lt; ', 1) if html else fdm
 
         # 4.2. If result is above max and hidemax enabled, return '>max'
         if abovemax:
-            return formatDecimalMark('> %s' % hidemax, decimalmark)
+            fdm = formatDecimalMark('> %s' % hidemax, decimalmark)
+            return fdm.replace('> ', '&gt; ', 1) if html else fdm
 
         # Below Lower Detection Limit (LDL)?
         ldl = self.getLowerDetectionLimit()
@@ -909,7 +927,8 @@ class Analysis(BaseContent):
             # LDL must not be formatted according to precision, etc.
             # Drop trailing zeros from decimal
             ldl = drop_trailing_zeros_decimal(ldl)
-            return formatDecimalMark('< %s' % ldl, decimalmark)
+            fdm = formatDecimalMark('< %s' % ldl, decimalmark)
+            return fdm.replace('< ', '&lt; ', 1) if html else fdm
 
         # Above Upper Detection Limit (UDL)?
         udl = self.getUpperDetectionLimit()
@@ -917,10 +936,13 @@ class Analysis(BaseContent):
             # UDL must not be formatted according to precision, etc.
             # Drop trailing zeros from decimal
             udl = drop_trailing_zeros_decimal(udl)
-            return formatDecimalMark('> %s' % udl, decimalmark)
+            fdm = formatDecimalMark('> %s' % udl, decimalmark)
+            return fdm.replace('> ', '&gt; ', 1) if html else fdm
 
         # Render numerical values
-        return formatDecimalMark(format_numeric_result(self, result, sciformat=sciformat), decimalmark=decimalmark)
+        return format_numeric_result(self, self.getResult(),
+                        decimalmark=decimalmark,
+                        sciformat=sciformat)
 
     def getPrecision(self, result=None):
         """

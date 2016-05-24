@@ -25,6 +25,7 @@ from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
 from zope.component import getAdapters, getUtility
 
 import App
+import cgi
 import glob, os, sys, traceback
 import Globals
 import re
@@ -561,7 +562,6 @@ class AnalysisRequestPublishView(BrowserView):
                 andict['previous_results'] = ", ".join([p['formatted_result'] for p in andict['previous'][-5:]])
 
             analyses.append(andict)
-        analyses.sort(lambda x, y: cmp(x.get('title').lower(), y.get('title').lower()))
         return analyses
 
     def _analysis_data(self, analysis, decimalmark=None):
@@ -620,7 +620,16 @@ class AnalysisRequestPublishView(BrowserView):
 
         andict['specs'] = specs
         scinot = self.context.bika_setup.getScientificNotationReport()
-        andict['formatted_result'] = analysis.getFormattedResult(specs=specs, sciformat=int(scinot), decimalmark=decimalmark)
+        fresult =  analysis.getFormattedResult(specs=specs, sciformat=int(scinot), decimalmark=decimalmark)
+
+        # We don't use here cgi.encode because results fields must be rendered
+        # using the 'structure' wildcard. The reason is that the result can be
+        # expressed in sci notation, that may include <sup></sup> html tags.
+        # Please note the default value for the 'html' parameter from
+        # getFormattedResult signature is set to True, so the service will
+        # already take into account LDLs and UDLs symbols '<' and '>' and escape
+        # them if necessary.
+        andict['formatted_result'] = fresult;
 
         fs = ''
         if specs.get('min', None) and specs.get('max', None):
@@ -869,7 +878,7 @@ class AnalysisRequestPublishView(BrowserView):
 
             # Attach the pdf to the email if requested
             if pdf_report and 'pdf' in recip.get('pubpref'):
-                attachPdf(mime_msg, pdf_report, pdf_fn)
+                attachPdf(mime_msg, pdf_report, ar.id)
 
             # For now, I will simply ignore mail send under test.
             if hasattr(self.portal, 'robotframework'):
@@ -1005,6 +1014,13 @@ class AnalysisRequestPublishView(BrowserView):
         else:
             subject = t(_('Analysis results'))
         return subject, tot_line
+
+    def sorted_by_sort_key(self, category_keys):
+        """ Sort categories via catalog lookup on title. """
+        bsc = getToolByName(self.context, "bika_setup_catalog")
+        analysis_categories = bsc(portal_type="AnalysisCategory", sort_on="sortable_title")
+        sort_keys = dict([(b.Title, "{:04}".format(a)) for a, b in enumerate(analysis_categories)])
+        return sorted(category_keys, key=lambda title, sk=sort_keys: sk.get(title))
 
     def getAnaysisBasedTransposedMatrix(self, ars):
         """ Returns a dict with the following structure:

@@ -17,6 +17,7 @@ from tescan.tima import tima
 from sysmex.xs import i500, i1000
 from beckmancoulter.access import model2
 from rochecobas.taqman import model48
+from rochecobas.taqman import model96
 from sealanalytical.aq2 import aq2
 from horiba.jobinyvon import icp
 from abaxis.vetscan import vs2
@@ -24,6 +25,7 @@ from scilvet.abc import plus
 from eltra.cs import cs2000
 from rigaku.supermini import wxrf
 from myself import myinstrument
+from nuclisens import easyq
 
 __all__ = ['abaxis.vetscan.vs2',
            'agilent.masshunter.quantitative',
@@ -39,6 +41,7 @@ __all__ = ['abaxis.vetscan.vs2',
            'horiba.jobinyvon.icp',
            'rigaku.supermini.wxrf',
            'rochecobas.taqman.model48',
+           'rochecobas.taqman.model96',
            'thermoscientific.arena.xt20',
            'thermoscientific.gallery.Ts9861x',
            'panalytical.omnia.axios_xrf',
@@ -50,6 +53,7 @@ __all__ = ['abaxis.vetscan.vs2',
            'tescan.tima.tima',
            'thermoscientific.multiskan.go',
            'myself.myinstrument',
+           'nuclisens.easyq',
            ]
 
 

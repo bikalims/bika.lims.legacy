@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from AccessControl import ModuleSecurityInfo, allow_module
+
+import math
+
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from DateTime import DateTime
@@ -179,19 +182,25 @@ def formatDuration(context, totminutes):
 
 
 def formatDecimalMark(value, decimalmark='.'):
-    """ Dummy method to replace decimal mark from an input string.
+    """
+        Dummy method to replace decimal mark from an input string.
         Assumes that 'value' uses '.' as decimal mark and ',' as
         thousand mark.
+        ::value:: is a string
+        ::return:: is a string with the decimal mark if needed
     """
-    rawval = value
+    # We have to consider the possibility of working with decimals such as
+    # X.000 where those decimals are important because of the precission
+    # and significant digits matters
+    # Using 'float' the system delete the extre desimals with 0 as a value
+    # Example: float(2.00) -> 2.0
+    # So we have to save the decimal length, this is one reason we are usnig
+    # strings for results
+    rawval = str(value)
     try:
-        if decimalmark == ',':
-            rawval = rawval.replace('.', '[comma]')
-            rawval = rawval.replace(',', '.')
-            rawval = rawval.replace('[comma]', ',')
+        return decimalmark.join(rawval.split('.'))
     except:
-        pass
-    return rawval
+        return rawval
 
 
 # encode_header function copied from roundup's rfc2822 package.

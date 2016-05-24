@@ -2,11 +2,15 @@
 from Products.CMFCore.utils import getToolByName
 from bika.lims.jsonapi import get_include_fields
 from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
 from bika.lims.utils import t, dicts_to_dict
+from bika.lims.utils.analysis import get_method_instrument_constraints
 from bika.lims.interfaces import IAnalysis, IResultOutOfRange, IJSONReadExtender
 from bika.lims.interfaces import IFieldIcons
 from bika.lims.utils import to_utf8
 from bika.lims.utils import dicts_to_dict
+import json
+import plone
 from zope.component import adapts, getAdapters
 from zope.interface import implements
 
@@ -29,8 +33,8 @@ class ResultOutOfRangeIcons(object):
                 continue
             spec = ret["spec_values"]
             rngstr = "{0} {1}, {2} {3}".format(
-                t(_("min")), str(spec['min']),
-                t(_("max")), str(spec['max']))
+                t(_("min")), str(spec.get('min','')),
+                t(_("max")), str(spec.get('max','')))
             if ret["out_of_range"]:
                 if ret["acceptable"]:
                     message = "{0} ({1})".format(
@@ -167,7 +171,7 @@ class ResultOutOfRange(object):
         if self.isOutOfShoulderRange(result, Min, Max, error):
             return True, True
         return True, False
-    
+
 class JSONReadExtender(object):
 
     """- Adds the specification from Analysis Request to Analysis in JSON response
@@ -182,7 +186,7 @@ class JSONReadExtender(object):
     def analysis_specification(self):
         ar = self.context.aq_parent
         rr = dicts_to_dict(ar.getResultsRange(),'keyword')
-        
+
         return rr[self.context.getService().getKeyword()]
 
     def __call__(self, request, data):
@@ -193,3 +197,22 @@ class JSONReadExtender(object):
         return data
 
 
+class ajaxGetMethodInstrumentConstraints(BrowserView):
+
+    def __call__(self):
+        """
+            Returns a json dictionary with the constraints and rules for
+            methods, instruments and results to be applied to each of the
+            analyses specified in the request (an array of uids).
+            See docs/imm_results_entry_behaviour.png for further details
+        """
+        constraints = {}
+        try:
+            plone.protect.CheckAuthenticator(self.request)
+        except Forbidden:
+            return json.dumps(constraints)
+
+        rowuids = self.request.get('uids', '[]')
+        rowuids = json.loads(rowuids)
+        constraints = get_method_instrument_constraints(self, rowuids)
+        return json.dumps(constraints)

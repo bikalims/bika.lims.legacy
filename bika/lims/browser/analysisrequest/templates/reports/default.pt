@@ -208,7 +208,7 @@
     <h1 i18n:translate="">Results</h1>
     <tal:poc tal:repeat="poc python:categanalyses.keys()">
     <h2 tal:content="poc"></h2>
-    <tal:cat tal:repeat="cat python:sorted(categanalyses.get(poc,{}).keys())">
+    <tal:cat tal:repeat="cat python:view.sorted_by_sort_key(categanalyses.get(poc,{}).keys())">
     <table>
         <thead>
             <tr>
@@ -373,7 +373,7 @@
         <li tal:define="file python:attachment.getAttachmentFile();
                         filename file/filename | nothing;
                         filesize file/get_size | python:file and len(file) or 0;
-                        icon file/getBestIcon | nothing">
+                        icon file/icon | nothing">
             <a title="Click to download"
                tal:attributes="href string:${attachment/absolute_url}/at_download/AttachmentFile"
                tal:content="attachment/Title">Filename</a>
@@ -390,7 +390,7 @@
         <tr tal:define="file python:anat.getAttachmentFile();
                         filename file/filename | nothing;
                         filesize file/get_size | python:file and len(file) or 0;
-                        icon file/getBestIcon | nothing">
+                        icon file/icon | nothing">
             <td tal:content="python: analysis.getKeyword()">Total Vit D2 + D3</td>
             <td>
                 <a title="Click to download"
