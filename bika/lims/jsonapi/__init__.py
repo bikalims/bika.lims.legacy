@@ -12,7 +12,7 @@ import Missing
 import sys, traceback
 
 METADATA_FIELD_MAPPING = {
-    'getClientReference': 'ClientRefernece',
+    'getClientReference': 'ClientReference',
     'getRequestID': 'RequestID',
     'getSamplePointTitle': 'SamplePointTitle',
     'getClientOrderNumber': 'ClientOrderNumber',
