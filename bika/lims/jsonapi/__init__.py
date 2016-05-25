@@ -48,7 +48,7 @@ def get_include_fields(request, query="include_fields"):
     return include_fields
 
 
-def load_brain_metadata(proxy, include_fields, catalog):
+def load_brain_metadata(proxy, include_fields, catalog=None):
     """Load values from the catalog metadata into a list of dictionaries
     """
     ret = {}
@@ -66,19 +66,21 @@ def load_brain_metadata(proxy, include_fields, catalog):
                 continue
             ret[index] = val
         else:
-            # Some fields do not respect metadata, check index contents for values instead
-            try:
-                val = catalog._catalog.getIndex(index).getEntryForObject(proxy.getRID(), default=None)
-                if val is None:
+            if catalog is not None:
+                # Some fields do not respect metadata, check index contents for values instead
+                try:
+                    val = catalog._catalog.getIndex(index).getEntryForObject(proxy.getRID(), default=None)
+                    if val is None:
+                        continue
+                    json.dumps(val)
+                except:
                     continue
-                json.dumps(val)
-            except:
-                continue
-            ret[index] = val
+                ret[index] = val
 
-        # Replace index names with mapped names
-        if index in METADATA_FIELD_MAPPING:
-            ret[METADATA_FIELD_MAPPING[index]] = ret.pop(index)
+        if catalog is not None:
+            # Replace index names with mapped names
+            if index in METADATA_FIELD_MAPPING:
+                ret[METADATA_FIELD_MAPPING[index]] = ret.pop(index)
             
     return ret
 
