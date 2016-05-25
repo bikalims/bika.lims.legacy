@@ -11,6 +11,8 @@
     <adapter name="BatchUID" factory=".analysisrequest.BatchUID" />
     <adapter name="SamplingRoundUID" factory=".analysisrequest.SamplingRoundUID" />
     <adapter name="Priority" factory=".analysis.Priority" />
+    <adapter name="ServiceTitle" factory=".analysis.ServiceTitle" />
+    <adapter name="RequestUID" factory=".analysis.RequestUID" />
     <adapter name="Priority" factory=".worksheet.Priority" />
     <adapter name="analysisRequestTemplates" factory=".samplinground.analysisRequestTemplates" />
     <adapter name="samplingRoundSamplingDate" factory=".samplinground.samplingRoundSamplingDate" />

@@ -50,11 +50,24 @@ import cgi
 import datetime
 import math
 
+# Indexers for computed fields
 @indexer(IAnalysis)
 def Priority(instance):
     priority = instance.getPriority()
     if priority:
         return priority.getSortKey()
+
+@indexer(IAnalysis)
+def ServiceTitle(instance):
+    return instance.getService().Title()
+
+@indexer(IAnalysis)
+def RequestUID(instance):
+    return instance.aq_parent.UID()
+
+@indexer(IAnalysis)
+def ResultCaptureDate(instance):
+    return instance.getResultCaptureDate()
 
 @indexer(IAnalysis)
 def sortable_title_with_sort_key(instance):

@@ -11,6 +11,12 @@ import json
 import Missing
 import sys, traceback
 
+METADATA_FIELD_MAPPING = {
+    'getClientReference': 'ClientRefernece',
+    'getRequestID': 'RequestID',
+    'getSamplePointTitle': 'SamplePointTitle',
+    'getClientOrderNumber': 'ClientOrderNumber',
+}
 
 def handle_errors(f):
     """ simple JSON error handler
@@ -28,21 +34,21 @@ def handle_errors(f):
     return decorator
 
 
-def get_include_fields(request):
+def get_include_fields(request, query="include_fields"):
     """Retrieve include_fields values from the request
     """
     include_fields = []
-    rif = request.get("include_fields", "")
-    if "include_fields" in request:
+    rif = request.get(query, "")
+    if query in request:
         include_fields = [x.strip()
                           for x in rif.split(",")
                           if x.strip()]
-    if "include_fields[]" in request:
-        include_fields = request['include_fields[]']
+    if query+"[]" in request:
+        include_fields = request[query+'[]']
     return include_fields
 
 
-def load_brain_metadata(proxy, include_fields):
+def load_brain_metadata(proxy, include_fields, catalog):
     """Load values from the catalog metadata into a list of dictionaries
     """
     ret = {}
@@ -52,12 +58,28 @@ def load_brain_metadata(proxy, include_fields):
         if include_fields and index not in include_fields:
             continue
         val = getattr(proxy, index)
+
         if val != Missing.Value:
             try:
                 json.dumps(val)
             except:
                 continue
             ret[index] = val
+        else:
+            # Some fields do not respect metadata, check index contents for values instead
+            try:
+                val = catalog._catalog.getIndex(index).getEntryForObject(proxy.getRID(), default=None)
+                if val is None:
+                    continue
+                json.dumps(val)
+            except:
+                continue
+            ret[index] = val
+
+        # Replace index names with mapped names
+        if index in METADATA_FIELD_MAPPING:
+            ret[METADATA_FIELD_MAPPING[index]] = ret.pop(index)
+            
     return ret
 
 

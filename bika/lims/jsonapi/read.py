@@ -73,6 +73,14 @@ def read(context, request):
     # Get matching objects from catalog
     proxies = catalog(**contentFilter)
 
+    subContentFilter = {}
+    if 'include_sub' in request:
+        subContentFilter['portal_type'] = request['include_sub']
+        if 'sub_catalog' in request:
+            sub_catalog = getToolByName(context, request['sub_catalog'])
+        else:
+            sub_catalog = catalog
+
     # batching items
     page_nr = int(request.get("page_nr", 0))
     try:
@@ -90,18 +98,27 @@ def read(context, request):
         obj_data = {}
 
         # Place all proxy attributes into the result.
-        obj_data.update(load_brain_metadata(proxy, include_fields))
+        obj_data.update(load_brain_metadata(proxy, include_fields, catalog))
 
-        # Place all schema fields ino the result.
-        obj = proxy.getObject()
-        obj_data.update(load_field_values(obj, include_fields))
+        if 'include_sub' in request:
+            obj_data.update({request['include_sub']:[]})
+            subContentFilter['RequestUID'] = proxy['UID']
+            sub_proxies = sub_catalog(**subContentFilter)
+            for proxy in sub_proxies:
+                obj_data[request['include_sub']].append(load_brain_metadata(proxy, get_include_fields(request, query="sub_include_fields"), sub_catalog))
 
-        obj_data['path'] = "/".join(obj.getPhysicalPath())
 
-        # call any adapters that care to modify this data.
-        adapters = getAdapters((obj, ), IJSONReadExtender)
-        for name, adapter in adapters:
-            adapter(request, obj_data)
+        # Place all schema fields ino the result only if not metadata-only request.
+        if not 'metadata_only' in request:
+            obj = proxy.getObject()
+            obj_data.update(load_field_values(obj, include_fields))
+
+            obj_data['path'] = "/".join(obj.getPhysicalPath())
+
+            # call any adapters that care to modify this data.
+            adapters = getAdapters((obj, ), IJSONReadExtender)
+            for name, adapter in adapters:
+                adapter(request, obj_data)
 
         ret['objects'].append(obj_data)
 
