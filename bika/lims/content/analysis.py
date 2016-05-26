@@ -67,7 +67,7 @@ def RequestUID(instance):
 
 @indexer(IAnalysis)
 def ResultCaptureDate(instance):
-    return instance.getResultCaptureDate()
+    return DateTime(instance.getResultCaptureDate())
 
 @indexer(IAnalysis)
 def sortable_title_with_sort_key(instance):
