@@ -10,12 +10,16 @@ from bika.lims.utils import safe_unicode
 import json
 import Missing
 import sys, traceback
+from pprint import pprint
+from DateTime import DateTime
 
+# Return these index names as field names instead
 METADATA_FIELD_MAPPING = {
     'getClientReference': 'ClientReference',
     'getRequestID': 'RequestID',
     'getSamplePointTitle': 'SamplePointTitle',
     'getClientOrderNumber': 'ClientOrderNumber',
+    'getResultCaptureDate': 'ResultCaptureDate',
 }
 
 def handle_errors(f):
@@ -72,13 +76,22 @@ def load_brain_metadata(proxy, include_fields, catalog=None):
                     val = catalog._catalog.getIndex(index).getEntryForObject(proxy.getRID(), default=None)
                     if val is None:
                         continue
+
+                    # Parse certain index types as readable metadata
+                    if 'BooleanIndex' in str(catalog._catalog.getIndex(index).__class__):
+                        val = True if val else False
+                    if 'DateIndex' in str(catalog._catalog.getIndex(index).__class__):
+                        val = str(DateTime(val))
+
                     json.dumps(val)
                 except:
                     continue
+ 
                 ret[index] = val
 
+        # Don't do any mapping outside of API read calls
         if catalog is not None:
-            # Replace index names with mapped names
+            # Replace index names with mapped field names
             if index in METADATA_FIELD_MAPPING:
                 ret[METADATA_FIELD_MAPPING[index]] = ret.pop(index)
             
