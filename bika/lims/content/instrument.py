@@ -145,19 +145,6 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         ),
     ),
 
-    # References to all analyses performed with this instrument.
-    # Includes regular analyses, QC analyes and Calibration tests.
-    ReferenceField('Analyses',
-        required = 0,
-        multiValued = 1,
-        allowed_types = ('ReferenceAnalysis', 'DuplicateAnalysis',
-                         'Analysis'),
-        relationship = 'InstrumentAnalyses',
-        widget = ReferenceWidget(
-            visible = False,
-        ),
-    ),
-
     # Private method. Use getLatestReferenceAnalyses() instead.
     # See getLatestReferenceAnalyses() method for further info.
     ReferenceField('_LatestReferenceAnalyses',
@@ -397,22 +384,29 @@ class Instrument(ATFolder):
             [1]: RefAnalysis for Ethanol, QC-002 (Control)
             [2]: RefAnalysis for Methanol, QC-001 (Blank)
         """
+        bac = getToolByName(self, 'bika_analysis_catalog');
+        
         field = self.getField('_LatestReferenceAnalyses')
         refs = field and field.get(self) or []
         if len(refs) == 0:
             latest = {}
-            # Since the results file importer uses Date from the results
-            # file as Analysis 'Capture Date', we cannot assume the last
-            # item from the list is the latest analysis done, so we must
-            # pick up the latest analyses using the Results Capture Date
-            for ref in self.getReferenceAnalyses():
-                antype = QCANALYSIS_TYPES.getValue(ref.getReferenceType())
-                key = '%s.%s' % (ref.getServiceUID(), antype)
-                last = latest.get(key, ref)
-                if ref.getResultCaptureDate() > last.getResultCaptureDate():
-                    latest[key] = ref
-                else:
-                    latest[key] = last
+            services = bac._catalog.indexes["getServiceUID"].uniqueValues()
+            for refType in QCANALYSIS_TYPES:
+                for servUID in services:
+                  key = '%s.%s' % (servUID, refType)
+                  # Get the last reference result for a
+                  # instrument, service and reftype
+                  last_result = bac(portal_type="ReferenceAnalysis",
+                                    getInstrumentUID=self.UID(),
+                                    getServiceUID=servUID,
+                                    getReferenceType=refType,
+                                    sort_on="ResultCaptureDate",
+                                    sort_order="descending",
+                                    sort_limit=1)[:1]
+                  
+                  if len(last_result) == 1:
+                    latest[key] = last_result[0].getObject()
+                
             refs = [r for r in latest.itervalues()]
             # Add to the cache
             self.getField('_LatestReferenceAnalyses').set(self, refs)
@@ -598,40 +592,23 @@ class Instrument(ATFolder):
             The rest of the analyses (regular and duplicates) will not
             be returned.
         """
-        return [analysis for analysis in self.getAnalyses() \
-                if analysis.portal_type=='ReferenceAnalysis']
+        last_month_q = { 'query': (DateTime() - 30,
+                                   DateTime()),
+                         'range': 'min:max' }
+        bac = getToolByName(self, 'bika_analysis_catalog');
+        results = bac(portal_type="ReferenceAnalysis",
+                      getInstrumentUID=self.UID(),
+		                  getResultCaptureDate=last_month_q,
+                      sort_on="ResultCaptureDate",
+                      sort_order="descending")
 
-    def addAnalysis(self, analysis):
-        """ Add regular analysis (included WS QCs) to this instrument
-            If the analysis has
-        """
-        targetuid = analysis.getRawInstrument()
-        if not targetuid:
-            return
-        if targetuid != self.UID():
-            raise Exception("Invalid instrument")
-        ans = self.getRawAnalyses() if self.getRawAnalyses() else []
-        ans.append(analysis.UID())
-        self.setAnalyses(ans)
-        self.cleanReferenceAnalysesCache()
-
-    def removeAnalysis(self, analysis):
-        """ Remove a regular analysis assigned to this instrument
-        """
-        targetuid = analysis.getRawInstrument()
-        if not targetuid:
-            return
-        if targetuid != self.UID():
-            raise Exception("Invalid instrument")
-        uid = analysis.UID()
-        ans = [a for a in self.getRawAnalyses() if a != uid]
-        self.setAnalyses(ans)
-        self.cleanReferenceAnalysesCache()
+        return [brain.getObject() for brain in results]
 
     def cleanReferenceAnalysesCache(self):
         self.getField('_LatestReferenceAnalyses').set(self, [])
 
     def addReferences(self, reference, service_uids):
+
         """ Add reference analyses to reference
         """
         addedanalyses = []
@@ -678,8 +655,6 @@ class Instrument(ATFolder):
                 # Instrument, we apply the assign state
                 wf.doActionFor(ref_analysis, 'assign')
             addedanalyses.append(ref_analysis)
-
-        self.setAnalyses(self.getAnalyses() + addedanalyses)
 
         # Initialize LatestReferenceAnalyses cache
         self.cleanReferenceAnalysesCache()
