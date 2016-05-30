@@ -603,6 +603,8 @@ class Instrument(ATFolder):
                       sort_order="descending")
 
         return [brain.getObject() for brain in results]
+        rc = getToolByName(self, 'reference_catalog')
+        refs = rc({'UID': uid})
 
     def cleanReferenceAnalysesCache(self):
         self.getField('_LatestReferenceAnalyses').set(self, [])

@@ -62,7 +62,6 @@ def load_brain_metadata(proxy, include_fields, catalog=None):
             ret[index] = val
         else:
             if catalog is not None:
-                # Some fields do not respect metadata, check index contents for values instead
                 try:
                     val = catalog._catalog.getIndex(index).getEntryForObject(proxy.getRID(), default=None)
                     if val is None:
@@ -72,7 +71,12 @@ def load_brain_metadata(proxy, include_fields, catalog=None):
                     if 'BooleanIndex' in str(catalog._catalog.getIndex(index).__class__):
                         val = True if val else False
                     if 'DateIndex' in str(catalog._catalog.getIndex(index).__class__):
-                        val = str(DateTime(val))
+                        # Ignore dates since they use Zope timestamp conversion and not standard UTC timestamps
+                        # TODO Should really make sure metadata works here instead
+                        continue
+                    if 'DateTime' in str(val.__class__):
+                        val = str(val)
+                        pprint(val)
 
                     json.dumps(val)
                 except:
