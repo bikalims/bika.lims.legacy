@@ -385,7 +385,7 @@ class Instrument(ATFolder):
             [2]: RefAnalysis for Methanol, QC-001 (Blank)
         """
         bac = getToolByName(self, 'bika_analysis_catalog');
-        
+
         field = self.getField('_LatestReferenceAnalyses')
         refs = field and field.get(self) or []
         if len(refs) == 0:
@@ -403,10 +403,10 @@ class Instrument(ATFolder):
                                     sort_on="ResultCaptureDate",
                                     sort_order="descending",
                                     sort_limit=1)[:1]
-                  
+
                   if len(last_result) == 1:
                     latest[key] = last_result[0].getObject()
-                
+
             refs = [r for r in latest.itervalues()]
             # Add to the cache
             self.getField('_LatestReferenceAnalyses').set(self, refs)
@@ -603,8 +603,6 @@ class Instrument(ATFolder):
                       sort_order="descending")
 
         return [brain.getObject() for brain in results]
-        rc = getToolByName(self, 'reference_catalog')
-        refs = rc({'UID': uid})
 
     def cleanReferenceAnalysesCache(self):
         self.getField('_LatestReferenceAnalyses').set(self, [])

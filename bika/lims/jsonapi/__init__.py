@@ -76,7 +76,6 @@ def load_brain_metadata(proxy, include_fields, catalog=None):
                         continue
                     if 'DateTime' in str(val.__class__):
                         val = str(val)
-                        pprint(val)
 
                     json.dumps(val)
                 except:
