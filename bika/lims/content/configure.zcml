@@ -15,6 +15,8 @@
     <adapter name="RequestUID" factory=".analysis.RequestUID" />
     <adapter name="ResultCaptureDate" factory=".analysis.ResultCaptureDate" />
     <adapter name="Priority" factory=".worksheet.Priority" />
+    <adapter name="ServiceUID" factory=".analysis.ServiceUID" />
+
     <adapter name="analysisRequestTemplates" factory=".samplinground.analysisRequestTemplates" />
     <adapter name="samplingRoundSamplingDate" factory=".samplinground.samplingRoundSamplingDate" />
     <adapter name="sortable_title" factory=".analysiscategory.sortable_title_with_sort_key" />

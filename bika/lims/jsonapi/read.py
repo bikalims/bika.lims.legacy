@@ -6,7 +6,7 @@
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import logger, to_utf8
 from bika.lims.interfaces import IJSONReadExtender
-from bika.lims.jsonapi import get_include_fields
+from bika.lims.jsonapi import get_include_fields, handle_formattedDisplayResult
 from plone.jsonapi.core import router
 from plone.jsonapi.core.interfaces import IRouteProvider
 from plone.protect.authenticator import AuthenticatorView
@@ -17,6 +17,7 @@ from zope import interface
 from zope.component import getAdapters
 import re
 import App
+from pprint import pprint
 
 
 def read(context, request):
@@ -37,6 +38,9 @@ def read(context, request):
         raise ValueError("bad or missing catalog_name: " + catalog_name)
     catalog = getToolByName(context, catalog_name)
     indexes = catalog.indexes()
+
+    # Bika setup cataolog for services
+    bsc = getToolByName(context, 'bika_setup_catalog')
 
     contentFilter = {}
     for index in indexes:
@@ -74,12 +78,16 @@ def read(context, request):
     proxies = catalog(**contentFilter)
 
     subContentFilter = {}
+    handleDisplayResult = False
     if 'include_sub' in request:
         subContentFilter['portal_type'] = request['include_sub']
         if 'sub_catalog' in request:
             sub_catalog = getToolByName(context, request['sub_catalog'])
         else:
             sub_catalog = catalog
+
+        if 'DisplayResult' in request['sub_include_fields'].split(','):
+            handleDisplayResult = True
 
     # batching items
     page_nr = int(request.get("page_nr", 0))
@@ -100,12 +108,28 @@ def read(context, request):
         # Place all proxy attributes into the result.
         obj_data.update(load_brain_metadata(proxy, include_fields, catalog))
 
-        if 'include_sub' in request:
+        if 'include_sub' in request and 'metadata_only' in request:
             obj_data.update({request['include_sub']:[]})
-            subContentFilter['RequestUID'] = proxy['UID']
+            # subContentFilter['RequestUID'] = proxy['UID']
+            path = catalog._catalog.getIndex('path').getEntryForObject(proxy.getRID(), default=None)
+            subContentFilter['path'] = {'query': path, 'depth': 1}
             sub_proxies = sub_catalog(**subContentFilter)
+            
             for proxy in sub_proxies:
                 obj_data[request['include_sub']].append(load_brain_metadata(proxy, get_include_fields(request, query="sub_include_fields"), sub_catalog))
+                if handleDisplayResult:
+
+                    # iterate all ananlyses in the AR and update DisplayResult
+                    for i, child in enumerate(obj_data[request['include_sub']]):
+                        if 'ResultOptions' in obj_data[request['include_sub']][i]:
+                            choices = obj_data[request['include_sub']][i]['ResultOptions']
+                        else:
+                            choices = None
+
+                        service = bsc({'UID': obj_data[request['include_sub']][i]['ServiceUID']})
+                        threshold = bsc._catalog.getIndex('getExponentialFormatPrecision').getEntryForObject(service[0].getRID(), default=None)
+                        precision = bsc._catalog.getIndex('getPrecision').getEntryForObject(service[0].getRID(), default=None)
+                        obj_data[request['include_sub']][i]['DisplayResult'] = handle_formattedDisplayResult(obj_data[request['include_sub']][i]['Result'], choices, threshold, precision)
 
 
         # Place all schema fields ino the result only if not metadata-only request.

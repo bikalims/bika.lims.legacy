@@ -390,7 +390,7 @@ class Instrument(ATFolder):
         refs = field and field.get(self) or []
         if len(refs) == 0:
             latest = {}
-            services = bac._catalog.indexes["getServiceUID"].uniqueValues()
+            services = bac._catalog.indexes["ServiceUID"].uniqueValues()
             for refType in QCANALYSIS_TYPES:
                 for servUID in services:
                   key = '%s.%s' % (servUID, refType)
@@ -398,7 +398,7 @@ class Instrument(ATFolder):
                   # instrument, service and reftype
                   last_result = bac(portal_type="ReferenceAnalysis",
                                     getInstrumentUID=self.UID(),
-                                    getServiceUID=servUID,
+                                    ServiceUID=servUID,
                                     getReferenceType=refType,
                                     sort_on="getResultCaptureDate",
                                     sort_order="descending",
