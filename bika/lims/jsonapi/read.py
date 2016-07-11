@@ -111,7 +111,7 @@ def read(context, request):
         # Place all proxy attributes into the result.
         obj_data.update(load_brain_metadata(proxy, include_fields, catalog))
 
-        if 'metadata_only' in request:
+        if 'metadata_only' in request and not 'include_sub' in request:
             if handleDisplayResult:
                 if 'ResultOptions' in obj_data:
                     choices = obj_data['ResultOptions']
