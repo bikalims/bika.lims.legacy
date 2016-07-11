@@ -89,6 +89,9 @@ def read(context, request):
         if 'DisplayResult' in request['sub_include_fields'].split(','):
             handleDisplayResult = True
 
+    if 'DisplayResult' in include_fields:
+        handleDisplayResult = True
+
     # batching items
     page_nr = int(request.get("page_nr", 0))
     try:
@@ -107,6 +110,20 @@ def read(context, request):
 
         # Place all proxy attributes into the result.
         obj_data.update(load_brain_metadata(proxy, include_fields, catalog))
+
+        if 'metadata_only' in request:
+            if handleDisplayResult:
+                if 'ResultOptions' in obj_data:
+                    choices = obj_data['ResultOptions']
+                else:
+                    choices = None
+
+                service = bsc({'UID': obj_data['ServiceUID']})
+                threshold = bsc._catalog.getIndex('getExponentialFormatPrecision').getEntryForObject(service[0].getRID(), default=None)
+                precision = bsc._catalog.getIndex('getPrecision').getEntryForObject(service[0].getRID(), default=None)
+                obj_data['DisplayResult'] = handle_formattedDisplayResult(obj_data['Result'], choices, threshold, precision)
+
+
 
         if 'include_sub' in request and 'metadata_only' in request:
             obj_data.update({request['include_sub']:[]})
