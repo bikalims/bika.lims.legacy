@@ -5,7 +5,7 @@
 
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, get_metadata
+from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.content.instrumentmaintenancetask import InstrumentMaintenanceTaskStatuses as mstatus
 from bika.lims.subscribers import doActionFor, skip
@@ -28,6 +28,7 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zExceptions import Forbidden
 from operator import itemgetter
+
 import plone
 import json
 
@@ -665,39 +666,38 @@ class InstrumentQCFailuresViewlet(ViewletBase):
         bsc = getToolByName(self, 'bika_setup_catalog')
         insts = bsc(portal_type='Instrument', inactive_state='active')
         for i in insts:
-            # Bad practise waking up Archetype objects so frequently
-            # i = i.getObject()
+            i = i.getObject()
             instr = {
-                'uid': i['UID'],
-                'title': i['Title'],
+                'uid': i.UID(),
+                'title': i.Title(),
             }
-            if get_metadata(i, 'isValidationInProgress', bsc):
+            if i.isValidationInProgress():
                 instr['link'] = '<a href="%s/validations">%s</a>' % (
-                    i.getURL(), i['Title']
+                    i.absolute_url(), i.Title()
                 )
                 self.nr_failed += 1
                 self.failed['validation'].append(instr)
-            elif get_metadata(i, 'isCalibrationInProgress', bsc):
+            elif i.isCalibrationInProgress():
                 instr['link'] = '<a href="%s/calibrations">%s</a>' % (
-                    i.getURL(), i['Title']
+                    i.absolute_url(), i.Title()
                 )
                 self.nr_failed += 1
                 self.failed['calibration'].append(instr)
-            elif get_metadata(i, 'isOutOfDate', bsc):
+            elif i.isOutOfDate():
                 instr['link'] = '<a href="%s/certifications">%s</a>' % (
-                    i.getURL(), i['Title']
+                    i.absolute_url(), i.Title()
                 )
                 self.nr_failed += 1
                 self.failed['out-of-date'].append(instr)
-            elif not get_metadata(i, 'isQCValid', bsc):
+            elif not i.isQCValid():
                 instr['link'] = '<a href="%s/referenceanalyses">%s</a>' % (
-                    i.getURL(), i['Title']
+                    i.absolute_url(), i.Title()
                 )
                 self.nr_failed += 1
                 self.failed['qc-fail'].append(instr)
-            elif get_metadata(i, 'getDisposeUntilNextCalibrationTest', bsc):
+            elif i.getDisposeUntilNextCalibrationTest():
                 instr['link'] = '<a href="%s/referenceanalyses">%s</a>' % (
-                    i.getURL(), i['Title']
+                    i.absolute_url(), i.Title()
                 )
                 self.nr_failed += 1
                 self.failed['next-test'].append(instr)

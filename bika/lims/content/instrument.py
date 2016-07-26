@@ -685,6 +685,7 @@ class Instrument(ATFolder):
         if (len(addedanalyses) > 0):
             self.getField('DisposeUntilNextCalibrationTest').set(self, False)
 
+        self.reindexObject()
         return addedanalyses
 
     def getAnalysesToRetract(self, allanalyses=True, outofdate=False):
