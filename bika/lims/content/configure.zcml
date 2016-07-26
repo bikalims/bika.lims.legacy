@@ -16,6 +16,9 @@
     <adapter name="ResultCaptureDate" factory=".analysis.ResultCaptureDate" />
     <adapter name="Priority" factory=".worksheet.Priority" />
     <adapter name="ServiceUID" factory=".analysis.ServiceUID" />
+    <adapter name="isQCValid" factory=".instrument.isQCValid" />
+    <adapter name="isOutOfDate" factory=".instrument.isOutOfDate" />
+    <adapter name="getDisposeUntilNextCalibrationTest" factory=".instrument.getDisposeUntilNextCalibrationTest" />
 
     <adapter name="analysisRequestTemplates" factory=".samplinground.analysisRequestTemplates" />
     <adapter name="samplingRoundSamplingDate" factory=".samplinground.samplingRoundSamplingDate" />

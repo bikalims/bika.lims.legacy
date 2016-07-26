@@ -21,10 +21,24 @@ from bika.lims.content.bikaschema import BikaSchema, BikaFolderSchema
 from bika.lims.interfaces import IInstrument
 from bika.lims.utils import to_utf8
 from plone.app.folder.folder import ATFolder
+from plone.indexer import indexer
 from zope.interface import implements
 from datetime import date
 from DateTime import DateTime
 from bika.lims.config import QCANALYSIS_TYPES
+
+
+@indexer(IInstrument)
+def isQCValid(instance):
+    return instance.isQCValid()
+
+@indexer(IInstrument)
+def isOutOfDate(instance):
+    return instance.isOutOfDate()
+
+@indexer(IInstrument)
+def getDisposeUntilNextCalibrationTest(instance):
+    return instance.getDisposeUntilNextCalibrationTest()
 
 schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
 
