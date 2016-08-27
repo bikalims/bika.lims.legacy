@@ -621,7 +621,15 @@ class AnalysisRequestPublishView(BrowserView):
         andict['specs'] = specs
         scinot = self.context.bika_setup.getScientificNotationReport()
         fresult =  analysis.getFormattedResult(specs=specs, sciformat=int(scinot), decimalmark=decimalmark)
-        andict['formatted_result'] = cgi.escape(fresult);
+
+        # We don't use here cgi.encode because results fields must be rendered
+        # using the 'structure' wildcard. The reason is that the result can be
+        # expressed in sci notation, that may include <sup></sup> html tags.
+        # Please note the default value for the 'html' parameter from
+        # getFormattedResult signature is set to True, so the service will
+        # already take into account LDLs and UDLs symbols '<' and '>' and escape
+        # them if necessary.
+        andict['formatted_result'] = fresult;
 
         fs = ''
         if specs.get('min', None) and specs.get('max', None):
@@ -630,8 +638,8 @@ class AnalysisRequestPublishView(BrowserView):
             fs = '> %s' % specs['min']
         elif specs.get('max', None):
             fs = '< %s' % specs['max']
-        andict['formatted_specs'] = cgi.escape(formatDecimalMark(fs, decimalmark))
-        andict['formatted_uncertainty'] = cgi.escape(format_uncertainty(analysis, analysis.getResult(), decimalmark=decimalmark, sciformat=int(scinot)))
+        andict['formatted_specs'] = formatDecimalMark(fs, decimalmark)
+        andict['formatted_uncertainty'] = format_uncertainty(analysis, analysis.getResult(), decimalmark=decimalmark, sciformat=int(scinot))
 
         # Out of range?
         if specs:
@@ -870,7 +878,7 @@ class AnalysisRequestPublishView(BrowserView):
 
             # Attach the pdf to the email if requested
             if pdf_report and 'pdf' in recip.get('pubpref'):
-                attachPdf(mime_msg, pdf_report, pdf_fn)
+                attachPdf(mime_msg, pdf_report, ar.id)
 
             # For now, I will simply ignore mail send under test.
             if hasattr(self.portal, 'robotframework'):

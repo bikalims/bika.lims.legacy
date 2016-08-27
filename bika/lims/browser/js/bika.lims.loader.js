@@ -78,15 +78,21 @@ window.bika.lims.controllers =  {
     ".template-bika-lims-content-samplingsround.portaltype-client":
         ['ClientSamplingRoundAddEditView'],
 
+    // Sampling Rounds PrintView
+    "#sr_publish_container":
+        ['SamplingRoundPrintView'],
+
     // Reference Samples
     ".portaltype-referencesample.template-analyses":
         ['ReferenceSampleAnalysesView'],
 
 
-    // Samples
+    // Sample
     ".portaltype-sample":
         ['SampleView'],
-
+    // Samples fodler
+    ".portaltype-samplesfolder":
+        ['SamplesFolderView'],
 
     // Analysis Request Templates
     ".portaltype-artemplate.template-base_edit":
@@ -123,6 +129,10 @@ window.bika.lims.controllers =  {
 
     "#ar_publish_container":
         ['AnalysisRequestPublishView', 'RangeGraph'],
+
+    // Samples PrintView
+     "#preview_container.samples_print_preview":
+         ['FormPrintView'],
 
     // Supply Orders
     ".portaltype-supplyorder.template-base_edit":
@@ -201,18 +211,11 @@ window.bika.lims.loadControllers = function(all, controllerKeys) {
             controllers[key].forEach(function(js) {
                 if (all == true || $.inArray(key, controllerKeys) >= 0 || $.inArray(js, _bika_lims_loaded_js) < 0) {
                     console.debug('[bika.lims.loader] Loading '+js);
-                    try {
-                        obj = new window[js]();
-                        obj.load();
-                        // Register the object for further access
-                        window.bika.lims[js]=obj;
-                        _bika_lims_loaded_js.push(js);
-                    } catch (e) {
-                       // statements to handle any exceptions
-                       var msg = '[bika.lims.loader] Unable to load '+js+": "+ e.message +"\n"+e.stack;
-                       console.warn(msg);
-                       window.bika.lims.error(msg);
-                    }
+                    obj = new window[js]();
+                    obj.load();
+                    // Register the object for further access
+                    window.bika.lims[js]=obj;
+                    _bika_lims_loaded_js.push(js);
                 }
             });
         }
