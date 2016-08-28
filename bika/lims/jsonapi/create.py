@@ -1,22 +1,24 @@
-from AccessControl import getSecurityManager
+import json
+
+import transaction
 from AccessControl import Unauthorized
-from bika.lims.idserver import renameAfterCreation
-from bika.lims.jsonapi import set_fields_from_request
-from bika.lims.jsonapi import resolve_request_lookup
-from bika.lims.permissions import AccessJSONAPI
-from bika.lims.utils import tmpID, dicts_to_dict
-from bika.lims.workflow import doActionFor
-from plone.jsonapi.core import router
-from plone.jsonapi.core.interfaces import IRouteProvider
+from AccessControl import getSecurityManager
 from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from plone.jsonapi.core import router
+from plone.jsonapi.core.interfaces import IRouteProvider
 from zExceptions import BadRequest
 from zope import event
 from zope import interface
 
-import json
-import transaction
+from bika.lims.idserver import renameAfterCreation
+from bika.lims.jsonapi import resolve_request_lookup
+from bika.lims.jsonapi import set_fields_from_request
+from bika.lims.permissions import AccessJSONAPI
+from bika.lims.utils import tmpID, dicts_to_dict
+from bika.lims.workflow import doActionFor
+
 
 class Create(object):
     interface.implements(IRouteProvider)
@@ -251,12 +253,15 @@ class Create(object):
 
         return spec_rr.values()
 
-    def require(self, fieldname, allow_blank=False):
+    def require(self, fname, allow_blank=False):
         """fieldname is required"""
-        if self.request.form and fieldname not in self.request.form.keys():
-            raise Exception("Required field not found in request: %s" % fieldname)
-        if self.request.form and (not self.request.form[fieldname] or allow_blank):
-            raise Exception("Required field %s may not have blank value")
+        if self.request.form and fname not in self.request.form.keys():
+            raise BadRequest("Required field not found in request: %s"
+                             % fname)
+        if self.request.form and not \
+                (self.request.form[fname] or allow_blank):
+            raise BadRequest("Required field %s may not have blank value"
+                             % fname)
 
     def used(self, fieldname):
         """fieldname is used, remove from list of unused fields"""
@@ -294,6 +299,11 @@ class Create(object):
 
             &Analysis_Specification:list=<Keyword>:min:max:error&...
 
+        - Analysis Profile - The services specified in the profile will be
+          included in addition to any services that are specifically listed
+          in the Services[] or Services:list keywords in the request
+
+            &AnalysisProfile=portal_type:AnalysisProfile:title=ProfileTitle&...
 
         """
 
@@ -311,10 +321,17 @@ class Create(object):
             'Client',
             'SampleType',
             'Contact',
-            'SamplingDate',
-            'Services']:
+            'SamplingDate']:
             self.require(field)
             self.used(field)
+
+        # At least one of Services and/or AnalysisProfile are required.
+        try:
+            self.require('Services', allow_blank=True)
+        except BadRequest:
+            self.require('AnalysisProfile')
+        self.used('Services')
+        self.used('AnalysisProfile')
 
         try:
             client = resolve_request_lookup(context, request, 'Client')[0].getObject()
@@ -360,8 +377,18 @@ class Create(object):
         ar.setSample(sample.UID())
         ar._renameAfterCreation()
         ret['ar_id'] = ar.getId()
+        # Grab service UIDs from the Services[] request parameter
         brains = resolve_request_lookup(context, request, 'Services')
         service_uids = [p.UID for p in brains]
+        # if AnalysisProfile is specified, augment the list of service UIDs
+        # with any profile services that are not already present
+        pbrains = resolve_request_lookup(context, request, 'AnalysisProfile')
+        if pbrains:
+            profile = pbrains[0].getObject()
+            puids = [s.UID() for s in profile.getService()
+                        if s not in service_uids]
+            service_uids.extend(puids)
+
         new_analyses = ar.setAnalyses(service_uids, specs=specs)
         ar.setRequestID(ar.getId())
         ar.reindexObject()

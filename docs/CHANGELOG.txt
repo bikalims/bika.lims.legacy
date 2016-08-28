@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+LIMS-2317: JSON API: Respect the AnalysisProfile parameter when creating ARs.
 LIMS-2298: Add filter in Clients list
 LIMS-2268: Instrument Interface. Vista Pro Simultaneous ICP, bi-directional CSV
 LIMS-2261: Cannot create analysis request
@@ -26,6 +27,7 @@ LIMS-2255: Switch to Chameleon (five.pt) for rendering TAL templates
 3.1.11 (2016-04-22)
 -----------------------------
 LIMS-2181: An analysis is not stopped from using an invalid instrument
+
 3.1.12 (unreleased)
 -----------------------------
 HEALTH-569 Bar code printing not working on sample registration
