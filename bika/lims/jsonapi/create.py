@@ -303,7 +303,7 @@ class Create(object):
           included in addition to any services that are specifically listed
           in the Services[] or Services:list keywords in the request
 
-            &AnalysisProfile=portal_type:AnalysisProfile:title=ProfileTitle&...
+            &AnalysisProfile=portal_type:AnalysisProfile|title:ProfileTitle&...
 
         """
 
