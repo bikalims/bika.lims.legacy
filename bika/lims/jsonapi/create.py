@@ -230,6 +230,17 @@ class Create(object):
         >>> browser.contents
         '{..."success": true...}'
 
+        >>> browser.open(portal_url+"/@@API/create", "&".join([
+        ... "obj_type=AnalysisRequest",
+        ... "Client=portal_type:Client|id:client-1",
+        ... "SampleType=portal_type:SampleType|title:Apple Pulp",
+        ... "Contact=portal_type:Contact|getFullname:Rita Mohale",
+        ... "AnalysisProfile=portal_type:AnalysisProfile|title:Trace Metals",
+        ... "SamplingDate=2013-09-29",
+        ... ]))
+        >>> browser.contents
+        '{..."success": true...}'
+
         """
 
         # valid output for ResultsRange goes here.
