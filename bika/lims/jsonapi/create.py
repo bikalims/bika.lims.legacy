@@ -33,15 +33,14 @@ class Create(object):
             ("/create", "create", self.create, dict(methods=['GET', 'POST'])),
         )
 
-
     def create(self, context, request):
         """/@@API/create: Create new object.
 
         Required parameters:
 
             - obj_type = portal_type of new object.
-            - obj_path = path of new object, from plone site root. - Not required for
-             obj_type=AnalysisRequest
+            - obj_path = path of new object, relative to site root.
+                - obj_path is not required when creating AnalysisRequests.
 
         Optionally:
 
@@ -93,7 +92,8 @@ class Create(object):
 
         Simple AR creation, no obj_path parameter is required:
 
-        >>> browser = layer['getBrowser'](portal, loggedIn=True, username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
+        >>> browser = layer['getBrowser'](portal, loggedIn=True,
+        username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
         >>> browser.open(portal_url+"/@@API/create", "&".join([
         ... "obj_type=AnalysisRequest",
         ... "Client=portal_type:Client|id:client-1",
@@ -108,10 +108,12 @@ class Create(object):
         >>> browser.contents
         '{..."success": true...}'
 
-        If some parameters are specified and are not located as existing fields or properties
+        If some parameters are specified and are not located as existing
+        fields or properties
         of the created instance, the create should fail:
 
-        >>> browser = layer['getBrowser'](portal, loggedIn=True, username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
+        >>> browser = layer['getBrowser'](portal, loggedIn=True,
+        username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
         >>> browser.open(portal_url+"/@@API/create?", "&".join([
         ... "obj_type=Batch",
         ... "obj_path=/batches",
@@ -121,9 +123,11 @@ class Create(object):
         >>> browser.contents
         '{...The following request fields were not used: ...Thing...}'
 
-        Now we test that the AR create also fails if some fields are spelled wrong
+        Now we test that the AR create also fails if some fields are spelled
+        wrong
 
-        >>> browser = layer['getBrowser'](portal, loggedIn=True, username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
+        >>> browser = layer['getBrowser'](portal, loggedIn=True,
+        username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
         >>> browser.open(portal_url+"/@@API/create", "&".join([
         ... "obj_type=AnalysisRequest",
         ... "thing=Fish",
@@ -170,7 +174,7 @@ class Create(object):
             msg = "You don't have the '{0}' permission on {1}".format(
                 AccessJSONAPI, parent.absolute_url())
             raise Unauthorized(msg)
-
+        # Possibly allow the requester to decide what the object's ID will be
         obj_id = request.get("obj_id", "")
         _renameAfterCreation = False
         if not obj_id:
@@ -178,7 +182,7 @@ class Create(object):
             obj_id = tmpID()
         self.used(obj_id)
 
-        ret = {
+        self.retval = {
             "url": router.url_for("create", force_external=True),
             "success": True,
             "error": False,
@@ -189,11 +193,14 @@ class Create(object):
             obj.unmarkCreationFlag()
             if _renameAfterCreation:
                 renameAfterCreation(obj)
-            ret['obj_id'] = obj.getId()
+            self.retval['obj_id'] = obj.getId()
+            # Magic happens here - All request fields are matched against
+            # Archetypes schema fields.
             used_fields = set_fields_from_request(obj, request)
             for field in used_fields:
                 self.used(field)
             obj.reindexObject()
+            # XXX Always reindexing the parent seems a bit crazy
             obj.aq_parent.reindexObject()
             event.notify(ObjectInitializedEvent(obj))
             obj.at_post_create_script()
@@ -202,82 +209,10 @@ class Create(object):
             raise
 
         if self.unused:
-            raise BadRequest("The following request fields were not used: %s.  Request aborted." % self.unused)
+            raise BadRequest(
+                "The following request fields were not used: %s." % self.unused)
 
-        return ret
-
-    def get_specs_from_request(self, dicts_to_dict_rr=None):
-        """Specifications for analyses are given on the request in *Spec
-
-        >>> portal = layer['portal']
-        >>> portal_url = portal.absolute_url()
-        >>> from plone.app.testing import SITE_OWNER_NAME
-        >>> from plone.app.testing import SITE_OWNER_PASSWORD
-
-        >>> browser = layer['getBrowser'](portal, loggedIn=True, username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
-        >>> browser.open(portal_url+"/@@API/create", "&".join([
-        ... "obj_type=AnalysisRequest",
-        ... "Client=portal_type:Client|id:client-1",
-        ... "SampleType=portal_type:SampleType|title:Apple Pulp",
-        ... "Contact=portal_type:Contact|getFullname:Rita Mohale",
-        ... "Services:list=portal_type:AnalysisService|title:Calcium",
-        ... "Services:list=portal_type:AnalysisService|title:Copper",
-        ... "Services:list=portal_type:AnalysisService|title:Magnesium",
-        ... "SamplingDate=2013-09-29",
-        ... "Specification=portal_type:AnalysisSpec|title:Apple Pulp",
-        ... 'ResultsRange=[{"keyword":"Cu","min":5,"max":10,"error":10},{"keyword":"Mg","min":6,"max":11,"error":11}]',
-        ... ]))
-        >>> browser.contents
-        '{..."success": true...}'
-
-        >>> browser.open(portal_url+"/@@API/create", "&".join([
-        ... "obj_type=AnalysisRequest",
-        ... "Client=portal_type:Client|id:client-1",
-        ... "SampleType=portal_type:SampleType|title:Apple Pulp",
-        ... "Contact=portal_type:Contact|getFullname:Rita Mohale",
-        ... "AnalysisProfile=portal_type:AnalysisProfile|title:Trace Metals",
-        ... "SamplingDate=2013-09-29",
-        ... ]))
-        >>> browser.contents
-        '{..."success": true...}'
-
-        """
-
-        # valid output for ResultsRange goes here.
-        specs = []
-
-        context = self.context
-        request = self.request
-        brains = resolve_request_lookup(context, request, "Specification")
-        spec_rr = brains[0].getObject().getResultsRange() if brains else {}
-        spec_rr = dicts_to_dict(spec_rr, 'keyword')
-        #
-        bsc = getToolByName(context, "bika_setup_catalog")
-        req_rr = request.get('ResultsRange', "[]")
-        try:
-            req_rr = json.loads(req_rr)
-        except:
-            raise BadRequest("Invalid value for ResultsRange (%s)"%req_rr)
-        req_rr = dicts_to_dict(req_rr, 'keyword')
-        #
-        spec_rr.update(req_rr)
-
-        return spec_rr.values()
-
-    def require(self, fname, allow_blank=False):
-        """fieldname is required"""
-        if self.request.form and fname not in self.request.form.keys():
-            raise BadRequest("Required field not found in request: %s"
-                             % fname)
-        if self.request.form and not \
-                (self.request.form[fname] or allow_blank):
-            raise BadRequest("Required field %s may not have blank value"
-                             % fname)
-
-    def used(self, fieldname):
-        """fieldname is used, remove from list of unused fields"""
-        if fieldname in self.unused:
-            self.unused.remove(fieldname)
+        return self.retval
 
     def _create_ar(self, context, request):
         """Creates AnalysisRequest object, with supporting Sample, Partition
@@ -316,63 +251,26 @@ class Create(object):
 
             &AnalysisProfile=portal_type:AnalysisProfile|title:ProfileTitle&...
 
+        - AR Template - Include all available information from the
+          ARTemplate specified in the 'Template' request parameter
+
+            &Template=portal_type:ARTemplate|title:Bruma Metals&...
+
         """
 
         wftool = getToolByName(context, 'portal_workflow')
-        bc = getToolByName(context, 'bika_catalog')
-        bsc = getToolByName(context, 'bika_setup_catalog')
-        pc = getToolByName(context, 'portal_catalog')
-        ret = {
-            "url": router.url_for("create", force_external=True),
-            "success": True,
-            "error": False,
-        }
-        SamplingWorkflowEnabled = context.bika_setup.getSamplingWorkflowEnabled()
-        for field in [
-            'Client',
-            'SampleType',
-            'Contact',
-            'SamplingDate']:
+        self.retval = {"url": router.url_for("create", force_external=True),
+                       "success": True,
+                       "error": False}
+
+        # Absolutely required fields
+        for field in ['Client', 'Contact', 'SamplingDate']:
             self.require(field)
             self.used(field)
 
-        # At least one of Services and/or AnalysisProfile are required.
-        try:
-            self.require('Services', allow_blank=True)
-        except BadRequest:
-            self.require('AnalysisProfile')
-        self.used('Services')
-        self.used('AnalysisProfile')
-
-        try:
-            client = resolve_request_lookup(context, request, 'Client')[0].getObject()
-        except IndexError:
-            raise Exception("Client not found")
-
-        # Sample_id
-        if 'Sample' in request:
-            try:
-                sample = resolve_request_lookup(context, request, 'Sample')[0].getObject()
-            except IndexError:
-                raise Exception("Sample not found")
-        else:
-            # Primary AR
-            sample = _createObjectByType("Sample", client, tmpID())
-            sample.unmarkCreationFlag()
-            fields = set_fields_from_request(sample, request)
-            for field in fields:
-                self.used(field)
-            sample._renameAfterCreation()
-            sample.setSampleID(sample.getId())
-            event.notify(ObjectInitializedEvent(sample))
-            sample.at_post_create_script()
-
-            if SamplingWorkflowEnabled:
-                wftool.doActionFor(sample, 'sampling_workflow')
-            else:
-                wftool.doActionFor(sample, 'no_sampling_workflow')
-
-        ret['sample_id'] = sample.getId()
+        client = self.get_client()
+        service_uids = self.get_service_uids()
+        sample = self.get_or_create_sample()
 
         parts = [{'services': [],
                   'container': [],
@@ -387,24 +285,20 @@ class Create(object):
             self.used(field)
         ar.setSample(sample.UID())
         ar._renameAfterCreation()
-        ret['ar_id'] = ar.getId()
-        # Grab service UIDs from the Services[] request parameter
-        brains = resolve_request_lookup(context, request, 'Services')
-        service_uids = [p.UID for p in brains]
-        # if AnalysisProfile is specified, augment the list of service UIDs
-        # with any profile services that are not already present
-        pbrains = resolve_request_lookup(context, request, 'AnalysisProfile')
-        if pbrains:
-            profile = pbrains[0].getObject()
-            puids = [s.UID() for s in profile.getService()
-                        if s not in service_uids]
-            service_uids.extend(puids)
-
+        self.retval['ar_id'] = ar.getId()
         new_analyses = ar.setAnalyses(service_uids, specs=specs)
         ar.setRequestID(ar.getId())
         ar.reindexObject()
         event.notify(ObjectInitializedEvent(ar))
         ar.at_post_create_script()
+
+        # Set template values into the AR.
+        template_values = self.get_template_values()
+        for key, value in template_values.items():
+            try:
+                ar.schema[key].set(ar, value)
+            except:
+                pass
 
         # Create sample partitions
         parts_and_services = {}
@@ -413,7 +307,8 @@ class Create(object):
             part_prefix = sample.getId() + "-P"
             if '%s%s' % (part_prefix, _i + 1) in sample.objectIds():
                 parts[_i]['object'] = sample['%s%s' % (part_prefix, _i + 1)]
-                parts_and_services['%s%s' % (part_prefix, _i + 1)] = p['services']
+                parts_and_services['%s%s' % (part_prefix, _i + 1)] = p[
+                    'services']
                 part = parts[_i]['object']
             else:
                 part = _createObjectByType("SamplePartition", sample, tmpID())
@@ -426,19 +321,20 @@ class Create(object):
                     Preservation=preservation,
                 )
                 part.processForm()
-                if SamplingWorkflowEnabled:
+                if context.bika_setup.getSamplingWorkflowEnabled():
                     wftool.doActionFor(part, 'sampling_workflow')
                 else:
                     wftool.doActionFor(part, 'no_sampling_workflow')
                 parts_and_services[part.id] = p['services']
 
-        if SamplingWorkflowEnabled:
+        if context.bika_setup.getSamplingWorkflowEnabled():
             wftool.doActionFor(ar, 'sampling_workflow')
         else:
             wftool.doActionFor(ar, 'no_sampling_workflow')
 
         # Add analyses to sample partitions
-        # XXX jsonapi create AR: right now, all new analyses are linked to the first samplepartition
+        # XXX jsonapi create AR: right now, all new analyses are linked to
+        # the first samplepartition
         if new_analyses:
             analyses = list(part.getAnalyses())
             analyses.extend(new_analyses)
@@ -451,7 +347,7 @@ class Create(object):
         # If Preservation is required for some partitions,
         # and the SamplingWorkflow is disabled, we need
         # to transition to to_be_preserved manually.
-        if not SamplingWorkflowEnabled:
+        if not context.bika_setup.getSamplingWorkflowEnabled():
             to_be_preserved = []
             sample_due = []
             lowest_state = 'sample_due'
@@ -486,6 +382,203 @@ class Create(object):
                     doActionFor(analysis, 'receive')
 
         if self.unused:
-            raise BadRequest("The following request fields were not used: %s.  Request aborted." % self.unused)
+            raise BadRequest("Unused request fields: %s" % self.unused)
 
-        return ret
+        return self.retval
+
+    def require(self, fname, allow_blank=False):
+        """fieldname is required"""
+        if self.request.form and fname not in self.request.form.keys():
+            raise BadRequest("Required field not found in request: %s"
+                             % fname)
+        if self.request.form and \
+                (not self.request.form[fname] or allow_blank):
+            raise BadRequest("Required field %s may not have blank value"
+                             % fname)
+
+    def used(self, fieldname):
+        """fieldname is used, remove from list of unused fields"""
+        if fieldname in self.unused:
+            self.unused.remove(fieldname)
+
+    def get_client(self):
+        context, request = self.context, self.request
+        cbrain = resolve_request_lookup(context, request, 'Client')
+        if cbrain:
+            return cbrain[0].getObject()
+        else:
+            raise BadRequest("Invalid client specified in request")
+
+    def get_sample_type(self):
+        """Get SampleType directly from the request, or from the Template.
+        Both cannot be present.
+        """
+        context, request = self.context, self.request
+        template_values = self.get_template_values()
+        sampletype = resolve_request_lookup(context, request, 'SampleType')
+        if sampletype:
+            sampletype = sampletype[0].getObject()
+        # 'SampleType' is required, unless present in template values.
+        if not template_values.get('SampleType', False):
+            self.require('SampleType')
+            self.used('SampleType')
+        if sampletype and template_values.get('SampleType', False):
+            raise BadRequest("You can't specify SampleType if the Template"
+                             "already has a SampleType entered.")
+        return template_values.get('SampleType', sampletype)
+
+    def get_service_uids(self):
+        """Collect services from any of the following request parameters:
+        - Services
+        - AnalysisProfile
+        - Template
+        """
+        context, request = self.context, self.request
+        # Grab service UIDs from the Services[] request parameter
+        sbrains = resolve_request_lookup(context, request, 'Services')
+        self.used('Services')
+        service_uids = [b.UID for b in sbrains]
+        # if AnalysisProfile is specified, augment the list of service UIDs
+        # with any profile services that are not already present
+        pbrains = resolve_request_lookup(context, request, 'AnalysisProfile')
+        self.used('AnalysisProfile')
+        for pbrain in pbrains:
+            profile = pbrain.getObject()
+            uids = [s.UID() for s in profile.getService()
+                    if s not in service_uids]
+            service_uids.extend(uids)
+        # if a Template is selected, add it's services to the list as above:
+        tbrains = resolve_request_lookup(self.context, self.request, 'Template')
+        self.used('Template')
+        if tbrains:
+            template = tbrains[0].getObject()
+            uids = [s['service_uid'] for s in template.getAnalyses()
+                    if s['service_uid'] not in service_uids]
+            service_uids.extend(uids)
+        return service_uids
+
+    def get_template_values(self):
+        """Perhaps an ARTemplate is specified.  If so then do a little
+        dance to validate and complete information from the template.
+        """
+        context, request = self.context, self.request
+        tbrains = resolve_request_lookup(context, request, 'Template')
+        if not tbrains:
+            return {}
+        # It's an error to provide a Template /and/ a Profile.
+        pbrains = resolve_request_lookup(context, request, 'AnalysisProfile')
+        if tbrains and pbrains:
+            raise BadRequest("You can't specify both Template and Profile.")
+
+        template = tbrains[0].getObject()
+        return {
+            'SamplePoint': template.getSamplePoint(),
+            'SampleType': template.getSampleType(),
+            'Composite': template.getComposite(),
+            'ReportDryMatter': template.getReportDryMatter(),
+            'Profiles': [template.getAnalysisProfile(), ],
+            'Partitions': template.getPartitions(),
+        }
+
+    def get_or_create_sample(self):
+        """For primary ARs we will create a new sample here and set values
+        from the request, and if a sample is specified in the request we'll
+        locate and return it unmodified
+        """
+        context, request = self.context, self.request
+        client = self.get_client()
+        if 'Sample' in request:
+            # Secondary AR
+            sbrain = resolve_request_lookup(context, request, 'Sample')
+            if not sbrain:
+                raise BadRequest("Invalid sample specified in request")
+            sample = sbrain[0].getObject()
+            self.retval['sample_id'] = sample.getId()
+        else:
+            # Primary AR
+            sample = _createObjectByType("Sample", client, tmpID())
+            sample.unmarkCreationFlag()
+            fields = set_fields_from_request(sample, request)
+            for field in fields:
+                self.used(field)
+            sampletype = self.get_sample_type()
+            sample.setSampleType(sampletype)
+            sample._renameAfterCreation()
+            sample.setSampleID(sample.getId())
+            event.notify(ObjectInitializedEvent(sample))
+            sample.at_post_create_script()
+            self.retval['sample_id'] = sample.getId()
+            # Manually trigger initial workflow
+            wftool = getToolByName(context, 'portal_workflow')
+            if context.bika_setup.getSamplingWorkflowEnabled():
+                wftool.doActionFor(sample, 'sampling_workflow')
+            else:
+                wftool.doActionFor(sample, 'no_sampling_workflow')
+        return sample
+
+    def get_specs_from_request(self, dicts_to_dict_rr=None):
+        """Specifications for analyses are given on the request in *Spec
+
+        >>> portal = layer['portal']
+        >>> portal_url = portal.absolute_url()
+        >>> from plone.app.testing import SITE_OWNER_NAME
+        >>> from plone.app.testing import SITE_OWNER_PASSWORD
+
+        >>> browser = layer['getBrowser'](portal, loggedIn=True,
+        username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
+        >>> browser.open(portal_url+"/@@API/create", "&".join([
+        ... "obj_type=AnalysisRequest",
+        ... "Client=portal_type:Client|id:client-1",
+        ... "SampleType=portal_type:SampleType|title:Apple Pulp",
+        ... "Contact=portal_type:Contact|getFullname:Rita Mohale",
+        ... "Services:list=portal_type:AnalysisService|title:Calcium",
+        ... "Services:list=portal_type:AnalysisService|title:Copper",
+        ... "Services:list=portal_type:AnalysisService|title:Magnesium",
+        ... "SamplingDate=2013-09-29",
+        ... "Specification=portal_type:AnalysisSpec|title:Apple Pulp",
+        ... 'ResultsRange=[{"keyword":"Cu","min":5,"max":10,"error":10}',
+        {"keyword":"Mg","min":6,"max":11,"error":11}]',
+        ... ]))
+        >>> browser.contents
+        '{..."success": true...}'
+
+        >>> browser.open(portal_url+"/@@API/create", "&".join([
+        ... "obj_type=AnalysisRequest",
+        ... "Client=portal_type:Client|id:client-1",
+        ... "SampleType=portal_type:SampleType|title:Apple Pulp",
+        ... "Contact=portal_type:Contact|getFullname:Rita Mohale",
+        ... "AnalysisProfile=portal_type:AnalysisProfile|title:Trace Metals",
+        ... "SamplingDate=2013-09-29",
+        ... ]))
+        >>> browser.contents
+        '{..."success": true...}'
+
+
+        >>> browser.open(portal_url+"/@@API/create", "&".join([
+        ... "obj_type=AnalysisRequest",
+        ... "Client=portal_type:Client|id:client-1",
+        ... "Contact=portal_type:Contact|getFullname:Rita Mohale",
+        ... "Template=portal_type:ARTemplate|title:Bruma Metals",
+        ... "SamplingDate=2013-09-29",
+        ... ]))
+        >>> browser.contents
+        '{..."success": true...}'
+
+        """
+
+        # valid output for ResultsRange goes here.
+        specs = []
+
+        context = self.context
+        request = self.request
+        brains = resolve_request_lookup(context, request, "Specification")
+        spec_rr = brains[0].getObject().getResultsRange() if brains else {}
+        spec_rr = dicts_to_dict(spec_rr, 'keyword')
+        req_rr = request.get('ResultsRange', "[]")
+        try:
+            req_rr = json.loads(req_rr)
+        except:
+            raise BadRequest("Invalid value for ResultsRange (%s)" % req_rr)
+        req_rr = dicts_to_dict(req_rr, 'keyword')
+        spec_rr.update(req_rr)
+        return spec_rr.values()
