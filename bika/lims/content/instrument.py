@@ -37,6 +37,14 @@ def isOutOfDate(instance):
     return instance.isOutOfDate()
 
 @indexer(IInstrument)
+def isValidationInProgress(instance):
+    return instance.isValidationInProgress()
+
+@indexer(IInstrument)
+def isCalibrationInProgress(instance):
+    return instance.isCalibrationInProgress()
+
+@indexer(IInstrument)
 def getDisposeUntilNextCalibrationTest(instance):
     return instance.getDisposeUntilNextCalibrationTest()
 

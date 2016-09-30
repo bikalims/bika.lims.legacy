@@ -18,6 +18,8 @@
     <adapter name="ServiceUID" factory=".analysis.ServiceUID" />
     <adapter name="isQCValid" factory=".instrument.isQCValid" />
     <adapter name="isOutOfDate" factory=".instrument.isOutOfDate" />
+    <adapter name="isValidationInProgress" factory=".instrument.isValidationInProgress" />
+    <adapter name="isCalibrationInProgress" factory=".instrument.isCalibrationInProgress" />
     <adapter name="getDisposeUntilNextCalibrationTest" factory=".instrument.getDisposeUntilNextCalibrationTest" />
 
     <adapter name="analysisRequestTemplates" factory=".samplinground.analysisRequestTemplates" />
