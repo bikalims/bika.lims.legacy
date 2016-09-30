@@ -359,6 +359,12 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
                     # The current analysis allows the instrument regards
                     # to its analysis service and method?
                     if (instruments[uid]==''):
+                        # if no valid instrument is selected, prompt user
+                        message = _('Please select a valid instrument.')
+                        self.context.plone_utils.addPortalMessage(message, 'error')
+                        params = {'state[]': [uid for uid, analysis in selected_analyses.items()]}
+                        self.request.response.redirect(self.context.absolute_url() + '?' + urlencode(params))
+                        return
                     elif analysis.isInstrumentAllowed(instruments[uid]):
                         analysis.setInstrument(instruments[uid])
 
