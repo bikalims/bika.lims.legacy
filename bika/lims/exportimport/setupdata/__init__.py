@@ -1,3 +1,9 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+from bika.lims.exportimport.dataimport import SetupDataSetList as SDL
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import ISetupDataSetList
 from Products.CMFPlone.utils import safe_unicode, _createObjectByType
@@ -258,6 +264,10 @@ class WorksheetImporter:
             logger.info("More than one object found for %s" % contentFilter)
             return None
         elif len(brains) == 0:
+            if portal_type == 'AnalysisService':
+                brains = catalog(portal_type=portal_type, getKeyword=title)
+                if brains:
+                    return brains[0].getObject()
             logger.info("No objects found for %s" % contentFilter)
             return None
         else:
@@ -1783,7 +1793,7 @@ class AR_Templates(WorksheetImporter):
 
             obj = _createObjectByType("ARTemplate", folder, tmpID())
             obj.edit(
-                title=row['title'],
+                title=str(row['title']),
                 description=row.get('description', ''),
                 Remarks=row.get('Remarks', ''),
                 ReportDryMatter=bool(row['ReportDryMatter']))
@@ -2077,7 +2087,7 @@ class Reference_Samples(WorksheetImporter):
                      DateDisposed=row['DateDisposed']
                      )
             obj.setReferenceDefinition(ref_def)
-            obj.setReferenceManufacturer(ref_man)
+            obj.setManufacturer(ref_man)
             obj.unmarkCreationFlag()
 
             self.load_reference_sample_results(obj)

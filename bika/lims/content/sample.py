@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """Sample represents a physical sample submitted for testing
 """
 from AccessControl import ClassSecurityInfo
@@ -10,6 +15,7 @@ from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import ISample, ISamplePrepWorkflow, \
     ITransactionalType
 from bika.lims.permissions import SampleSample
+from bika.lims.permissions import ScheduleSampling
 from bika.lims.workflow import doActionFor, isBasicTransitionAllowed
 from bika.lims.workflow import skip
 from DateTime import DateTime
@@ -59,6 +65,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -81,6 +88,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -121,6 +129,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'visible', 'edit': 'invisible'},
@@ -156,6 +165,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
                      'sampled':           {'view': 'visible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'visible', 'edit': 'invisible'},
@@ -192,6 +202,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -213,12 +224,14 @@ schema = BikaSchema.copy() + Schema((
         write_permission=SampleSample,
         widget = DateTimeWidget(
             label=_("Date Sampled"),
+            show_time=True,
             size=20,
             visible={'edit': 'visible',
                      'view': 'visible',
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'visible', 'edit': 'invisible'},
@@ -242,6 +255,33 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
+                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
+                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
+                     'expired':           {'view': 'visible', 'edit': 'invisible'},
+                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
+                     },
+            render_own_label=True,
+        ),
+    ),
+    StringField('ScheduledSamplingSampler',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=ScheduleSampling,
+        vocabulary='getSamplers',
+        widget=BikaSelectionWidget(
+            description=_("Define the sampler supposed to do the sample in "
+                          "the scheduled date"),
+            format='select',
+            label=_("Sampler for scheduled sampling"),
+            visible={'edit': 'visible',
+                     'view': 'visible',
+                     'header_table': 'visible',
+                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'visible', 'edit': 'invisible'},
@@ -258,11 +298,14 @@ schema = BikaSchema.copy() + Schema((
         write_permission=permissions.ModifyPortalContent,
         widget = DateTimeWidget(
             label=_("Sampling Date"),
+            description=_("Define when the sampler has to take the samples"),
+            show_time=True,
             visible={'edit': 'visible',
                      'view': 'visible',
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'visible', 'edit': 'invisible'},
@@ -313,6 +356,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -341,6 +385,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -366,6 +411,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'prominent',
                      'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_received':   {'view': 'visible', 'edit': 'visible'},
@@ -390,6 +436,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_sampled':     {'view': 'invisible', 'edit': 'invisible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'invisible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'invisible', 'edit': 'invisible'},
@@ -430,6 +477,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -451,6 +499,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_sampled':     {'view': 'invisible', 'edit': 'invisible'},
+                     'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                      'sampled':           {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'invisible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'invisible', 'edit': 'invisible'},
@@ -469,6 +518,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
                      'sampled':           {'view': 'visible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'visible', 'edit': 'invisible'},
@@ -490,6 +540,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_sampled':     {'view': 'invisible', 'edit': 'invisible'},
+                     'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                      'sampled':           {'view': 'invisible', 'edit': 'invisible'},
                      'to_be_preserved':   {'view': 'invisible', 'edit': 'invisible'},
                      'sample_due':        {'view': 'invisible', 'edit': 'invisible'},
@@ -512,6 +563,7 @@ schema = BikaSchema.copy() + Schema((
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
                      'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                      'sampled':           {'view': 'visible', 'edit': 'visible'},
                      'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
                      'sample_due':        {'view': 'visible', 'edit': 'visible'},
@@ -876,22 +928,22 @@ class Sample(BaseFolder, HistoryAwareMixin):
                 if ar_state == 'active':
                     workflow.doActionFor(ar, 'cancel')
 
+    def workflow_script_schedule_sampling(self):
+        """
+        This function runs all the needed process for that action
+        """
+        workflow = getToolByName(self, 'portal_workflow')
+        # transact the related analysis requests
+        ars = self.getAnalysisRequests()
+        for ar in ars:
+            doActionFor(ar, 'schedule_sampling')
+
     def guard_receive_transition(self):
-        """Prevent the receive transition from being available:
-        - if object is cancelled
-        - if any related ARs have field analyses with no result.
+        """Prevent the receive transition from being available if object
+        is cancelled
         """
         # Can't do anything to the object if it's cancelled
-        if not isBasicTransitionAllowed(self):
-            return False
-        # check if any related ARs have field analyses with no result.
-        for ar in self.getAnalysisRequests():
-            field_analyses = ar.getAnalyses(getPointOfCapture='field',
-                                            full_objects=True)
-            no_results = [a for a in field_analyses if a.getResult() == '']
-            if no_results:
-                return False
-        return True
+        return isBasicTransitionAllowed(self)
 
     def guard_sample_prep_transition(self):
         """Allow the sampleprep automatic transition to fire.
@@ -939,5 +991,18 @@ class Sample(BaseFolder, HistoryAwareMixin):
         if len(transitions) > 0:
             return False
         return True
+
+    def guard_schedule_sampling_transition(self):
+        """
+        Prevent the transition if:
+        - if the user isn't part of the sampling coordinators group
+          and "sampling schedule" checkbox is set in bika_setup
+        - if no date and samples have been defined
+          and "sampling schedule" checkbox is set in bika_setup
+        """
+        if self.bika_setup.getScheduleSamplingEnabled() and\
+                isBasicTransitionAllowed(self):
+            return True
+        return False
 
 atapi.registerType(Sample, PROJECTNAME)
