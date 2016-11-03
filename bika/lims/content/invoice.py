@@ -1,9 +1,14 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.config import ManageInvoices, ManageBika, PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IInvoice
+from bika.lims.interfaces import IInvoice, ITransactionalType
 from DateTime import DateTime
 from decimal import Decimal
 from persistent.mapping import PersistentMapping
@@ -97,7 +102,7 @@ class InvoiceLineItem(PersistentMapping):
 
 
 class Invoice(BaseFolder):
-    implements(IInvoice)
+    implements(IInvoice, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

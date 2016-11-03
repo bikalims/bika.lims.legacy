@@ -1,10 +1,15 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.config import PROJECTNAME, ManageSuppliers
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.content.organisation import Organisation
-from bika.lims.interfaces import ISupplier
+from bika.lims.interfaces import ISupplier, IBikaSetupType
 from Products.Archetypes.public import *
 from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFPlone.utils import safe_unicode
@@ -63,7 +68,7 @@ schema = Organisation.schema.copy() + ManagedSchema((
 schema['AccountNumber'].write_permission = ManageSuppliers
 
 class Supplier(Organisation):
-    implements(ISupplier)
+    implements(ISupplier, IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

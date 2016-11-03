@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """
     AnalysisRequests often use the same configurations.
     AnalysisProfile is used to save these common configurations (templates).
@@ -10,7 +15,7 @@ from bika.lims.browser.widgets import ServicesWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from Products.Archetypes.public import *
-from bika.lims.interfaces import IAnalysisProfile
+from bika.lims.interfaces import IAnalysisProfile, IBikaSetupType
 from Products.Archetypes.references import HoldingReference
 from Products.ATExtensions.field import RecordsField
 from Products.CMFCore.permissions import View, ModifyPortalContent
@@ -131,7 +136,7 @@ class AnalysisProfile(BaseContent):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
-    implements(IAnalysisProfile)
+    implements(IAnalysisProfile, IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

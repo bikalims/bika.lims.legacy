@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """Analysis Category - the category of the analysis service
 """
 from AccessControl import ClassSecurityInfo
@@ -5,7 +10,7 @@ from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IAnalysisCategory
+from bika.lims.interfaces import IAnalysisCategory, IBikaSetupType
 from plone.indexer import indexer
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
@@ -65,7 +70,7 @@ schema['description'].schemata = 'default'
 
 
 class AnalysisCategory(BaseContent):
-    implements(IAnalysisCategory)
+    implements(IAnalysisCategory, IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

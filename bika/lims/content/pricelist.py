@@ -1,10 +1,15 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.browser.widgets.datetimewidget import DateTimeWidget
 from bika.lims.config import PRICELIST_TYPES, PROJECTNAME
 from bika.lims.content.bikaschema import BikaFolderSchema
-from bika.lims.interfaces import IPricelist
+from bika.lims.interfaces import IPricelist, ITransactionalType
 from DateTime import DateTime
 from persistent.mapping import PersistentMapping
 from plone.app.folder import folder
@@ -87,7 +92,7 @@ class PricelistLineItem(PersistentMapping):
 
 
 class Pricelist(folder.ATFolder):
-    implements(IPricelist)
+    implements(IPricelist, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

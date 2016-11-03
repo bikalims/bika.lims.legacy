@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """ Reference Definitions represent standard specifications for
     reference samples used in quality control
 """
@@ -13,6 +18,8 @@ import sys
 import time
 from bika.lims import PMF, bikaMessageFactory as _
 from zope.interface import implements
+
+from bika.lims.interfaces import IBikaSetupType
 
 schema = BikaSchema.copy() + Schema((
     ReferenceResultsField('ReferenceResults',
@@ -64,6 +71,7 @@ class ReferenceDefinition(BaseContent):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

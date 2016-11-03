@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """The contact person at a reference supplier organisation.
 """
 from AccessControl import ClassSecurityInfo
@@ -8,6 +13,7 @@ from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
 from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from zope.interface import implements
 
@@ -28,6 +34,7 @@ class SupplierContact(Person):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

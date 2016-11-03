@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
 from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
@@ -16,6 +21,8 @@ from zope.interface import implements
 import json
 import plone
 import sys
+
+from bika.lims.interfaces import IBikaSetupType
 
 schema = BikaSchema.copy() + Schema((
     StringField('SiteTitle',
@@ -86,6 +93,7 @@ class StorageLocation(BaseContent, HistoryAwareMixin):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

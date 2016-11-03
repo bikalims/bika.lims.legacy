@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """ReferenceSample represents a reference sample used for quality control testing
 """
 
@@ -19,7 +24,7 @@ from bika.lims.browser.widgets import DateTimeWidget as bika_DateTimeWidget
 from bika.lims.browser.widgets import ReferenceResultsWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IReferenceSample
+from bika.lims.interfaces import IReferenceSample, ITransactionalType
 from bika.lims.utils import sortable_title, tmpID
 from bika.lims.utils import to_unicode as _u
 from bika.lims.utils import to_utf8
@@ -54,11 +59,11 @@ schema = BikaSchema.copy() + Schema((
             description=_("Samples of this type should be treated as hazardous"),
         ),
     ),
-    ReferenceField('ReferenceManufacturer',
+    ReferenceField('Manufacturer',
         schemata = 'Description',
         allowed_types = ('Manufacturer',),
         relationship = 'ReferenceSampleManufacturer',
-        vocabulary = "getReferenceManufacturers",
+        vocabulary = "getManufacturers",
         referenceClass = HoldingReference,
         widget = ReferenceWidget(
             checkbox_bound = 0,
@@ -158,7 +163,7 @@ schema = BikaSchema.copy() + Schema((
 schema['title'].schemata = 'Description'
 
 class ReferenceSample(BaseFolder):
-    implements(IReferenceSample)
+    implements(IReferenceSample, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
@@ -200,7 +205,7 @@ class ReferenceSample(BaseFolder):
         items.sort(lambda x,y: cmp(x[1], y[1]))
         return DisplayList(list(items))
 
-    def getReferenceManufacturers(self):
+    def getManufacturers(self):
         bsc = getToolByName(self, 'bika_setup_catalog')
         items = [('','')] + [(o.UID, o.Title) for o in
                                bsc(portal_type='Manufacturer',

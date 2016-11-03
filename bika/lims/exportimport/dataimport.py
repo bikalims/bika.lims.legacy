@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
@@ -14,25 +19,6 @@ from pkg_resources import *
 from zope.component import getAdapters
 
 import plone
-
-
-class SetupDataSetList:
-
-    implements(ISetupDataSetList)
-
-    def __init__(self, context):
-        self.context = context
-
-    def __call__(self, projectname="bika.lims"):
-        datasets = []
-        for f in resource_listdir(projectname, 'setupdata'):
-            fn = f+".xlsx"
-            try:
-                if fn in resource_listdir(projectname, 'setupdata/%s' % f):
-                    datasets.append({"projectname": projectname, "dataset": f})
-            except OSError:
-                pass
-        return datasets
 
 
 class ImportView(BrowserView):

@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """DuplicateAnalysis uses Analysis as it's base.  Until that's fixed there
 is some confusion.
 """
@@ -7,7 +12,7 @@ from bika.lims.utils import t
 from bika.lims.browser.fields import InterimFieldsField
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.analysis import schema, Analysis
-from bika.lims.interfaces import IDuplicateAnalysis
+from bika.lims.interfaces import IDuplicateAnalysis, ITransactionalType
 from bika.lims.subscribers import skip
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import *
@@ -130,7 +135,7 @@ schema = schema.copy() + Schema((
 
 
 class DuplicateAnalysis(Analysis):
-    implements(IDuplicateAnalysis)
+    implements(IDuplicateAnalysis, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

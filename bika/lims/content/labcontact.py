@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """The lab staff
 """
 from AccessControl import ClassSecurityInfo
@@ -13,7 +18,7 @@ from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from zope.component import getAdapters
 from zope.interface import implements
-from bika.lims.interfaces import ILabContact
+from bika.lims.interfaces import ILabContact, IBikaSetupType
 from bika.lims.vocabularies import CustomPubPrefVocabularyFactory
 import sys
 
@@ -64,7 +69,7 @@ class LabContact(Person):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
-    implements(ILabContact)
+    implements(ILabContact, IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

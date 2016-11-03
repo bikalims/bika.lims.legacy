@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _, logger
 from bika.lims.config import *
@@ -7,7 +12,7 @@ from bika.lims.utils import to_utf8 as _c
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IWorksheet
+from bika.lims.interfaces import IWorksheet, ITransactionalType
 from bika.lims.permissions import EditWorksheet, ManageWorksheets
 from bika.lims.workflow import doActionFor
 from bika.lims.workflow import skip
@@ -91,7 +96,7 @@ schema['title'].widget.visible = {'edit': 'hidden', 'view': 'invisible'}
 
 class Worksheet(BaseFolder, HistoryAwareMixin):
     security = ClassSecurityInfo()
-    implements(IWorksheet)
+    implements(IWorksheet, ITransactionalType)
     displayContentsTab = False
     schema = schema
 
@@ -229,7 +234,6 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
 
             # Set ReferenceAnalysesGroupID (same id for the analyses from
             # the same Reference Sample and same Worksheet)
-            # https://github.com/bikalabs/Bika-LIMS/issues/931
             ref_analysis.setReferenceAnalysesGroupID(refgid)
             ref_analysis.reindexObject(idxs=["getReferenceAnalysesGroupID"])
 
@@ -324,17 +328,18 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
 
             # Set ReferenceAnalysesGroupID (same id for the analyses from
             # the same Reference Sample and same Worksheet)
-            # https://github.com/bikalabs/Bika-LIMS/issues/931
             if not refgid and not analysis.portal_type == 'ReferenceAnalysis':
-                part = analysis.getSamplePartition().id
-                dups = [an.getReferenceAnalysesGroupID()
-                        for an in self.getAnalyses()
-                        if an.portal_type == 'DuplicateAnalysis'
-                            and an.getSamplePartition().id == part]
+                prefix = analysis.aq_parent.getSample().id
+                dups = []
+                for an in self.getAnalyses():
+                    if an.portal_type == 'DuplicateAnalysis' \
+                            and hasattr(an.aq_parent, 'getSample') \
+                            and an.aq_parent.getSample().id == prefix:
+                        dups.append(an.getReferenceAnalysesGroupID())
                 dups = list(set(dups))
                 postfix = dups and len(dups) + 1 or 1
                 postfix = str(postfix).zfill(int(2))
-                refgid = '%s-D%s' % (part, postfix)
+                refgid = '%s-D%s' % (prefix, postfix)
             duplicate.setReferenceAnalysesGroupID(refgid)
             duplicate.reindexObject(idxs=["getReferenceAnalysesGroupID"])
 

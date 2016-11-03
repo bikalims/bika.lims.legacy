@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_base, aq_inner
 from Products.ATExtensions.field.records import RecordsField
@@ -12,6 +17,8 @@ from bika.lims.content.bikaschema import BikaSchema
 from bika.lims import PMF, bikaMessageFactory as _
 from zope.interface import implements
 import sys
+
+from bika.lims.interfaces import IBikaSetupType
 
 schema = BikaSchema.copy() + Schema((
     RecordsField('Layout',
@@ -80,6 +87,7 @@ class WorksheetTemplate(BaseContent):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
+    implements(IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):

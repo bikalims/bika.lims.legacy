@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from zope.interface import Interface
 
 
@@ -175,6 +180,15 @@ class IBikaSetup(Interface):
 
     ""
 
+class IBikaSetupType(Interface):
+    """This marker will apply to any item which is considered a "setup"
+    object.  This makes it easy to select them all together for exportation.
+    """
+
+class ITransactionalType(Interface):
+    """This marker will apply to any item which is considered a "transactional"
+    object.  This makes it easy to select them all together for exportation.
+    """
 
 class IAnalysisCategory(Interface):
 

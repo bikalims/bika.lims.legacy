@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """
     AnalysisRequests often use the same configurations.
     ARTemplate includes all AR fields, including preset AnalysisProfile
@@ -10,7 +15,7 @@ from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.ATExtensions.field.records import RecordsField
 from Products.CMFCore.utils import getToolByName
 from bika.lims import PMF, bikaMessageFactory as _
-from bika.lims.interfaces import IARTemplate
+from bika.lims.interfaces import IARTemplate, IBikaSetupType
 from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
 from bika.lims.browser.widgets import ARTemplatePartitionsWidget
 from bika.lims.browser.widgets import ARTemplateAnalysesWidget
@@ -169,7 +174,7 @@ schema = BikaSchema.copy() + Schema((
     RecordsField('Analyses',
         schemata = 'Analyses',
         required = 0,
-        type = 'artemplate_analyses',
+        type = 'analyses',
         subfields = ('service_uid', 'partition'),
         subfield_labels = {'service_uid': _('Title'),
                            'partition': _('Partition')},
@@ -202,7 +207,7 @@ class ARTemplate(BaseContent):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
-    implements(IARTemplate)
+    implements(IARTemplate, IBikaSetupType)
 
     _at_rename_after_creation = True
     def _renameAfterCreation(self, check_auto_id=False):
@@ -224,8 +229,11 @@ class ARTemplate(BaseContent):
         return DisplayList(items)
 
     def getClientUID(self):
-        if self.aq_parent.portal_type == 'Client':
-            return self.aq_parent.UID()
+        """This populates the getClientUID catalog
+        If the parent is the system bika_artemplates folder,
+        then that folder's UID must be returned in this index.
+        """
+        return self.aq_parent.UID()
         return ''
 
     def getAnalysisServiceSettings(self, uid):

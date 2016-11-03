@@ -1,5 +1,14 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
+
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
@@ -72,6 +81,7 @@ schema['description'].widget.visible = True
 schema['description'].schemata = 'default'
 
 class Container(BaseContent):
+    implements(IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

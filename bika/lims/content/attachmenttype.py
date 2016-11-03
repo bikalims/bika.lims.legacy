@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """AttachmentType - the type of attachment
 """
 from AccessControl import ClassSecurityInfo
@@ -7,6 +12,7 @@ from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
 import sys
 from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IBikaSetupType
 from bika.lims.utils import t
 from zope.interface import implements
 
@@ -16,6 +22,7 @@ schema['description'].widget.visible = True
 schema['description'].schemata = 'default'
 
 class AttachmentType(BaseContent):
+    implements(IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

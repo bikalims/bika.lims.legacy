@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """The contact person at an organisation.
 """
 from AccessControl import ClassSecurityInfo
@@ -11,7 +16,7 @@ from Products.CMFPlone.utils import safe_unicode
 from bika.lims.config import ManageClients, PROJECTNAME
 from bika.lims.content.person import Person
 from bika.lims import PMF, bikaMessageFactory as _
-from bika.lims.interfaces import IContact
+from bika.lims.interfaces import IContact, IBikaSetupType
 from zope.component import getAdapters
 from zope.interface import implements
 from bika.lims.utils import isActive
@@ -57,7 +62,7 @@ schema['title'].widget.visible = False
 schema.moveField('CCContact', before='AttachmentsPermitted')
 
 class Contact(Person):
-    implements(IContact)
+    implements(IContact, IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

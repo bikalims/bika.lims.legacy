@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 import sys
 
 from Products.Archetypes.public import *
@@ -8,7 +13,7 @@ from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import ReferenceWidget as BikaReferenceWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import ISupplyOrder
+from bika.lims.interfaces import ISupplyOrder, ITransactionalType
 from bika.lims.utils import t
 from DateTime import DateTime
 from persistent.mapping import PersistentMapping
@@ -107,7 +112,7 @@ class SupplyOrderLineItem(PersistentMapping):
 
 class SupplyOrder(BaseFolder):
 
-    implements(ISupplyOrder, IConstrainTypes)
+    implements(ISupplyOrder, IConstrainTypes, ITransactionalType)
 
     security = ClassSecurityInfo()
     displayContentsTab = False

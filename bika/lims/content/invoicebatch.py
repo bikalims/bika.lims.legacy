@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """InvoiceBatch is a container for Invoice instances.
 """
 from AccessControl import ClassSecurityInfo
@@ -7,7 +12,7 @@ from bika.lims.utils import t
 from bika.lims.config import ManageInvoices, PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.content.invoice import InvoiceLineItem
-from bika.lims.interfaces import IInvoiceBatch
+from bika.lims.interfaces import IInvoiceBatch, ITransactionalType
 from bika.lims.utils import get_invoice_item_description
 from DateTime import DateTime
 from Products.Archetypes.public import *
@@ -40,7 +45,7 @@ schema['title'].default = DateTime().strftime('%b %Y')
 class InvoiceBatch(BaseFolder):
 
     """ Container for Invoice instances """
-    implements(IInvoiceBatch)
+    implements(IInvoiceBatch, ITransactionalType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema

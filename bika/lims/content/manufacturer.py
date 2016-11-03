@@ -1,3 +1,8 @@
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2016 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
 from Products.CMFCore.permissions import View, ModifyPortalContent
@@ -5,7 +10,7 @@ from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IManufacturer
+from bika.lims.interfaces import IManufacturer, IBikaSetupType
 from zope.interface import implements
 
 schema = BikaSchema.copy()
@@ -14,7 +19,7 @@ schema['description'].schemata = 'default'
 schema['description'].widget.visible = True
 
 class Manufacturer(BaseContent):
-    implements(IManufacturer)
+    implements(IManufacturer, IBikaSetupType)
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
