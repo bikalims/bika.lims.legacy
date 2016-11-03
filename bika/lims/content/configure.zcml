@@ -11,7 +11,17 @@
     <adapter name="BatchUID" factory=".analysisrequest.BatchUID" />
     <adapter name="SamplingRoundUID" factory=".analysisrequest.SamplingRoundUID" />
     <adapter name="Priority" factory=".analysis.Priority" />
+    <adapter name="ServiceTitle" factory=".analysis.ServiceTitle" />
+    <adapter name="RequestUID" factory=".analysis.RequestUID" />
+    <adapter name="ResultCaptureDate" factory=".analysis.ResultCaptureDate" />
     <adapter name="Priority" factory=".worksheet.Priority" />
+    <adapter name="ServiceUID" factory=".analysis.ServiceUID" />
+    <adapter name="isQCValid" factory=".instrument.isQCValid" />
+    <adapter name="isOutOfDate" factory=".instrument.isOutOfDate" />
+    <adapter name="isValidationInProgress" factory=".instrument.isValidationInProgress" />
+    <adapter name="isCalibrationInProgress" factory=".instrument.isCalibrationInProgress" />
+    <adapter name="getDisposeUntilNextCalibrationTest" factory=".instrument.getDisposeUntilNextCalibrationTest" />
+
     <adapter name="analysisRequestTemplates" factory=".samplinground.analysisRequestTemplates" />
     <adapter name="samplingRoundSamplingDate" factory=".samplinground.samplingRoundSamplingDate" />
     <adapter name="sortable_title" factory=".analysiscategory.sortable_title_with_sort_key" />

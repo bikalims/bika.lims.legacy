@@ -50,11 +50,38 @@ import cgi
 import datetime
 import math
 
+# Indexers for some fields
 @indexer(IAnalysis)
 def Priority(instance):
     priority = instance.getPriority()
     if priority:
         return priority.getSortKey()
+
+@indexer(IAnalysis)
+def ServiceTitle(instance):
+    return instance.getService().Title()
+
+@indexer(IAnalysis)
+def ServiceUID(instance):
+    # Check to see if both analysis and service are instantiated
+    # before attempting to index, because create methods notify
+    # indexer before these objects are ready
+    if instance is not None:
+        if instance.getService() is not None:
+            return instance.getService().UID()
+
+@indexer(IAnalysis)
+def RequestUID(instance):
+    return instance.aq_parent.UID()
+
+@indexer(IAnalysis)
+def ResultCaptureDate(instance):
+    try:
+        print('indexed: %r' % instance)
+        return instance.getResultCaptureDate()
+    except Exception as e:
+        print('index fail: %r' % e)
+    return ''
 
 @indexer(IAnalysis)
 def sortable_title_with_sort_key(instance):
@@ -175,6 +202,9 @@ schema = BikaSchema.copy() + Schema((
     ),
     ComputedField('ServiceUID',
         expression = 'context.getService().UID()',
+    ),
+    ComputedField('InstrumentUID',
+        expression = 'context.getInstrument().UID() if context.getInstrument() else None',
     ),
     ComputedField('SampleTypeUID',
         expression = 'context.aq_parent.getSample().getSampleType().UID()',
@@ -503,6 +533,9 @@ class Analysis(BaseContent):
             # Reset DL
             self.Schema().getField('DetectionLimitOperand').set(self, None)
         self.getField('Result').set(self, val, **kw)
+        # Reindex new ResultcaptureDate
+        bac = getToolByName(self, 'bika_analysis_catalog')
+        bac.reindexObject(self)
 
         # Uncertainty calculation on DL
         # https://jira.bikalabs.com/browse/LIMS-1808

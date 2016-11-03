@@ -5,12 +5,69 @@
 
 from Products.Archetypes.config import TOOL_NAME
 from Products.CMFCore.utils import getToolByName
+from bika.lims.utils import formatDecimalMark
+from bika.lims.utils.analysis import format_numeric_result, get_significant_digits
 from zExceptions import BadRequest
 from bika.lims.utils import safe_unicode
 import json
 import Missing
 import sys, traceback
+from pprint import pprint
+from DateTime import DateTime
 
+# Need to handle formatted result for DisplayResult 
+# from metadata rather than indexing it directly
+def handle_formattedDisplayResult(result, choices, threshold, precision, decimalmark='.', sciformat=1):
+    """
+    Returns a formatted result from an analysis using only catalog metadata
+
+    :param result: result value of the analysis. Returned from Analysis catalog result.
+    :param choices: ResultOptions dict of the analysis' service. Returned from Service catalog result.
+    :param threshold: ExponentialFormatPrecision field of analysis' service. Returned from Service catalog result.
+    :param precision: Precision field of analysis' service. Returned from Service catalog result.
+    :param decimalmark: Uses default
+    :param sciformat: Uses default
+
+    Things it does not handle as of yet:
+    1) hidemin/hidemax results
+    2) multiple scientific notations, only uses default formatting
+    3) uncertaintity in format precision
+    """
+
+    # Choices will be from catalog ResultOptions index
+
+    # 1. Print ResultText of matching ResulOptions
+    if choices is not None:
+        match = [x['ResultText'] for x in choices
+                 if str(x['ResultValue']) == str(result)]
+        if match:
+            return match[0]
+
+    # 2. If the result is not floatable, return it without being formatted
+    try:
+        result = float(result)
+    except:
+        return result
+
+    # Current result precision is above the threshold?
+    sig_digits = get_significant_digits(float(result))
+    negative = sig_digits < 0
+    sign = '-' if negative else ''
+    sig_digits = abs(sig_digits)
+    sci = sig_digits >= float(threshold)
+
+    formatted = ''
+    if sci:
+        # Default format: aE^+b
+        formatted = str("%%.%se" % sig_digits) % result
+    else:
+        # Decimal notation
+        prec = precision if precision else ''
+        formatted = str("%%.%sf" % prec) % result
+        formatted = str(int(float(formatted))) if float(formatted).is_integer() else formatted
+
+    # Render numerical values
+    return formatDecimalMark(formatted, decimalmark)
 
 def handle_errors(f):
     """ simple JSON error handler
@@ -28,21 +85,21 @@ def handle_errors(f):
     return decorator
 
 
-def get_include_fields(request):
+def get_include_fields(request, query="include_fields"):
     """Retrieve include_fields values from the request
     """
     include_fields = []
-    rif = request.get("include_fields", "")
-    if "include_fields" in request:
+    rif = request.get(query, "")
+    if query in request:
         include_fields = [x.strip()
                           for x in rif.split(",")
                           if x.strip()]
-    if "include_fields[]" in request:
-        include_fields = request['include_fields[]']
+    if query+"[]" in request:
+        include_fields = request[query+'[]']
     return include_fields
 
 
-def load_brain_metadata(proxy, include_fields):
+def load_brain_metadata(proxy, include_fields, catalog=None):
     """Load values from the catalog metadata into a list of dictionaries
     """
     ret = {}
@@ -52,12 +109,40 @@ def load_brain_metadata(proxy, include_fields):
         if include_fields and index not in include_fields:
             continue
         val = getattr(proxy, index)
+
         if val != Missing.Value:
             try:
+                # handle FieldIndexes that return metadat as DateTime objects
+                if 'DateTime' in str(val.__class__):
+                    val = str(val)
+
                 json.dumps(val)
             except:
                 continue
             ret[index] = val
+        else:
+            if catalog is not None:
+                try:
+                    val = catalog._catalog.getIndex(index).getEntryForObject(proxy.getRID(), default=None)
+                    if val is None:
+                        continue
+
+                    # Parse certain index types as readable metadata
+                    if 'BooleanIndex' in str(catalog._catalog.getIndex(index).__class__):
+                        val = True if val else False
+                    if 'DateIndex' in str(catalog._catalog.getIndex(index).__class__):
+                        # Ignore dates since they use Zope timestamp conversion and not standard UTC timestamps
+                        # TODO Should really make sure metadata works here instead
+                        continue
+                    if 'DateTime' in str(val.__class__):
+                        val = str(val)
+
+                    json.dumps(val)
+                except:
+                    continue
+ 
+                ret[index] = val
+
     return ret
 
 

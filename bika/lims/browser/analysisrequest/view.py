@@ -147,6 +147,11 @@ class AnalysisRequestViewView(BrowserView):
                         'Request ${retracted_request_id}.',
                         mapping={'retracted_request_id': par.getRequestID()})
             self.addMessage(message, 'info')
+
+        # reindex AR if saving
+        if "form.button.save" in self.request.form:
+            ar.reindexObject()
+
         self.renderMessages()
         return self.template()
 

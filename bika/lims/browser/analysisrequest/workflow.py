@@ -363,17 +363,14 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
                     # The current analysis allows the instrument regards
                     # to its analysis service and method?
                     if (instruments[uid]==''):
-                        previnstr = analysis.getInstrument()
-                        if previnstr:
-                            previnstr.removeAnalysis(analysis)
-                        analysis.setInstrument(None);
+                        # if no valid instrument is selected, prompt user
+                        message = _('Please select a valid instrument.')
+                        self.context.plone_utils.addPortalMessage(message, 'error')
+                        params = {'state[]': [uid for uid, analysis in selected_analyses.items()]}
+                        self.request.response.redirect(self.context.absolute_url() + '?' + urlencode(params))
+                        return
                     elif analysis.isInstrumentAllowed(instruments[uid]):
-                        previnstr = analysis.getInstrument()
-                        if previnstr:
-                            previnstr.removeAnalysis(analysis)
                         analysis.setInstrument(instruments[uid])
-                        instrument = analysis.getInstrument()
-                        instrument.addAnalysis(analysis)
 
             # Need to save the method?
             if uid in methods and analysis_active:

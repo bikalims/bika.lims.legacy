@@ -219,6 +219,8 @@ class WorksheetWorkflowAction(WorkflowAction):
                         instrument.addAnalysis(analysis)
                         if analysis.portal_type == 'ReferenceAnalysis':
                             instrument.setDisposeUntilNextCalibrationTest(False)
+                            instrument.cleanReferenceAnalysesCache()
+                            instrument.reindexObject()
 
             # Need to save the method?
             if uid in methods and analysis_active:

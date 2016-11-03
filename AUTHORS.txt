@@ -22,6 +22,8 @@ Aleksandr Melnikov <aleksandr.melnikov@limelyte.com>
 Anderson Smith <andersonsmith183@gmail.com>
 Henrique Chehad <hchehad@gmail.com>
 Pieter van der Merwe <pietercvdm@gmail.com>
+Alyssa Murati <alyssa@mooball.net>
+Ben Letchford <ben_letchford@debortoli.com.au>
 Manav Batra <manavbatra@outlook.com>
 Hocine Bendou <hocinebendou@gmail.com>
 Jaipal Singh <jaipal.singh@research.iiit.ac.in>
