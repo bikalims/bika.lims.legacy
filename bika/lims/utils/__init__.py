@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 
-from AccessControl import ModuleSecurityInfo, allow_module
+from AccessControl import ModuleSecurityInfo, allow_module, getSecurityManager
 
 import math
 
@@ -33,6 +32,7 @@ import Globals
 import os
 import re
 import tempfile
+import types
 import urllib2
 
 ModuleSecurityInfo('email.Utils').declarePublic('formataddr')
@@ -581,3 +581,37 @@ def get_metadata(brain, index, catalog):
             return brain[index]
 
         return val
+
+def checkPermissions(permissions=[], obj=None):
+    """
+    Checks if a user has permissions for a given object.
+
+    Args:
+        permissions: The permissions the current user must be compliant with
+        obj: The object for which the permissions apply
+
+    Returns:
+        1 if the user complies with all the permissions for the given object.
+        Otherwise, it returns empty.
+    """
+    if not obj:
+        return False
+    sm = getSecurityManager()
+    for perm in permissions:
+        if not sm.checkPermission(perm, obj):
+            return ''
+    return True
+
+def getFromString(obj, string):
+    attrobj = obj
+    attrs = string.split('.')
+    for attr in attrs:
+        if hasattr(attrobj, attr):
+            attrobj = getattr(attrobj, attr)
+            if isinstance(attrobj, types.MethodType) \
+               and callable(attrobj):
+                attrobj = attrobj()
+        else:
+            attrobj = None
+            break
+    return attrobj if attrobj else None
