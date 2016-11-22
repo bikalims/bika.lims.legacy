@@ -334,7 +334,40 @@ schema = BikaFolderSchema.copy() + Schema((
         default = False,
         widget = BooleanWidget(
             label=_("Add a remarks field to all analyses"),
+            description=_(
+                "If enabled, a free text field will be displayed close to "
+                "each analysis in results entry view"
+            )
         ),
+    ),
+    BooleanField(
+        'SelfVerificationEnabled',
+        schemata="Analyses",
+        default=False,
+        widget=BooleanWidget(
+            label=_("Allow self-verification of results"),
+            description=_(
+                "If enabled, a user who submitted a result will also be able "
+                "to verify it. This setting only take effect for those users "
+                "with a role assigned that allows them to verify results "
+                "(by default, managers, labmanagers and verifiers)."
+                "This setting can be overrided for a given Analysis in "
+                "Analysis Service edit view. By default, disabled."),
+         ),
+    ),
+    IntegerField(
+        'NumberOfRequiredVerifications',
+        schemata="Analyses",
+        default=1,
+        vocabulary="_getNumberOfRequiredVerificationsVocabulary",
+        widget=SelectionWidget(
+            label=_("Number of required verifications"),
+            description=_(
+                "Number of required verifications before a given result being "
+                "considered as 'verified'. This setting can be overrided for "
+                "any Analysis in Analysis Service edit view. By default, 1"),
+            format="select",
+         ),
     ),
     ReferenceField('DryMatterService',
         schemata = "Analyses",
@@ -665,6 +698,16 @@ class BikaSetup(folder.ATFolder):
             return True if checkbox == 'on' and len(widget[0]) > 1 else False
         else:
             return False
+
+    def _getNumberOfRequiredVerificationsVocabulary(self):
+        """
+        Returns a DisplayList with the available options for the
+        multi-verification list: '1', '2', '3', '4'
+        :return: DisplayList with the available options for the
+            multi-verification list
+        """
+        items = [(1, '1'), (2, '2'), (3, '3'), (4, '4')]
+        return IntDisplayList(list(items))
 
 
 registerType(BikaSetup, PROJECTNAME)
