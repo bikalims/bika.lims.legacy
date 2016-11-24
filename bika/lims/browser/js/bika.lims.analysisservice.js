@@ -428,11 +428,18 @@ function AnalysisServiceEditView() {
                 async: false
             }).done(function(data) {
                 $(method_sel).find('option').remove();
-                if (data != null && data['uid']) {
-                    // Set the instrument's method
-                    var option = '<option value="'+data['uid']+'">'+data['title']+'</option>';
-                    $(method_sel).append(option);
-                    $(method_sel).val(data['uid']);
+                // Handle multiple methods
+
+                if (data != null && data.methods.length > 0) {
+                    // Set the instrument's methods
+                    $.each(data.methods, function(index, value) {
+                        var uid = value.uid;
+                        var title = value.title;
+                        console.debug("Adding Method " + title + " to the Selection");
+                        var option = '<option value="'+uid+'">'+title+'</option>';
+                        $(method_sel).append(option);
+                        $(method_sel).val(uid);
+                    });
                 } else {
                     // Oooopps. The instrument has no method assigned
                     $(method_sel).append("<option value=''>"+_("None")+"</option>");

@@ -16,6 +16,7 @@ from bika.lims.utils import t
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import RecordsWidget
+from bika.lims.browser.widgets.simplereferencewidget import SimpleReferenceWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema, BikaFolderSchema
 from bika.lims.interfaces import IInstrument
@@ -83,7 +84,8 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         allowed_types=('Method',),
         relationship='InstrumentMethod',
         required=0,
-        widget=SelectionWidget(
+        multiValued=1,
+        widget=SimpleReferenceWidget(
             format='select',
             label=_("Method"),
         ),
@@ -320,15 +322,13 @@ class Instrument(ATFolder):
 
     def _getAvailableMethods(self):
         """ Returns the available (active) methods.
-            One method can be done by multiple instruments, but one
-            instrument can only be used in one method.
         """
         bsc = getToolByName(self, 'bika_setup_catalog')
-        items = [(c.UID, c.Title) \
-                for c in bsc(portal_type='Method',
-                             inactive_state = 'active')]
-        items.sort(lambda x,y:cmp(x[1], y[1]))
-        items.insert(0, ('', t(_('None'))))
+        items = [(c.UID, c.Title)
+                 for c in bsc(portal_type='Method',
+                              inactive_state='active')]
+        items.sort(lambda x, y: cmp(x[1], y[1]))
+        # items.insert(0, ('', t(_('None'))))
         return DisplayList(items)
 
     def getInstrumentTypes(self):

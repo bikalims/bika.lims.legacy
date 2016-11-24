@@ -97,37 +97,44 @@ class InstrumentsView(BikaListingView):
 
     def folderitems(self):
         items = BikaListingView.folderitems(self)
-        for x in range(len(items)):
-            if not items[x].has_key('obj'): continue
-            obj = items[x]['obj']
+
+        for item in items:
+            obj = item.get("obj", None)
+            if obj is None:
+                continue
 
             itype = obj.getInstrumentType()
-            items[x]['Type'] = itype.Title() if itype else ''
+            item['Type'] = itype.Title() if itype else ''
             ibrand = obj.getManufacturer()
-            items[x]['Brand'] = ibrand.Title() if ibrand else ''
-            items[x]['Model'] = obj.getModel()
+            item['Brand'] = ibrand.Title() if ibrand else ''
+            item['Model'] = obj.getModel()
 
             data = obj.getCertificateExpireDate()
             if data == '':
-                items[x]['ExpiryDate'] = "No date avaliable"
+                item['ExpiryDate'] = "No date avaliable"
             else:
-                items[x]['ExpiryDate'] = data.asdatetime().strftime(self.date_format_short)
-                
+                item['ExpiryDate'] = data.asdatetime().strftime(self.date_format_short)
+
             if obj.isOutOfDate():
-                items[x]['WeeksToExpire'] = "Out of date"
+                item['WeeksToExpire'] = "Out of date"
             else:
                 date = int(str(obj.getWeeksToExpire()).split(',')[0].split(' ')[0])
-                weeks,days = divmod(date,7)
-                items[x]['WeeksToExpire'] = str(weeks)+" weeks"+" "+str(days)+" days"
-                
-            if obj.getMethod():
-                items[x]['Method'] = obj.getMethod().Title() 
-                items[x]['replace']['Method'] = "<a href='%s'>%s</a>" % \
-                    (obj.getMethod().absolute_url(), items[x]['Method'])
-            else:
-                items[x]['Method'] = ''
-            items[x]['replace']['Title'] = "<a href='%s'>%s</a>" % \
-                (items[x]['url'], items[x]['Title'])
+                weeks, days = divmod(date, 7)
+                item['WeeksToExpire'] = str(weeks) + " weeks" + " " + str(days) + " days"
+
+            # Multiple Methods per Instrument handling
+            methods = to_list(obj.getMethod())
+            item["Methods"] = methods
+            urls = []
+            titles = []
+            for method in methods:
+                url = method.absolute_url()
+                title = method.Title()
+                titles.append(title)
+                urls.append("<a href='{0}'>{1}</a>".format(url, title))
+
+            item["Method"] = ", ".join(titles)
+            item["replace"]["Method"] = ", ".join(urls)
 
         return items
 

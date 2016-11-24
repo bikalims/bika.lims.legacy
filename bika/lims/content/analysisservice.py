@@ -1188,11 +1188,14 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         """
         method = None
         if (self.getInstrumentEntryOfResults() == True):
-            method = self.getInstrument().getMethod() \
-                if (self.getInstrument() \
-                    and self.getInstrument().getMethod()) \
-                else None
-        else:
+            # Instruments can have now multiple Methods assigned, thus, use
+            # immediately the value of the _Method field
+            #
+            # method = self.getInstrument().getMethod() \
+            #     if (self.getInstrument() \
+            #         and self.getInstrument().getMethod()) \
+            #     else None
+        # else:
             method = self.get_Method();
         return method
 
