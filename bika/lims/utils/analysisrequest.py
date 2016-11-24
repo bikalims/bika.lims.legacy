@@ -121,6 +121,7 @@ def create_analysisrequest(context, request, values, analyses=None,
         analysis_state = workflow.getInfoFor(analysis, 'review_state')
         if analysis_state not in skip_receive:
             doActionFor(analysis, 'receive')
+
     if not secondary:
         # Create sample partitions
         if not partitions:
