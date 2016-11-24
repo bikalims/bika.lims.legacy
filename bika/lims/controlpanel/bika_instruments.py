@@ -1,29 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
-from Products.Archetypes.ArchetypeTool import registerType
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.content.bikaschema import BikaFolderSchema
 from bika.lims.interfaces import IInstruments
+from bika.lims.utils.functools import to_list
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.app.folder.folder import ATFolder, ATFolderSchema
 from zope.interface.declarations import implements
-from operator import itemgetter
+
 
 class InstrumentsView(BikaListingView):
     implements(IFolderContentsView, IViewView)
+
     def __init__(self, context, request):
         super(InstrumentsView, self).__init__(context, request)
         self.catalog = 'bika_setup_catalog'
@@ -39,7 +36,7 @@ class InstrumentsView(BikaListingView):
         self.show_select_row = False
         self.show_select_column = True
         self.pagesize = 25
-        
+
         self.columns = {
             'Title': {'title': _('Instrument'),
                       'index': 'sortable_title'},
@@ -55,16 +52,16 @@ class InstrumentsView(BikaListingView):
             'ExpiryDate': {'title': _('Expiry Date'),
                            'toggle': True},
             'WeeksToExpire': {'title': _('Weeks To Expire'),
-                           'toggle': False},
+                              'toggle': False},
             'Method': {'title': _('Method'),
-                           'toggle': True},
-            }
+                       'toggle': True},
+        }
 
         self.review_states = [
-            {'id':'default',
+            {'id': 'default',
              'title': _('Active'),
              'contentFilter': {'inactive_state': 'active'},
-             'transitions': [{'id':'deactivate'}, ],
+             'transitions': [{'id': 'deactivate'}, ],
              'columns': ['Title',
                          'Type',
                          'Brand',
@@ -72,10 +69,10 @@ class InstrumentsView(BikaListingView):
                          'ExpiryDate',
                          'WeeksToExpire',
                          'Method']},
-            {'id':'inactive',
+            {'id': 'inactive',
              'title': _('Dormant'),
              'contentFilter': {'inactive_state': 'inactive'},
-             'transitions': [{'id':'activate'}, ],
+             'transitions': [{'id': 'activate'}, ],
              'columns': ['Title',
                          'Type',
                          'Brand',
@@ -83,9 +80,9 @@ class InstrumentsView(BikaListingView):
                          'ExpiryDate',
                          'WeeksToExpire',
                          'Method']},
-            {'id':'all',
+            {'id': 'all',
              'title': _('All'),
-             'contentFilter':{},
+             'contentFilter': {},
              'columns': ['Title',
                          'Type',
                          'Brand',
@@ -93,7 +90,7 @@ class InstrumentsView(BikaListingView):
                          'ExpiryDate',
                          'WeeksToExpire',
                          'Method']},
-            ]
+        ]
 
     def folderitems(self):
         items = BikaListingView.folderitems(self)
@@ -139,10 +136,12 @@ class InstrumentsView(BikaListingView):
         return items
 
 schema = ATFolderSchema.copy()
+
+
 class Instruments(ATFolder):
     implements(IInstruments)
     displayContentsTab = False
     schema = schema
 
-schemata.finalizeATCTSchema(schema, folderish = True, moveDiscussion = False)
+schemata.finalizeATCTSchema(schema, folderish=True, moveDiscussion=False)
 atapi.registerType(Instruments, PROJECTNAME)

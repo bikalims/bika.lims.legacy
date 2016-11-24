@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -81,7 +83,7 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
 
     HistoryAwareReferenceField('Method',
         vocabulary='_getAvailableMethods',
-        allowed_types=('Method',),
+        allowed_types=('Method', ),
         relationship='InstrumentMethod',
         required=0,
         multiValued=1,
