@@ -1214,10 +1214,10 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
             # Add the methods from the instruments capable to perform
             # this analysis service
             for ins in self.getInstruments():
-                method = ins.getMethod()
-                if method and method.UID() not in muids:
-                    methods.append(method)
-                    muids.append(method.UID())
+                for method in ins.getMethod():
+                    if method and method.UID() not in muids:
+                        methods.append(method)
+                        muids.append(method.UID())
 
         return methods
 
