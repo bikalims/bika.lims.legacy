@@ -10,7 +10,7 @@ Linux Installation Steps
 
     The following list of packages need to be installed.  
 
-    This package list is valid for Ubuntu 14.04.
+    This package list is valid for Ubuntu 14.04 and 16.04.
 
        sudo apt-get install python-dev build-essential libffi-dev libpcre3-dev gcc
        sudo apt-get install autoconf libtool pkg-config zlib1g-dev git-core libssl-dev
@@ -100,6 +100,18 @@ Linux Installation Steps
     If the buildout finished successfully, an 'adminPassword.txt' will have been
     created automatically inside the Plone instance folder. It contains the super-user
     credentials you'll need to create the Bika site.
+
+    If the biuldout does fail, check the error message. If the error looks similiar to
+    this::
+    
+        TypeError: 'encoding' is an invalid keyword argument for this function An error
+        occurred when trying to install CairoSVG 2.0.0
+
+    add the following to the end of the ``buildout.cfg`` file, and retry the buildout::
+        
+        # Required by:
+        # bika.lims
+        CairoSVG = 1.0.20
 
 4. Test your setup
 
