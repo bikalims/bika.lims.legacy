@@ -8,13 +8,7 @@ python:
   - 2.7
 addons:
   apt:
-    sources:
-      - google-chrome
     packages:
-      - google-chrome-stable
-    packages:
-    - chromium-chromedriver
-    - chromium-bsu
     - libpcre3
     - libpcre3-dev
     - libssl-dev
@@ -25,6 +19,10 @@ before_script:
   - export DISPLAY=99.0
   - sh -e /etc/init.d/xvfb start
 before_install:
+  - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+  - sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+  - sudo apt-get update
+  - sudo apt-get install google-chrome-stable
   - mkdir -p $TRAVIS_BUILD_DIR/buildout-cache/{eggs,downloads}
   - echo "[buildout]" > $TRAVIS_BUILD_DIR/default.cfg
   - echo "download-cache = $TRAVIS_BUILD_DIR/buildout-cache/downloads" >> $TRAVIS_BUILD_DIR/default.cfg
