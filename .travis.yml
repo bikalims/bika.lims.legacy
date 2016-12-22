@@ -8,6 +8,10 @@ python:
   - 2.7
 addons:
   apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
     packages:
     - chromium-chromedriver
     - chromium-bsu
