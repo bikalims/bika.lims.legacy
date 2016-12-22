@@ -15,6 +15,7 @@ addons:
       - libexpat1-dev
       - gnuplot
       - libgdk-pixbuf2.0-0
+      - google-chrome-stable
 before_script:
     # Install Chrome driver
   - wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux64.zip
