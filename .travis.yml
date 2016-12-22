@@ -9,7 +9,7 @@ python:
 addons:
   apt:
     packages:
-    - chromedriver
+    - chromium-chromedriver
     - chromium-bsu
     - libpcre3
     - libpcre3-dev
