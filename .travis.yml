@@ -1,5 +1,5 @@
 language: python
-sudo: false
+sudo: required
 cache:
   pip: true
   directories:
@@ -16,6 +16,7 @@ addons:
       - gnuplot
       - libgdk-pixbuf2.0-0
 before_script:
+  # Manually install chromedriver
   - wget http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
   - sudo unzip chromedriver_linux64.zip -d /usr/bin
   - export DISPLAY=99.0
