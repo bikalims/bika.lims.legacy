@@ -22,9 +22,9 @@ addons:
       - chromium-chromedriver
 before_script:
   ###
-  - wget http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
-  - sudo unzip chromedriver_linux64.zip -d /usr/bin
-  - sudo chmod u+x /usr/bin/chromedriver
+  # - wget http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
+  # - sudo unzip chromedriver_linux64.zip -d /usr/bin
+  # - sudo chmod u+x /usr/bin/chromedriver
   - export CHROME_BIN=chromium-browser
   ###
   - export DISPLAY=99.0
