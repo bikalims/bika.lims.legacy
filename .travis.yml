@@ -1,6 +1,6 @@
 language: python
 sudo: required
-dist: xenial
+# dist: xenial
 cache:
   pip: true
   directories:
@@ -22,14 +22,9 @@ addons:
       - chromium-chromedriver
 before_script:
   ###
-  # Manually install google-chrome
-  # - wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-  # - sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-  # - sudo apt-get update
-  # - sudo apt-get install google-chrome-stable
-  # Manually install chromedriver
   - wget http://chromedriver.storage.googleapis.com/2.21/chromedriver_linux64.zip
   - sudo unzip chromedriver_linux64.zip -d /usr/bin
+  - sudo chmod u+x /usr/bin/chromedriver
   - export CHROME_BIN=chromium-browser
   ###
   - export DISPLAY=99.0
