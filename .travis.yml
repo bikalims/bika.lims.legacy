@@ -8,8 +8,6 @@ python:
   - 2.7
 addons:
   apt:
-    sources:
-      - google-chrome
     packages:
       - libpcre3
       - libpcre3-dev
@@ -17,8 +15,6 @@ addons:
       - libexpat1-dev
       - gnuplot
       - libgdk-pixbuf2.0-0
-      - google-chrome-stable
-      - google-chrome-beta
 before_script:
   - export CHROME_BIN=chromium-browser
   - export DISPLAY=99.0
