@@ -19,7 +19,7 @@ before_script:
     # Install Chrome driver
   - wget http://chromedriver.storage.googleapis.com/2.9/chromedriver_linux64.zip
   - unzip chromedriver_linux64.zip
-  - sudo chmod u+x chromedriver
+  - sudo chmod +x chromedriver
   - sudo mv chromedriver /usr/bin/
   - export DISPLAY=99.0
   - sh -e /etc/init.d/xvfb start
