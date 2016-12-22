@@ -10,7 +10,7 @@ addons:
   apt:
     packages:
     - chromedriver
-    - chromium
+    - chromium-bsu
     - libpcre3
     - libpcre3-dev
     - libssl-dev
