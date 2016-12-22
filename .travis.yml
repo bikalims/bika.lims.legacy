@@ -31,4 +31,5 @@ before_install:
 install:
   - bin/buildout -N -t 3 -c travis.cfg
 script:
-  - bin/test -m bika.lims --layer=bika.lims.testing.BikaTestingLayer:Functional
+  # - bin/test -m bika.lims --layer=bika.lims.testing.BikaTestingLayer:Functional
+  - bin/test -s bika.lims
