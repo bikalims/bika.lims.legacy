@@ -66,6 +66,7 @@ class BikaTestCase(unittest.TestCase):
     def tearDown(self):
         # Reset the plone.protect on the testing layer
         # plone.protect.auto.CSRF_DISABLED = self.CSRF_DISABLED_ORIGINAL
+        del os.environ["PLONE_CSRF_DISABLED"]
 
     def beforeTearDown(self):
         self.portal.MailHost = self.portal._original_MailHost
