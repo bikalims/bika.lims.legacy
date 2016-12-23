@@ -12,8 +12,9 @@ Documentation    Generally useful keywords for Bika tests.
 Start browser
     # https://github.com/robotframework/Selenium2Library/blob/ec3c897935866b62a64c311bc3218c2538ba1278/src/Selenium2Library/keywords/_browsermanagement.py#L128
     ${options}=   Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
-    Call Method  ${options}  add_argument  --no-sandbox
+    Call Method  ${options}  add_argument  no-sandbox
     Create Webdriver    Chrome    chrome_options=${options}
+    Go to {PLONEURL}/login_form
     # Open browser  ${PLONEURL}/login_form   browser=chrome
     Set selenium speed  ${SELENIUM_SPEED}
     # A large window, so that debug screenshots are sensibly sized
