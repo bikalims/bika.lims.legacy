@@ -11,6 +11,10 @@ Documentation    Generally useful keywords for Bika tests.
 
 Start browser
 #    Open browser  ${PLONEURL}/login_form
+    ${options}=   Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
+    ${options.add_argument}=    Set Variable    no-sandbox
+    Create WebDriver    Chrome    chrome_options=${options}
+    Close Browser
     Open browser  ${PLONEURL}/login_form   browser=chrome
     Set selenium speed  ${SELENIUM_SPEED}
     # A large window, so that debug screenshots are sensibly sized

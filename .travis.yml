@@ -21,7 +21,7 @@ addons:
       - chromium-browser
       - chromium-chromedriver
 before_script:
-  ###
+  ### Install the latest chromedriver manually from https://sites.google.com/a/chromium.org/chromedriver/downloads
   - wget http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
   - unzip chromedriver_linux64.zip
   - sudo chmod u+x chromedriver
