@@ -16,16 +16,16 @@ addons:
       - libexpat1-dev
       - gnuplot
       - libgdk-pixbuf2.0-0
-      # - libappindicator1
-      # - fonts-liberation
-      # - chromium-browser
-      # - chromium-chromedriver
+      - libappindicator1
+      - fonts-liberation
+      - libnss3-dev
+      - libgconf-2-4
 before_script:
   ### Install the latest chromedriver manually from https://sites.google.com/a/chromium.org/chromedriver/downloads
-  # - wget http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
-  # - unzip chromedriver_linux64.zip
+  - wget http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
   # - sudo chmod u+x chromedriver
-  # - sudo mv chromedriver /usr/bin/
+  - sudo mv chromedriver /usr/bin/
   # - export CHROME_BIN=chromium-browser
   ###
   - export DISPLAY=99.0
