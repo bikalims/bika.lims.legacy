@@ -175,6 +175,22 @@ class Keywords(object):
 
 class RemoteKeywords(Keywords, RemoteLibrary):
 
+    def start_browser(self):
+        from selenium import webdriver
+        from robot.libraries.BuiltIn import BuiltIn
+        from selenium.webdriver.chrome.options import Options
+
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--start-maximized")
+        chrome_options.add_argument("--disable-web-security")
+        chrome_options.add_argument("--allow-running-insecure-content")
+
+        browser = webdriver.Chrome(chrome_options=chrome_options)
+
+        s2l = BuiltIn().get_library_instance('Selenium2Library')
+
+        return s2l._cache.register(browser)
 
     def write_at_field_values(self, obj_or_path, **kwargs):
         """Write valid field values from kwargs into the object's AT fields.
