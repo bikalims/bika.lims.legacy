@@ -1,5 +1,6 @@
 language: python
-sudo: false
+sudo: required
+dist: xenial
 cache:
   pip: true
   directories:
@@ -9,17 +10,27 @@ python:
 addons:
   apt:
     packages:
-    - chromedriver
-    - chromium
-    - libpcre3
-    - libpcre3-dev
-    - libssl-dev
-    - libexpat1-dev
-    - gnuplot
-    - libgdk-pixbuf2.0-0
+      - libpcre3
+      - libpcre3-dev
+      - libssl-dev
+      - libexpat1-dev
+      - gnuplot
+      - libgdk-pixbuf2.0-0
+      - libappindicator1
+      - fonts-liberation
+      - libnss3-dev
+      - libgconf-2-4
 before_script:
+  ### Install the latest chromedriver manually from https://sites.google.com/a/chromium.org/chromedriver/downloads
+  - wget http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  # - sudo chmod u+x chromedriver
+  - sudo mv chromedriver /usr/bin/
+  # - export CHROME_BIN=chromium-browser
+  ###
   - export DISPLAY=99.0
   - sh -e /etc/init.d/xvfb start
+  - sleep 3
 before_install:
   - mkdir -p $TRAVIS_BUILD_DIR/buildout-cache/{eggs,downloads}
   - echo "[buildout]" > $TRAVIS_BUILD_DIR/default.cfg
@@ -30,4 +41,6 @@ before_install:
 install:
   - bin/buildout -N -t 3 -c travis.cfg
 script:
-  - bin/test -m bika.lims --layer=bika.lims.testing.BikaTestingLayer:Functional
+  # - bin/test -m bika.lims --layer=bika.lims.testing.BikaTestingLayer:Functional
+  # - bin/test -s bika.lims
+  - bin/test -m bika.lims --test-file-pattern test_robot
