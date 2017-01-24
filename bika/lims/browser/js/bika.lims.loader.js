@@ -105,13 +105,14 @@ window.bika.lims.controllers =  {
     // Analysis Requests
     ".portaltype-analysisrequest":
         ['SampleView',
-         'AnalysisRequestView'],
+         'AnalysisRequestView',
+         'RejectionKickOff',],
 
     ".portaltype-analysisrequest.template-base_view":
         ['WorksheetManageResultsView',
          'AnalysisRequestViewView',
-         'RejectionKickOff',
-         'AnalysisRequestManageResultsView'],
+         'AnalysisRequestManageResultsView',
+         'RejectionKickOff',],
 
     ".portaltype-analysisrequest.template-manage_results":
         ['WorksheetManageResultsView',
@@ -119,6 +120,11 @@ window.bika.lims.controllers =  {
 
     ".portaltype-analysisrequest.template-analyses":
         ['AnalysisRequestAnalysesView'],
+
+    // Aggregated analyses view
+    ".template-aggregatedanalyses.portaltype-plone-site":
+        ['WorksheetManageResultsView',
+         'AnalysisRequestManageResultsView',],
 
 	// Common and utilities for AR Add forms
 	".portaltype-analysisrequest.template-ar_add": ['AnalysisRequestAddView'],
@@ -171,9 +177,17 @@ window.bika.lims.controllers =  {
     ".portaltype-worksheet.template-manage_results":
         ['WorksheetManageResultsView'],
 
+    ".portaltype-worksheettemplate.template-base_edit":
+        ['WorksheetTemplateEdit'],
+
     "#worksheet-printview-wrapper":
         ['WorksheetPrintView'],
 
+    ".portaltype-reflexrule.template-base_edit":
+        ['ReflexRuleEditView'],
+
+    ".template-labcontacts.portaltype-department":
+        ['DepartmentLabContactsView'],
 
     // Reports folder (not AR Reports)
     ".portaltype-reportfolder":

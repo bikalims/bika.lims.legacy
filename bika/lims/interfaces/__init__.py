@@ -698,6 +698,15 @@ class ISamplePrepWorkflow(Interface):
 class ICustomPubPref(Interface):
     ""
 
+class IReflexRule(Interface):
+
+    ""
+
+class IReflexRuleFolder(Interface):
+    ""
+
+class IDepartment(Interface):
+    ""
 
 class IAcquireFieldDefaults(Interface):
     """Register this adapter to define if and how the value for a field is
