@@ -171,16 +171,26 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         ),
     ),
 
-    RecordsField(
-        'DataInterfaceOptions',
-        type='interfaceoptions',
-        subfields=('Key', 'Value'),
-        required_subfields=('Key', 'Value'),
-        subfield_labels={
-            'OptionValue': _('Key'),
-            'OptionText': _('Value'),
-        },
-        widget=RecordsWidget(
+    StringField('ImportDataInterface',
+        vocabulary = "getImportDataInterfacesList",
+        multiValued=1,
+        widget = MultiSelectionWidget(
+            checkbox_bound = 0,
+            label=_("Import Data Interface"),
+            description=_("Select an Import interface for this instrument."),
+            format='select',
+            default='',
+            visible = True,
+        ),
+    ),
+
+    RecordsField('DataInterfaceOptions',
+        type = 'interfaceoptions',
+        subfields = ('Key','Value'),
+        required_subfields = ('Key','Value'),
+        subfield_labels = {'OptionValue': _('Key'),
+                           'OptionText': _('Value'),},
+        widget = RecordsWidget(
             label=_("Data Interface Options"),
             description=_("Use this field to pass arbitrary parameters to the export/import modules."),
             visible=False,
@@ -340,6 +350,20 @@ def getDataInterfaces(context, export_only=False):
     exims.insert(0, ('', t(_('None'))))
     return DisplayList(exims)
 
+def getImportDataInterfaces(context, import_only=False):
+    """ Return the current list of import data interfaces
+    """
+    from bika.lims.exportimport import instruments
+    exims = []
+    for exim_id in instruments.__all__:
+        exim = instruments.getExim(exim_id)
+        if import_only and not hasattr(exim, 'Import'):
+            pass
+        else:
+            exims.append((exim_id, exim.title))
+    exims.sort(lambda x, y: cmp(x[1].lower(), y[1].lower()))
+    exims.insert(0, ('', t(_('None'))))
+    return DisplayList(exims)
 
 def getMaintenanceTypes(context):
     types = [('preventive', 'Preventive'),
@@ -373,6 +397,9 @@ class Instrument(ATFolder):
 
     def getExportDataInterfacesList(self):
         return getDataInterfaces(self, export_only=True)
+
+    def getImportDataInterfacesList(self):
+        return getImportDataInterfaces(self, import_only=True)
 
     def getScheduleTaskTypesList(self):
         return getMaintenanceTypes(self)
