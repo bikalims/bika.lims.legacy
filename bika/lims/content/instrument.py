@@ -49,6 +49,7 @@ from bika.lims.utils import to_utf8
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IInstrument
 from bika.lims.config import QCANALYSIS_TYPES
+from bika.lims import logger
 from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.content.bikaschema import BikaFolderSchema
@@ -809,6 +810,14 @@ class Instrument(ATFolder):
         ans = [p.getObject() for p in prox]
         return [a for a in ans if a.getRawInstrument() == self.UID()]
 
+    def setImportDataInterface(self, values):
+        """ Return the current list of import data interfaces
+        """
+        exims = self.getImportDataInterfacesList()
+        new_values = [value for value in values if value in exims]
+        if len(new_values) < len(values):
+            logger.warn("Some Interfaces weren't added...")
+        self.Schema().getField('ImportDataInterface').set(self, new_values)
 
 schemata.finalizeATCTSchema(schema, folderish=True, moveDiscussion=False)
 
