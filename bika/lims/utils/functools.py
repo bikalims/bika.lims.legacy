@@ -290,18 +290,6 @@ def alias(col, mapping):
     return map(_block, col)
 
 
-def first(lst, n=None):
-    """ get the first element of a list
-
-        >>> lst = [1, 2, 3, 4, 5]
-        >>> first(lst)
-        1
-        >>> first(lst, 3)
-        [1, 2, 3]
-    """
-    return n is None and lst[0] or lst[0:n]
-
-
 if __name__ == '__main__':
     import doctest
     doctest.testmod(raise_on_error=False,

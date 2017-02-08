@@ -772,7 +772,7 @@ class Instruments(WorksheetImporter):
             obj.setInstrumentType(instrumenttype)
             obj.setManufacturer(manufacturer)
             obj.setSupplier(supplier)
-            obj.setMethod(method)
+            obj.setMethods([method])
 
             # Attaching the instrument's photo
             if row.get('Photo', None):

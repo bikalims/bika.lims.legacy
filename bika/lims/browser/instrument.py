@@ -17,8 +17,6 @@ from zope.interface import implements
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import QCANALYSIS_TYPES
 from bika.lims.utils import to_utf8
-from bika.lims.utils.functools import to_list
-from bika.lims.utils.functools import first
 from bika.lims import api
 from bika.lims.permissions import *
 from operator import itemgetter
@@ -623,7 +621,7 @@ class InstrumentMultifileView(MultifileView):
         self.description = "Different interesting documents and files to be attached to the instrument"
 
 
-class ajaxGetInstrumentMethod(BrowserView):
+class ajaxGetInstrumentMethods(BrowserView):
     """ Returns the method assigned to the defined instrument.
         uid: unique identifier of the instrument
     """
@@ -638,14 +636,14 @@ class ajaxGetInstrumentMethod(BrowserView):
         except Forbidden:
             return json.dumps(out)
         bsc = api.get_catalog('bika_setup_catalog')
-        results = bsc(portal_type='Instrument', UID=self.request.get("uid", '0'))
-        instrument = first(results)
-        if instrument:
+        brains = bsc(portal_type='Instrument', UID=self.request.get("uid", '0'))
+        if brains:
+            instrument = brains[0]
             instrument_obj = api.get_object(instrument)
             out["title"] = instrument_obj.Title()
             out["instrument"] = api.get_uid(instrument)
             # Handle multiple Methods per instrument
-            methods = to_list(instrument_obj.getMethod())
+            methods = instrument_obj.getMethods()
             for method in methods:
                 out["methods"].append({
                     "uid": api.get_uid(method),

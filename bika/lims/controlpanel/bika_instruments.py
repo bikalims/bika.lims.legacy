@@ -11,7 +11,6 @@ from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
 from bika.lims.interfaces import IInstruments
-from bika.lims.utils.functools import to_list
 from plone.app.layout.globals.interfaces import IViewView
 from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.app.folder.folder import ATFolder, ATFolderSchema
@@ -53,7 +52,7 @@ class InstrumentsView(BikaListingView):
                            'toggle': True},
             'WeeksToExpire': {'title': _('Weeks To Expire'),
                               'toggle': False},
-            'Method': {'title': _('Method'),
+            'Methods': {'title': _('Methods'),
                        'toggle': True},
         }
 
@@ -68,7 +67,7 @@ class InstrumentsView(BikaListingView):
                          'Model',
                          'ExpiryDate',
                          'WeeksToExpire',
-                         'Method']},
+                         'Methods']},
             {'id': 'inactive',
              'title': _('Dormant'),
              'contentFilter': {'inactive_state': 'inactive'},
@@ -79,7 +78,7 @@ class InstrumentsView(BikaListingView):
                          'Model',
                          'ExpiryDate',
                          'WeeksToExpire',
-                         'Method']},
+                         'Methods']},
             {'id': 'all',
              'title': _('All'),
              'contentFilter': {},
@@ -89,7 +88,7 @@ class InstrumentsView(BikaListingView):
                          'Model',
                          'ExpiryDate',
                          'WeeksToExpire',
-                         'Method']},
+                         'Methods']},
         ]
 
     def folderitems(self):
@@ -120,8 +119,7 @@ class InstrumentsView(BikaListingView):
                 item['WeeksToExpire'] = str(weeks) + " weeks" + " " + str(days) + " days"
 
             # Multiple Methods per Instrument handling
-            methods = to_list(obj.getMethod())
-            item["Methods"] = methods
+            methods = obj.getMethods()
             urls = []
             titles = []
             for method in methods:
@@ -130,8 +128,8 @@ class InstrumentsView(BikaListingView):
                 titles.append(title)
                 urls.append("<a href='{0}'>{1}</a>".format(url, title))
 
-            item["Method"] = ", ".join(titles)
-            item["replace"]["Method"] = ", ".join(urls)
+            item["Methods"] = ", ".join(titles)
+            item["replace"]["Methods"] = ", ".join(urls)
             item["replace"]["Title"] = "<a href='{0}'>{1}</a>".format(
                 obj.absolute_url(), obj.Title())
 

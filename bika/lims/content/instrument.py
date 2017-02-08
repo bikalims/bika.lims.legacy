@@ -81,15 +81,15 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         )
     ),
 
-    ReferenceField('Method',
+    ReferenceField('Methods',
         vocabulary='_getAvailableMethods',
         allowed_types=('Method', ),
-        relationship='InstrumentMethod',
+        relationship='InstrumentMethods',
         required=0,
         multiValued=1,
         widget=ReferenceWidget(
             format='select',
-            label=_("Method"),
+            label=_("Methods"),
         ),
     ),
 

@@ -420,7 +420,7 @@ function AnalysisServiceEditView() {
             $(method_sel).append("<option value=''>"+_("None")+"</option>");
             $(method_sel).val('');
             $.ajax({
-                url: window.portal_url + "/get_instrument_method",
+                url: window.portal_url + "/get_instrument_methods",
                 type: 'POST',
                 data: {'_authenticator': $('input[name="_authenticator"]').val(),
                        'uid': $(instr_sel).val() },

@@ -209,11 +209,11 @@ def get_uid(brain_or_object):
     :returns: Plone UID
     :rtype: string
     """
-    if brain_or_object is None:
-        return None
     if is_brain(brain_or_object):
         return brain_or_object.UID
-    return brain_or_object.UID()
+    if hasattr(brain_or_object, 'UID') and callable(brain_or_object.UID):
+        return brain_or_object.UID()
+    raise RuntimeError("get_uid requires an object with a UID")
 
 
 def move_item_in_folder(folder, item, index=None):

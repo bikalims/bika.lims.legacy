@@ -41,10 +41,10 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.instrument3 = self.portal.bika_setup.bika_instruments['instrument-3']
         self.servicemeor = self.service.getManualEntryOfResults()
         self.serviceieor = self.service.getInstrumentEntryOfResults()
-        self.servicemeth = self.service.getMethods()
-        self.i1method = self.instrument1.getMethod()
-        self.i2method = self.instrument2.getMethod()
-        self.i3method = self.instrument3.getMethod()
+        self.servicemeth = self.service.getMethods()[0]
+        self.i1method = self.instrument1.getMethods()[0]
+        self.i2method = self.instrument2.getMethods()[0]
+        self.i3method = self.instrument3.getMethods()[0]
         self.serviceinsts = self.service.getInstruments()
         self.serviceinst = self.service.getInstrument()
         self.i1certdate = self.instrument1.getLatestValidCertification().getValidTo()
@@ -59,9 +59,9 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.service.setManualEntryOfResults(self.servicemeor)
         self.service.setInstrumentEntryOfResults(self.serviceieor)
         self.service.setMethods(self.servicemeth)
-        self.instrument1.setMethod(self.i1method)
-        self.instrument2.setMethod(self.i2method)
-        self.instrument3.setMethod(self.i3method)
+        self.instrument1.setMethods(self.i1method)
+        self.instrument2.setMethods(self.i2method)
+        self.instrument3.setMethods(self.i3method)
         self.instrument1.setDisposeUntilNextCalibrationTest(False)
         self.instrument2.setDisposeUntilNextCalibrationTest(False)
         self.instrument3.setDisposeUntilNextCalibrationTest(False)
@@ -84,16 +84,16 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.service.setInstrumentEntryOfResults(True)
         self.service.setManualEntryOfResults(True)
         self.service.setMethods([self.method])
-        self.instrument1.setMethod(self.method)
-        self.instrument2.setMethod(self.method)
+        self.instrument1.setMethods(self.method)
+        self.instrument2.setMethods(self.method)
         self.instrument1.setDisposeUntilNextCalibrationTest(False)
         self.instrument2.setDisposeUntilNextCalibrationTest(False)
         self.service.setInstruments([self.instrument1, self.instrument2])
         self.service.setInstrument(self.instrument1)
         self.assertTrue(self.service.getManualEntryOfResults())
         self.assertTrue(self.service.getInstrumentEntryOfResults())
-        self.assertTrue(self.instrument1.getMethod()[0].UID(), self.method.UID())
-        self.assertTrue(self.instrument2.getMethod()[0].UID(), self.method.UID())
+        self.assertTrue(self.instrument1.getMethods()[0].UID(), self.method.UID())
+        self.assertTrue(self.instrument2.getMethods()[0].UID(), self.method.UID())
         self.assertFalse(self.instrument1.getDisposeUntilNextCalibrationTest())
         self.assertFalse(self.instrument2.getDisposeUntilNextCalibrationTest())
         self.assertTrue(len(self.service.getAvailableInstruments()) == 2)
@@ -205,15 +205,15 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
 
             if m_instravilab:
                 if m_isnotnone:
-                    self.instrument1.setMethod(self.method)
-                    self.instrument2.setMethod(self.method)
-                    self.instrument3.setMethod(self.method2)
-                    self.assertTrue(self.instrument1.getMethod()[0].UID(), self.method.UID())
-                    self.assertTrue(self.instrument2.getMethod()[0].UID(), self.method.UID())
+                    self.instrument1.setMethods(self.method)
+                    self.instrument2.setMethods(self.method)
+                    self.instrument3.setMethods(self.method2)
+                    self.assertTrue(self.instrument1.getMethods()[0].UID(), self.method.UID())
+                    self.assertTrue(self.instrument2.getMethods()[0].UID(), self.method.UID())
                 else:
-                    self.instrument1.setMethod(None)
-                    self.instrument2.setMethod(None)
-                    self.instrument3.setMethod(None)
+                    self.instrument1.setMethods(None)
+                    self.instrument2.setMethods(None)
+                    self.instrument3.setMethods(None)
                 self.service.setInstrument(self.instrument1)
                 if m_validinstru:
                     if m_allinstrval:
@@ -242,8 +242,8 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
                     self.assertTrue(self.instrument2.getDisposeUntilNextCalibrationTest())
                     self.service.setInstruments([self.instrument1])
             else:
-                self.instrument1.setMethod(None)
-                self.instrument2.setMethod(None)
+                self.instrument1.setMethods(None)
+                self.instrument2.setMethods(None)
                 self.instrument1.setDisposeUntilNextCalibrationTest(False)
                 self.instrument1.setDisposeUntilNextCalibrationTest(False)
                 self.service.setInstruments([])
