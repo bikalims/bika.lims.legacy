@@ -873,15 +873,6 @@ class Analysis(BaseContent):
 
         return uids
 
-    def getDefaultMethod(self):
-        """ Returns the default method for this Analysis
-            according to its current instrument. If the Analysis hasn't
-            set yet an Instrument, looks to the Service
-        """
-        instr = self.getInstrument() \
-            if self.getInstrument() else self.getDefaultInstrument()
-        return instr.getMethod() if instr else None
-
     def getFormattedResult(self, specs=None, decimalmark='.', sciformat=1, html=True):
         """Formatted result:
         1. If the result is a detection limit, returns '< LDL' or '> UDL'
