@@ -83,16 +83,19 @@ class ReferenceWidget(StringWidget):
         """
         fieldName = field.getName()
         if fieldName + "_uid" in form:
-            uid = form.get(fieldName + "_uid", '')
+            value = form.get(fieldName + "_uid", '')
             if field.multiValued:
-                uid = uid.split(",")
+                value = value.split(",")
         elif fieldName in form:
-            uid = form.get(fieldName, '')
+            value = form.get(fieldName, '')
             if field.multiValued:
-                uid = uid.split(",")
+                value = value.split(",")
         else:
-            uid = None
-        return uid, {}
+            value = None
+        if type(value) in (list, tuple):
+            # Filter out empty strings
+            values = [x for x in value if x]
+        return value, {}
 
     def get_combogrid_options(self, context, fieldName):
         colModel = self.colModel

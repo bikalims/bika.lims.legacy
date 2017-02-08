@@ -18,7 +18,7 @@ from bika.lims.utils import t
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import RecordsWidget
-from bika.lims.browser.widgets.simplereferencewidget import SimpleReferenceWidget
+from bika.lims.browser.widgets import ReferenceWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema, BikaFolderSchema
 from bika.lims.interfaces import IInstrument
@@ -87,7 +87,7 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         relationship='InstrumentMethod',
         required=0,
         multiValued=1,
-        widget=SimpleReferenceWidget(
+        widget=ReferenceWidget(
             format='select',
             label=_("Method"),
         ),
