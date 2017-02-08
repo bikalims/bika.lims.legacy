@@ -81,7 +81,7 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         )
     ),
 
-    HistoryAwareReferenceField('Method',
+    ReferenceField('Method',
         vocabulary='_getAvailableMethods',
         allowed_types=('Method', ),
         relationship='InstrumentMethod',
