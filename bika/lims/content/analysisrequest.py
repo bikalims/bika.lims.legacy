@@ -73,8 +73,6 @@ def BatchUID(instance):
 
 @indexer(IAnalysisRequest)
 def getDatePublished(instance):
-    print('indexer for getDatePublished: %s = "%s"' %
-          (instance, getTransitionDate(instance, 'publish')))
     return getTransitionDate(instance, 'publish')
 
 
@@ -84,6 +82,14 @@ def SamplingRoundUID(instance):
     if sr:
         return sr.UID()
 
+@indexer(IAnalysisRequest)
+def getDepartmentUIDs(instance):
+    """ Returns department UIDs assigned to the Analyses
+        from this Analysis Request
+    """
+    ans = [an.getObject() for an in instance.getAnalyses()]
+    depts = [an.getService().getDepartment().UID() for an in ans if an.getService().getDepartment()]
+    return depts
 
 schema = BikaSchema.copy() + Schema((
     StringField(
@@ -199,6 +205,8 @@ schema = BikaSchema.copy() + Schema((
         mode="rw",
         read_permission=permissions.View,
         write_permission=EditARContact,
+        acquire=True,
+        acquire_fieldname="CCEmails",
         widget=StringWidget(
             label=_("CC Emails"),
             visible={
@@ -1871,6 +1879,7 @@ class AnalysisRequest(BaseFolder):
         """ return True if any analyses are late """
         workflow = getToolByName(self, 'portal_workflow')
         review_state = workflow.getInfoFor(self, 'review_state', '')
+        resultdate = 0
         if review_state in ['to_be_sampled', 'to_be_preserved',
                             'sample_due', 'published']:
             return False
@@ -2251,21 +2260,20 @@ class AnalysisRequest(BaseFolder):
                 suids.append(an.getServiceUID())
 
         def valid_dup(wan):
+            if wan.portal_type == 'ReferenceAnalysis':
+                return False
             an_state = wf.getInfoFor(wan, 'review_state')
-            an_reftype = wan.getReferenceType()
             return \
                 wan.portal_type == 'DuplicateAnalysis' \
                 and wan.getRequestID() == self.id \
-                and wan not in qcanalyses \
-                and (qctype is None or an_reftype == qctype) \
                 and (review_state is None or an_state in review_state)
 
         def valid_ref(wan):
+            if wan.portal_type != 'ReferenceAnalysis':
+                return False
             an_state = wf.getInfoFor(wan, 'review_state')
             an_reftype = wan.getReferenceType()
-            return \
-                wan.portal_type == 'ReferenceAnalysis' \
-                and wan.getServiceUID() in suids \
+            return wan.getServiceUID() in suids \
                 and wan not in qcanalyses \
                 and (qctype is None or an_reftype == qctype) \
                 and (review_state is None or an_state in review_state)
@@ -2991,12 +2999,13 @@ class AnalysisRequest(BaseFolder):
                     success = True
                     revers = analysis.getNumberOfRequiredVerifications()
                     nmvers = analysis.getNumberOfVerifications()
-                    analysis.setNumberOfVerifications(nmvers+1)
+                    username=getToolByName(self,'portal_membership').getAuthenticatedMember().getUserName()
+                    item.addVerificator(username)
                     if revers-nmvers <= 1:
                         success, message = doActionFor(analysis, 'verify')
                         if not success:
-                            # If failed, restore to the previous number
-                            analysis.setNumberOfVerifications(numvers)
+                            # If failed, delete last verificator
+                            item.deleteLastVerificator()
                 else:
                     doActionFor(analysis, 'verify')
 

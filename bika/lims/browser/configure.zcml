@@ -24,6 +24,7 @@
   <include file="duplicateanalysis.zcml"/>
   <include file="instrument.zcml"/>
   <include file="instrumenttype.zcml"/>
+  <include file="instrumentlocation.zcml"/>
   <include file="late_analyses.zcml"/>
   <include file="manufacturer.zcml"/>
   <include file="menu.zcml"/>
@@ -71,6 +72,14 @@
       for="*"
       name="at_validate_field"
       class=".validation.InlineValidationView"
+      permission="zope2.View"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+  <browser:page
+      for="*"
+      name="portletfilter_by_department"
+      class="bika.lims.browser.updateFilerByDepartmentCookie"
       permission="zope2.View"
       layer="bika.lims.interfaces.IBikaLIMS"
     />
