@@ -8,6 +8,7 @@ from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 
+from bika.lims import api
 from bika.lims import logger
 from Products.CMFCore import permissions
 from Products.CMFPlone.utils import _createObjectByType
@@ -223,3 +224,13 @@ def multi_verification(portal):
                     new_value+=','
             obj.setVerificators(new_value)
 
+def LIMS2321_instrument_multiple_methods(portal):
+    # An instrument had only a single relevant field called "Method".
+    # This field has been replaced with a multiValued "Methods" field.
+    for instrument in portal.bika_setup.bika_instruments.objectValues():
+        fields = api.get_fields(instrument)
+        if 'Method' not in fields:
+            continue
+        value = fields['Method'].get(instrument)
+        if value:
+            instrument.setMethods([value])
