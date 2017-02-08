@@ -386,7 +386,7 @@ schema = BikaSchema.copy() + Schema((
                  schemata="Method",
                  default=True,
                  widget=BooleanWidget(
-                     label = _("Instrument assignment is not required"),
+                     label = _("Allow manual entry of results"),
                      description=_("Select if the results for tests of this "
                                    "type of analysis can be set manually. "
                                    "If selected, the user will be able to "
