@@ -21,7 +21,7 @@ from Products.Archetypes.public import DisplayList, ReferenceField, \
     FixedPointField, DecimalWidget, IntegerField, \
     IntegerWidget, StringWidget, BaseContent, \
     Schema, registerType, MultiSelectionWidget, \
-    FloatField, DecimalWidget
+    FloatField, DecimalWidget, InAndOutWidget
 from Products.Archetypes.utils import IntDisplayList
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.permissions import View, ModifyPortalContent
@@ -432,7 +432,7 @@ schema = BikaSchema.copy() + Schema((
                    allowed_types=('Instrument',),
                    relationship='AnalysisServiceInstruments',
                    referenceClass=HoldingReference,
-                   widget=MultiSelectionWidget(
+                   widget=InAndOutWidget(
                        label = _("Instruments"),
                        description=_("More than one instrument can be "
                                      "used in a test of this type of "
@@ -511,11 +511,10 @@ schema = BikaSchema.copy() + Schema((
         allowed_types = ('Method',),
         relationship = 'AnalysisServiceMethods',
         referenceClass = HoldingReference,
-        widget = MultiSelectionWidget(
+        widget = InAndOutWidget(
             label = _("Methods"),
             description = _("The tests of this type of analysis can be "
                             "performed by using more than one method with the "
-                            "'Manual entry of results' option enabled. "
                             "A selection list with the methods selected here "
                             "is populated in the manage results view for each "
                             "test of this type of analysis. Note that only "
