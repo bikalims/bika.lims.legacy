@@ -382,20 +382,21 @@ schema = BikaSchema.copy() + Schema((
     # - If InstrumentEntry not checked, set checked and readonly
     # - If InstrumentEntry checked, set as not readonly
     # See browser/js/bika.lims.analysisservice.edit.js
-    BooleanField('ManualEntryOfResults',
-                 schemata="Method",
-                 default=True,
-                 widget=BooleanWidget(
-                     label = _("Allow manual entry of results"),
-                     description=_("Select if the results for tests of this "
-                                   "type of analysis can be set manually. "
-                                   "If selected, the user will be able to "
-                                   "set a result for a test of this type of "
-                                   "analysis in manage results view without "
-                                   "the need of selecting an instrument, "
-                                   "even though the method selected for the "
-                                   "test has instruments assigned."),
-                 )
+    BooleanField(
+        'ManualEntryOfResults',
+        schemata="Method",
+        default=True,
+        widget=BooleanWidget(
+            label=_("Allow manual entry of results"),
+            description=_(
+                "Select if the results for tests of this type of analysis can "
+                "be set manually. If selected, the user will be able to set a "
+                "result for a test of this type of analysis in manage results "
+                "view without the need of selecting an instrument even if the "
+                "method selected for the test has instruments assigned. "
+                "Setting this option will cause methods with no associated "
+                "instruments to be available for selection."),
+        )
     ),
     # Allow/Disallow instrument entry of results
     # Behavior controlled by javascript depending on Instruments field:

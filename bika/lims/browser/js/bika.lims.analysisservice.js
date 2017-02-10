@@ -5,15 +5,16 @@ function AnalysisServiceEditView() {
 
     var that = this;
 
-    var manual_results_field      = $('#archetypes-fieldname-ManualEntryOfResults');
+//    var manual_results_field      = $('#archetypes-fieldname-ManualEntryOfResults');
     var manual_results_checkbox   = $('#archetypes-fieldname-ManualEntryOfResults #ManualEntryOfResults');
     var instrument_results_field  = $('#archetypes-fieldname-InstrumentEntryOfResults #InstrumentEntryOfResults');
     var methods_field             = $('#archetypes-fieldname-Methods');
-    var methods_inandout          = $('#archetypes-fieldname-Methods #Methods');
-    var default_method_field      = $('#archetypes-fieldname-_Method');
+    var methods_options           = $('#archetypes-fieldname-Methods #Methods_options');
+    var methods_select            = $('#archetypes-fieldname-Methods #Methods');
     var default_method_select     = $('#archetypes-fieldname-_Method #_Method');
     var instruments_field         = $('#archetypes-fieldname-Instruments');
-    var instruments_inandout      = $('#archetypes-fieldname-Instruments #Instruments');
+    var instruments_options       = $('#archetypes-fieldname-Instruments #Instruments_options');
+    var instruments_select        = $('#archetypes-fieldname-Instruments #Instruments');
     var default_instr_field       = $('#archetypes-fieldname-Instrument');
     var default_instr_select      = $('#archetypes-fieldname-Instrument #Instrument');
     var default_calc_checkbox     = $('#archetypes-fieldname-UseDefaultCalculation #UseDefaultCalculation');
@@ -162,7 +163,7 @@ function AnalysisServiceEditView() {
         }
 
         // Check if there is, at least, one instrument available
-        if ($(instruments_inandout).find('option').length == 0) {
+        if ($(instruments_select).find('option').length == 0) {
             // Ooops, there isn't any instrument!
             $(manual_results_checkbox).prop('checked', true);
             $(manual_results_checkbox).prop('readonly', true);
@@ -181,19 +182,12 @@ function AnalysisServiceEditView() {
         $(manual_results_checkbox).change(function() {
             if ($(this).is(':checked')) {
 
-                // The user can select the Analysis Service methods
-                // manually. The default method will be retrieved from
-                // the methods selected.
-
-                // Show the methods multiselector
-                $(methods_field).fadeIn('slow');
-
-                // Show the default method field
-                $(default_method_field).show();
-                $(default_method_select).unbind("focus");
+                // Insert all methods without instruments into the
+                // methods InOut options widget.
+                insert_manual_methods();
 
                 // Delegate remaining actions to Methods change event
-                $(methods_inandout).change();
+                $(methods_select).change();
 
             } else {
 
@@ -202,11 +196,11 @@ function AnalysisServiceEditView() {
 
                 // Hide and clear the methods multiselector
                 $(methods_field).hide();
-                $(methods_inandout).find('option[selected]').prop('selected', false);
-                $(methods_inandout).val('');
+                $(methods_select).find('option[selected]').prop('selected', false);
+                $(methods_select).val('');
 
                 // Delegate remaining actions to Methods change event
-                $(methods_inandout).change();
+                $(methods_select).change();
 
                 // Select instrument entry and fire event
                 $(instrument_results_field).prop('checked', true);
@@ -229,18 +223,13 @@ function AnalysisServiceEditView() {
                 $(instruments_field).fadeIn('slow');
 
                 // Remove the 'none' option from instruments multiselector
-                $(instruments_inandout).find('option[value=""]').remove();
+                $(instruments_select).find('option[value=""]').remove();
 
                 // Remove the 'none' option from def instrument selector
                 $(default_instr_select).find('option[value=""]').remove();
 
                 // Show the default instrument selector
                 $(default_instr_field).fadeIn('slow');
-
-                // Disable the default method selector
-                $(default_method_select).focus(function(e) {
-                    $(this).blur();
-                });
 
                 // Disable the default calculation selector
                 $(default_calc_select).focus(function(e) {
@@ -251,7 +240,7 @@ function AnalysisServiceEditView() {
                 $(alternate_calc_field).hide();
 
                 // Delegate remaining actions to Instruments change event
-                $(instruments_inandout).change();
+                $(instruments_select).change();
 
             } else {
 
@@ -264,11 +253,11 @@ function AnalysisServiceEditView() {
 
                 // Hide the instruments multiselector and unselect all
                 $(instruments_field).hide();
-                if ($(instruments_inandout).find('option[value=""]').length == 0) {
-                    $(instruments_inandout).prepend('<option value="">None</option>');
+                if ($(instruments_select).find('option[value=""]').length == 0) {
+                    $(instruments_select).prepend('<option value="">None</option>');
                 }
-                $(instruments_inandout).val('');
-                $(instruments_inandout).find('option[value=""]').prop("selected", true);
+                $(instruments_select).val('');
+                $(instruments_select).find('option[value=""]').prop("selected", true);
 
                 // Hide the default instrument selector
                 $(default_instr_field).hide();
@@ -286,8 +275,7 @@ function AnalysisServiceEditView() {
                 });
 
                 // The user must be able to select the default method manualy
-                $(methods_inandout).change();
-                $(default_method_select).unbind("focus");
+                $(methods_select).change();
 
                 // If manual entry is not selected, select it and
                 // fire event cascade
@@ -299,7 +287,7 @@ function AnalysisServiceEditView() {
         });
 
         // The methods multiselect changes
-        $(methods_inandout).change(function(e) {
+        $(methods_select).change(function(e) {
             var prevmethod = $(default_method_select).val();
             var prevmethodtxt = $(default_method_select).find('option[value="'+prevmethod+'"]').html();
             /*if ($(this).val() == null) {
@@ -310,10 +298,10 @@ function AnalysisServiceEditView() {
             $(default_method_select).find('option').remove();
 
             // Populate with the methods from the multi-select
-            var methods = $(methods_inandout).val();
+            var methods = $(methods_select).val();
             if (methods != null) {
                 $.each(methods, function(index, value) {
-                    var option = $(methods_inandout).find('option[value="'+value+'"]').clone();
+                    var option = $(methods_select).find('option[value="'+value+'"]').clone();
                     $(default_method_select).append(option);
                 });
             } else {
@@ -348,7 +336,7 @@ function AnalysisServiceEditView() {
 
 
         // The instruments multiselect changes
-        $(instruments_inandout).change(function(e) {
+        $(instruments_select).change(function(e) {
             var previnstr = $(default_instr_select).val();
             if ($(this).val() == null) {
                 // At least one instrument must be selected
@@ -357,9 +345,9 @@ function AnalysisServiceEditView() {
 
             // Populate the default instrument list with the selected instruments
             $(default_instr_select).find('option').remove();
-            var insts = $(instruments_inandout).val();
+            var insts = $(instruments_select).val();
             $.each(insts, function(index, value) {
-                var option = $(instruments_inandout).find('option[value="'+value+'"]').clone();
+                var option = $(instruments_select).find('option[value="'+value+'"]').clone();
                 $(default_instr_select).append(option);
             });
 
@@ -520,19 +508,52 @@ function AnalysisServiceEditView() {
         catchOriginalValues();
     }
 
+    function insert_manual_methods(){
+        $.ajax({
+            url: window.portal_url + "/get_instrument_methods",
+            type: 'POST',
+            data: {'_authenticator': $('input[name="_authenticator"]').val(),
+                   'uid': $(default_instr_select).val() },
+            dataType: 'json',
+            async: false
+        }).done(function(data) {
+            $(default_method_select).find('option').remove();
+            // Handle multiple methods
+
+            if (data != null && data.methods.length > 0) {
+                // Set the instrument's methods
+                $.each(data.methods, function(index, value) {
+                    var uid = value.uid;
+                    var title = value.title;
+                    console.debug("Adding Method " + title + " to the Selection");
+                    var option = '<option value="'+uid+'">'+title+'</option>';
+                    $(default_method_select).append(option);
+                    $(default_method_select).val(uid);
+                });
+            } else {
+                // Oooopps. The instrument has no method assigned
+                $(default_method_select).append("<option value=''>"+_("None")+"</option>");
+                $(default_method_select).val('');
+            }
+            // Delegate the action to Default Calc change event
+            $(default_calc_checkbox).change();
+        });
+    }
+
+
     function catchOriginalValues() {
         $(manual_results_checkbox).attr('data-default', $(manual_results_checkbox).is(':checked'));
         $(instrument_results_field).attr('data-default', $(instrument_results_field).is(':checked'));
-        $(methods_inandout).attr('data-default', $(methods_inandout).val());
+        $(methods_select).attr('data-default', $(methods_select).val());
         $(default_method_select).attr('data-default', $(default_method_select).val());
-        $(instruments_inandout).attr('data-default', $(instruments_inandout).val());
+        $(instruments_select).attr('data-default', $(instruments_select).val());
         $(default_instr_select).attr('data-default', $(default_instr_select).val());
         $(default_calc_checkbox).attr('data-default', $(default_calc_checkbox).is(':checked'));
         $(default_calc_select).attr('data-default', $(default_calc_select).val());
         $(alternate_calc_select).attr('data-default', $(alternate_calc_select).val());
 
         // Remove 'None' option from 'Methods' multi-select
-        $(methods_inandout).find('option[value=""]').remove();
+        $(methods_select).find('option[value=""]').remove();
 
         // Disable the default calculation selector
         $(default_calc_select).focus(function(e) {
@@ -764,7 +785,7 @@ function AnalysisServiceEditView() {
 
     function applyStyles() {
 
-        $($(manual_results_field)).after($(methods_field));
+//        $($(manual_results_field)).after($(methods_field));
 
         $(methods_field)
             .css('border', '1px solid #cfcfcf')
