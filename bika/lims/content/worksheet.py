@@ -152,8 +152,10 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
         # is allowed, set it
         instr = self.getInstrument()
         if instr and analysis.isInstrumentAllowed(instr):
-            # Set the method assigned to the selected instrument
-            analysis.setMethod(instr.getMethod())
+            methods = instr.getMethods()
+            if methods:
+                # Set the method assigned to the selected instrument
+                analysis.setMethod(methods[0])  # XXX LIMS-2321
             analysis.setInstrument(instr)
 
         self.setAnalyses(analyses + [analysis, ])
@@ -598,18 +600,20 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
                     if (not an.getInstrument() or override_analyses)
                         and an.isInstrumentAllowed(instrument)]
         total = 0
-        for an in analyses:
+        for analysis in analyses:
             # An analysis can be done using differents Methods.
             # Un method can be supported by more than one Instrument,
             # but not all instruments support one method.
             # We must force to set the instrument's method too. Otherwise,
-            # the WS manage results view will display the an's default
+            # the WS manage results view will display the analysis's default
             # method and its instruments displaying, only the instruments
             # for the default method in the picklist.
-            meth = instrument.getMethod()
-            if an.isMethodAllowed(meth):
-                an.setMethod(meth)
-            success = an.setInstrument(instrument)
+            methods = instrument.getMethods()
+            if methods:
+                # Set the method assigned to the selected instrument
+                if analysis.isMethodAllowed(methods):
+                    analysis.setMethod(methods[0])  # XXX LIMS-2321
+            success = analysis.setInstrument(instrument)
             if success is True:
                 total += 1
 

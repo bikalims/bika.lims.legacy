@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+LIMS-2321: Allow multiple Methods per instrument
 LIMS-2477: Reference Analysis has no dependencies; remove guard that assumes it does
 LIMS-2465: Not possible to translate Bika Listing Table Workflow Action Buttons
 LIMS-1391: Add configurable identifier types (CAS# for AnalysisService)

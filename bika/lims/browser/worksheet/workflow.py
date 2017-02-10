@@ -224,9 +224,9 @@ class WorksheetWorkflowAction(WorkflowAction):
             if uid in methods and analysis_active:
                 # TODO: Add SetAnalysisMethod permission
                 # allow_setmethod = sm.checkPermission(SetAnalysisMethod)
-                allow_setmethod = True
+                allow_setmethods = True
                 # ---8<-----
-                if allow_setmethod == True and analysis.isMethodAllowed(methods[uid]):
+                if allow_setmethods == True and analysis.isMethodAllowed(methods[uid]):
                     analysis.setMethod(methods[uid])
 
             # Need to save the analyst?

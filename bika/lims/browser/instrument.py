@@ -17,6 +17,7 @@ from zope.interface import implements
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import QCANALYSIS_TYPES
 from bika.lims.utils import to_utf8
+from bika.lims import api
 from bika.lims.permissions import *
 from operator import itemgetter
 from bika.lims.browser import BrowserView
@@ -620,24 +621,35 @@ class InstrumentMultifileView(MultifileView):
         self.description = "Different interesting documents and files to be attached to the instrument"
 
 
-class ajaxGetInstrumentMethod(BrowserView):
+class ajaxGetInstrumentMethods(BrowserView):
     """ Returns the method assigned to the defined instrument.
         uid: unique identifier of the instrument
     """
     def __call__(self):
-        methoddict = {}
+        out = {
+            "title": None,
+            "instrument": None,
+            "methods": [],
+        }
         try:
             plone.protect.CheckAuthenticator(self.request)
         except Forbidden:
-            return json.dumps(methoddict)
-        bsc = getToolByName(self, 'bika_setup_catalog')
-        instrument = bsc(portal_type='Instrument', UID=self.request.get("uid", '0'))
-        if instrument and len(instrument) == 1:
-            method = instrument[0].getObject().getMethod()
-            if method:
-                methoddict = {'uid': method.UID(),
-                              'title': method.Title()}
-        return json.dumps(methoddict)
+            return json.dumps(out)
+        bsc = api.get_catalog('bika_setup_catalog')
+        brains = bsc(portal_type='Instrument', UID=self.request.get("uid", '0'))
+        if brains:
+            instrument = brains[0]
+            instrument_obj = api.get_object(instrument)
+            out["title"] = instrument_obj.Title()
+            out["instrument"] = api.get_uid(instrument)
+            # Handle multiple Methods per instrument
+            methods = instrument_obj.getMethods()
+            for method in methods:
+                out["methods"].append({
+                    "uid": api.get_uid(method),
+                    "title": method.Title(),
+                })
+        return json.dumps(out)
 
 
 class InstrumentQCFailuresViewlet(ViewletBase):

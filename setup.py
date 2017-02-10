@@ -83,6 +83,7 @@ setup(name='bika.lims',
               'robotframework-debuglibrary',
               'plone.resource',
               'plone.app.textfield',
+              'pdbpp',
           ]
       },
       entry_points="""

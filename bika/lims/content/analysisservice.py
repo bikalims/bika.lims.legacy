@@ -21,7 +21,7 @@ from Products.Archetypes.public import DisplayList, ReferenceField, \
     FixedPointField, DecimalWidget, IntegerField, \
     IntegerWidget, StringWidget, BaseContent, \
     Schema, registerType, MultiSelectionWidget, \
-    FloatField, DecimalWidget
+    FloatField, DecimalWidget, InAndOutWidget
 from Products.Archetypes.utils import IntDisplayList
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.permissions import View, ModifyPortalContent
@@ -382,20 +382,21 @@ schema = BikaSchema.copy() + Schema((
     # - If InstrumentEntry not checked, set checked and readonly
     # - If InstrumentEntry checked, set as not readonly
     # See browser/js/bika.lims.analysisservice.edit.js
-    BooleanField('ManualEntryOfResults',
-                 schemata="Method",
-                 default=True,
-                 widget=BooleanWidget(
-                     label = _("Instrument assignment is not required"),
-                     description=_("Select if the results for tests of this "
-                                   "type of analysis can be set manually. "
-                                   "If selected, the user will be able to "
-                                   "set a result for a test of this type of "
-                                   "analysis in manage results view without "
-                                   "the need of selecting an instrument, "
-                                   "even though the method selected for the "
-                                   "test has instruments assigned."),
-                 )
+    BooleanField(
+        'ManualEntryOfResults',
+        schemata="Method",
+        default=True,
+        widget=BooleanWidget(
+            label=_("Allow manual entry of results"),
+            description=_(
+                "Select if the results for tests of this type of analysis can "
+                "be set manually. If selected, the user will be able to set a "
+                "result for a test of this type of analysis in manage results "
+                "view without the need of selecting an instrument even if the "
+                "method selected for the test has instruments assigned. "
+                "Setting this option will cause methods with no associated "
+                "instruments to be available for selection."),
+        )
     ),
     # Allow/Disallow instrument entry of results
     # Behavior controlled by javascript depending on Instruments field:
@@ -432,7 +433,7 @@ schema = BikaSchema.copy() + Schema((
                    allowed_types=('Instrument',),
                    relationship='AnalysisServiceInstruments',
                    referenceClass=HoldingReference,
-                   widget=MultiSelectionWidget(
+                   widget=InAndOutWidget(
                        label = _("Instruments"),
                        description=_("More than one instrument can be "
                                      "used in a test of this type of "
@@ -511,11 +512,10 @@ schema = BikaSchema.copy() + Schema((
         allowed_types = ('Method',),
         relationship = 'AnalysisServiceMethods',
         referenceClass = HoldingReference,
-        widget = MultiSelectionWidget(
+        widget = InAndOutWidget(
             label = _("Methods"),
             description = _("The tests of this type of analysis can be "
                             "performed by using more than one method with the "
-                            "'Manual entry of results' option enabled. "
                             "A selection list with the methods selected here "
                             "is populated in the manage results view for each "
                             "test of this type of analysis. Note that only "
@@ -1188,12 +1188,9 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         """
         method = None
         if (self.getInstrumentEntryOfResults() == True):
-            method = self.getInstrument().getMethod() \
-                if (self.getInstrument() \
-                    and self.getInstrument().getMethod()) \
-                else None
-        else:
-            method = self.get_Method();
+            # Instruments can have now multiple Methods assigned, thus, use
+            # immediately the value of the _Method field
+            method = self.get_Method()
         return method
 
     def getAvailableMethods(self):
@@ -1211,10 +1208,10 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
             # Add the methods from the instruments capable to perform
             # this analysis service
             for ins in self.getInstruments():
-                method = ins.getMethod()
-                if method and method.UID() not in muids:
-                    methods.append(method)
-                    muids.append(method.UID())
+                for method in ins.getMethods():
+                    if method and method.UID() not in muids:
+                        methods.append(method)
+                        muids.append(method.UID())
 
         return methods
 
