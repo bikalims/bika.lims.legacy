@@ -1,60 +1,77 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-"""The request for analysis by a client. It contains analysis instances.
-"""
+import sys
 import logging
+from decimal import Decimal
 from operator import methodcaller
 
-from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
-from plone import api
+from AccessControl import ClassSecurityInfo
 
 # noinspection PyUnresolvedReferences
-from Products.ATExtensions.field import RecordsField
-from plone.indexer import indexer
 from Products.Archetypes import atapi
+from Products.Archetypes.atapi import BaseFolder
 from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
+from Products.Archetypes.utils import DisplayList
+
+# Fields
+from Products.ATExtensions.field import RecordsField
+from Products.Archetypes.atapi import StringField
+from Products.Archetypes.atapi import ReferenceField
+from Products.Archetypes.atapi import TextField
+from Products.Archetypes.atapi import ComputedField
+from Products.Archetypes.atapi import FixedPointField
+from Products.Archetypes.atapi import BooleanField
+from bika.lims.browser.fields import ARAnalysesField
+from bika.lims.browser.fields import DateTimeField
+
+# Widgets
 from Products.Archetypes.Widget import RichWidget
+from Products.Archetypes.atapi import StringWidget
+from Products.Archetypes.atapi import BooleanWidget
+from Products.Archetypes.atapi import ComputedWidget
+from Products.Archetypes.atapi import TextAreaWidget
+from bika.lims.browser.widgets import ReferenceWidget
+from bika.lims.browser.widgets import SelectionWidget
+from bika.lims.browser.widgets import RejectionWidget
+from bika.lims.browser.widgets import SelectionWidget as BikaSelectionWidget
+
 from Products.CMFCore import permissions
 from Products.CMFCore.permissions import View
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
-from bika.lims.browser.fields import ARAnalysesField
+
+from zope.interface import implements
+
+from plone import api
+from plone.indexer import indexer
+
 from bika.lims.config import PROJECTNAME
-from bika.lims.permissions import *
+from bika.lims.permissions import EditARContact
+from bika.lims.permissions import SampleSample
+from bika.lims.permissions import ScheduleSampling
+from bika.lims.permissions import ManageInvoices
 from bika.lims.permissions import Verify as VerifyPermission
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IAnalysisRequest, ISamplePrepWorkflow
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.widgets import DateTimeWidget, DecimalWidget
-from bika.lims.browser.widgets import ReferenceWidget
-from bika.lims.browser.widgets import SelectionWidget
-from bika.lims.browser.widgets import RejectionWidget
 from bika.lims.workflow import skip, isBasicTransitionAllowed, getTransitionDate
 from bika.lims.workflow import doActionFor
-from decimal import Decimal
-from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import getUsers, dicts_to_dict
 from bika.lims.utils.analysisrequest import notify_rejection
 
-from bika.lims.browser.fields import DateTimeField
-from bika.lims.browser.widgets import SelectionWidget as BikaSelectionWidget
-
-import sys
-
-try:
-    from zope.component.hooks import getSite
-except ImportError:
-    # Plone < 4.3
-    # noinspection PyUnresolvedReferences
-    from zope.app.component.hooks import getSite
+"""The request for analysis by a client. It contains analysis instances.
+"""
 
 
 @indexer(IAnalysisRequest)
@@ -82,6 +99,7 @@ def SamplingRoundUID(instance):
     if sr:
         return sr.UID()
 
+
 @indexer(IAnalysisRequest)
 def getDepartmentUIDs(instance):
     """ Returns department UIDs assigned to the Analyses
@@ -91,7 +109,8 @@ def getDepartmentUIDs(instance):
     depts = [an.getService().getDepartment().UID() for an in ans if an.getService().getDepartment()]
     return depts
 
-schema = BikaSchema.copy() + Schema((
+
+schema = BikaSchema.copy() + atapi.Schema((
     StringField(
         'RequestID',
         searchable=True,
@@ -1768,8 +1787,8 @@ class AnalysisRequest(BaseFolder):
         """ compute default member discount if it applies """
         if hasattr(self, 'getMemberDiscountApplies'):
             if self.getMemberDiscountApplies():
-                plone = getSite()
-                settings = plone.bika_setup
+                portal = api.portal.get()
+                settings = portal.bika_setup
                 return settings.getMemberDiscount()
             else:
                 return "0.00"
@@ -1890,7 +1909,7 @@ class AnalysisRequest(BaseFolder):
                 continue
             calculation = analysis.getService().getCalculation()
             if not calculation or (
-                        calculation and not calculation.getDependentServices()):
+                    calculation and not calculation.getDependentServices()):
                 resultdate = analysis.getResultCaptureDate()
             duedate = analysis.getDueDate()
             # noinspection PyCallingNonCallable
@@ -1956,11 +1975,8 @@ class AnalysisRequest(BaseFolder):
         for profile in analysis_profiles:
             for analysis_service in profile.getService():
                 for analysis in analyses:
-                    if analysis_service.getKeyword() == analysis.getService(
-
-                    ).getKeyword() and \
-                                    analysis.getService().getKeyword() not in \
-                                    to_be_billed:
+                    if analysis_service.getKeyword() == analysis.getService().getKeyword() and \
+                       analysis.getService().getKeyword() not in to_be_billed:
                         analyses.remove(analysis)
         return analyses, analysis_profiles
 
@@ -2991,7 +3007,8 @@ class AnalysisRequest(BaseFolder):
             analyses = self.getAnalyses(review_state='to_be_verified')
             for analysis in analyses:
                 if (hasattr(analysis, 'getNumberOfVerifications') and
-                    hasattr(analysis, 'getNumberOfRequiredVerifications')):
+                        hasattr(analysis, 'getNumberOfRequiredVerifications')):
+
                     # For the 'verify' transition to (effectively) take place,
                     # we need to check if the required number of verifications
                     # for the analysis is, at least, the number of verifications
@@ -2999,9 +3016,9 @@ class AnalysisRequest(BaseFolder):
                     success = True
                     revers = analysis.getNumberOfRequiredVerifications()
                     nmvers = analysis.getNumberOfVerifications()
-                    username=getToolByName(self,'portal_membership').getAuthenticatedMember().getUserName()
+                    username = getToolByName(self, 'portal_membership').getAuthenticatedMember().getUserName()
                     item.addVerificator(username)
-                    if revers-nmvers <= 1:
+                    if revers - nmvers <= 1:
                         success, message = doActionFor(analysis, 'verify')
                         if not success:
                             # If failed, delete last verificator
