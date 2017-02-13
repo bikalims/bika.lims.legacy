@@ -123,10 +123,21 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         ),
     ),
 
-    BooleanField(
-        'DisposeUntilNextCalibrationTest',
-        default=False,
-        widget=BooleanWidget(
+    HistoryAwareReferenceField('Methods',
+        vocabulary='_getAvailableMethods',
+        allowed_types=('Method',),
+        relationship='InstrumentMethods',
+        required=0,
+        multiValued=1,
+        widget=ReferenceWidget(
+            format='select',
+            label=_("Method"),
+        ),
+    ),
+
+    BooleanField('DisposeUntilNextCalibrationTest',
+        default = False,
+        widget = BooleanWidget(
             label=_("De-activate until next calibration test"),
             description=_("If checked, the instrument will be unavailable until the next valid "
                           "calibration was performed. This checkbox will automatically be unchecked."),
