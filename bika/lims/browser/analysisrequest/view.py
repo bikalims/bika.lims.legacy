@@ -1,9 +1,21 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+
+from DateTime import DateTime
 from AccessControl import getSecurityManager
+
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from zope.interface import implements
+
+from plone.app.layout.globals.interfaces import IViewView
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.browser import BrowserView
@@ -12,24 +24,15 @@ from bika.lims.browser.analyses import QCAnalysesView
 from bika.lims.browser.header_table import HeaderTableView
 from bika.lims.browser.sample import SamplePartitionsView
 from bika.lims.config import POINTS_OF_CAPTURE
-from bika.lims.permissions import *
+from bika.lims.permissions import EditFieldResults
 from bika.lims.utils import isActive
 from bika.lims.utils import to_utf8
 from bika.lims.workflow import doActionFor
-from DateTime import DateTime
-from bika.lims.workflow import doActionFor
-from plone.app.layout.globals.interfaces import IViewView
-from Products.Archetypes import PloneMessageFactory as PMF
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.interface import implements
 
-import plone
 
 class AnalysisRequestViewView(BrowserView):
-
-    """ AR View form
-        The AR fields are printed in a table, using analysisrequest_view.py
+    """AR View form
+       The AR fields are printed in a table, using analysisrequest_view.py
     """
 
     implements(IViewView)
@@ -56,7 +59,7 @@ class AnalysisRequestViewView(BrowserView):
         ccemails = []
         for cc in contacts:
             ccemails.append("%s &lt;<a href='mailto:%s'>%s</a>&gt;"
-                % (cc.Title(), cc.getEmailAddress(), cc.getEmailAddress()))
+                            % (cc.Title(), cc.getEmailAddress(), cc.getEmailAddress()))
         # CC Emails become mailto links
         emails = self.context.getCCEmails()
         if isinstance(emails, str):
@@ -76,10 +79,11 @@ class AnalysisRequestViewView(BrowserView):
         self.tables = {}
         for poc in POINTS_OF_CAPTURE:
             if self.context.getAnalyses(getPointOfCapture=poc):
-                t = self.createAnalysesView(ar,
-                                 self.request,
-                                 getPointOfCapture=poc,
-                                 show_categories=self.context.bika_setup.getCategoriseAnalysisServices())
+                t = self.createAnalysesView(
+                    ar,
+                    self.request,
+                    getPointOfCapture=poc,
+                    show_categories=self.context.bika_setup.getCategoriseAnalysisServices())
                 t.allow_edit = True
                 t.form_id = "%s_analyses" % poc
                 t.review_states[0]['transitions'] = [{'id': 'submit'},
@@ -94,8 +98,8 @@ class AnalysisRequestViewView(BrowserView):
         # Create QC Analyses View for this AR
         show_cats = self.context.bika_setup.getCategoriseAnalysisServices()
         qcview = self.createQCAnalyesView(ar,
-                                self.request,
-                                show_categories=show_cats)
+                                          self.request,
+                                          show_categories=show_cats)
         qcview.allow_edit = False
         qcview.show_select_column = False
         qcview.show_workflow_action_buttons = False
@@ -114,7 +118,7 @@ class AnalysisRequestViewView(BrowserView):
             allstatus = list()
             for analysis in ar.getAnalyses():
                 status = workflow.getInfoFor(analysis.getObject(), 'review_state')
-                if status not in ['retracted','to_be_verified','verified']:
+                if status not in ['retracted', 'to_be_verified', 'verified']:
                     allstatus = []
                     break
                 else:
@@ -125,8 +129,8 @@ class AnalysisRequestViewView(BrowserView):
 
         # If is a retracted AR, show the link to child AR and show a warn msg
         if workflow.getInfoFor(ar, 'review_state') == 'invalid':
-            childar = hasattr(ar, 'getChildAnalysisRequest') \
-                        and ar.getChildAnalysisRequest() or None
+            childar = hasattr(ar, 'getChildAnalysisRequest') and \
+                ar.getChildAnalysisRequest() or None
             message = _('These results have been withdrawn and are '
                         'listed here for trace-ability purposes. Please follow '
                         'the link to the retest')
@@ -137,8 +141,9 @@ class AnalysisRequestViewView(BrowserView):
             self.addMessage(message, 'warning')
         # If is an AR automatically generated due to a Retraction, show it's
         # parent AR information
-        if hasattr(ar, 'getParentAnalysisRequest') \
-            and ar.getParentAnalysisRequest():
+        if hasattr(ar, 'getParentAnalysisRequest') and \
+           ar.getParentAnalysisRequest():
+
             par = ar.getParentAnalysisRequest()
             message = _('This Analysis Request has been '
                         'generated automatically due to '
@@ -152,7 +157,7 @@ class AnalysisRequestViewView(BrowserView):
     def getAttachments(self):
         attachments = []
         ar_atts = self.context.getAttachment()
-        analyses = self.context.getAnalyses(full_objects = True)
+        analyses = self.context.getAnalyses(full_objects=True)
         for att in ar_atts:
             file = att.getAttachmentFile()
             fsize = file.getSize() if file else 0
@@ -301,7 +306,7 @@ class AnalysisRequestViewView(BrowserView):
         bac = getToolByName(self.context, 'bika_analysis_catalog')
         res = []
         for analysis in bac(portal_type="Analysis",
-                           getRequestID=self.context.RequestID):
+                            getRequestID=self.context.RequestID):
             analysis = analysis.getObject()
             service = analysis.getService()
             res.append([service.getPointOfCapture(),
@@ -365,13 +370,13 @@ class AnalysisRequestViewView(BrowserView):
         """Grab the context's current AnalysisProfile Title if any
         """
         return self.context.getProfile() and \
-               self.context.getProfile().Title() or ''
+            self.context.getProfile().Title() or ''
 
     def getARTemplateTitle(self):
         """Grab the context's current ARTemplate Title if any
         """
         return self.context.getTemplate() and \
-               self.context.getTemplate().Title() or ''
+            self.context.getTemplate().Title() or ''
 
     def get_requested_analyses(self):
         #
@@ -384,7 +389,7 @@ class AnalysisRequestViewView(BrowserView):
                 continue
             service = analysis.getService()
             category_name = service.getCategoryTitle()
-            if not category_name in cats:
+            if category_name not in cats:
                 cats[category_name] = {}
             cats[category_name][analysis.Title()] = analysis
         cat_keys = cats.keys()
@@ -446,7 +451,7 @@ class AnalysisRequestViewView(BrowserView):
         # If is a retracted AR, show the link to child AR and show a warn msg
         if workflow.getInfoFor(ar, 'review_state') == 'invalid':
             childar = hasattr(ar, 'getChildAnalysisRequest') \
-                        and ar.getChildAnalysisRequest() or None
+                and ar.getChildAnalysisRequest() or None
             anchor = childar and ("<a href='%s'>%s</a>" % (childar.absolute_url(), childar.getRequestID())) or None
             if anchor:
                 custom['ChildAR'] = {
@@ -455,8 +460,8 @@ class AnalysisRequestViewView(BrowserView):
                 }
         # If is an AR automatically generated due to a Retraction, show it's
         # parent AR information
-        if hasattr(ar, 'getParentAnalysisRequest') \
-            and ar.getParentAnalysisRequest():
+        if hasattr(ar, 'getParentAnalysisRequest') and \
+           ar.getParentAnalysisRequest():
             par = ar.getParentAnalysisRequest()
             anchor = "<a href='%s'>%s</a>" % (par.absolute_url(), par.getRequestID())
             custom['ParentAR'] = {
