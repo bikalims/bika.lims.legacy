@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+LIMS-2596: AR and Sample view fields that need to stay editable
 LIMS-2597: AttributeError: `bika_setup` on login on a new Plone site w/o bika.lims installed
 LIMS-2558: JavaScript Uncaught TypeError: Cannot read property 'checkbox' of undefined causes endless Spinner
 LIMS-2473: Link User to Contact: LDAP Users not found
