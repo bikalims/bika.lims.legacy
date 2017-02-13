@@ -50,14 +50,14 @@
                   delete_attachments python:(add_attachments and not user.allowed(context, ['Client'])) or update_attachments;">
 
     <input type="hidden" id="bika_setup"
-           tal:attributes="bika_samplepoints python: context.bika_setup.bika_samplepoints.UID()">
+           tal:attributes="bika_samplepoints python: context.bika_setup.bika_samplepoints.UID()"/>
 
-    <div
-        tal:condition="python:update_attachments or add_attachments"
-        tal:define="ar_review_state review_state">
+    <div tal:condition="python:update_attachments or add_attachments"
+         tal:define="ar_review_state review_state">
       <metal:block use-macro="here/attachments/macros/attachments"/>
     </div>
 
+    <!-- Header Table -->
     <span tal:replace="structure view/header_table"/>
 
     <div tal:define="cfields python:view.get_custom_fields()"
