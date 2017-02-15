@@ -52,7 +52,7 @@ def upgrade(tool):
     """Update workflow permissions
     """
     # Adding old method of instrument as a set .
-    logger.info("Assingning Multiple method to instruments...")
+    logger.info("Assigning Multiple method to instruments...")
     instrument_multiple_methods(portal)
 
     wf = getToolByName(portal, 'portal_workflow')
@@ -200,24 +200,27 @@ def create_CAS_IdentifierType(portal):
                     description='Chemical Abstracts Registry number',
                     portal_types=['Analysis Service'])
 
+
 def multi_verification(portal):
     """
     Getting all analyses with review_state in to_be_verified and
     adding "admin" as a verificator as many times as this analysis verified before.
     """
     pc = getToolByName(portal, 'portal_catalog', None)
-    objs = pc(portal_type="Analyses",review_state="to_be_verified")
+    objs = pc(portal_type="Analyses", review_state="to_be_verified")
     for obj_brain in objs:
         obj = obj_brain.getObject()
-        old_field = obj.Schema().get("NumberOfVerifications", None)
+        old_field = obj.Schema().get("NumberOfVerifications", None).get(obj)
         if old_field:
-            new_value=''
-            for n in range(0,old_field):
-                new_value+='admin'
-                if n<old_field:
-                    new_value+=','
+            new_value = ''
+            for n in range(0, old_field):
+                new_value += 'admin'
+                if n < old_field:
+                    new_value += ','
             obj.setVerificators(new_value)
     transaction.commit()
+
+
 
 
 def instrument_multiple_methods(portal):
@@ -229,7 +232,7 @@ def instrument_multiple_methods(portal):
     addIndex(bsc, 'getMethodUIDs', 'KeywordIndex')
 
     for instrument in portal.bika_setup.bika_instruments.objectValues():
-        value = instrument.Schema().get("Method", None)
+        value = instrument.Schema().get("Method", None).get(instrument)
         if value:
             instrument.setMethods([value])
 
