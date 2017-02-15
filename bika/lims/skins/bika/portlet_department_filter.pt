@@ -1,6 +1,7 @@
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="bika">
+
 <body>
 <div metal:define-macro="portlet"
     tal:define="
@@ -29,19 +30,12 @@
         <!-- The header of the porlet -->
         <dt class="portletHeader"
             i18n:translate="">Department</dt>
-
-        <!-- Opening the form -->
-        <form
-            action="portletfilter_by_department"
-            name="portletfilter_by_department"
-            method="POST">
             <dd class="portletItem">
-                <input type="checkbox"
-                       name="admin_dep_filter_enabled"
-                       id="admin_dep_filter_enabled"
-                       tal:condition= "python: user_name=='admin'"/>
-                       <label tal:condition= "python: user_name=='admin'">Select All Departments<br><br></label>
-
+              <input type="checkbox"
+                     name="admin_dep_filter_enabled"
+                     id="admin_dep_filter_enabled"
+                     tal:condition= "python: user_name=='admin'"/>
+              <label tal:condition= "python: user_name=='admin'">Select All Departments<br><br></label>
                 <tal:option repeat="dep deps" tal:condition="python: len(deps)>1">
                 <input type="checkbox"
                     tal:define="dep_name python:dep.Title if user_name=='admin' else dep.Title();
@@ -61,14 +55,17 @@
                     tal:content="python: deps[0].Title if user_name=='admin' and deps else deps[0].Title() if deps else ''"
                     >Department</label>
             </dd><br>
+
             <!-- The submit form button -->
             <dd class="portletFooter">
-                <input type="button" id="department_filter_submit" value="Filter"
-                  tal:condition="python: len(deps)>1"/>
+              <input type="button" id="department_filter_submit" value="Filter"
+                     tal:condition="python: len(deps)>1"/>
             </dd>
-        </form>
-    </dl>
-</tal:departments>
-</div>
-</body>
+
+          </form>
+        </dl>
+        </tal:condition>
+      </tal:departments>
+    </div>
+  </body>
 </html>

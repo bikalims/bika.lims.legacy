@@ -21,7 +21,7 @@ from Products.Archetypes.public import DisplayList, ReferenceField, \
     FixedPointField, DecimalWidget, IntegerField, \
     IntegerWidget, StringWidget, BaseContent, \
     Schema, registerType, MultiSelectionWidget, \
-    FloatField, DecimalWidget
+    FloatField
 from Products.Archetypes.utils import IntDisplayList
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.permissions import View, ModifyPortalContent

@@ -9,7 +9,7 @@
   top:-0.4em;
   margin-right: .5em;
   font-size: 60%;
-  /*border:1px solid #dfdfdf !important;*/
+  border:none;
   vertical-align: middle;
   font-weight:normal;
   letter-spacing: 0;

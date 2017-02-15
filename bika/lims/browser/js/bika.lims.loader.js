@@ -66,6 +66,9 @@ window.bika.lims.controllers =  {
     ".portaltype-instrumentcertification.template-base_edit":
         ['InstrumentCertificationEditView'],
 
+    // Editing a calculation
+    ".portaltype-calculation":
+        ['CalculationEditView'],
 
     // Bika Setup
     ".portaltype-bikasetup.template-base_edit":
@@ -191,7 +194,7 @@ window.bika.lims.controllers =  {
 
     // Reports folder (not AR Reports)
     ".portaltype-reportfolder":
-        ['ReportFolderView'],
+        ['ReportFolderView']
 
     // Add here your view-controller/s assignment
 

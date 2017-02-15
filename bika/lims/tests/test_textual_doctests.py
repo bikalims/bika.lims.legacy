@@ -15,6 +15,9 @@ from bika.lims.tests.base import BikaSimpleTestCase
 
 
 DOCTESTS = [
+    "../docs/Permissions.rst",
+    "../docs/InstrumentCalibrationCertificationAndValidation.rst",
+    "../docs/ContactUser.rst",
     "../docs/Instruments.rst",
     "../docs/Versioning.rst",
 ]
@@ -27,7 +30,7 @@ def test_suite():
             ztc.ZopeDocFileSuite(
                 doctestfile,
                 test_class=BikaSimpleTestCase,
-                optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
+                optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_NDIFF,
             )
     ])
     return suite

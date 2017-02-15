@@ -45,6 +45,9 @@ class ClientFolderContentsView(BikaListingView):
             'EmailAddress': {'title': _('Email Address')},
             'Phone': {'title': _('Phone')},
             'Fax': {'title': _('Fax')},
+            'ClientID': {'title': _('Client ID')},
+            'BulkDiscount': {'title': _('Bulk Discount')},
+            'MemberDiscountApplies': {'title': _('Member Discount')},
         }
 
 
@@ -56,7 +59,11 @@ class ClientFolderContentsView(BikaListingView):
              'columns':['title',
                         'EmailAddress',
                         'Phone',
-                        'Fax', ]
+                        'Fax', 
+                        'ClientID',
+                        'BulkDiscount',
+                        'MemberDiscountApplies',
+                        ]
              },
             {'id':'inactive',
              'title': _('Dormant'),
@@ -65,7 +72,11 @@ class ClientFolderContentsView(BikaListingView):
              'columns':['title',
                         'EmailAddress',
                         'Phone',
-                        'Fax', ]
+                        'Fax', 
+                        'ClientID',
+                        'BulkDiscount',
+                        'MemberDiscountApplies',
+                        ]
              },
             {'id':'all',
              'title': _('All'),
@@ -74,7 +85,11 @@ class ClientFolderContentsView(BikaListingView):
              'columns':['title',
                         'EmailAddress',
                         'Phone',
-                        'Fax', ]
+                        'Fax', 
+                        'ClientID',
+                        'BulkDiscount',
+                        'MemberDiscountApplies',
+                        ]
              },
         ]
 
@@ -130,6 +145,9 @@ class ClientFolderContentsView(BikaListingView):
                       obj.getEmailAddress())
             items[x]['Phone'] = obj.getPhone()
             items[x]['Fax'] = obj.getFax()
+            items[x]['ClientID'] = obj.getClientID()
+            items[x]['BulkDiscount'] = obj.getBulkDiscount() and 'Y' or 'N'
+            items[x]['MemberDiscountApplies'] = obj.getMemberDiscountApplies() and 'Y' or 'N'
 
         return items
 

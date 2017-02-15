@@ -7,12 +7,12 @@
 
 import re
 
-from Acquisition import aq_base
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone import api
 from plone.protect import CheckAuthenticator
+from plone.app.controlpanel.usergroups import UsersOverviewControlPanel
 
 from bika.lims import PMF
 from bika.lims import logger
@@ -93,29 +93,41 @@ class ContactLoginDetailsView(BrowserView):
     def linkable_users(self):
         """Search Plone users which are not linked to a contact
         """
-        users = api.user.get_users()
+
+        # We make use of the existing controlpanel `@@usergroup-userprefs` view
+        # logic to make sure we get all users from all plugins (e.g. LDAP)
+        users_view = UsersOverviewControlPanel(self.context, self.request)
+
+        users = users_view.doSearch("")
 
         out = []
         for user in users:
-            userid = user.getId()
+            userid = user.get("id", None)
+
+            if userid is None:
+                continue
 
             # Skip users which are already linked to a Contact
             contact = Contact.getContactByUsername(userid)
             labcontact = LabContact.getContactByUsername(userid)
+
             if contact or labcontact:
                 continue
 
             userdata = {
-                "userid": user.getId(),
-                "email": user.getProperty("email"),
-                "fullname": user.getProperty("fullname"),
+                "userid": userid,
+                "email": user.get("email"),
+                "fullname": user.get("title"),
             }
 
             # filter out users which do not match the searchstring
             if self.searchstring:
                 s = self.searchstring.lower()
-                if not any(map(lambda v: re.search(s, v.lower()), userdata.values())):
+                if not any(map(lambda v: re.search(s, str(v).lower()), userdata.values())):
                     continue
+
+            # update data (maybe for later use)
+            userdata.update(user)
 
             # Append the userdata for the results
             out.append(userdata)
@@ -168,11 +180,12 @@ class ContactLoginDetailsView(BrowserView):
     def _create_user(self):
         """Create a new user
         """
+
         def error(field, message):
             if field:
                 message = "%s: %s" % (field, message)
             self.context.plone_utils.addPortalMessage(message, 'error')
-            return self.template()
+            return self.request.response.redirect(self.context.absolute_url() + "/login_details")
 
         form = self.request.form
         contact = self.context
@@ -218,17 +231,6 @@ class ContactLoginDetailsView(BrowserView):
 
         contact.setUser(username)
 
-        # If we're being created in a Client context, then give
-        # the contact an Owner local role on client.
-        if contact.aq_parent.portal_type == 'Client':
-            contact.aq_parent.manage_setLocalRoles(username, ['Owner', ])
-            if hasattr(aq_base(contact.aq_parent), 'reindexObjectSecurity'):
-                contact.aq_parent.reindexObjectSecurity()
-
-            # add user to Clients group
-            group = self.context.portal_groups.getGroupById('Clients')
-            group.addMember(username)
-
         # Additional groups for LabContact users.
         # not required (not available for client Contact)
         if 'groups' in self.request and self.request['groups']:
@@ -247,12 +249,12 @@ class ContactLoginDetailsView(BrowserView):
             except:
                 import transaction
                 transaction.abort()
-                return error(
-                    None, PMF("SMTP server disconnected."))
+                message = _("SMTP server disconnected. User creation aborted.")
+                return error(None, message)
 
-        message = PMF("Member registered.")
+        message = _("Member registered and linked to the current Contact.")
         self.context.plone_utils.addPortalMessage(message, 'info')
-        return self.template()
+        return self.request.response.redirect(self.context.absolute_url() + "/login_details")
 
     def tabindex(self):
         i = 0

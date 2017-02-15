@@ -26,6 +26,7 @@ class AddWorksheetView(BrowserView):
         form = self.request.form
         analyst = self.request.get('analyst', '')
         template = self.request.get('template', '')
+        client = self.request.get('client', 'any')
         instrument = self.request.get('instrument', '')
 
         if not analyst:
@@ -60,7 +61,7 @@ class AddWorksheetView(BrowserView):
 
         wst = rc.lookupObject(template)
         ws.setWorksheetTemplate(wst)
-        ws.applyWorksheetTemplate(wst)
+        ws.applyWorksheetTemplate(wst, client_title=client)
 
         if ws.getLayout():
             self.request.RESPONSE.redirect(ws.absolute_url() + "/manage_results")

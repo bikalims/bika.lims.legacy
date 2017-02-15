@@ -585,7 +585,12 @@ class BikaListingView(BrowserView):
 
         self.contentFilter['sort_order'] = self.sort_order
         if self.sort_on:
-            self.contentFilter['sort_on'] = self.sort_on
+            # Ensure we have a valid sort_on index is valid
+            if self.sort_on not in catalog.indexes():
+                logger.warn("Sort index 'sort_on={}' is not in available indexes for the requested catalog '{}'.".format(
+                    self.sort_on, self.catalog))
+            else:
+                self.contentFilter['sort_on'] = self.sort_on
 
         # pagesize
         pagesize = self.request.get(form_id + '_pagesize', self.pagesize)
@@ -606,7 +611,7 @@ class BikaListingView(BrowserView):
         self.Or = []
         # logger.info("contentFilter: %s"%self.contentFilter)
         for k, v in self.columns.items():
-            if 'index 'not in v \
+            if 'index' not in v \
                or v['index'] == 'review_state' \
                or v['index'] in self.filter_indexes:
                 continue
@@ -1034,6 +1039,7 @@ class BikaListingView(BrowserView):
                 # otherwise, self.contentsMethod must handle contentFilter
                 brains = self.contentsMethod(contentFilterTemp)
         else:
+            logger.debug("Bika Listing Table Query={}".format(contentFilterTemp))
             brains = self.contentsMethod(contentFilterTemp)
 
         # idx increases one unit each time an object is added to the 'items'

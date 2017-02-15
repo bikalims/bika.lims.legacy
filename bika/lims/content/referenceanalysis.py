@@ -8,6 +8,8 @@
 
 """ReferenceAnalysis
 """
+from Products.CMFCore.WorkflowCore import WorkflowException
+from bika.lims.workflow import getTransitionActor
 from plone import api
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
@@ -418,6 +420,13 @@ class ReferenceAnalysis(BaseContent):
             return get_significant_digits(uncertainty)
         else:
             return serv.getPrecision(result)
+
+    def getSubmittedBy(self):
+        """Returns the identifier of the user who submitted the result if the
+        state of the current analysis is "to_be_verified" or "verified"
+        :return: the user_id of the user who did the last submission of result
+        """
+        return getTransitionActor(self, 'submit')
 
     def isVerifiable(self):
         """

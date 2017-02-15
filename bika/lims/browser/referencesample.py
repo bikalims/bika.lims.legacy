@@ -160,8 +160,14 @@ class ReferenceAnalysesView(AnalysesView):
         item['Captured'] = self.ulocalized_time(obj.getResultCaptureDate())
         brefs = obj.getBackReferences("WorksheetAnalysis")
         item['Worksheet'] = brefs and brefs[0].Title() or ''
+        # The following item keywords are required for the
+        # JSON return value below, which is used to render graphs.
+        # they are not actually used in the table rendering.
+        item['Keyword'] = service.getKeyword()
+        item['Unit'] = service.getUnit()
 
         self.addToJSON(obj, service, item)
+        return item
 
     def addToJSON(self, analysis, service, item):
         """ Adds an analysis item to the self.anjson dict that will be used
@@ -177,32 +183,29 @@ class ReferenceAnalysesView(AnalysesView):
         uid = service.UID()
         if uid in rr:
             specs = rr.get(uid, None)
-            try:
-                smin = float(specs.get('min', 0))
-                smax = float(specs.get('max', 0))
-                error = float(specs.get('error', 0))
-                target = float(specs.get('result', 0))
-                result = float(item['Result'])
-                error_amount = ((target / 100) * error) if target > 0 else 0
-                upper = smax + error_amount
-                lower = smin - error_amount
+            smin = float(specs.get('min', 0))
+            smax = float(specs.get('max', 0))
+            error = float(specs.get('error', 0))
+            target = float(specs.get('result', 0))
+            result = float(item['Result'])
+            error_amount = ((target / 100) * error) if target > 0 else 0
+            upper = smax + error_amount
+            lower = smin - error_amount
 
-                anrow = {'date': item['CaptureDate'],
-                         'min': smin,
-                         'max': smax,
-                         'target': target,
-                         'error': error,
-                         'erroramount': error_amount,
-                         'upper': upper,
-                         'lower': lower,
-                         'result': result,
-                         'unit': item['Unit'],
-                         'id': item['uid']}
-                anrows.append(anrow)
-                trows[qcid] = anrows
-                self.anjson[serviceref] = trows
-            except:
-                pass
+            anrow = {'date': item['Captured'],
+                     'min': smin,
+                     'max': smax,
+                     'target': target,
+                     'error': error,
+                     'erroramount': error_amount,
+                     'upper': upper,
+                     'lower': lower,
+                     'result': result,
+                     'unit': item['Unit'],
+                     'id': item['uid']}
+            anrows.append(anrow)
+            trows[qcid] = anrows
+            self.anjson[serviceref] = trows
 
     def get_analyses_json(self):
         return json.dumps(self.anjson)

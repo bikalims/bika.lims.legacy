@@ -522,16 +522,37 @@ class AnalysisResultsImporter(Logger):
     #                                                "request_id": ar.getRequestID()}))
                                 pass
 
+        # Calculate analysis dependencies
+        for aruid in list(set(arprocessed)):
+            ar = self.bc(portal_type='AnalysisRequest', UID=aruid)
+            ar = ar[0].getObject()
+            analyses = ar.getAnalyses()
+            for analysis in analyses:
+                analysis = analysis.getObject()
+                initial_result = analysis.getResult()
+                calc_passed = analysis.calculateResult(override=True,
+                                                       cascade=True)
+                if calc_passed and initial_result != analysis.getResult():
+                    self.log(
+                        "${request_id}: calculated result for "
+                        "'${analysis_keyword}': '${analysis_result}'",
+                        mapping={"request_id": ar.getRequestID(),
+                                 "analysis_keyword": analysis.getKeyword(),
+                                 "analysis_result": str(analysis.getResult())}
+                    )
+
         for arid, acodes in importedars.iteritems():
-            acodesmsg = ["Analysis %s" % acod for acod in acodes]
+            acodesmsg = '. '.join(["Analysis %s" % acod for acod in acodes])
             self.log("${request_id}: ${analysis_keywords} imported sucessfully",
                      mapping={"request_id": arid,
                               "analysis_keywords": acodesmsg})
 
         for instid, acodes in importedinsts.iteritems():
-            acodesmsg = ["Analysis %s" % acod for acod in acodes]
-            msg = "%s: %s %s" % (instid, ", ".join(acodesmsg), "imported sucessfully")
-            self.log(msg)
+            acodesmsg = '. '.join(["Analysis %s" % acod for acod in acodes])
+            self.log(
+                "${instrument_id}: ${analysis_keywords} imported sucessfully",
+                 mapping={"instrument_id": instid,
+                          "analysis_keywords": acodesmsg})
 
         if self.instrument_uid:
             self.log(

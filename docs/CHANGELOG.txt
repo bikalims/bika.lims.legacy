@@ -3,6 +3,19 @@
 - Allow multi-approval (multi-verification) of results
 HEALTH-568: TaqMan 96 Interface not working well
 HEALTH-567: Nuclicens Interface not working well
+LIMS-2600: Some improvements and fixes for Statements
+LIMS-2567: Show all ARs on worksheet when adding Duplicate analysis
+LIMS-2562: Add Client filter when applying Worksheet Template
+LIMS-2561: Valid Reference Samples not being listed in worksheet views
+LIMS-1504: Calculation formula test widgets
+LIMS-2352: Cleaner and smaller instrument import log
+LIMS-2527: Bika Listing Table fail on invalid `sort_on` index
+LIMS-2568: Multi AR Report Template raises AttributeError
+LIMS-2548: Allow entry of negative values for LDL and UDL
+LIMS-2489: Fix error in suppliers view when a Reference Sample is past expiry date
+LIMS-2597: AttributeError: `bika_setup` on login on a new Plone site w/o bika.lims installed
+LIMS-2558: JavaScript Uncaught TypeError: Cannot read property 'checkbox' of undefined causes endless Spinner
+LIMS-2473: Link User to Contact: LDAP Users not found
 LIMS-2477: Reference Analysis has no dependencies; remove guard that assumes it does
 LIMS-2465: Not possible to translate Bika Listing Table Workflow Action Buttons
 LIMS-1391: Add configurable identifier types (CAS# for AnalysisService)
