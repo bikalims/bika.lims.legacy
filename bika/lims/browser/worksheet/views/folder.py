@@ -127,7 +127,7 @@ class FolderView(BikaListingView):
             {'id':'default',
              'title': _('All'),
              'contentFilter': {'portal_type': 'Worksheet',
-                               'review_state':['open', 'to_be_verified',],
+                               'review_state':['open', 'to_be_verified', 'verified'],
                                'sort_on':'id',
                                'sort_order': 'reverse'},
              'transitions':[{'id':'retract'},
