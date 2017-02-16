@@ -29,7 +29,9 @@ window.bika.lims.controllers =  {
     // Atachments
     ".attachments":
         ['AttachmentsUtils'],
-
+    // Bika Listing Filter Bar
+    "tr.bika_listing_filter_bar":
+        ['BikaListingFilterBarController'],
 
     /** JS objects to be loaded always **/
 
@@ -64,6 +66,9 @@ window.bika.lims.controllers =  {
     ".portaltype-instrumentcertification.template-base_edit":
         ['InstrumentCertificationEditView'],
 
+    // Editing a calculation
+    ".portaltype-calculation":
+        ['CalculationEditView'],
 
     // Bika Setup
     ".portaltype-bikasetup.template-base_edit":
@@ -172,10 +177,9 @@ window.bika.lims.controllers =  {
     "#worksheet-printview-wrapper":
         ['WorksheetPrintView'],
 
-
     // Reports folder (not AR Reports)
     ".portaltype-reportfolder":
-        ['ReportFolderView'],
+        ['ReportFolderView']
 
     // Add here your view-controller/s assignment
 

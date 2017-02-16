@@ -2,7 +2,7 @@
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
-
+from Products.CMFCore.WorkflowCore import WorkflowException
 from plone import api
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _, logger
@@ -37,6 +37,20 @@ def Priority(instance):
     if priority:
         return priority.getSortKey()
 
+
+@indexer(IWorksheet)
+def getDepartmentUIDs(instance):
+    deps = [an.getDepartment().UID() for
+            an in obj.getWorksheetServices() if
+            an.getDepartment()]
+    return deps
+
+@indexer(IWorksheet)
+def getDepartmentUIDs(instance):
+    deps = [an.getDepartment().UID() for
+            an in obj.getWorksheetServices() if
+            an.getDepartment()]
+    return deps
 
 schema = BikaSchema.copy() + Schema((
     HistoryAwareReferenceField('WorksheetTemplate',
@@ -189,7 +203,13 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
 
         # overwrite saved context UID for event subscriber
         self.REQUEST['context_uid'] = self.UID()
-        workflow.doActionFor(analysis, 'unassign')
+        try:
+            workflow.doActionFor(analysis, 'unassign')
+        except WorkflowException as e:
+            message = str(e)
+            logger.error(
+                "Cannot use 'unassign' transition on {}: {}".format(
+                analysis, message))
         # Note: subscriber might unassign the AR and/or promote the worksheet
 
         # remove analysis from context.Analyses *after* unassign,
@@ -307,6 +327,10 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
         for analysis in src_analyses:
             if analysis.UID() in dest_analyses:
                 continue
+            if analysis.portal_type == 'ReferenceAnalysis':
+                logger.warning('Cannot create duplicate analysis from '
+                               'ReferenceAnalysis at {}'.format(analysis))
+                continue
 
             # If retracted analyses, for some reason, the getLayout() returns
             # two times the regular analysis generated automatically after a
@@ -338,7 +362,7 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
 
             # Set ReferenceAnalysesGroupID (same id for the analyses from
             # the same Reference Sample and same Worksheet)
-            if not refgid and not analysis.portal_type == 'ReferenceAnalysis':
+            if not refgid:
                 prefix = analysis.aq_parent.getSample().id
                 dups = []
                 for an in self.getAnalyses():
@@ -366,7 +390,7 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
             workflow.doActionFor(duplicate, 'assign')
 
 
-    def applyWorksheetTemplate(self, wst):
+    def applyWorksheetTemplate(self, wst, client_title=None):
         """ Add analyses to worksheet according to wst's layout.
             Will not overwrite slots which are filled already.
             If the selected template has an instrument assigned, it will
@@ -387,12 +411,16 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
         nr_slots = len(wst_slots) - len(ws_slots)
         positions = [pos for pos in wst_slots if pos not in ws_slots]
 
-        analyses = bac(portal_type='Analysis',
-                       getServiceUID=wst_service_uids,
-                       review_state='sample_received',
-                       worksheetanalysis_review_state='unassigned',
-                       cancellation_state = 'active',
-                       sort_on='getDueDate')
+        contentFilter = {'portal_type': 'Analysis',
+                         'getServiceUID': wst_service_uids,
+                         'review_state': 'sample_received',
+                         'worksheetanalysis_review_state': 'unassigned',
+                         'cancellation_state':  'active',
+                         'sort_on': 'getDueDate'}
+        if client_title and client_title != 'any':
+            contentFilter['getClientTitle'] = client_title
+
+        analyses = bac(contentFilter)
 
         # ar_analyses is used to group analyses by AR.
         ar_analyses = {}
@@ -743,15 +771,24 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
                 state = workflow.getInfoFor(analysis, 'review_state', '')
                 if state != 'to_be_verified':
                     continue
-                # For the 'verify' transition to (effectively) take place,
-                # we need to check if the required number of verifications for
-                # the analysis is, at least, the number of verifications
-                # performed previously +1
-                revers = analysis.getNumberOfRequiredVerifications()
-                nmvers = analysis.getNumberOfVerifications()
-                analysis.setNumberOfVerifications(nmvers+1)
-                if revers-nmvers <= 1:
-                    doActionFor(analysis, "verify")
+                if (hasattr(analysis, 'getNumberOfVerifications') and
+                    hasattr(analysis, 'getNumberOfRequiredVerifications')):
+                    # For the 'verify' transition to (effectively) take place,
+                    # we need to check if the required number of verifications
+                    # for the analysis is, at least, the number of verifications
+                    # performed previously +1
+                    success = True
+                    revers = analysis.getNumberOfRequiredVerifications()
+                    nmvers = analysis.getNumberOfVerifications()
+                    username=getToolByName(self,'portal_membership').getAuthenticatedMember().getUserName()
+                    analysis.addVerificator(username)
+                    if revers-nmvers <= 1:
+                        success, message = doActionFor(analysis, 'verify')
+                        if not success:
+                            # If failed, delete last verificator.
+                            analysis.deleteLastVerificator()
+                else:
+                    doActionFor(analysis, 'verify')
 
     def workflow_script_reject(self):
         """Copy real analyses to RejectAnalysis, with link to real

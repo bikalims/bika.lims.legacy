@@ -55,6 +55,13 @@
 							tal:content="python:profile[1]"/>
 					</tal:profile>
 				</select>&nbsp;
+				<label for="client" i18n:translate="">Client</label>
+				<select id="WSTClientSelector" name="client" class="listing-filter">
+					<option value="any" i18n:translate="">Any</option>
+					<tal:options repeat="client view/getClients">
+						<option tal:attributes="value python:client" tal:content="python:client"/>
+					</tal:options>
+				</select>&nbsp;
 				<input type="submit"
 					   class="applytemplate"
 				       value="Apply template"

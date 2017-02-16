@@ -23,9 +23,14 @@
                  "RejectionReasons"]
          };
          window.bika.lims.jsonapi_read(request_data, function (data) {
-             if (data.success &&
-                 data.total_objects > 0) {
-                 var reasons_state = data.objects[0]['RejectionReasons'][0]['checkbox'];
+             if (data.success && data.total_objects > 0) {
+                 var rejection_reasons = data.objects[0]['RejectionReasons'];
+                 // https://jira.bikalabs.com/browse/LIMS-2558
+                 if (rejection_reasons.length == 0) {
+                     console.debug("bika.lims.rejection.RejectionKickOff: No rejection reasons found in ", data);
+                     return;
+                 }
+                 var reasons_state = rejection_reasons[0]['checkbox'];
                  if (reasons_state == undefined || reasons_state != 'on'){
                      $('a#workflow-transition-reject').closest('li').hide();
                  }

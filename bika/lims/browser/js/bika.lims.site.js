@@ -15,7 +15,15 @@ function SiteView() {
 
         loadReferenceDefinitionEvents();
 
-    }
+        loadFilterByDepartment();
+        //Date range controllers
+        $('.date_range_start').bind("change", function () {
+            date_range_controller_0(this);
+        });
+        $('.date_range_end').bind("change", function () {
+            date_range_controller_1(this);
+        });
+    };
 
     function loadClientEvents() {
 
@@ -159,6 +167,19 @@ function SiteView() {
             .click(function(){$(this).attr("value", "");})
             .focus();
         });
+        /**
+        This function defines a datepicker for a date range. Both input
+        elements should be siblings and have the class 'date_range_start' and
+        'date_range_end'.
+        */
+        $("input.datepicker_range").datepicker({
+            showOn:"focus",
+            showAnim:"",
+            changeMonth:true,
+            changeYear:true,
+            dateFormat: dateFormat,
+            yearRange: limitString
+        });
 
         $("input.datepicker_nofuture").live("click", function() {
             $(this).datepicker({
@@ -270,6 +291,45 @@ function SiteView() {
                 event.preventDefault();
             }
         });
+        // autocomplete input controller
+        var availableTags = $.parseJSON($("input.autocomplete").attr('voc'));
+        function split( val ) {
+            return val.split( /,\s*/ );
+        }
+        function extractLast( term ) {
+            return split( term ).pop();
+        }
+        $("input.autocomplete")
+            // don't navigate away from the field on tab when selecting an item
+            .on( "keydown", function( event ) {
+              if ( event.keyCode === $.ui.keyCode.TAB &&
+                  $( this ).autocomplete( "instance" ).menu.active ) {
+                event.preventDefault();
+              }
+            })
+            .autocomplete({
+                minLength: 0,
+                source: function( request, response ) {
+                    // delegate back to autocomplete, but extract the last term
+                    response( $.ui.autocomplete.filter(
+                        availableTags, extractLast( request.term ) ) );
+                },
+                focus: function() {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function( event, ui ) {
+                    var terms = split( this.value );
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push( ui.item.value );
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push( "" );
+                    this.value = terms.join( ", " );
+                    return false;
+                }
+        });
 
         // Archetypes :int and IntegerWidget inputs get filtered
         $("input[name*='\\:int'], .ArchetypesIntegerWidget input").keyup(function(e) {
@@ -280,8 +340,8 @@ function SiteView() {
 
         // Archetypes :float and DecimalWidget inputs get filtered
         $("input[name*='\\:float'], .ArchetypesDecimalWidget input").keyup(function(e) {
-            if (/[^.\d]/g.test(this.value)) {
-                this.value = this.value.replace(/[^.\d]/g, "");
+            if (/[^-.\d]/g.test(this.value)) {
+                this.value = this.value.replace(/[^-.\d]/g, "");
             }
         });
 
@@ -343,5 +403,83 @@ function SiteView() {
                 $('#panel-notification').fadeOut("slow","linear")
             }, 3000)
         });
+    };
+
+    function loadFilterByDepartment() {
+        /**
+        This function sets up the filter by department cookie value by chosen departments.
+        Also it does auto-submit if admin wants to enable/disable the department filtering.
+        */
+        $('#department_filter_submit').click(function() {
+          if(!($('#admin_dep_filter_enabled').is(":checked"))) {
+            var deps =[];
+            $.each($("input[name^=chb_deps_]:checked"), function() {
+              deps.push($(this).val());
+            });
+            var cookiename = 'filter_by_department_info';
+            if (deps.length===0) {
+              deps.push($('input[name^=chb_deps_]:checkbox:not(:checked):visible:first').val());
+            }
+            createCookie(cookiename, deps.toString());
+          }
+          location.reload();
+        });
+
+        $('#admin_dep_filter_enabled').change(function() {
+            var cookiename = 'filter_by_department_info';
+            if($(this).is(":checked")) {
+                var deps=[];
+                $.each($("input[name^=chb_deps_]:checkbox"), function() {
+                  deps.push($(this).val());
+                });
+                createCookie(cookiename, deps);
+                createCookie('dep_filter_disabled','true');
+                location.reload();
+              }else{
+                createCookie('dep_filter_disabled','false');
+                location.reload();
+              }
+            });
+          loadFilterByDepartmentCookie();
+    }
+
+    function loadFilterByDepartmentCookie(){
+        /**
+        This function checks if the cookie 'filter_by_department_info' is
+        available. If the cookie exists, do nothing, if the cookie has not been
+        created yet, checks the selected department in the checkbox group and creates the cookie with the UID of the first department.
+        If cookie value "dep_filter_disabled" is true, it means the user is admin and filtering is disabled.
+        */
+        // Gettin the cookie
+        var cookiename = 'filter_by_department_info';
+        var cookie_val = readCookie(cookiename);
+        if (cookie_val === null || document.cookie.indexOf(cookiename)<1){
+            var dep_uid = $('input[name^=chb_deps_]:checkbox:visible:first').val();
+            createCookie(cookiename, dep_uid);
+        }
+        var dep_filter_disabled=readCookie('dep_filter_disabled');
+        if (dep_filter_disabled=="true" || dep_filter_disabled=='"true"'){
+            $('#admin_dep_filter_enabled').prop("checked",true);
+        }
+    }
+
+
+    /**
+    This function updates the minimum selectable date of date_range_end
+    @param {object} input_element is the <input> object for date_range_start
+    */
+    function date_range_controller_0(input_element){
+        var date_element = $(input_element).datepicker("getDate");
+        var brother = $(input_element).siblings('.date_range_end');
+        $(brother).datepicker("option", "minDate", date_element );
+    }
+    /**
+    This function updates the maximum selectable date of date_range_start
+    @param {object} input_element is the <input> object for date_range_end
+    */
+    function date_range_controller_1(input_element){
+        var date_element = $(input_element).datepicker("getDate");
+        var brother = $(input_element).siblings('.date_range_start');
+        $(brother).datepicker("option", "maxDate", date_element );
     }
 }

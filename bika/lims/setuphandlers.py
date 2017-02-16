@@ -10,8 +10,10 @@ from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory
+from Products.CMFPlone.utils import _createObjectByType
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
+from bika.lims.utils import t, tmpID
 from bika.lims import logger
 from bika.lims.config import *
 from bika.lims.permissions import *
@@ -81,8 +83,10 @@ class BikaGenerator:
                        'bika_containers',
                        'bika_containertypes',
                        'bika_preservations',
+                       'bika_identifiertypes',
                        'bika_instruments',
                        'bika_instrumenttypes',
+                       'bika_instrumentlocations',
                        'bika_analysisspecs',
                        'bika_analysisprofiles',
                        'bika_artemplates',
@@ -112,10 +116,6 @@ class BikaGenerator:
         lab.unmarkCreationFlag()
         lab.reindexObject()
 
-        # Move calendar and user action to bika
-# for action in portal.portal_controlpanel.listActions():
-# if action.id in ('UsersGroups', 'UsersGroups2', 'bika_calendar_tool'):
-# action.permissions = (ManageBika,)
 
     def setupGroupsAndRoles(self, portal):
         # add roles
@@ -274,49 +274,80 @@ class BikaGenerator:
 
         mp(ViewLogTab, ['Manager', 'LabManager'], 1)
 
+        # Bika Setup
+        # The `/bika_setup` folder follows the `bika_one_state_workflow`.
+        # Please refer to the workflow definition to see the default permissions
         mp = portal.bika_setup.manage_permission
-        mp('Access contents information', ['Authenticated', 'Analyst'], 1)
+        # We set explicit permissions to access methods to be persistent with the assigned workflow
+        mp(permissions.View, ['Authenticated'], 0)
+        mp(permissions.ListFolderContents, ['Authenticated'], 0)
+        # Front-Page Portlets need to access some information for Anonymous.
+        mp(permissions.AccessContentsInformation, ['Anonymous'], 0)
+
+        # Set modify permissions
         mp(permissions.ModifyPortalContent, ['Manager', 'LabManager'], 0)
-        mp(permissions.View, ['Authenticated', 'Analyst'], 1)
-        mp(ApplyVersionControl, ['Authenticated'], 1)
-        mp(SaveNewVersion, ['Authenticated'], 1)
-        mp(AccessPreviousVersions, ['Authenticated'], 1)
+        mp(ApplyVersionControl, ['Authenticated'], 0)
+        mp(SaveNewVersion, ['Authenticated'], 0)
+        mp(AccessPreviousVersions, ['Authenticated'], 0)
+
+        # Authenticated need to have access to bika_setup objects to create ARs
+        for obj in portal.bika_setup.objectValues():
+            mp = obj.manage_permission
+            mp(permissions.View, ['Authenticated'], 0)
+            mp(permissions.AccessContentsInformation, ['Authenticated'], 0)
+            mp(permissions.ListFolderContents, ['Authenticated'], 0)
+
         portal.bika_setup.reindexObject()
+        # /Bika Setup
 
+        # Laboratory
+        # The `/bika_setup/laboratory` object follows the `bika_one_state_workflow`.
         mp = portal.bika_setup.laboratory.manage_permission
-        mp('Access contents information', ['Authenticated'], 1)
-        mp(permissions.View, ['Authenticated'], 1)
+        # We set explicit permissions to access methods to be persistent with the assigned workflow
+        mp(permissions.View, ['Authenticated'], 0)
+        mp(permissions.ListFolderContents, ['Authenticated'], 0)
+        # Front-Page Portlets need to access some information for Anonymous.
+        mp(permissions.AccessContentsInformation, ['Anonymous'], 0)
         portal.bika_setup.laboratory.reindexObject()
+        # /Laboratory
 
-        # /clients folder permissions
-
+        # Clients
         # When modifying these defaults, look to subscribers/objectmodified.py
-
-        # Member role must have view permission on /clients, to see the list.
-        # This means within a client, perms granted on Member role are available
+        # Client role (from the Clients Group) must have view permission on /clients, to see the list.
+        # This means within a client, perms granted on Client role are available
         # in clients not our own, allowing sideways entry if we're not careful.
         mp = portal.clients.manage_permission
-        mp(permissions.ListFolderContents, ['Manager', 'LabManager', 'Member', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
-        mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Member', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator', 'SamplingCoordinator'], 0)
+
+        # Allow authenticated users to see the contents of the client folder
+        mp(permissions.View, ['Authenticated'], 0)
+        mp(permissions.AccessContentsInformation, ['Authenticated'], 0)
+        mp(permissions.ListFolderContents, ['Authenticated'], 0)
+
+        # Set modify permissions
         mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'LabClerk', 'Owner'], 0)
-        mp('Access contents information', ['Manager', 'LabManager', 'Member', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
         mp(ManageClients, ['Manager', 'LabManager', 'LabClerk'], 0)
         mp(permissions.AddPortalContent, ['Manager', 'LabManager', 'LabClerk', 'Owner'], 0)
         mp(AddAnalysisSpec, ['Manager', 'LabManager', 'Owner'], 0)
         portal.clients.reindexObject()
 
+        # Set permissions for each client in the clients folder
         for obj in portal.clients.objectValues():
             mp = obj.manage_permission
-            mp(permissions.ListFolderContents, ['Manager', 'LabManager', 'Member', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
-            mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Member', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
+
+            # Set view permissions (need to by in sync with those in subscribers.objectmodified.py)
+            mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
+            mp(permissions.AccessContentsInformation, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
+            mp(permissions.ListFolderContents, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
+
+            # Set modify permissions
             mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner'], 0)
             mp(AddSupplyOrder, ['Manager', 'LabManager', 'Owner', 'LabClerk'], 0)
-            mp('Access contents information', ['Manager', 'LabManager', 'Member', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
             obj.reindexObject()
             for contact in portal.clients.objectValues('Contact'):
                 mp = contact.manage_permission
                 mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Owner', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
                 mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner', 'SamplingCoordinator'], 0)
+        # /Clients
 
         # /worksheets folder permissions
         mp = portal.worksheets.manage_permission
@@ -398,14 +429,17 @@ class BikaGenerator:
         mp(permissions.View, ['Manager', 'LabManager'], 0)
         portal.pricelists.reindexObject()
 
-        # /methods folder permissions
+        # Methods
+        # The `/method` folder follows the `bika_one_state_workflow`
+        # Please refer to the workflow definition to see the default permissions
         mp = portal.methods.manage_permission
-        mp(CancelAndReinstate, ['Manager', 'LabManager'], 0)
-        mp(permissions.ListFolderContents, ['Member', 'Authenticated', 'Anonymous'], 1)
+        # We set explicit permissions to access methods to be persistent with the assigned workflow
+        mp(permissions.View, ['Authenticated', 'Anonymous'], 0)
+        mp(permissions.ListFolderContents, ['Authenticated', 'Anonymous'], 0)
+        mp(permissions.AccessContentsInformation, ['Authenticated', 'Anonymous'], 0)
         mp(permissions.AddPortalContent, ['Manager', 'LabManager'], 0)
+        mp(CancelAndReinstate, ['Manager', 'LabManager'], 0)
         mp(permissions.DeleteObjects, ['Manager', 'LabManager'], 0)
-        mp(permissions.View, ['Manager', 'Member', 'Authenticated', 'Anonymous'], 1)
-        mp('Access contents information', ['Manager', 'Member', 'Authenticated', 'Anonymous'], 1)
         portal.methods.reindexObject()
 
         try:
@@ -420,12 +454,16 @@ class BikaGenerator:
         except:
             pass
 
+        # Analysis Services
         # Add Analysis Services View permission to Clients
         # (allow Clients to add attachments to Analysis Services from an AR)
         mp = portal.bika_setup.bika_analysisservices.manage_permission
-        mp('Access contents information', ['Authenticated', 'Analyst', 'Client'], 1)
-        mp(permissions.View, ['Authenticated', 'Analyst', 'Client'], 1)
+        # We set explicit permissions to access methods to be persistent with the assigned workflow
+        mp(permissions.View, ['Authenticated', 'Anonymous'], 0)
+        mp(permissions.ListFolderContents, ['Authenticated'], 0)
+        mp(permissions.AccessContentsInformation, ['Authenticated', 'Anonymous'], 0)
         portal.bika_setup.bika_analysisservices.reindexObject()
+        # /Analysis Services
 
         # Add Attachment Types View permission to Clients
         # (allow Clients to add attachments to Analysis Services from an AR)
@@ -524,6 +562,7 @@ class BikaGenerator:
         addIndex(bac, 'review_state', 'FieldIndex')
         addIndex(bac, 'worksheetanalysis_review_state', 'FieldIndex')
         addIndex(bac, 'cancellation_state', 'FieldIndex')
+        addIndex(bac, 'getDepartmentUID', 'KeywordIndex')
 
         addIndex(bac, 'getDueDate', 'DateIndex')
         addIndex(bac, 'getDateSampled', 'DateIndex')
@@ -611,7 +650,9 @@ class BikaGenerator:
         addIndex(bc, 'inactive_state', 'FieldIndex')
         addIndex(bc, 'worksheetanalysis_review_state', 'FieldIndex')
         addIndex(bc, 'cancellation_state', 'FieldIndex')
+        addIndex(bc, 'Identifiers', 'KeywordIndex')
 
+        addIndex(bc, 'getDepartmentUIDs', 'KeywordIndex')
         addIndex(bc, 'getAnalysisCategory', 'KeywordIndex')
         addIndex(bc, 'getAnalysisService', 'KeywordIndex')
         addIndex(bc, 'getAnalyst', 'FieldIndex')
@@ -707,8 +748,10 @@ class BikaGenerator:
         at.setCatalogsByType('SamplePoint', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('StorageLocation', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('SamplingDeviation', ['bika_setup_catalog', ])
-        at.setCatalogsByType('Instrument', ['bika_setup_catalog', ])
-        at.setCatalogsByType('InstrumentType', ['bika_setup_catalog', ])
+        at.setCatalogsByType('IdentifierType', ['bika_setup_catalog', ])
+        at.setCatalogsByType('Instrument', ['bika_setup_catalog', 'portal_catalog'])
+        at.setCatalogsByType('InstrumentType', ['bika_setup_catalog', 'portal_catalog'])
+        at.setCatalogsByType('InstrumentLocation', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('Method', ['bika_setup_catalog', 'portal_catalog'])
         at.setCatalogsByType('Multifile', ['bika_setup_catalog'])
         at.setCatalogsByType('AttachmentType', ['bika_setup_catalog', ])
@@ -741,6 +784,7 @@ class BikaGenerator:
         addIndex(bsc, 'created', 'DateIndex')
         addIndex(bsc, 'Creator', 'FieldIndex')
         addIndex(bsc, 'getObjPositionInParent', 'GopipIndex')
+        addIndex(bc, 'Identifiers', 'KeywordIndex')
 
         addIndex(bsc, 'title', 'FieldIndex', 'Title')
         addIndex(bsc, 'sortable_title', 'FieldIndex')
@@ -754,6 +798,7 @@ class BikaGenerator:
         addIndex(bsc, 'getAnalyst', 'FieldIndex')
         addIndex(bsc, 'getInstrumentType', 'FieldIndex')
         addIndex(bsc, 'getInstrumentTypeName', 'FieldIndex')
+        addIndex(bsc, 'getInstrumentLocationName', 'FieldIndex')
         addIndex(bsc, 'getBlank', 'FieldIndex')
         addIndex(bsc, 'getCalculationTitle', 'FieldIndex')
         addIndex(bsc, 'getCalculationUID', 'FieldIndex')
@@ -811,6 +856,7 @@ class BikaGenerator:
         addColumn(bsc, 'getAccredited')
         addColumn(bsc, 'getInstrumentType')
         addColumn(bsc, 'getInstrumentTypeName')
+        addColumn(bsc, 'getInstrumentLocationName')
         addColumn(bsc, 'getBlank')
         addColumn(bsc, 'getCalculationTitle')
         addColumn(bsc, 'getCalculationUID')
@@ -858,6 +904,20 @@ class BikaGenerator:
             alsoProvides(obj, IHaveNoBreadCrumbs)
 
 
+def create_CAS_IdentifierType(portal):
+    """LIMS-1391 The CAS Nr IdentifierType is normally created by
+    setuphandlers during site initialisation.
+    """
+    bsc = getToolByName(portal, 'bika_catalog', None)
+    idtypes = bsc(portal_type = 'IdentifierType', title='CAS Nr')
+    if not idtypes:
+        folder = portal.bika_setup.bika_identifiertypes
+        idtype = _createObjectByType('IdentifierType', folder, tmpID())
+        idtype.processForm()
+        idtype.edit(title='CAS Nr',
+                    description='Chemical Abstracts Registry number',
+                    portal_types=['Analysis Service'])
+
 def setupVarious(context):
     """
     Final Bika import steps.
@@ -885,3 +945,5 @@ def setupVarious(context):
     setup.runImportStepFromProfile(
             'profile-plone.app.jquery:default', 'jsregistry')
     # setup.runImportStepFromProfile('profile-plone.app.jquerytools:default', 'jsregistry')
+
+    create_CAS_IdentifierType(site)

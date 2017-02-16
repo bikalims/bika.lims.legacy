@@ -353,7 +353,7 @@ class TestCalculations(BikaFunctionalTestCase):
                 self.assertEqual(an.getInterimFields(), intermap)
 
             # Let's go.. calculate and check result
-            calcanalysis.calculateResult(True, True)
+            calcanalysis.calculateResult(override=True, cascade=True)
             self.assertEqual(float(calcanalysis.getResult()), float(f['exresult']))
 
     def test_calculation_fixed_precision(self):
@@ -427,7 +427,7 @@ class TestCalculations(BikaFunctionalTestCase):
                     self.assertEqual(an.getInterimFields(), intermap)
 
                 # Let's go.. calculate and check result
-                calcanalysis.calculateResult(True, True)
+                calcanalysis.calculateResult(override=True, cascade=True)
                 self.assertEqual(calcanalysis.getFormattedResult(), case['expected_result'])
 
     def test_calculation_uncertainties_precision(self):
@@ -503,7 +503,7 @@ class TestCalculations(BikaFunctionalTestCase):
                     self.assertEqual(an.getInterimFields(), intermap)
 
                 # Let's go.. calculate and check result
-                calcanalysis.calculateResult(True, True)
+                calcanalysis.calculateResult(override=True, cascade=True)
                 self.assertEqual(calcanalysis.getFormattedResult(), case['expected_result'])
 
 def test_suite():

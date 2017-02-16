@@ -14,6 +14,7 @@ from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from bika.lims import logger
 from bika.lims.utils.analysis import format_numeric_result
+from bika.lims.workflow import getTransitionActor
 from plone.indexer import indexer
 from Products.ATContentTypes.content import schemata
 from Products.ATExtensions.ateapi import DateTimeField, DateTimeWidget, RecordsField
@@ -66,6 +67,10 @@ def sortable_title_with_sort_key(instance):
         if sort_key:
             return "{:010.3f}{}".format(sort_key, service.Title())
         return service.Title()
+
+@indexer(IAnalysis)
+def getDepartmentUID(instance):
+    return instance.getService().getDepartment().UID()
 
 schema = BikaSchema.copy() + Schema((
     HistoryAwareReferenceField('Service',
@@ -216,12 +221,10 @@ schema = BikaSchema.copy() + Schema((
     # NumberOfRequiredVerifications from the Analysis Service
     IntegerField('NumberOfRequiredVerifications', default=1),
 
-    # Number of verifications done for this analysis. Each time a 'verify'
-    # transition takes place, this value is updated accordingly. The
-    # transition will finally succeed when the NumberOfVerifications matches
-    # with the NumberOfRequiredVerifications. Meanwhile, the state of the
-    # object will remain in 'to_be_verified'
-    IntegerField('NumberOfVerifications', default=0),
+    # This field keeps the user_ids of members who verified this analysis.
+    # After each verification, user_id will be added end of this string
+    # seperated by comma- ',' .
+    StringField('Verificators',default='')
 ),
 )
 
@@ -235,6 +238,31 @@ class Analysis(BaseContent):
     def _getCatalogTool(self):
         from bika.lims.catalog import getCatalog
         return getCatalog(self)
+
+    def getNumberOfVerifications(self):
+        verificators=self.getVerificators()
+        if not verificators:
+            return 0
+        return len(verificators.split(','))
+
+    def addVerificator(self,username):
+        verificators=self.getVerificators()
+        if not verificators:
+            self.setVerificators(username)
+        else:
+            self.setVerificators(verificators+","+username)
+
+    def deleteLastVerificator(self):
+        verificators=self.getVerificators().split(',')
+        del verificators[-1]
+        self.setVerificators(",".join(verificators))
+
+    def wasVerifiedByUser(self,username):
+        verificators=self.getVerificators().split(',')
+        return username in verificators
+
+    def getLastVerificator(self):
+        return self.getVerificators().split(',')[-1]
 
     def Title(self):
         """ Return the service title as title.
@@ -644,7 +672,7 @@ class Analysis(BaseContent):
         # Add interims to mapping
         for i in interims:
             if 'keyword' not in i:
-                continue;
+                continue
             try:
                 ivalue = float(i['value'])
                 mapping[i['keyword']] = ivalue
@@ -1068,24 +1096,30 @@ class Analysis(BaseContent):
         if self_submitted and not selfverification:
             return False
 
+        #Checking verifiability depending on multi-verification type of bika_setup
+        if self.bika_setup.getNumberOfRequiredVerifications()>1:
+            mv_type=self.bika_setup.getTypeOfmultiVerification()
+            #If user verified before and self_multi_disabled, then return False
+            if mv_type=='self_multi_disabled' and self.wasVerifiedByUser(username):
+                return False
+
+            # If user is the last verificator and consecutively multi-verification
+            # is disabled, then return False
+            # Comparing was added just to check if this method is called before/after
+            # verification
+            elif mv_type=='self_multi_not_cons' and username==self.getLastVerificator() and \
+                self.getNumberOfVerifications()<self.getNumberOfRequiredVerifications():
+                return False
+
         # All checks pass
         return True
 
     def getSubmittedBy(self):
-        """
-        Returns the identifier of the user who submitted the result if the
+        """Returns the identifier of the user who submitted the result if the
         state of the current analysis is "to_be_verified" or "verified"
         :return: the user_id of the user who did the last submission of result
         """
-        workflow = getToolByName(self, "portal_workflow")
-        try:
-            review_history = workflow.getInfoFor(self, "review_history")
-            review_history = self.reverseList(review_history)
-            for event in review_history:
-                if event.get("action") == "submit":
-                    return event.get("actor")
-        except WorkflowException:
-            return ''
+        return getTransitionActor(self, 'submit')
 
     def guard_sample_transition(self):
         workflow = getToolByName(self, "portal_workflow")

@@ -21,7 +21,7 @@ from Products.Archetypes.public import DisplayList, ReferenceField, \
     FixedPointField, DecimalWidget, IntegerField, \
     IntegerWidget, StringWidget, BaseContent, \
     Schema, registerType, MultiSelectionWidget, \
-    FloatField, DecimalWidget
+    FloatField
 from Products.Archetypes.utils import IntDisplayList
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.permissions import View, ModifyPortalContent
@@ -41,7 +41,7 @@ from bika.lims.browser.fields import *
 from bika.lims.config import ATTACHMENT_OPTIONS, PROJECTNAME, \
     SERVICE_POINT_OF_CAPTURE
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IAnalysisService
+from bika.lims.interfaces import IAnalysisService, IHaveIdentifiers
 from magnitude import mg, MagnitudeError
 from zope import i18n
 from zope.interface import implements
@@ -1027,7 +1027,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
-    implements(IAnalysisService)
+    implements(IAnalysisService, IHaveIdentifiers)
 
     _at_rename_after_creation = True
 

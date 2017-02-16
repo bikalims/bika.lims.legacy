@@ -51,7 +51,7 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
             came_from = came_from[0]
         # Call out to the workflow action method
         # Use default bika_listing.py/WorkflowAction for other transitions
-        method_name = 'workflow_action_' + action
+        method_name = 'workflow_action_' + action if action else ''
         method = getattr(self, method_name, False)
         if method:
             method()
@@ -463,7 +463,10 @@ class AnalysisRequestWorkflowAction(WorkflowAction):
     def workflow_action_verify(self):
         # default bika_listing.py/WorkflowAction, but then go to view screen.
         self.destination_url = self.context.absolute_url()
-        return self.workflow_action_default(action='verify', came_from='edit')
+        action, came_from = WorkflowAction._get_form_workflow_action(self)
+        if type(came_from) in (list, tuple):
+            came_from = came_from[0]
+        return self.workflow_action_default(action='verify', came_from=came_from)
 
     def workflow_action_retract_ar(self):
         workflow = getToolByName(self.context, 'portal_workflow')

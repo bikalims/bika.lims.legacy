@@ -47,12 +47,12 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.i3method = self.instrument3.getMethod()
         self.serviceinsts = self.service.getInstruments()
         self.serviceinst = self.service.getInstrument()
-        self.i1certdate = self.instrument1.getLatestValidCertification().getValidTo()
-        self.i2certdate = self.instrument2.getLatestValidCertification().getValidTo()
-        self.i3certdate = self.instrument3.getLatestValidCertification().getValidTo()
-        self.instrument1.getLatestValidCertification().setValidTo('3000-01-01')
-        self.instrument2.getLatestValidCertification().setValidTo('3000-01-01')
-        self.instrument3.getLatestValidCertification().setValidTo('3000-01-01')
+        self.i1certdate = self.instrument1.getCertifications()[0].getValidTo()
+        self.i2certdate = self.instrument2.getCertifications()[0].getValidTo()
+        self.i3certdate = self.instrument3.getCertifications()[0].getValidTo()
+        self.instrument1.getCertifications()[0].setValidTo('3000-01-01')
+        self.instrument2.getCertifications()[0].setValidTo('3000-01-01')
+        self.instrument3.getCertifications()[0].setValidTo('3000-01-01')
 
     def tearDown(self):
         logout()

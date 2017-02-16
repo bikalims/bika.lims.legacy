@@ -110,8 +110,10 @@ class AddAnalysesView(BikaListingView):
             if 'getWorksheetTemplate' in form and form['getWorksheetTemplate']:
                 layout = self.context.getLayout()
                 wst = rc.lookupObject(form['getWorksheetTemplate'])
+                client_title = form.get('client', 'any')
                 self.request['context_uid'] = self.context.UID()
-                self.context.applyWorksheetTemplate(wst)
+                self.context.applyWorksheetTemplate(
+                    wst, client_title=client_title)
                 if len(self.context.getLayout()) != len(layout):
                     self.context.plone_utils.addPortalMessage(
                         PMF("Changes saved."))
@@ -129,6 +131,28 @@ class AddAnalysesView(BikaListingView):
             return self.contents_table()
         else:
             return self.template()
+
+    def isItemAllowed(self, obj):
+        """
+        It checks if the item can be added to the list depending on the
+        department filter. If the analysis service is not assigned to a
+        department, show it.
+        If department filtering is disabled in bika_setup, will return True.
+        @Obj: it is an analysis object.
+        @return: boolean
+        """
+        if not self.context.bika_setup.getAllowDepartmentFiltering():
+            return True
+        # Gettin the department from analysis service
+        serv_dep = obj.getService().getDepartment()
+        result = True
+        if serv_dep:
+            # Getting the cookie value
+            cookie_dep_uid = self.request.get('filter_by_department_info', '')
+            # Comparing departments' UIDs
+            result = True if serv_dep.UID() in\
+                cookie_dep_uid.split(',') else False
+        return result
 
     def folderitems(self):
 

@@ -8,6 +8,8 @@
 
 """ReferenceAnalysis
 """
+from Products.CMFCore.WorkflowCore import WorkflowException
+from bika.lims.workflow import getTransitionActor
 from plone import api
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _
@@ -137,12 +139,10 @@ schema = BikaSchema.copy() + Schema((
     # NumberOfRequiredVerifications from the Analysis Service
     IntegerField('NumberOfRequiredVerifications', default=1),
 
-    # Number of verifications done for this analysis. Each time a 'verify'
-    # transition takes place, this value is updated accordingly. The
-    # transition will finally succeed when the NumberOfVerifications matches
-    # with the NumberOfRequiredVerifications. Meanwhile, the state of the
-    # object will remain in 'to_be_verified'
-    IntegerField('NumberOfVerifications', default=0),
+    # This field keeps the user_ids of members who verified this analysis.
+    # After each verification, user_id will be added end of this string
+    # seperated by comma- ',' .
+    StringField('Verificators',default='')
 ),
 )
 
@@ -158,6 +158,31 @@ class ReferenceAnalysis(BaseContent):
     def _renameAfterCreation(self, check_auto_id=False):
         from bika.lims.idserver import renameAfterCreation
         renameAfterCreation(self)
+
+    def getNumberOfVerifications(self):
+        verificators=self.getVerificators()
+        if not verificators:
+            return 0
+        return len(verificators.split(','))
+
+    def addVerificator(self,username):
+        verificators=self.getVerificators()
+        if not verificators:
+            self.setVerificators(username)
+        else:
+            self.setVerificators(verificators+","+username)
+
+    def deleteLastVerificator(self):
+        verificators=self.getVerificators().split(',')
+        del verificators[-1]
+        self.setVerificators(",".join(verificators))
+
+    def wasVerifiedByUser(self,username):
+        verificators=self.getVerificators().split(',')
+        return username in verificators
+
+    def getLastVerificator(self):
+        return self.getVerificators().split(',')[-1]
 
     def Title(self):
         """ Return the Service ID as title """
@@ -393,6 +418,13 @@ class ReferenceAnalysis(BaseContent):
         else:
             return serv.getPrecision(result)
 
+    def getSubmittedBy(self):
+        """Returns the identifier of the user who submitted the result if the
+        state of the current analysis is "to_be_verified" or "verified"
+        :return: the user_id of the user who did the last submission of result
+        """
+        return getTransitionActor(self, 'submit')
+
     def isVerifiable(self):
         """
         Checks it the current analysis can be verified. This is, its not a
@@ -409,14 +441,6 @@ class ReferenceAnalysis(BaseContent):
         review_state = workflow.getInfoFor(self, "review_state")
         if review_state != 'to_be_verified':
             return False
-
-        # Check if the analysis has dependencies not yet verified
-        for d in self.getDependencies():
-            review_state = workflow.getInfoFor(d, "review_state")
-            if review_state in (
-                    "to_be_sampled", "to_be_preserved", "sample_due",
-                    "sample_received", "attachment_due", "to_be_verified"):
-                return False
 
         # All checks passsed
         return True
@@ -462,6 +486,21 @@ class ReferenceAnalysis(BaseContent):
         selfverification = self.getService().isSelfVerificationEnabled()
         if self_submitted and not selfverification:
             return False
+
+        #Checking verifiability depending on multi-verification type of bika_setup
+        if self.bika_setup.getNumberOfRequiredVerifications()>1:
+            mv_type=self.bika_setup.getTypeOfmultiVerification()
+            #If user verified before and self_multi_disabled, then return False
+            if mv_type=='self_multi_disabled' and self.wasVerifiedByUser(username):
+                return False
+
+            # If user is the last verificator and consecutively multi-verification
+            # is disabled, then return False
+            # Comparing was added just to check if this method is called before/after
+            # verification
+            elif mv_type=='self_multi_not_cons' and username==self.getLastVerificator() and \
+                self.getNumberOfVerifications()<self.getNumberOfRequiredVerifications():
+                return False
 
         # All checks pass
         return True
