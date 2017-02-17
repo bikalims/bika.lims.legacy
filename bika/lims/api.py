@@ -319,11 +319,17 @@ def get_parent_path(brain_or_object):
     return get_path(get_object(brain_or_object).aq_parent)
 
 
-def get_parent(brain_or_object):
+def get_parent(brain_or_object, catalog_search=False):
     """Locate the parent object of the content/catalog brain
+
+    The `catalog_search` switch uses the `portal_catalog` to do a search return
+    a brain instead of the full parent object. However, if the search returned
+    no results, it falls back to return the full parent object.
 
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :param catalog_search: Use a catalog query to find the parent object
+    :type catalog_search: bool
     :returns: parent object
     :rtype: ATContentType/DexterityContentType/PloneSite/CatalogBrain
     """
@@ -331,22 +337,26 @@ def get_parent(brain_or_object):
     if is_portal(brain_or_object):
         return get_portal()
 
-    if is_brain(brain_or_object):
+    # Do a catalog search and return the brain
+    if catalog_search:
         parent_path = get_parent_path(brain_or_object)
 
         # parent is the portal object
         if parent_path == get_path(get_portal()):
             return get_portal()
 
-        # query for the parent path
+        # get the catalog tool
         pc = get_portal_catalog()
+
+        # query for the parent path
         results = pc(path={
             "query": parent_path,
             "depth": 0})
 
-        # fallback to the object
+        # No results fallback: return the parent object
         if not results:
             return get_object(brain_or_object).aq_parent
+
         # return the brain
         return results[0]
 

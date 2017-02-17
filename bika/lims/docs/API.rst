@@ -332,10 +332,18 @@ This function returns the parent object::
     >>> api.get_parent(client)
     <ClientFolder at /plone/clients>
 
-To keep performance high, the function uses a catalog query and returns a brain,
-if the passed in object was also a brain::
+Brains are also supported::
 
     >>> api.get_parent(brain)
+    <ClientFolder at /plone/clients>
+
+The function can also use a catalog query on the `portal_catalog` and return a
+brain, if the passed parameter `catalog_search` was set to true. ::
+
+    >>> api.get_parent(client, catalog_search=True)
+    <Products.ZCatalog.Catalog.mybrains object at 0x...>
+
+    >>> api.get_parent(brain, catalog_search=True)
     <Products.ZCatalog.Catalog.mybrains object at 0x...>
 
 However, this function goes only up to the portal object::
