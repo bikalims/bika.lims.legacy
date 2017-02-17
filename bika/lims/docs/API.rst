@@ -10,7 +10,7 @@ API
 ===
 
 The purpose of this API is to help coders to follow the DRY principle (Don't
-Repeat Yorself). It also ensures that the most effective and efficient method is
+Repeat Yourself). It also ensures that the most effective and efficient method is
 used to achieve a task.
 
 Import it first::
@@ -108,7 +108,7 @@ Now we show it with catalog results::
     >>> api.get_object(api.get_object(brain))
     <Client at /plone/clients/client-1>
 
-Usupported objects raise an error::
+No supported objects raise an error::
 
     >>> api.get_object(object())
     Traceback (most recent call last):
@@ -173,8 +173,6 @@ This function checks if an object is an `Archetypes` content type::
 
     >>> api.is_at_content(object())
     False
-
-We currently have no `Dexterity` contents, so testing this comes later...
 
 
 Getting the Schema of a Content
@@ -280,8 +278,8 @@ Paths outside the portal raise an error::
     BikaLIMSError: Not a physical path inside the portal.
 
 
-Getting the Phyical Path of an Object
--------------------------------------
+Getting the Physical Path of an Object
+--------------------------------------
 
 The physical path describes exactly where an object is located inside the portal.
 This function unifies the different approaches to get the physical path and does
@@ -488,7 +486,7 @@ for the passed in object::
 
 
 
-Checking if an Object is versionable
+Checking if an Object is Versionable
 ------------------------------------
 
 Some contents in Bika LIMS support versioning. This function checks this for you.
@@ -549,7 +547,7 @@ Getting a Group
 ---------------
 
 Users in Bika LIMS are managed in groups. A common group is the `Clients` group,
-where all users of client contacs are grouped.
+where all users of client contacts are grouped.
 This function gives easy access and is also idempotent::
 
     >>> clients_group = api.get_group("Clients")
