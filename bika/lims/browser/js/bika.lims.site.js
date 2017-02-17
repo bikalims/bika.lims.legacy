@@ -340,8 +340,8 @@ function SiteView() {
 
         // Archetypes :float and DecimalWidget inputs get filtered
         $("input[name*='\\:float'], .ArchetypesDecimalWidget input").keyup(function(e) {
-            if (/[^.\d]/g.test(this.value)) {
-                this.value = this.value.replace(/[^.\d]/g, "");
+            if (/[^-.\d]/g.test(this.value)) {
+                this.value = this.value.replace(/[^-.\d]/g, "");
             }
         });
 

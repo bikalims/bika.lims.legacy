@@ -24,3 +24,4 @@ from .integer import IntegerWidget
 from .decimal import DecimalWidget
 from .rejectionsetupwidget import RejectionSetupWidget
 from .rejectionwidget import RejectionWidget
+from .comboboxwidget import ComboBoxWidget

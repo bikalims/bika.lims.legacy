@@ -110,8 +110,10 @@ class AddAnalysesView(BikaListingView):
             if 'getWorksheetTemplate' in form and form['getWorksheetTemplate']:
                 layout = self.context.getLayout()
                 wst = rc.lookupObject(form['getWorksheetTemplate'])
+                client_title = form.get('client', 'any')
                 self.request['context_uid'] = self.context.UID()
-                self.context.applyWorksheetTemplate(wst)
+                self.context.applyWorksheetTemplate(
+                    wst, client_title=client_title)
                 if len(self.context.getLayout()) != len(layout):
                     self.context.plone_utils.addPortalMessage(
                         PMF("Changes saved."))

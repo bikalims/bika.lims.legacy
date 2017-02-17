@@ -439,6 +439,16 @@ class FolderView(BikaListingView):
 
         return items
 
+    def getClients(self):
+        """Present a list of client titles for the Template Client dropdown
+        This allows a template to select analyses from only a single client
+        """
+        pc = getToolByName(self.context, 'portal_catalog')
+        return [c.Title for c in
+                pc(portal_type = 'Client',
+                   inactive_state = 'active',
+                   sort_on = 'sortable_title')]
+
     def getAnalysts(self):
         """ Present the LabManagers and Analysts as options for analyst
             Used in bika_listing.pt

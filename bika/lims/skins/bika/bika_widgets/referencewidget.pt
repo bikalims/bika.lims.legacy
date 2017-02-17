@@ -17,10 +17,16 @@
             tal:attributes="class kss_class;
                             id string:parent-fieldname-$fieldName-$uid">
             <span metal:define-slot="inside"
-                  tal:define="value accessor;
-                              value python: (value and hasattr(value, 'Title')) and value.Title() or '';"
-                  tal:attributes="value python: value.strip();"
-                  tal:content="value">reference</span>
+                tal:define="values python:context.Schema()[fieldName].getAccessor(context)();">
+            <span tal:condition="python:context.Schema()[fieldName].multiValued">
+                <tal:repeat repeat="value values">
+                      <span tal:define="value python: (value and hasattr(value, 'Title')) and value.Title() or '';"
+                      tal:content="value">reference</span>
+                </tal:repeat>
+            </span>
+            <span tal:define="value python: (values and hasattr(values, 'Title')) and values.Title() or '';"
+              tal:condition="python:not context.Schema()[fieldName].multiValued"
+            tal:content="value">reference</span>
         </span>
     </metal:view_macro>
 

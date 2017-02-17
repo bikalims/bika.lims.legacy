@@ -73,7 +73,7 @@
 				<tr>
 					<td tal:content="item/invoiceDate"></td>
 					<td class="text" tal:content="item/description"></td>
-                    <td><a tal:attributes="href  item/orderNoURL" tal:content="item/orderNo"></a></td>
+                    <td tal:content="item/orderNo"></td>
 					<td>
 						<span tal:content="item/VATAmount">0.00</span>
 					</td>

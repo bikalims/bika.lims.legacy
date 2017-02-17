@@ -114,6 +114,11 @@ class Laboratory(UniqueObject, Organisation):
     displayContentsTab = False
     schema = schema
 
+    # needed to access the field for the front-page Portlet for Anonymous, w/o
+    # making the whole Laboratory viewable by Anonymous.
+    # Only the permission "Access contents information" is needed
+    security.declarePublic('getAccreditationBodyLogo')
+
     security.declareProtected(View, 'getSchema')
     def getSchema(self):
         return self.schema

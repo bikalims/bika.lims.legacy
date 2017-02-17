@@ -32,7 +32,7 @@ class ReferenceSamplesView(BaseView):
         self.show_select_all_checkbox = False
         self.show_select_column = False
         self.show_workflow_action_buttons = False
-        self.pagesize = 50
+        self.pagesize = 9999
         # must set service_uids in __call__ before delegating to super
         self.service_uids = []
         # must set control_type='b' or 'c' in __call__ before delegating
