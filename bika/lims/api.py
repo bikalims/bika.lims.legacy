@@ -20,9 +20,25 @@ from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
 
-# from bika.lims import logger
+"""Bika LIMS Framework API
 
-"""Please see bika.lims/docs/API.rst for documentation
+Please see bika.lims/docs/API.rst for documentation.
+
+Architecural Notes:
+
+Please add only functions that do a single thing for a single object.
+
+Good: `def get_foo(brain_or_object)`
+Bad:  `def get_foos(list_of_brain_objects)`
+
+Why?
+
+Because it makes things more complex. You can always use a pattern like this to
+achieve the same::
+
+    >>> foos = map(get_foo, list_of_brains_objects)
+
+Please add for all of your functions a descriptive test in docs/API.rst. Thanks.
 """
 
 _marker = object()
@@ -60,8 +76,7 @@ def create(container, portal_type, title=None, **kwargs):
     :returns: The new created object
     :rtype: object
     """
-
-    title = title is None and "Test {}".format(portal_type) or title
+    title = title is None and "New {}".format(portal_type) or title
     _ = container.invokeFactory(portal_type, id="tmpID", title=title)
     obj = container.get(_)
     obj.processForm()
