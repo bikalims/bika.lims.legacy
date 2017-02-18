@@ -36,7 +36,7 @@ Why?
 Because it makes things more complex. You can always use a pattern like this to
 achieve the same::
 
-    >>> foos = map(get_foo, list_of_brains_objects)
+    >>> foos = map(get_foo, list_of_brain_objects)
 
 Please add for all of your functions a descriptive test in docs/API.rst. Thanks.
 """
