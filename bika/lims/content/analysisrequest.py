@@ -1896,42 +1896,47 @@ class AnalysisRequest(BaseFolder):
         return False
 
     def getPrinted(self):
-        """ returns "0", "1" or "2" to indicate Printed state.
+        """Returns "0", "1" or "2" to indicate Printed state.
             0 -> Never printed.
             1 -> Printed after last publish
             2 -> Printed but republished afterwards.
         """
+        NEVER_PRINTED = '0'
+        PRINTED_AFTER_PUBLICATION = '1'
+        REPUBLISHED_AFTER_PRINT = '2'
         workflow = getToolByName(self, 'portal_workflow')
         review_state = workflow.getInfoFor(self, 'review_state', '')
         if review_state not in ['published']:
-            return "0"
-        report_list=sorted(self.objectValues('ARReport'),key=lambda report: report.getDatePublished())
+            return NEVER_PRINTED
+        report_list = sorted(self.objectValues('ARReport'),
+                             key=lambda report: report.getDatePublished())
         if not report_list:
-            return "0"
-        last_report=report_list[-1]
+            return PRINTED_AFTER_PUBLICATION
+        last_report = report_list[-1]
         if last_report.getDatePrinted():
-            return "1"
+            return PRINTED_AFTER_PUBLICATION
         else:
             for report in report_list:
                 if report.getDatePrinted():
-                    return "2"
-        return "0"
+                    return REPUBLISHED_AFTER_PRINT
+        return NEVER_PRINTED
 
     def printLastReport(self):
-        """ Setting Printed Time of the last report, so its Printed value will be 1"""
+        """Setting Printed Time of the last report, so its Printed value
+        will be 1"""
         workflow = getToolByName(self, 'portal_workflow')
         review_state = workflow.getInfoFor(self, 'review_state', '')
         if review_state not in ['published']:
             return
-        last_report=sorted(self.objectValues('ARReport'),key=lambda report: report.getDatePublished())[-1]
+        last_report = sorted(self.objectValues('ARReport'),
+                             key=lambda report: report.getDatePublished())[-1]
         if last_report and not last_report.getDatePrinted():
             last_report.setDatePrinted(DateTime())
 
     security.declareProtected(View, 'getBillableItems')
 
     def getBillableItems(self):
-        """
-        The main purpose of this function is to obtain the analysis services
+        """The main purpose of this function is to obtain the analysis services
         and profiles from the analysis request
         whose prices are needed to quote the analysis request.
         If an analysis belongs to a profile, this analysis will only be
