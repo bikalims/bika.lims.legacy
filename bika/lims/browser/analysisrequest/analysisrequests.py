@@ -67,6 +67,8 @@ class AnalysisRequestsView(BikaListingView):
         member = mtool.getAuthenticatedMember()
         user_is_preserver = 'Preserver' in member.getRoles()
 
+        self.printwfenabled = self.context.bika_setup.getPrintingWorkflowEnabled()
+
         self.columns = {
             'getRequestID': {'title': _('Request ID'),
                              'index': 'getRequestID'},
@@ -452,7 +454,11 @@ class AnalysisRequestsView(BikaListingView):
                                'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'republish'}],
-             'custom_actions': [],
+             'custom_actions': [
+                 {'id': 'print',
+                  'title': _('Print'),
+                  'url': 'workflow_action?action=print'}
+             ] if self.printwfenabled else [],
              'columns': ['getRequestID',
                         'getSample',
                         'BatchID',
@@ -478,9 +484,9 @@ class AnalysisRequestsView(BikaListingView):
                         'getPreserver',
                         'getDateReceived',
                         'getAnalysesNum',
-                        'getDateVerified',
-                        'Printed',
-                        'getDatePublished']},
+                        'getDateVerified'] + \
+                    ['Printed'] if self.printwfenabled else [] + \
+                    ['getDatePublished']},
             {'id': 'cancelled',
              'title': _('Cancelled'),
              'contentFilter': {'cancellation_state': 'cancelled',
@@ -923,31 +929,6 @@ class AnalysisRequestsView(BikaListingView):
 
         self.editresults = -1
         self.clients = {}
-
-        # Printing workflow enabled?
-        # If not, remove the Column
-        self.printwfenabled = self.context.bika_setup.getPrintingWorkflowEnabled()
-        printed_colname = 'Printed'
-        if not self.printwfenabled and printed_colname in self.columns:
-            # Remove "Printed" columns
-            del self.columns[printed_colname]
-            tmprvs = []
-            for rs in self.review_states:
-                tmprs = rs
-                tmprs['columns'] = [c for c in rs.get('columns', []) if
-                                    c != printed_colname]
-                tmprvs.append(tmprs)
-            self.review_states = tmprvs
-        elif self.printwfenabled:
-            #Print button to choose multiple ARs and print them.
-            review_states = []
-            for review_state in self.review_states:
-                review_state.get('custom_actions', []).extend(
-                    [{'id': 'print',
-                      'title': _('Print'),
-                      'url': 'workflow_action?action=print'}, ])
-                review_states.append(review_state)
-            self.review_states = review_states
 
         # Only "BIKA: ManageAnalysisRequests" may see the copy to new button.
         # elsewhere it is hacked in where required.
