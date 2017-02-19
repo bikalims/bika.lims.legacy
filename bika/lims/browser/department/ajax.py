@@ -32,9 +32,7 @@ class LabContactUpdate(BrowserView):
         # If the lab contact exists, update it
         if labcontact_brain and dataset.get('checkbox_value', False):
             # Getting the department
-            department = str(dataset.get('department'))
-            department = department[1:] if\
-                department.startswith('/') else department
+            department = str(dataset.get('department')).lstrip('/')
             dep = self.context.unrestrictedTraverse(department)
             # Assign the lab contact to the department
             lab_contact = labcontact_brain[0].getObject()
