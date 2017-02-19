@@ -12,6 +12,7 @@ import plone
 from Acquisition import aq_inner
 from DateTime import DateTime
 from Products.AdvancedQuery import And, Or, MatchRegexp, Between, Generic, Eq
+from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from bika.lims import PMF
@@ -942,15 +943,24 @@ class BikaListingView(BrowserView):
                 rs = obj.review_state
                 st_title = workflow.getTitleForStateOnType(rs, obj.portal_type)
                 st_title = t(PMF(st_title))
-            except:
-                logger.warning(
-                    "Workflow title doesn't obtined for object %s" % obj.id)
+            except WorkflowException as e:
+                message = str(e)
+                logger.error(
+                    "Cannot obtain workflow title for {} on {}: {}"
+                        .format(rs, obj, message))
                 rs = 'active'
                 st_title = None
             for state_var, state in states.items():
                 if not st_title:
-                    st_title = workflow.getTitleForStateOnType(
-                        state, obj.portal_type)
+                    try:
+                        st_title = workflow.getTitleForStateOnType(
+                            state, obj.portal_type)
+                    except WorkflowException as e:
+                        message = str(e)
+                        logger.error(
+                            "Cannot obtain workflow title for {} on {}: {}"
+                                .format(state, obj, message))
+
                 results_dict[state_var] = state
             results_dict['state_title'] = st_title
             # extra classes for individual fields on this item
