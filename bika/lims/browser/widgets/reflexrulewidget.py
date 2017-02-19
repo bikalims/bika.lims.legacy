@@ -5,9 +5,9 @@ from Products.CMFCore.utils import getToolByName
 from bika.lims.utils import getUsers
 from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.browser.widgets.reflexrulewidget_description import description
+from bika.lims import bikaMessageFactory as _
 
 import json
-
 
 
 class ReflexRuleWidget(RecordsWidget):
@@ -29,8 +29,7 @@ class ReflexRuleWidget(RecordsWidget):
 
     def process_form(self, instance, field, form, empty_marker=None,
                      emptyReturnsMarker=False):
-        """
-        Gets the values from the ReflexRule section and returns them in the
+        """Gets the values from the ReflexRule section and returns them in the
         correct way to be saved.
         So the function will return a list of dictionaries:
 
@@ -94,8 +93,7 @@ class ReflexRuleWidget(RecordsWidget):
         return value, {}
 
     def _format_conditions_and_actions(self, raw_data):
-        """
-        This function gets a set of actions and conditionswith the following
+        """This function gets a set of actions and conditionswith the following
         format:
 
          {'action-0': 'repeat',
@@ -150,15 +148,14 @@ class ReflexRuleWidget(RecordsWidget):
         # Filling the dict with the values that aren't actions or conditions
         formatted_set['trigger'] = raw_data.get('trigger', '')
         # Adding the conditions list to the final dictionary
-        formatted_set['conditions'] = self._get_sorted_conditions_list(
-            raw_data)
+        formatted_set['conditions'] = \
+            self._get_sorted_conditions_list(raw_data)
         # Adding the actions list to the final dictionary
         formatted_set['actions'] = self._get_sorted_actions_list(raw_data)
         return formatted_set
 
     def _get_sorted_conditions_list(self, raw_set):
-        """
-        This returns a list of dictionaries with the conditions got in the
+        """This returns a list of dictionaries with the conditions got in the
         raw_set.
         :raw_set: is the dict representing a set of rules and conditions.
         """
@@ -168,38 +165,33 @@ class ReflexRuleWidget(RecordsWidget):
         # The dictionaries will be sorted by the index obtained in the
         # template.
         cond_dicts_l = []
-        # c_count is a counter which is incremented every time a new cond is
-        # added to the list, so we can give it a index.
-        c_count = 0
         # cond_list will contain the keys starting with 'analysisservice-'
         # but sorted by their index
         cond_list = self._get_sorted_cond_keys(keys_list)
-        for key in cond_list:
-            range0_key = 'range0-'+str(c_count)
+        for n, key in enumerate(cond_list):
+            range0_key = 'range0-' + str(n)
             range0 = raw_set.get(range0_key, '')
-            range1_key = 'range1-'+str(c_count)
+            range1_key = 'range1-' + str(n)
             range1 = raw_set.get(range1_key, '')
-            discreteresult_key = 'discreteresult-'+str(c_count)
+            discreteresult_key = 'discreteresult-' + str(n)
             discreteresult = raw_set.get(discreteresult_key, '')
-            and_or_key = 'and_or-'+str(c_count)
+            and_or_key = 'and_or-' + str(n)
             and_or = raw_set.get(and_or_key, '')
             # Building the conditions dict
             cond_dict = {
                 'analysisservice': raw_set[key],
-                'cond_row_idx': c_count,
+                'cond_row_idx': n,
                 'range0': range0,
                 'range1': range1,
                 'discreteresult': discreteresult,
                 'and_or': and_or,
-                }
+            }
             # Saves the conditions as a new dict inside the actions list
             cond_dicts_l.append(cond_dict)
-            c_count += 1
         return cond_dicts_l
 
     def _get_sorted_cond_keys(self, keys_list):
-        """
-        This function returns only the elements starting with
+        """This function returns only the elements starting with
         'analysisservice-' in 'keys_list'. The returned list is sorted by the
         index appended to the end of each element
         """
@@ -213,8 +205,7 @@ class ReflexRuleWidget(RecordsWidget):
         return cond_list
 
     def _get_sorted_actions_list(self, raw_set):
-        """
-        This returns a list of dictionaries with the actions got in the
+        """This returns a list of dictionaries with the actions got in the
         raw_set.
         :raw_set: is the dict representing a set of rules and conditions.
         """
@@ -224,40 +215,37 @@ class ReflexRuleWidget(RecordsWidget):
         # The dictionaries will be sorted by the index obtained in the
         # template.
         actions_dicts_l = []
-        # a_count is a counter which is incremented every time a new action is
-        # added to the list, so we can give it a index.
-        a_count = 0
         # actions_list will contain the keys starting with 'action-' but sorted
         # by their index
         actions_list = self._get_sorted_action_keys(keys_list)
-        for key in actions_list:
+        for n, key in enumerate(actions_list):
             # Getting the key for otherWS element
-            otherWS_key = 'otherWS-'+str(a_count)
+            otherWS_key = 'otherWS-' + str(n)
             # Getting the value for otherWS selector
             otherWS = raw_set.get(otherWS_key, '')
             # Getting the key for analyst element
-            analyst_key = 'analyst-'+str(a_count)
+            analyst_key = 'analyst-' + str(n)
             # Getting the value for analyst
             analyst = raw_set.get(analyst_key, '')
             # Getting which analysis should has its result set
-            setresulton_key = 'setresulton-'+str(a_count)
+            setresulton_key = 'setresulton-' + str(n)
             setresulton = raw_set.get(setresulton_key, '')
             # Getting the discrete result to set
-            setresultdiscrete_key = 'setresultdiscrete-'+str(a_count)
+            setresultdiscrete_key = 'setresultdiscrete-' + str(n)
             setresultdiscrete = raw_set.get(setresultdiscrete_key, '')
             # Getting the numeric result to set
-            setresultvalue_key = 'setresultvalue-'+str(a_count)
+            setresultvalue_key = 'setresultvalue-' + str(n)
             setresultvalue = raw_set.get(setresultvalue_key, '')
             # Getting the local analysis id
-            local_id_key = 'an_result_id-'+str(a_count)
+            local_id_key = 'an_result_id-' + str(n)
             local_id = raw_set.get(local_id_key, '')
             # Getting the local analysis id
-            worksheettemplate_key = 'worksheettemplate-'+str(a_count)
+            worksheettemplate_key = 'worksheettemplate-' + str(n)
             worksheettemplate = raw_set.get(worksheettemplate_key, '')
             # Building the action dict
             action_dict = {
                 'action': raw_set[key],
-                'act_row_idx': a_count,
+                'act_row_idx': n,
                 'otherWS': otherWS,
                 'worksheettemplate': worksheettemplate,
                 'analyst': analyst,
@@ -265,15 +253,13 @@ class ReflexRuleWidget(RecordsWidget):
                 'setresultdiscrete': setresultdiscrete,
                 'setresultvalue': setresultvalue,
                 'an_result_id': local_id,
-                }
+            }
             # Saves the action as a new dict inside the actions list
             actions_dicts_l.append(action_dict)
-            a_count += 1
         return actions_dicts_l
 
     def _get_sorted_action_keys(self, keys_list):
-        """
-        This function returns only the elements starting with 'action-' in
+        """This function returns only the elements starting with 'action-' in
         'keys_list'. The returned list is sorted by the index appended to
         the end of each element
         """
@@ -287,8 +273,7 @@ class ReflexRuleWidget(RecordsWidget):
         return action_list
 
     def getReflexRuleSetup(self):
-        """
-        Return a json dict with all the setup data necessary to build the
+        """Return a json dict with all the setup data necessary to build the
         relations:
         - Relations between methods and analysis services options.
         - The current saved data
@@ -332,8 +317,10 @@ class ReflexRuleWidget(RecordsWidget):
                                    'setresultdiscrete': '',
                                    'setresulton': 'original',
                                    'setresultvalue': '',
-                                   'worksheettemplate': '70d48adfb34c4231a145f76a858e94cf',}],
-                      'conditions': [{'analysisservice': 'd802cdbf1f4742c094d45997b1038f9c',
+                                   'worksheettemplate':
+                                       '70d48adfb34c4231a145f76a858e94cf',}],
+                      'conditions': [{'analysisservice':
+                                          'd802cdbf1f4742c094d45997b1038f9c',
                                       'and_or': 'no',
                                       'cond_row_idx': 0,
                                       'discreteresult': '',
@@ -350,9 +337,10 @@ class ReflexRuleWidget(RecordsWidget):
         relations = {}
         # Getting all the methods from the system
         pc = getToolByName(self, 'portal_catalog')
+        bsc = getToolByName(self, 'bika_setup_catalog')
         methods = [obj.getObject() for obj in pc(
-                    portal_type='Method',
-                    inactive_state='active')]
+            portal_type='Method',
+            inactive_state='active')]
         for method in methods:
             # Get the analysis services related to each method
             br = method.getBackReferences('AnalysisServiceMethods')
@@ -362,7 +350,6 @@ class ReflexRuleWidget(RecordsWidget):
                 # analysis, those worksheet templates are the ones without
                 # method and the ones with a method shared with the
                 # analysis service.
-                bsc = getToolByName(self, 'bika_setup_catalog')
                 service_methods_uid = analysiservice.getAvailableMethodsUIDs()
                 query_dict = {
                     'portal_type': 'WorksheetTemplate',
@@ -392,64 +379,56 @@ class ReflexRuleWidget(RecordsWidget):
                 'as_keys': analysiservices.keys(),
             }
         # Get the data saved in the object
+        method = self.aq_parent.getMethod()
         relations['saved_actions'] = {
-            'method_uid': self.aq_parent.getMethod().UID() if
-            self.aq_parent.getMethod() else '',
-            'method_id': self.aq_parent.getMethod().id if
-            self.aq_parent.getMethod() else '',
-            'method_tile': self.aq_parent.getMethod().Title() if
-            self.aq_parent.getMethod() else '',
+            'method_uid': method.UID() if method else '',
+            'method_id': method.id if method else '',
+            'method_tile': method.Title() if method else '',
             'rules': self.aq_parent.getReflexRules(),
-            }
+        }
         return json.dumps(relations)
 
     def getActionVoc(self):
-        """
-        Return the different action available
+        """Return the different action available
         """
         return DisplayList([
-            ('repeat', 'Repeat'),
-            ('duplicate', 'Duplicate'),
-            ('setresult', 'Set result')])
+            ('repeat', _('Repeat')),
+            ('duplicate', _('Duplicate')),
+            ('setresult', _('Set result'))])
 
     def getAndOrVoc(self):
-        """
-        Return the different concatenation options
+        """Return the different concatenation options
         """
         return DisplayList([
             ('no', ''),
-            ('and', 'AND'),
-            ('or', 'OR')])
+            ('and', _('AND')),
+            ('or', _('OR'))])
 
     def getDefiningResultTo(self):
-        """
-        Returns where we can define a result.
+        """Returns where we can define a result.
         """
         return DisplayList([
-            ('original', 'Original analysis'),
-            ('new', 'New analysis')])
+            ('original', _('Original analysis')),
+            ('new', _('New analysis'))])
 
     def getTriggerVoc(self):
-        """
-        Return the triggeroptions for the rule
+        """Return the triggeroptions for the rule
         """
         return DisplayList([
-            ('submit', 'on analysis submission'),
-            ('verify', 'on analysis verification')])
+            ('submit', _('on analysis submission')),
+            ('verify', _('on analysis verification'))])
 
     def getWorksheetOptionsVoc(self):
-        """
-        Return the the available options to carry on realted with a worksheet
+        """Return the the available options to carry on realted with a worksheet
         """
         return DisplayList([
-            ('current', "To the current worksheet"),
-            ('to_another', "To another worksheet"),
-            ('create_another', "Create another worksheet"),
-            ('no_ws', "No worksheet")])
+            ('current', _('To the current worksheet')),
+            ('to_another', _('To another worksheet')),
+            ('create_another', _('Create another worksheet')),
+            ('no_ws', _('No worksheet'))])
 
     def getReflexRuleElement(self, idx=0, element=''):
-        """
-        Returns the expected value saved in the object.
+        """Returns the expected value saved in the object.
         :idx: it is an integer with the position of the reflex rules set in the
         widget's list.
         :element: a string with the name of the element to obtain:
@@ -489,48 +468,48 @@ class ReflexRuleWidget(RecordsWidget):
             value = rules_list[idx].get(element, '')
             if element == 'actions' and value == '':
                 return [{'action': '', 'act_row_idx': '0',
-                        'otherWS': 'current', 'analyst': '',
-                        'setresulton': '', 'setresultdiscrete': '',
-                        'worksheettemplate': '',
-                        'setresultvalue': '', 'an_result_id': ''}, ]
+                         'otherWS': 'current', 'analyst': '',
+                         'setresulton': '', 'setresultdiscrete': '',
+                         'worksheettemplate': '',
+                         'setresultvalue': '', 'an_result_id': ''}, ]
             elif element == 'conditions' and value == '':
                 return [{'analysisservice': '', 'cond_row_idx': '0',
-                        'range0': '', 'range1': '',
-                        'discreteresult': '', 'and_or': 'no'}, ]
+                         'range0': '', 'range1': '',
+                         'discreteresult': '', 'and_or': 'no'}, ]
             else:
                 return value
         if element == 'actions':
             return [{'action': '', 'act_row_idx': '0',
-                    'otherWS': 'current', 'analyst': '',
-                    'worksheettemplate': '',
-                    'setresulton': '', 'setresultdiscrete': '',
-                    'setresultvalue': '', 'an_result_id': ''}, ]
+                     'otherWS': 'current', 'analyst': '',
+                     'worksheettemplate': '',
+                     'setresulton': '', 'setresultdiscrete': '',
+                     'setresultvalue': '', 'an_result_id': ''}, ]
         elif element == 'conditions':
             return [{'analysisservice': '', 'cond_row_idx': '0',
-                    'range0': '', 'range1': '',
-                    'discreteresult': '', 'and_or': 'no'}, ]
+                     'range0': '', 'range1': '',
+                     'discreteresult': '', 'and_or': 'no'}, ]
         else:
-            return ''
+            # Empty value to satisfy calling code's expectation that we
+            # return a list of dict.
+            return [{}]
 
     def getReflexRuleActionElement(self, set_idx=0, row_idx=0, element=''):
-        """
-        Returns the expected value saved in the action list object.
+        """Returns the expected value saved in the action list object.
         :set_idx: it is an integer with the position of the reflex rules set
         in the widget's list.
         :row_idx: is an integer with the numer of the row from the set
         :element: a string with the name of the element of the action to
             obtain: 'action', 'act_row_idx', 'otherWS', 'analyst'
         """
-        if isinstance(set_idx, str):
+        if isinstance(set_idx, basestring):
             set_idx = int(set_idx)
-        if isinstance(row_idx, str):
+        if isinstance(row_idx, basestring):
             row_idx = int(row_idx)
         actions = self.getReflexRuleElement(idx=set_idx, element='actions')
         return actions[row_idx].get(element, '')
 
     def getReflexRuleConditionElement(self, set_idx=0, row_idx=0, element=''):
-        """
-        Returns the expected value saved in the action list object.
+        """Returns the expected value saved in the action list object.
         :set_idx: it is an integer with the position of the reflex rules set
         in the widget's list.
         :row_idx: is an integer with the numer of the row from the set
@@ -538,23 +517,23 @@ class ReflexRuleWidget(RecordsWidget):
             obtain: 'analysisservice', 'cond_row_idx', 'range0', 'range1',
                     'discreteresult', and_or
         """
-        if isinstance(set_idx, str):
+        if isinstance(set_idx, basestring):
             set_idx = int(set_idx)
-        if isinstance(row_idx, str):
+        if isinstance(row_idx, basestring):
             row_idx = int(row_idx)
         cond = self.getReflexRuleElement(idx=set_idx, element='conditions')
         return cond[row_idx].get(element, '')
 
     def getAnalysts(self):
-        """
-        This function returns a displaylist with the available analysts
+        """This function returns a displaylist with the available analysts
         """
         analysts = getUsers(self, ['Manager', 'LabManager', 'Analyst'])
         return analysts.sortedByKey()
+
 
 registerWidget(
     ReflexRuleWidget,
     title="Reflex Rule Widget",
     description=(
         'Widget to define different actions for an analysis services result'),
-    )
+)
