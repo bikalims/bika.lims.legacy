@@ -239,6 +239,19 @@ def get_title(brain_or_object):
     return get_object(brain_or_object).Title()
 
 
+def get_description(brain_or_object):
+    """Get the Title for this object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: Title
+    :rtype: string
+    """
+    if is_brain(brain_or_object) and base_hasattr(brain_or_object, "Description"):
+        return brain_or_object.Description
+    return get_object(brain_or_object).Description()
+
+
 def get_uid(brain_or_object):
     """Get the Plone UID for this object
 
@@ -277,11 +290,19 @@ def get_icon(brain_or_object, html_tag=True):
     :returns: HTML '<img>' tag if 'html_tag' is True else the image url
     :rtype: string
     """
-    plone_layout = get_view('plone_layout')
-    adapter = plone_layout.getIcon(brain_or_object)
+    # Manual approach, because `plone.app.layout.getIcon` does not reliable
+    # work for Bika Contents coming from other catalogs than the `portal_catalog`
+    portal_types = get_tool("portal_types")
+    fti = portal_types.getTypeInfo(brain_or_object.portal_type)
+    icon = fti.getIcon()
+    if not icon:
+        return ""
+    url = "%s/%s" % (get_url(get_portal()), icon)
     if not html_tag:
-        return adapter.url
-    return adapter()
+        return url
+    tag = '<img width="16" height="16" src="{url}" title="{title}" />'.format(
+        url=url, title=get_title(brain_or_object))
+    return tag
 
 
 def get_object_by_uid(uid):

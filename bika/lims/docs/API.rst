@@ -242,6 +242,22 @@ This function takes care that catalog brains are not waked up for this task::
     'Test Client'
 
 
+Getting the Description of a Content
+------------------------------------
+
+Getting the Description is a common task in Bika LIMS.
+This function takes care that catalog brains are not waked up for this task::
+
+    >>> api.get_description(portal)
+    ''
+
+    >>> api.get_description(client)
+    ''
+
+    >>> api.get_description(brain)
+    ''
+
+
 Getting the UID of a Content
 ----------------------------
 
@@ -279,10 +295,10 @@ Getting the Icon of a Content
 -----------------------------
 
     >>> api.get_icon(client)
-    u'<img width="16" height="16" src="http://nohost/plone/++resource++bika.lims.images/client.png" alt="Client" />'
+    '<img width="16" height="16" src="http://nohost/plone/++resource++bika.lims.images/client.png" title="Test Client" />'
 
     >>> api.get_icon(brain)
-    u'<img width="16" height="16" src="http://nohost/plone/++resource++bika.lims.images/client.png" alt="Client" />'
+    '<img width="16" height="16" src="http://nohost/plone/++resource++bika.lims.images/client.png" title="Test Client" />'
 
     >>> api.get_icon(client, html_tag=False)
     'http://nohost/plone/++resource++bika.lims.images/client.png'
