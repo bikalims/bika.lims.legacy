@@ -4,16 +4,11 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.Registry import registerWidget, registerPropertyType
+from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Widget import TypesWidget
 from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
-from zope.i18n.locales import locales
-from operator import itemgetter
-import json
 from bika.lims.utils import isnumber
 
 class AnalysisSpecificationView(BikaListingView):
