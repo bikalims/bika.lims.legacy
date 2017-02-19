@@ -5,6 +5,7 @@
 from Acquisition import aq_base
 from AccessControl.PermissionRole import rolesForPermissionOn
 
+from Products.CMFPlone.utils import base_hasattr
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.Archetypes.BaseObject import BaseObject
 from Products.ZCatalog.interfaces import ICatalogBrain
@@ -19,6 +20,7 @@ from plone import api as ploneapi
 from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
+
 
 """Bika LIMS Framework API
 
@@ -219,7 +221,7 @@ def get_id(brain_or_object):
     :returns: Plone ID
     :rtype: string
     """
-    if is_brain(brain_or_object):
+    if is_brain(brain_or_object) and base_hasattr(brain_or_object, "getId"):
         return brain_or_object.getId
     return get_object(brain_or_object).getId()
 
@@ -232,7 +234,7 @@ def get_title(brain_or_object):
     :returns: Title
     :rtype: string
     """
-    if is_brain(brain_or_object):
+    if is_brain(brain_or_object) and base_hasattr(brain_or_object, "Title"):
         return brain_or_object.Title
     return get_object(brain_or_object).Title()
 
@@ -247,7 +249,7 @@ def get_uid(brain_or_object):
     """
     if is_portal(brain_or_object):
         return 0
-    if is_brain(brain_or_object):
+    if is_brain(brain_or_object) and base_hasattr(brain_or_object, "UID"):
         return brain_or_object.UID
     return get_object(brain_or_object).UID()
 
@@ -260,7 +262,7 @@ def get_url(brain_or_object):
     :returns: Absolute URL
     :rtype: string
     """
-    if is_brain(brain_or_object):
+    if is_brain(brain_or_object) and base_hasattr(brain_or_object, "getURL"):
         return brain_or_object.getURL()
     return get_object(brain_or_object).absolute_url()
 
@@ -320,7 +322,7 @@ def get_object_by_uid(uid):
 
 
 def get_object_by_path(path):
-    """Find an object by a given physical path
+    """Find an object by a given physical path or absolute_url
 
     :param path: The physical path of the object to find
     :type path: string
@@ -335,6 +337,12 @@ def get_object_by_path(path):
     pc = get_portal_catalog()
     portal = get_portal()
     portal_path = get_path(portal)
+    portal_url = get_url(portal)
+
+    # ensure we have a physical path
+    if path.startswith(portal_url):
+        request = get_request()
+        path = "/".join(request.physicalPathFromURL(path))
 
     if not path.startswith(portal_path):
         fail("Not a physical path inside the portal.")
