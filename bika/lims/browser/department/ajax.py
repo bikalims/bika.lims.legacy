@@ -24,7 +24,7 @@ class LabContactUpdate(BrowserView):
     """
     def __call__(self):
         # Getting the data from the json object
-        dataset = json.loads(self.request.form.get('data', ''))
+        dataset = json.loads(self.request.form.get('data', {}))
         pc = getToolByName(self.context, 'portal_catalog')
         # Getting the lab contact object
         labcontact_brain = pc(
