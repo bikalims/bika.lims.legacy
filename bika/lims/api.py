@@ -426,8 +426,8 @@ def search(query, catalog=_marker):
 
     :param query: A suitable search query.
     :type query: dict
-    :param catalog: A named catalog tool
-    :type catalog: str
+    :param catalog: A single catalog id or a list of catalog ids
+    :type catalog: str/list
     :returns: Search results
     :rtype: List of ZCatalog brains
     """
@@ -436,29 +436,32 @@ def search(query, catalog=_marker):
     if not isinstance(query, dict):
         fail("Catalog query needs to be a dictionary")
 
-    # The user requested an explicit catalog query.
-    # Fetch the catalog and execute the query
+    # The catalogs to query
+    catalogs = []
+
+    # The user requested one or more explicit catalog query.
     if catalog is not _marker:
-        tool = get_tool(catalog)
-        return tool(**query)
+        if isinstance(catalog, (list, tuple)):
+            catalogs.extend(map(get_tool, catalog))
+        else:
+            catalogs.append(get_tool(catalog))
 
     # Implicit queries require knowledge about the `portal_type` to search.
     portal_types = query.get("portal_type", None)
 
-    # If no portal_type was found, execute a standard catalog search
-    if portal_types is None:
+    # If no portal_type was found and no catalogs were specified,
+    # execute a standard catalog search
+    if not portal_types and not catalogs:
         return get_portal_catalog()(query)
 
     # We want the portal_type as a list
     if not isinstance(portal_types, (tuple, list)):
         portal_types = [portal_types]
 
-    # The catalogs to query
-    catalogs = []
-
     # Use the archetypes_tool to gather the right catalogs
     archetype_tool = get_tool("archetype_tool", None)
-    if archetype_tool:
+    # but only if the user did not specify any catalogs explicitly
+    if archetype_tool and not catalogs:
         for portal_type in portal_types:
             # we just want the first of the registered catalogs
             catalogs.extend(archetype_tool.getCatalogsByType(portal_type)[:1])

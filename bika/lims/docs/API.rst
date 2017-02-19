@@ -454,6 +454,33 @@ It is also possible to limit the results::
     >>> map(api.get_id, results)
     ['client-1', 'clients']
 
+We can also specify explicit catalogs to search::
+
+    >>> analysiscategories = bika_setup.bika_analysiscategories
+    >>> analysiscategory1 = api.create(analysiscategories, "AnalysisCategory", title="AC-1")
+    >>> analysiscategory2 = api.create(analysiscategories, "AnalysisCategory", title="AC-2")
+    >>> analysiscategory3 = api.create(analysiscategories, "AnalysisCategory", title="AC-3")
+
+Because if we don't specify the `portal_type`, the catalog defaults to the
+`portal_catalog`, which will not find this item::
+
+    >>> results = api.search({"id": "analysiscategory-1"})
+    >>> len(results)
+    0
+
+Would we add the `portal_type`, the search function would ask the
+`archetype_tool` for the right catalog, and it would return a result::
+
+    >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"})
+    >>> len(results)
+    1
+
+We could also explicitly define a catalog to achieve the same::
+
+    >>> results = api.search({"id": "analysiscategory-1"}, catalog="bika_setup_catalog")
+    >>> len(results)
+    1
+
 
 Getting an Attribute of an Object
 ---------------------------------
