@@ -226,6 +226,22 @@ This function takes care that catalog brains are not waked up for this task::
     'client-1'
 
 
+Getting the Title of a Content
+------------------------------
+
+Getting the Title is a common task in Bika LIMS.
+This function takes care that catalog brains are not waked up for this task::
+
+    >>> api.get_title(portal)
+    u'Plone site'
+
+    >>> api.get_title(client)
+    'Test Client'
+
+    >>> api.get_title(brain)
+    'Test Client'
+
+
 Getting the UID of a Content
 ----------------------------
 
@@ -241,6 +257,38 @@ The portal object actually has no UID. This funciton defines it therfore to be `
     >>> uid_client_brain = api.get_uid(brain)
     >>> uid_client is uid_client_brain
     True
+
+
+Getting the URL of a Content
+----------------------------
+
+Getting the URL is a common task in Bika LIMS.
+This function takes care that catalog brains are not waked up for this task::
+
+    >>> api.get_url(portal)
+    'http://nohost/plone'
+
+    >>> api.get_url(client)
+    'http://nohost/plone/clients/client-1'
+
+    >>> api.get_url(brain)
+    'http://nohost/plone/clients/client-1'
+
+
+Getting the Icon of a Content
+-----------------------------
+
+    >>> api.get_icon(client)
+    u'<img width="16" height="16" src="http://nohost/plone/++resource++bika.lims.images/client.png" alt="Client" />'
+
+    >>> api.get_icon(brain)
+    u'<img width="16" height="16" src="http://nohost/plone/++resource++bika.lims.images/client.png" alt="Client" />'
+
+    >>> api.get_icon(client, html_tag=False)
+    'http://nohost/plone/++resource++bika.lims.images/client.png'
+
+    >>> api.get_icon(client, html_tag=False)
+    'http://nohost/plone/++resource++bika.lims.images/client.png'
 
 
 Getting an object by UID

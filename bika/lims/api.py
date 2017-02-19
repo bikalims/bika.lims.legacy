@@ -224,6 +224,19 @@ def get_id(brain_or_object):
     return get_object(brain_or_object).getId()
 
 
+def get_title(brain_or_object):
+    """Get the Title for this object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: Title
+    :rtype: string
+    """
+    if is_brain(brain_or_object):
+        return brain_or_object.Title
+    return get_object(brain_or_object).Title()
+
+
 def get_uid(brain_or_object):
     """Get the Plone UID for this object
 
@@ -237,6 +250,36 @@ def get_uid(brain_or_object):
     if is_brain(brain_or_object):
         return brain_or_object.UID
     return get_object(brain_or_object).UID()
+
+
+def get_url(brain_or_object):
+    """Get the absolute URL for this object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: Absolute URL
+    :rtype: string
+    """
+    if is_brain(brain_or_object):
+        return brain_or_object.getURL()
+    return get_object(brain_or_object).absolute_url()
+
+
+def get_icon(brain_or_object, html_tag=True):
+    """Get the icon of the content object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :param html_tag: A value of 'True' returns the HTML tag, 'False' the image url
+    :type html_tag: bool
+    :returns: HTML '<img>' tag if 'html_tag' is True else the image url
+    :rtype: string
+    """
+    plone_layout = get_view('plone_layout')
+    adapter = plone_layout.getIcon(brain_or_object)
+    if not html_tag:
+        return adapter.url
+    return adapter()
 
 
 def get_object_by_uid(uid):
