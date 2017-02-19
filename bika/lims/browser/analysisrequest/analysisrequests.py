@@ -689,8 +689,7 @@ class AnalysisRequestsView(BikaListingView):
             ]
 
     def isItemAllowed(self, obj):
-        """
-        It checks if the analysis request can be added to the list depending
+        """It checks if the analysis request can be added to the list depending
         on the department filter. It checks the department of each analysis
         service from each analysis belonguing to the given analysis request.
         If department filtering is disabled in bika_setup, will return True.
@@ -700,7 +699,7 @@ class AnalysisRequestsView(BikaListingView):
         if not self.context.bika_setup.getAllowDepartmentFiltering():
             return True
         # Gettin the department from analysis service
-        deps = obj.getDepartmentUIDs() if hasattr(obj, 'getDepartmentUIDs') else []
+        deps = obj.getDepartmentUIDs()
         result = True
         if deps:
             # Getting the cookie value
