@@ -36,7 +36,7 @@ class AnalysisRequestsView(BikaListingView):
 
         self.catalog = "bika_catalog"
         self.contentFilter = {'portal_type': 'AnalysisRequest',
-                              'sort_on': 'Created',
+                              'sort_on': 'created',
                               'sort_order': 'reverse',
                               'path': {"query": "/", "level": 0},
                               'cancellation_state': 'active',
