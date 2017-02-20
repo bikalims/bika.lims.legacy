@@ -21,6 +21,7 @@ from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
 
+from bika.lims import logger
 
 """Bika LIMS Framework API
 
@@ -54,7 +55,6 @@ def get_portal():
     """Get the portal object
 
     :returns: Portal object
-    :rtype: object
     """
     return ploneapi.portal.getSite()
 
@@ -76,7 +76,6 @@ def create(container, portal_type, title=None, **kwargs):
     :param title: The title for the new content object
     :type title: string
     :returns: The new created object
-    :rtype: object
     """
     title = title is None and "New {}".format(portal_type) or title
     _ = container.invokeFactory(portal_type, id="tmpID", title=title)
@@ -93,7 +92,6 @@ def get_tool(name, default=_marker):
     :param name: The name of the tool, e.g. `portal_catalog`
     :type name: string
     :returns: Portal Tool
-    :rtype: object
     """
     try:
         return ploneapi.portal.get_tool(name)
@@ -108,27 +106,27 @@ def fail(msg=None):
     """
     if msg is None:
         msg = "Reason not given."
-    raise BikaLIMSError("{0}".format(msg))
+    raise BikaLIMSError("{}".format(msg))
 
 
 def get_object(brain_or_object):
     """Get the full content object
 
     :param brain_or_object: A single catalog brain or content object
-    :type brain_or_object: PortalObject/ATContentType/DexterityContentType/CatalogBrain
+    :type brain_or_object: PortalObject/ATContentType/DexterityContentType
+    /CatalogBrain
     :returns: The full object
-    :rtype: object
     """
 
     if is_portal(brain_or_object):
         return brain_or_object
-    if is_brain(brain_or_object):
-        return brain_or_object.getObject()
     if is_at_content(brain_or_object):
         return brain_or_object
     if is_dexterity_content(brain_or_object):
         return brain_or_object
-    fail("%r is not supported." % brain_or_object)
+    if is_brain(brain_or_object):
+        return brain_or_object.getObject()
+    fail("{} is not supported.".format(brain_or_object))
 
 
 def is_portal(brain_or_object):
@@ -181,18 +179,17 @@ def get_schema(brain_or_object):
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
     :returns: Schema object
-    :rtype: object
     """
     obj = get_object(brain_or_object)
     if is_portal(obj):
-        return None
+        fail("get_schema can't return schema of portal root")
     if is_dexterity_content(obj):
         pt = get_portal_catalog()
         fti = pt.getTypeInfo(obj.portal_type)
         return fti.lookupSchema()
     if is_at_content(obj):
         return obj.Schema()
-    fail("%r has no Schema.")
+    fail("{} has no Schema.".format(brain_or_object))
 
 
 def get_fields(brain_or_object):
@@ -205,8 +202,6 @@ def get_fields(brain_or_object):
     """
     obj = get_object(brain_or_object)
     schema = get_schema(obj)
-    if not schema:
-        return {}
     if is_dexterity_content(obj):
         # XXX implement properly for Dexterity content types
         return dict.fromkeys(schema.names())
@@ -247,7 +242,8 @@ def get_description(brain_or_object):
     :returns: Title
     :rtype: string
     """
-    if is_brain(brain_or_object) and base_hasattr(brain_or_object, "Description"):
+    if is_brain(brain_or_object) \
+            and base_hasattr(brain_or_object, "Description"):
         return brain_or_object.Description
     return get_object(brain_or_object).Description()
 
@@ -261,7 +257,7 @@ def get_uid(brain_or_object):
     :rtype: string
     """
     if is_portal(brain_or_object):
-        return 0
+        return '0'
     if is_brain(brain_or_object) and base_hasattr(brain_or_object, "UID"):
         return brain_or_object.UID
     return get_object(brain_or_object).UID()
@@ -285,13 +281,14 @@ def get_icon(brain_or_object, html_tag=True):
 
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :param html_tag: A value of 'True' returns the HTML tag, 'False' the image url
+    :param html_tag: A value of 'True' returns the HTML tag, else the image url
     :type html_tag: bool
     :returns: HTML '<img>' tag if 'html_tag' is True else the image url
     :rtype: string
     """
     # Manual approach, because `plone.app.layout.getIcon` does not reliable
-    # work for Bika Contents coming from other catalogs than the `portal_catalog`
+    # work for Bika Contents coming from other catalogs than the
+    # `portal_catalog`
     portal_types = get_tool("portal_types")
     fti = portal_types.getTypeInfo(brain_or_object.portal_type)
     icon = fti.getIcon()
@@ -311,33 +308,30 @@ def get_object_by_uid(uid):
     :param uid: The UID of the object to find
     :type uid: string
     :returns: Found Object or None
-    :rtype: object
     """
 
     # nothing to do here
-    if uid is None:
-        return None
+    if not uid:
+        fail("get_object_by_uid requires UID as first argument; got {} instead"
+             .format(uid))
 
-    # we defined the portal object UID to be 0::
-    if uid == 0:
+    # we defined the portal object UID to be '0'::
+    if uid == '0':
         return get_portal()
 
     # we try to find the object with both catalogs
     pc = get_portal_catalog()
-    rc = get_tool("reference_catalog", None)
+    uc = get_tool("uid_catalog")
 
     # try to find the object with the reference catalog first
-    obj = rc and rc.lookupObject(uid)
-    if obj:
-        return obj
+    brains = uc(UID=uid)
+    if brains:
+        return brains[0].getObject()
 
     # try to find the object with the portal catalog
-    res = pc(dict(UID=uid))
-    if len(res) > 1:
-        fail("More than one object found for UID '%s'" % uid)
-        return None
+    res = pc(UID=uid)
     if not res:
-        return None
+        fail("No object found for UID {}".format(uid))
 
     return get_object(res[0])
 
@@ -348,12 +342,12 @@ def get_object_by_path(path):
     :param path: The physical path of the object to find
     :type path: string
     :returns: Found Object or None
-    :rtype: object
     """
 
     # nothing to do here
     if not path:
-        return None
+        fail("get_object_by_path first argument must be a path; {} received"
+             .format(path))
 
     pc = get_portal_catalog()
     portal = get_portal()
@@ -373,7 +367,7 @@ def get_object_by_path(path):
 
     res = pc(path=dict(query=path, depth=0))
     if not res:
-        return None
+        fail("Object at path '{}' not found".format(path))
     return get_object(res[0])
 
 
@@ -568,7 +562,6 @@ def get_portal_catalog():
     """Get the portal catalog tool
 
     :returns: Portal Catalog Tool
-    :rtype: object
     """
     return get_tool("portal_catalog")
 
@@ -579,19 +572,23 @@ def get_review_history(brain_or_object, rev=True):
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
     :returns: Workflow history
-    :rtype: obj
+    :rtype: [{}, ...]
     """
     obj = get_object(brain_or_object)
     review_history = []
     try:
         workflow = get_tool("portal_workflow")
         review_history = workflow.getInfoFor(obj, 'review_history')
-    except WorkflowException:
-        return []
-    if rev is True:
-        review_history = reversed(review_history)
+    except WorkflowException as e:
+        message = str(e)
+        logger.error("Cannot retrieve review_history on {}: {}".format(
+            obj, message))
     if not isinstance(review_history, (list, tuple)):
-        return list(review_history)
+        logger.error("get_review_history: expected list, recieved {}".format(
+            review_history))
+        review_history = []
+    if rev is True:
+        review_history.reverse()
     return review_history
 
 
@@ -656,7 +653,8 @@ def is_versionable(brain_or_object, policy='at_edit_autoversion'):
     """
     pr = get_tool("portal_repository")
     obj = get_object(brain_or_object)
-    return pr.supportsPolicy(obj, 'at_edit_autoversion') and pr.isVersionable(obj)
+    return pr.supportsPolicy(obj, 'at_edit_autoversion') \
+           and pr.isVersionable(obj)
 
 
 def get_version(brain_or_object):
@@ -664,8 +662,8 @@ def get_version(brain_or_object):
 
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :returns: The current version of the object
-    :rtype: int
+    :returns: The current version of the object, or None if not available
+    :rtype: int or None
     """
     obj = get_object(brain_or_object)
     if not is_versionable(obj):
@@ -705,9 +703,9 @@ def get_group(group_or_groupname):
     :param group_or_groupname: Plone group or the name of the group
     :type groupname:  GroupData/str
     :returns: Plone GroupData
-    :rtype: object
     """
     if not group_or_groupname:
+
         return None
     if hasattr(group_or_groupname, "_getGroup"):
         return group_or_groupname
@@ -719,9 +717,7 @@ def get_user(user_or_username):
     """Return Plone User
 
     :param user_or_username: Plone user or user id
-    :type groupname:  PloneUser/MemberData/str
     :returns: Plone MemberData
-    :rtype: object
     """
     if not user_or_username:
         return None
@@ -734,9 +730,7 @@ def get_user_properties(user_or_username):
     """Return User Properties
 
     :param user_or_username: Plone group identifier
-    :type groupname:  PloneUser/MemberData/str
     :returns: Plone MemberData
-    :rtype: object
     """
     user = get_user(user_or_username)
     if user is None:
@@ -757,7 +751,6 @@ def get_users_by_roles(roles=None):
     :param roles: Plone role name or list of roles
     :type roles:  list/str
     :returns: List of Plone users having the role(s)
-    :rtype: object
     """
     if not isinstance(roles, (tuple, list)):
         roles = [roles]
@@ -769,6 +762,5 @@ def get_current_user():
     """Returns the current logged in user
 
     :returns: Current User
-    :rtype: object
     """
     return ploneapi.user.get_current()

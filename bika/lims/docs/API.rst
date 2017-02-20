@@ -267,7 +267,7 @@ This function takes care that catalog brains are not waked up for this task.
 The portal object actually has no UID. This funciton defines it therfore to be `0`::
 
     >>> api.get_uid(portal)
-    0
+    '0'
 
     >>> uid_client = api.get_uid(client)
     >>> uid_client_brain = api.get_uid(brain)
@@ -313,7 +313,7 @@ Getting an object by UID
 This function finds an object by its uinique ID (UID).
 The portal object with the defined UId of `0` is also supported::
 
-    >>> api.get_object_by_uid(0)
+    >>> api.get_object_by_uid('0')
     <PloneSite at /plone>
 
     >>> api.get_object_by_uid(uid_client)
@@ -706,18 +706,20 @@ An empty property dict is returned if no user could be found::
 Getting Users by their Roles
 ----------------------------
 
+    >>> from operator import methodcaller
+
 Roles in Bika LIMS are basically a name for one or more permissions. For
 example, a `LabManager` describes a role which is granted the most permissions.
 
 To see which users are granted a certain role, you can use this function::
 
     >>> labmanagers = api.get_users_by_roles(["LabManager"])
-    >>> sorted(labmanagers)
+    >>> sorted(labmanagers, key=methodcaller('getId'))
     [<PloneUser 'test_labmanager'>, <PloneUser 'test_labmanager1'>, <PloneUser 'test-user'>]
 
 A single value can also be passed into this function::
 
-    >>> sorted(api.get_users_by_roles("LabManager"))
+    >>> sorted(api.get_users_by_roles("LabManager"), key=methodcaller('getId'))
     [<PloneUser 'test_labmanager'>, <PloneUser 'test_labmanager1'>, <PloneUser 'test-user'>]
 
 
