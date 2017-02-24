@@ -39,6 +39,8 @@ class ARImportsView(BikaListingView):
             'cancellation_state': 'active',
             'sort_on': 'sortable_title',
         }
+        #self.allow_edit = True
+        self.show_select_column = True
         self.context_actions = {}
         if IClient.providedBy(self.context):
             self.context_actions = {
@@ -67,9 +69,27 @@ class ARImportsView(BikaListingView):
             'state_title': {'title': _('State')},
         }
         self.review_states = [
+            {'id': 'all',
+             'title': _('All'),
+             'contentFilter': {'review_state': ['invalid', 'valid',
+                                                'imported', 'initial']},
+             'transitions': [{'id': 'cancel'},],
+             'custom_actions': [],
+             'columns': ['Title',
+                         'Creator',
+                         'Filename',
+                         'Client',
+                         'DateCreated',
+                         'DateValidated',
+                         'DateImported',
+                         'state_title']},
             {'id': 'default',
              'title': _('Pending'),
-             'contentFilter': {'review_state': ['invalid', 'valid']},
+             'contentFilter': {'review_state': ['invalid', 'valid'],
+                                'sort_on': 'DateValidated',
+                                'sort_order': 'ascending'},
+             'transitions': [{'id': 'cancel'},],
+             'custom_actions': [],
              'columns': ['Title',
                          'Creator',
                          'Filename',
@@ -81,6 +101,8 @@ class ARImportsView(BikaListingView):
             {'id': 'imported',
              'title': _('Imported'),
              'contentFilter': {'review_state': 'imported'},
+             'transitions': [{'id': 'cancel'},],
+             'custom_actions': [],
              'columns': ['Title',
                          'Creator',
                          'Filename',
@@ -95,6 +117,9 @@ class ARImportsView(BikaListingView):
                  'review_state': ['initial', 'invalid', 'valid', 'imported'],
                  'cancellation_state': 'cancelled'
              },
+             'transitions': [{'id': 'cancel'},
+                             {'id': 'reinstate'}, ],
+             'custom_actions': [],
              'columns': ['Title',
                          'Creator',
                          'Filename',
@@ -140,11 +165,30 @@ class ClientARImportsView(ARImportsView):
         self.contentFilter['path'] = {
             'query': '/'.join(context.getPhysicalPath())
         }
+        #self.allow_edit = True
+        self.show_select_column = True
 
         self.review_states = [
+            {'id': 'all',
+             'title': _('All'),
+             'contentFilter': {'review_state': ['invalid', 'valid', 
+                                                'imported', 'initial']},
+             'transitions': [{'id': 'cancel'},],
+             'custom_actions': [],
+             'columns': ['Title',
+                         'Creator',
+                         'Filename',
+                         'DateCreated',
+                         'DateValidated',
+                         'DateImported',
+                         'state_title']},
             {'id': 'default',
              'title': _('Pending'),
-             'contentFilter': {'review_state': ['invalid', 'valid']},
+             'contentFilter': {'review_state': ['invalid', 'valid'],
+                                'sort_on': 'DateValidated',
+                                'sort_order': 'ascending'},
+             'transitions': [{'id': 'cancel'},],
+             'custom_actions': [],
              'columns': ['Title',
                          'Creator',
                          'Filename',
@@ -155,6 +199,8 @@ class ClientARImportsView(ARImportsView):
             {'id': 'imported',
              'title': _('Imported'),
              'contentFilter': {'review_state': 'imported'},
+             'transitions': [{'id': 'cancel'},],
+             'custom_actions': [],
              'columns': ['Title',
                          'Creator',
                          'Filename',
@@ -168,6 +214,9 @@ class ClientARImportsView(ARImportsView):
                  'review_state': ['initial', 'invalid', 'valid', 'imported'],
                  'cancellation_state': 'cancelled'
              },
+             'transitions': [{'id': 'cancel'},
+                             {'id': 'reinstate'}, ],
+             'custom_actions': [],
              'columns': ['Title',
                          'Creator',
                          'Filename',
