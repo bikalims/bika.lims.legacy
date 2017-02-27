@@ -398,6 +398,7 @@ class ReferenceSamplesView(BikaListingView):
         ]
 
     def folderitem(self, obj, item, index):
+        workflow = getToolByName(obj, 'portal_workflow')
         if item.get('review_state', 'current') == 'current':
             # Check expiry date
             exdate = obj.getExpiryDate()
