@@ -74,29 +74,25 @@ class ClientSamplePointsView(BikaListingView):
                  'icon': '++resource++bika.lims.images/add.png'}
         return super(ClientSamplePointsView, self).__call__()
 
-    def folderitems(self):
-        items = BikaListingView.folderitems(self)
-        for x in range(len(items)):
-            if not items[x].has_key('obj'): continue
-            obj = items[x]['obj']
-            items[x]['replace']['title'] = "<a href='%s'>%s</a>" % \
-                 (items[x]['url'], items[x]['title'])
-            items[x]['Description'] = obj.Description()
-            titles = [st.Title() for st in obj.getSampleTypes()]
-            items[x]['Sample Types'] = ",".join(titles)
-            if obj.aq_parent.portal_type == 'Client':
-                items[x]['Owner'] = obj.aq_parent.Title()
-            else:
-                items[x]['Owner'] = self.context.bika_setup.laboratory.Title()
-            items[x]['Composite'] = 'Y' if obj.Composite else 'N'
-            sample_freq = obj.SamplingFrequency.keys()
-            sample_freq.sort()
-            sample_freq_str = ''
-            for value in sample_freq:
-                sample_freq_str += '%s %s ' % (
-                                value.title(), obj.SamplingFrequency[value])
-            items[x]['Sampling Frequency'] = sample_freq_str
-            items[x]['replace']['Attachments'] = \
-                            "<a href='%s/at_download/Attachment'>%s</a>" % \
-                                 (items[x]['url'], obj.AttachmentFile.filename)
-        return items
+    def folderitem(self, obj, item, index):
+        item['replace']['title'] = "<a href='%s'>%s</a>" % \
+             (item['url'], item['title'])
+        item['Description'] = obj.Description()
+        titles = [st.Title() for st in obj.getSampleTypes()]
+        item['Sample Types'] = ",".join(titles)
+        if obj.aq_parent.portal_type == 'Client':
+            item['Owner'] = obj.aq_parent.Title()
+        else:
+            item['Owner'] = self.context.bika_setup.laboratory.Title()
+        item['Composite'] = 'Y' if obj.Composite else 'N'
+        sample_freq = obj.SamplingFrequency.keys()
+        sample_freq.sort()
+        sample_freq_str = ''
+        for value in sample_freq:
+            sample_freq_str += '%s %s ' % (
+                            value.title(), obj.SamplingFrequency[value])
+        item['Sampling Frequency'] = sample_freq_str
+        item['replace']['Attachments'] = \
+                        "<a href='%s/at_download/Attachment'>%s</a>" % \
+                             (item['url'], obj.AttachmentFile.filename)
+        return item
