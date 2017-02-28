@@ -57,7 +57,6 @@ class AddControlView(BrowserView):
             self.request.response.redirect(self.context.absolute_url() + "/manage_results")
         else:
             self.Services = ServicesView(self.context, self.request)
-            self.Services.expand_all_categories = False
             self.Services.view_url = self.Services.base_url + "/add_control"
             return self.template()
 

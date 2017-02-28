@@ -331,6 +331,7 @@ class BikaListingView(BrowserView):
     # and complted inline.  This is useful for list which will have many
     # thousands of entries in many categories, where loading the entire list
     # in HTML would be very slow.
+    # If you want to use service categories set this option ajax_categories_url
     ajax_categories = False
 
     # using the following attribute, some python class may add a CSS class

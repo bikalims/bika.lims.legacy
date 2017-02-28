@@ -29,7 +29,10 @@ class ServicesView(BikaListingView):
         self.pagesize = 999999
         self.show_workflow_action_buttons = False
         self.show_categories=context.bika_setup.getCategoriseAnalysisServices()
-        self.expand_all_categories=True
+        self.expand_all_categories = False
+        self.ajax_categories = True
+        self.ajax_categories_url = self.base_url + '/service_view'
+        self.category_index = 'getCategoryTitle'
 
         self.columns = {
             'Service': {'title': _('Service'),
