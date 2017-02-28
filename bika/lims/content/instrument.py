@@ -11,7 +11,7 @@ from AccessControl import ClassSecurityInfo
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from Products.Archetypes.atapi import DisplayList
+from Products.Archetypes.atapi import DisplayList, PicklistWidget
 from Products.Archetypes.atapi import registerType
 
 from zope.interface import implements
@@ -130,9 +130,8 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         relationship='InstrumentMethods',
         required=0,
         multiValued=1,
-        widget=ReferenceWidget(
-            checkbox_bound=0,
-            format='select',
+        widget=PicklistWidget(
+            size=10,
             label=_("Methods"),
         ),
     ),
@@ -433,7 +432,6 @@ class Instrument(ATFolder):
                  for c in bsc(portal_type='Method',
                               inactive_state='active')]
         items.sort(lambda x, y: cmp(x[1], y[1]))
-        items.insert(0, ('', t(_('None'))))
         return DisplayList(items)
 
     def getInstrumentTypes(self):
