@@ -67,6 +67,8 @@ class AnalysisRequestsView(BikaListingView):
         member = mtool.getAuthenticatedMember()
         user_is_preserver = 'Preserver' in member.getRoles()
 
+        self.printwfenabled = self.context.bika_setup.getPrintingWorkflowEnabled()
+
         self.columns = {
             'getRequestID': {'title': _('Request ID'),
                              'index': 'getRequestID'},
@@ -146,11 +148,14 @@ class AnalysisRequestsView(BikaListingView):
             'getTemplateTitle': {'title': _('Template'),
                                  'index': 'getTemplateTitle',
                                  'toggle': False},
+            'Printed':          {'title': _('Printed'),
+                                 'toggle': False},
         }
+
         self.review_states = [
             {'id': 'default',
              'title': _('Active'),
-             'contentFilter': {'sort_on': 'created',
+             'contentFilter': {'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'sample'},
                              {'id': 'preserve'},
@@ -194,7 +199,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'to_be_sampled',
              'title': _('To Be Sampled'),
              'contentFilter': {'review_state': ('to_be_sampled',),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'sample'},
                              {'id': 'submit'},
@@ -230,7 +235,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'to_be_preserved',
              'title': _('To Be Preserved'),
              'contentFilter': {'review_state': ('to_be_preserved',),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'preserve'},
                              {'id': 'cancel'},
@@ -265,7 +270,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'scheduled_sampling',
              'title': _('Scheduled sampling'),
              'contentFilter': {'review_state': ('scheduled_sampling',),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'sample'},
                              {'id': 'cancel'},
@@ -302,7 +307,7 @@ class AnalysisRequestsView(BikaListingView):
              'contentFilter': {'review_state': ('to_be_sampled',
                                                 'to_be_preserved',
                                                 'sample_due'),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'sample'},
                              {'id': 'preserve'},
@@ -339,7 +344,7 @@ class AnalysisRequestsView(BikaListingView):
            {'id': 'sample_received',
              'title': _('Received'),
              'contentFilter': {'review_state': 'sample_received',
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'prepublish'},
                              {'id': 'cancel'},
@@ -374,7 +379,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'to_be_verified',
              'title': _('To be verified'),
              'contentFilter': {'review_state': 'to_be_verified',
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'retract'},
                              {'id': 'verify'},
@@ -411,7 +416,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'verified',
              'title': _('Verified'),
              'contentFilter': {'review_state': 'verified',
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'publish'},
                              {'id': 'cancel'},
@@ -446,10 +451,14 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'published',
              'title': _('Published'),
              'contentFilter': {'review_state': ('published', 'invalid'),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'republish'}],
-             'custom_actions': [],
+             'custom_actions': [
+                 {'id': 'print',
+                  'title': _('Print'),
+                  'url': 'workflow_action?action=print'}
+             ] if self.printwfenabled else [],
              'columns': ['getRequestID',
                         'getSample',
                         'BatchID',
@@ -475,8 +484,9 @@ class AnalysisRequestsView(BikaListingView):
                         'getPreserver',
                         'getDateReceived',
                         'getAnalysesNum',
-                        'getDateVerified',
-                        'getDatePublished']},
+                        'getDateVerified'] + \
+                    ['Printed'] if self.printwfenabled else [] + \
+                    ['getDatePublished']},
             {'id': 'cancelled',
              'title': _('Cancelled'),
              'contentFilter': {'cancellation_state': 'cancelled',
@@ -490,7 +500,7 @@ class AnalysisRequestsView(BikaListingView):
                                    'attachment_due',
                                    'verified',
                                    'published'),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'reinstate'}],
              'custom_actions': [],
@@ -525,7 +535,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'invalid',
              'title': _('Invalid'),
              'contentFilter': {'review_state': 'invalid',
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [],
              'custom_actions': [],
@@ -564,7 +574,7 @@ class AnalysisRequestsView(BikaListingView):
                                'review_state': ('sample_received', 'to_be_verified',
                                                 'attachment_due', 'verified',
                                                 'published'),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'retract'},
                              {'id': 'verify'},
@@ -609,7 +619,7 @@ class AnalysisRequestsView(BikaListingView):
                                'review_state': ('sample_received', 'to_be_verified',
                                                 'attachment_due', 'verified',
                                                 'published'),
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [{'id': 'receive'},
                              {'id': 'retract'},
@@ -651,7 +661,7 @@ class AnalysisRequestsView(BikaListingView):
             {'id': 'rejected',
              'title': _('Rejected'),
              'contentFilter': {'review_state': 'rejected',
-                               'sort_on': 'created',
+                               'sort_on': 'Created',
                                'sort_order': 'reverse'},
              'transitions': [],
              'custom_actions': [],
@@ -685,8 +695,7 @@ class AnalysisRequestsView(BikaListingView):
             ]
 
     def isItemAllowed(self, obj):
-        """
-        It checks if the analysis request can be added to the list depending
+        """It checks if the analysis request can be added to the list depending
         on the department filter. It checks the department of each analysis
         service from each analysis belonguing to the given analysis request.
         If department filtering is disabled in bika_setup, will return True.
@@ -696,8 +705,7 @@ class AnalysisRequestsView(BikaListingView):
         if not self.context.bika_setup.getAllowDepartmentFiltering():
             return True
         # Gettin the department from analysis service
-        ans = [an.getObject() for an in obj.getAnalyses()]
-        deps = [an.getService().getDepartment().UID() for an in ans if an.getService().getDepartment()]
+        deps = obj.getDepartmentUIDs()
         result = True
         if deps:
             # Getting the cookie value
@@ -718,22 +726,24 @@ class AnalysisRequestsView(BikaListingView):
         if not item:
             return None
 
-        member = self.mtool.getAuthenticatedMember()
-        roles = member.getRoles()
-        hideclientlink = 'RegulatoryInspector' in roles \
-            and 'Manager' not in roles \
-            and 'LabManager' not in roles \
-            and 'LabClerk' not in roles
-
         sample = obj.getSample()
         url = obj.absolute_url()
-        if getSecurityManager().checkPermission(EditResults, obj):
+        if self.editresults == -1:
+            self.editresults = 1 if getSecurityManager().checkPermission(EditResults, obj) else 0
+        elif self.editresults == 1:
             url += "/manage_results"
 
-        item['Client'] = obj.aq_parent.Title()
-        if (hideclientlink == False):
+        clientuid = obj.getClientUID()
+        client = self.clients.get(clientuid,None)
+        if not client:
+            client = obj.aq_parent
+            self.clients[clientuid]=client
+
+        item['Client'] = client.Title()
+        if (self.hideclientlink == False):
             item['replace']['Client'] = "<a href='%s'>%s</a>" % \
-                (obj.aq_parent.absolute_url(), obj.aq_parent.Title())
+                (client.absolute_url(), client.Title())
+
         item['Creator'] = self.user_fullname(obj.Creator())
         item['getRequestID'] = obj.getRequestID()
         item['replace']['getRequestID'] = "<a href='%s'>%s</a>" % \
@@ -742,8 +752,7 @@ class AnalysisRequestsView(BikaListingView):
         item['replace']['getSample'] = \
             "<a href='%s'>%s</a>" % (sample.absolute_url(), sample.Title())
 
-        item['replace']['getProfilesTitle'] = ", ".join(
-            [p.Title() for p in obj.getProfiles()])
+        item['replace']['getProfilesTitle'] = ", ".join(obj.getProfilesTitle())
 
         analysesnum = obj.getAnalysesNum()
         if analysesnum:
@@ -771,6 +780,21 @@ class AnalysisRequestsView(BikaListingView):
             self.ulocalized_time(getTransitionDate(obj, 'publish'))
         item['getDateVerified'] = \
             self.ulocalized_time(getTransitionDate(obj, 'verify'))
+
+        if self.printwfenabled:
+            item['Printed']= ''
+            printed = obj.getPrinted() if hasattr(obj, 'getPrinted') else "0"
+            print_icon=''
+            if printed=="0":
+                print_icon="<img src='%s/++resource++bika.lims.images/delete.png' title='%s'>" % \
+                    (self.portal_url, t(_("Not printed yet")))
+            elif printed=="1":
+                print_icon="<img src='%s/++resource++bika.lims.images/ok.png' title='%s'>" % \
+                    (self.portal_url, t(_("Printed")))
+            elif printed=="2":
+                print_icon="<img src='%s/++resource++bika.lims.images/exclamation.png' title='%s'>" % \
+                    (self.portal_url, t(_("Republished after last print")))
+            item['after']['Printed']=print_icon
 
         deviation = sample.getSamplingDeviation()
         item['SamplingDeviation'] = deviation and deviation.Title() or ''
@@ -824,8 +848,8 @@ class AnalysisRequestsView(BikaListingView):
             sampler = sample.getSampler().strip()
             if sampler:
                 item['replace']['getSampler'] = self.user_fullname(sampler)
-            if 'Sampler' in member.getRoles() and not sampler:
-                sampler = member.id
+            if 'Sampler' in self.member.getRoles() and not sampler:
+                sampler = self.member.id
                 item['class']['getSampler'] = 'provisional'
         else:
             datesampled = ''
@@ -842,7 +866,7 @@ class AnalysisRequestsView(BikaListingView):
             item['required'] = ['getSampler', 'getDateSampled']
             item['allow_edit'] = ['getSampler', 'getDateSampled']
             samplers = getUsers(sample, ['Sampler', 'LabManager', 'Manager'])
-            username = member.getUserName()
+            username = self.member.getUserName()
             users = [({'ResultValue': u, 'ResultText': samplers.getValue(u)})
                      for u in samplers]
             item['choices'] = {'getSampler': users}
@@ -856,12 +880,11 @@ class AnalysisRequestsView(BikaListingView):
         item['getDatePreserved'] = ''
 
         # inline edits for Preserver and Date Preserved
-        checkPermission = self.context.portal_membership.checkPermission
         if checkPermission(PreserveSample, obj):
             item['required'] = ['getPreserver', 'getDatePreserved']
             item['allow_edit'] = ['getPreserver', 'getDatePreserved']
             preservers = getUsers(obj, ['Preserver', 'LabManager', 'Manager'])
-            username = member.getUserName()
+            username = self.member.getUserName()
             users = [({'ResultValue': u, 'ResultText': preservers.getValue(u)})
                      for u in preservers]
             item['choices'] = {'getPreserver': users}
@@ -875,10 +898,10 @@ class AnalysisRequestsView(BikaListingView):
 
         # Submitting user may not verify results
         if item['review_state'] == 'to_be_verified':
-            username = member.getUserName()
-            allowed = api.user.has_permission(VerifyPermission,
-                                              username=username)
-            if allowed and not obj.isUserAllowedToVerify(member):
+            allowed = api.user.has_permission(
+                VerifyPermission,
+                username=self.member.getUserName())
+            if allowed and not obj.isUserAllowedToVerify(self.member):
                 item['after']['state_title'] = \
                      "<img src='++resource++bika.lims.images/submitted-by-current-user.png' title='%s'/>" % \
                      t(_("Cannot verify: Submitted by current user"))
@@ -896,6 +919,16 @@ class AnalysisRequestsView(BikaListingView):
     def __call__(self):
         self.workflow = getToolByName(self.context, "portal_workflow")
         self.mtool = getToolByName(self.context, 'portal_membership')
+
+        self.member = self.mtool.getAuthenticatedMember()
+        roles = self.member.getRoles()
+        self.hideclientlink = 'RegulatoryInspector' in roles \
+            and 'Manager' not in roles \
+            and 'LabManager' not in roles \
+            and 'LabClerk' not in roles
+
+        self.editresults = -1
+        self.clients = {}
 
         # Only "BIKA: ManageAnalysisRequests" may see the copy to new button.
         # elsewhere it is hacked in where required.

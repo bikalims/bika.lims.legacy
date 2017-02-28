@@ -99,6 +99,7 @@ class BikaGenerator:
                        'bika_samplepoints',
                        'bika_sampletypes',
                        'bika_srtemplates',
+                       'bika_reflexrulefolder',
                        'bika_storagelocations',
                        'bika_subgroups',
                        'bika_suppliers',
@@ -589,6 +590,8 @@ class BikaGenerator:
         addIndex(bac, 'getRawSampleTypes', 'KeywordIndex')
         addIndex(bac, 'getRetested', 'FieldIndex')
         addIndex(bac, 'getReferenceAnalysesGroupID', 'FieldIndex')
+        addIndex(bac, 'getMethodUID', 'FieldIndex')
+        addIndex(bac, 'getInstrumentUID', 'FieldIndex')
 
         addColumn(bac, 'path')
         addColumn(bac, 'UID')
@@ -675,7 +678,6 @@ class BikaGenerator:
         addIndex(bc, 'getExpiryDate', 'DateIndex')
         addIndex(bc, 'getInvoiced', 'FieldIndex')
         addIndex(bc, 'getPreserver', 'FieldIndex')
-        addIndex(bc, 'getProfilesTitle', 'FieldIndex')
         addIndex(bc, 'getReferenceDefinitionUID', 'FieldIndex')
         addIndex(bc, 'getRequestID', 'FieldIndex')
         addIndex(bc, 'getSampleID', 'FieldIndex')
@@ -712,7 +714,6 @@ class BikaGenerator:
         addColumn(bc, 'getClientSampleID')
         addColumn(bc, 'getContactTitle')
         addColumn(bc, 'getClientTitle')
-        addColumn(bc, 'getProfilesTitle')
         addColumn(bc, 'getSamplePointTitle')
         addColumn(bc, 'getSampleTypeTitle')
         addColumn(bc, 'getAnalysisCategory')
@@ -834,6 +835,7 @@ class BikaGenerator:
         addIndex(bsc, 'sortKey', 'FieldIndex')
         addIndex(bsc, 'getMethodID', 'FieldIndex')
         addIndex(bsc, 'getDocumentID', 'FieldIndex')
+        addIndex(bsc, 'getAvailableMethodsUIDs', 'KeywordIndex')
 
         addColumn(bsc, 'path')
         addColumn(bsc, 'UID')
@@ -889,6 +891,15 @@ class BikaGenerator:
         addColumn(bsc, 'getUnit')
         addColumn(bsc, 'getVATAmount')
         addColumn(bsc, 'getVolume')
+
+        # portal_catalog
+        pc = getToolByName(portal, 'portal_catalog', None)
+        if pc == None:
+            logger.warning('Could not find the portal_catalog tool.')
+            return
+        addIndex(pc, 'Analyst', 'FieldIndex')
+        addIndex(pc, 'worksheettemplateUID', 'FieldIndex')
+        addColumn(pc, 'Analyst')
 
     def setupTopLevelFolders(self, context):
         workflow = getToolByName(context, "portal_workflow")

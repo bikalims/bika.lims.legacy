@@ -203,6 +203,9 @@ function AnalysisRequestAddByCol() {
           * a batch, then Auto-complete all Contact field.
           */
         var uid = $($("tr[fieldname='Client'] input")[0]).attr("uid");
+        if (uid === undefined || uid === null){
+          uid='';
+        }
         var request_data = {
             catalog_name: "portal_catalog",
             portal_type: "Contact",
@@ -281,6 +284,9 @@ function AnalysisRequestAddByCol() {
          * different analysis request templates needed.
          * :samplinground_uid: a string with the sampling round uid
          */
+         if (samplinground_UID === undefined || samplinground_UID === null){
+           samplinground_UID='';
+         }
         var request_data = {
             catalog_name: "portal_catalog",
             portal_type: "SamplingRound",
@@ -939,6 +945,9 @@ function AnalysisRequestAddByCol() {
             d.resolve()
             return d.promise()
         }
+        if (spec_uid === undefined || spec_uid === null){
+          spec_uid='';
+        }
         var request_data = {
             catalog_name: 'bika_setup_catalog',
             UID: spec_uid
@@ -1140,6 +1149,9 @@ function AnalysisRequestAddByCol() {
          *  also clear the AR Template field.
          */
         var d = $.Deferred();
+        if (profile_uid === undefined || profile_uid === null){
+          profile_uid='';
+        }
         var request_data = {
             catalog_name: "bika_setup_catalog",
             portal_type: "AnalysisProfile",
@@ -2540,8 +2552,9 @@ function AnalysisRequestAddByCol() {
     function form_submit() {
         $("[name='save_button']").click(
           function (event) {
-              event.preventDefault()
-              set_state_from_form_values()
+              $('input[name="save_button"]').prop('disabled', true);
+              event.preventDefault();
+              set_state_from_form_values();
               var request_data = {
                   _authenticator: $("input[name='_authenticator']").val(),
                   state: $.toJSON(bika.lims.ar_add.state)
@@ -2577,6 +2590,7 @@ function AnalysisRequestAddByCol() {
                                 }
                                 msg = msg + e + data.errors[error] + "<br/>"
                             }
+                            $('input[name="save_button"]').prop('disabled', false);
                             window.bika.lims.portalMessage(msg)
                             window.scroll(0, 0)
                         }

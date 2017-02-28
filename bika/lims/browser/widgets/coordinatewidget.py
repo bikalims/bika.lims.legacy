@@ -6,7 +6,6 @@
 from AccessControl import ClassSecurityInfo
 from Products.ATExtensions.widget import RecordWidget
 from Products.Archetypes.Registry import registerWidget
-import datetime
 
 class CoordinateWidget(RecordWidget):
     security = ClassSecurityInfo()

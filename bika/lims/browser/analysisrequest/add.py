@@ -2,7 +2,8 @@ import json
 from bika.lims.utils.sample import create_sample
 from bika.lims.workflow import doActionFor
 import plone
-
+import datetime
+from datetime import date
 from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
@@ -414,6 +415,15 @@ class ajaxAnalysisRequestSubmit():
                     required.remove('SamplingDate')
                 if 'SampleType' in required:
                     required.remove('SampleType')
+            # checking if sampling date is not future
+            if state.get('SamplingDate', ''):
+                samplingdate = state.get('SamplingDate', '')
+                samp_date=datetime.datetime.strptime(samplingdate, "%Y-%m-%d %H:%M")
+                now = datetime.datetime.now()
+                if now < samp_date:
+                    msg = t(_("Sampling Date can't be future"))
+                    ajax_form_error(self.errors, arnum=arnum, message=msg)
+                    continue
             # fields flagged as 'hidden' are not considered required because
             # they will already have default values inserted in them
             for fieldname in required:

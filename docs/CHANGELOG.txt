@@ -1,5 +1,8 @@
 3.2.1 (unreleased)
 ------------------
+- Allow multi-approval (multi-verification) of results
+HEALTH-568: TaqMan 96 Interface not working well
+HEALTH-567: Nuclicens Interface not working well
 LIMS-2600: Some improvements and fixes for Statements
 LIMS-2567: Show all ARs on worksheet when adding Duplicate analysis
 LIMS-2562: Add Client filter when applying Worksheet Template
@@ -59,6 +62,8 @@ LIMS-1774: Shiny graphs for result ranges
 - Scheduled sampling functionality added
 LIMS-2257: Scheduled sampling
 LIMS-2255: Switch to Chameleon (five.pt) for rendering TAL templates
+- Additional "Printed" workflow for Analysis Requests once Published
+- Add buttons to export lists to CSV and XML formats
 - System-wide filter by department
 - Allow to assign a lab contact to more than one department
 - Multi-verification of analyses, with different verification types
@@ -70,6 +75,13 @@ LIMS-2255: Switch to Chameleon (five.pt) for rendering TAL templates
 - Simplify instrument interface creation for basic CSV files
 - Pinned CairoSVG to 1.0.20 (support for Python 2 removed in later versions)
 
+3.1.x Long Term Support (LTS)
+-----------------------------
+HEALTH-498: Sampling Date accepting dates in the future
+3.1.11 (2016-04-22)
+-----------------------------
+LIMS-2181: An analysis is not stopped from using an invalid instrument
+3.1.12 (unreleased)
 3.1.12 (2016-12-15)
 -----------------------------
 HEALTH-569 Bar code printing not working on sample registration

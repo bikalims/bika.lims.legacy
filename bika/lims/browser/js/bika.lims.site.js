@@ -23,6 +23,13 @@ function SiteView() {
         $('.date_range_end').bind("change", function () {
             date_range_controller_1(this);
         });
+
+        //Reset default dep list when departments change
+        $(function() {
+          $("select[name='Departments:list']").change(function() {
+            reset_default_deps(this);
+          });
+        });
     };
 
     function loadClientEvents() {
@@ -420,7 +427,7 @@ function SiteView() {
             if (deps.length===0) {
               deps.push($('input[name^=chb_deps_]:checkbox:not(:checked):visible:first').val());
             }
-            createCookie(cookiename, deps.toString());
+            setCookie(cookiename, deps.toString());
           }
           location.reload();
         });
@@ -432,11 +439,11 @@ function SiteView() {
                 $.each($("input[name^=chb_deps_]:checkbox"), function() {
                   deps.push($(this).val());
                 });
-                createCookie(cookiename, deps);
-                createCookie('dep_filter_disabled','true');
+                setCookie(cookiename, deps);
+                setCookie('dep_filter_disabled','true');
                 location.reload();
               }else{
-                createCookie('dep_filter_disabled','false');
+                setCookie('dep_filter_disabled','false');
                 location.reload();
               }
             });
@@ -453,9 +460,10 @@ function SiteView() {
         // Gettin the cookie
         var cookiename = 'filter_by_department_info';
         var cookie_val = readCookie(cookiename);
-        if (cookie_val === null || document.cookie.indexOf(cookiename)<1){
+
+        if (cookie_val === null || cookie_val===""){
             var dep_uid = $('input[name^=chb_deps_]:checkbox:visible:first').val();
-            createCookie(cookiename, dep_uid);
+            setCookie(cookiename, dep_uid);
         }
         var dep_filter_disabled=readCookie('dep_filter_disabled');
         if (dep_filter_disabled=="true" || dep_filter_disabled=='"true"'){
@@ -481,5 +489,59 @@ function SiteView() {
         var date_element = $(input_element).datepicker("getDate");
         var brother = $(input_element).siblings('.date_range_start');
         $(brother).datepicker("option", "maxDate", date_element );
+    }
+
+    /**
+    Updating default department list when assigned departments change
+    @param {object} deps_element is the multiple select of deparments
+    */
+    function reset_default_deps(deps_element){
+      //Resetting def_dep_list
+      def_deps=$("select[name='DefaultDepartment']")[0];
+      def_deps.options.length=0;
+      var null_opt = document.createElement("option");
+      null_opt.text = "";
+      null_opt.value = "";
+      null_opt.selected="selected";
+      def_deps.add(null_opt);
+      //Adding selected deps
+      $('option:selected', deps_element).each(function() {
+        var option = document.createElement("option");
+        option.text = $(this).text();
+        option.value = $(this).val();
+        option.selected="selected";
+        def_deps.add(option);
+      });
+    }
+
+    /**
+    This function sets cookie value
+    @param {String} cname is name of the cookie
+    @param {String} cvalue is value of the cookie
+    */
+    function setCookie(cname, cvalue) {
+        var d = new Date();
+        d.setTime(d.getTime() + (1 * 24 * 60 * 60 * 1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    /**
+    This function is to read cookie value
+    @param {String} cname is name of the cookie to be read
+    */
+    function readCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return null;
     }
 }

@@ -4,15 +4,10 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.utils import DisplayList
 from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Widget import TypesWidget
-from Products.CMFPlone.i18nl10n import ulocalized_time
 from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
 from bika.lims.locales import COUNTRIES,STATES,DISTRICTS
-import json
-import plone
 
 class AddressWidget(TypesWidget):
     _properties = TypesWidget._properties.copy()

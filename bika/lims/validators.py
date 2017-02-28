@@ -1100,3 +1100,78 @@ class SortKeyValidator:
 
 
 validation.register(SortKeyValidator())
+
+
+class InlineFieldValidator:
+    """ Inline Field Validator
+
+    calls a field function for validation
+    """
+
+    implements(IValidator)
+    name = "inline_field_validator"
+
+    def __call__(self, value, *args, **kwargs):
+        field = kwargs['field']
+        request = kwargs['REQUEST']
+        instance = kwargs['instance']
+
+        # extract the request values
+        data = request.get(field.getName())
+
+        # check if the field contains a callable
+        validator = getattr(field, self.name, None)
+
+        # validator is a callable
+        if callable(validator):
+            return validator(instance, request, field, data)
+
+        # validator is a string, check if the instance has a method with this name
+        if type(validator) in types.StringTypes:
+            instance_validator = getattr(instance, validator, None)
+            if callable(instance_validator):
+                return instance_validator(request, field, data)
+
+        return True
+
+validation.register(InlineFieldValidator())
+
+class ReflexRuleValidator:
+
+    """
+    - The analysis service have to be related to the method
+    """
+
+    implements(IValidator)
+    name = "reflexrulevalidator"
+
+    def __call__(self, value, *args, **kwargs):
+
+        instance = kwargs['instance']
+        # fieldname = kwargs['field'].getName()
+        # request = kwargs.get('REQUEST', {})
+        # form = request.get('form', {})
+        method = instance.getMethod()
+        method_ans_uids = [
+            ans.UID() for ans in
+            method.getBackReferences('AnalysisServiceMethods')]
+        rules = instance.getReflexRules()
+        error = ''
+        pc = getToolByName(instance, 'portal_catalog')
+        for rule in rules:
+            as_uid = rule.get('analysisservice', '')
+            as_brain = pc(
+                    UID=as_uid,
+                    portal_type='AnalysisService',
+                    inactive_state='active')
+            if as_brain[0] and as_brain[0].UID in method_ans_uids:
+                pass
+            else:
+                error += as_brain['title'] + ' '
+        if error:
+            msg = _("The following analysis services don't belong to the"
+                    "current method: " + error)
+            return to_utf8(translate(msg))
+        return True
+
+validation.register(ReflexRuleValidator())

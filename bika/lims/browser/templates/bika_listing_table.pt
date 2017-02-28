@@ -5,9 +5,11 @@
     displayed when ajax requests the table.
 </tal:comment>
 
-<form name="bika_listing_form" method="post" action="workflow_action"
-      i18n:domain="bika"
-      tal:attributes="id form_id"
+<form name="bika_listing_form" method="post"
+    i18n:domain="bika"
+    tal:attributes="
+        id form_id;
+        action python:view.bika_listing.getPOSTAction();"
       tal:omit-tag="table_only"
       tal:define="form_id view/bika_listing/form_id;
                   rows_only python:(hasattr(view, 'rows_only') and view.rows_only)
@@ -147,12 +149,23 @@
                         tal:content="structure state/title"/>
                   </tal:review_states>
                 </td>
+                <td class="export-controls">
+                    <span href="#" class='export-toggle' i18n:translate="">Export</span>
+                    <ul>
+                        <li>
+                            <a href="" type='csv' tal:attributes="download python:form_id + '.csv'">CSV</a>
+                        </li>
+                        <li>
+                            <a href="" type='xml' tal:attributes="download python:form_id + '.xml'">XML</a>
+                        </li>
+                    </ul>
+                </td>
                 <tal:comment replace="nothing">
                   ********************************
                   Filter search
                   ********************************
                 </tal:comment>
-                <td class="filter noborder" style="text-align:right;whitespace:nowrap;padding:0 0 0 5px;">
+                <td class="filter noborder" style="text-align:right;whitespace:nowrap;padding:0 0 0 5px;width: 160px;">
                   <tal:filters_enabled
                     tal:define="term python:request.get(form_id+'_filter', '');"
                     tal:condition="python:hasattr(view.bika_listing, 'filter_indexes') and view.bika_listing.filter_indexes">

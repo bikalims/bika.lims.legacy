@@ -50,12 +50,15 @@ def SetDepartmentCookies(event):
 
             response.setCookie('dep_filter_disabled', 'true', path='/', max_age=24 * 3600)
         else:
-            labcontact = portal_catalog(portal_type='LabContact', getUsername=username)
-            if labcontact:
-                departments = labcontact[0].getObject().getSortedDepartments()
-                dep_for_cookie = departments[0].UID() if len(departments) > 0 else ''
+            lab_con=context.portal_catalog(portal_type='LabContact',
+                                getUsername=username)[0].getObject()
+            if lab_con.getDefaultDepartment():
+                dep_for_cookie=lab_con.getDefaultDepartment()
+            else:
+                deps=lab_con.getSortedDepartments()
+                dep_for_cookie=deps[0].UID() if len(deps)>0 else ''
+        response.setCookie('filter_by_department_info',dep_for_cookie,  path = '/', max_age = 24 * 3600)
 
-        response.setCookie('filter_by_department_info', dep_for_cookie, path='/', max_age=24 * 3600)
     else:
         response.setCookie('filter_by_department_info', None, path='/', max_age=0)
         response.setCookie('dep_filter_disabled', None, path='/', max_age=0)

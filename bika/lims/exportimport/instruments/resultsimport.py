@@ -345,7 +345,6 @@ class AnalysisResultsImporter(Logger):
         # Exclude non existing ACODEs
         acodes = []
         ancount = 0
-        arprocessed = []
         instprocessed = []
         importedars = {}
         importedinsts = {}
@@ -468,8 +467,6 @@ class AnalysisResultsImporter(Logger):
                         else:
                             ar = analysis.portal_type == 'Analysis' and analysis.aq_parent or None
                             if ar and ar.UID:
-                                # Set AR imported info
-                                arprocessed.append(ar.UID())
                                 importedar = ar.getRequestID() in importedars.keys() \
                                             and importedars[ar.getRequestID()] or []
                                 if acode not in importedar:
@@ -758,7 +755,7 @@ class AnalysisResultsImporter(Logger):
                                   "interim_keyword": keyword,
                                   "result": str(res)
                          })
-                ninterim = interim
+                ninterim = interim.copy()
                 ninterim['value'] = res
                 interimsout.append(ninterim)
                 resultsaved = True
@@ -769,7 +766,7 @@ class AnalysisResultsImporter(Logger):
             elif values.get(title, '') or values.get(title, '') == 0:
                 res = values.get(title)
                 self.log("%s/'%s:%s': '%s'"%(objid, acode, title, str(res)))
-                ninterim = interim
+                ninterim = interim.copy()
                 ninterim['value'] = res
                 interimsout.append(ninterim)
                 resultsaved = True
@@ -782,6 +779,9 @@ class AnalysisResultsImporter(Logger):
 
         if len(interimsout) > 0:
             analysis.setInterimFields(interimsout)
+            # won't be doing setResult below, so manually calculate result.
+            analysis.calculateResult()
+
         if resultsaved == False and (values.get(defresultkey, '')
                                      or values.get(defresultkey, '') == 0
                                      or self._override[1] == True):

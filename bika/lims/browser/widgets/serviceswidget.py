@@ -4,20 +4,13 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from Acquisition import aq_base, aq_inner
-from Products.Archetypes.Registry import registerWidget, registerPropertyType
+from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Widget import TypesWidget
-from Products.Archetypes.utils import shasattr
 from Products.CMFCore.utils import getToolByName
-from archetypes.referencebrowserwidget import utils
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
-from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.config import POINTS_OF_CAPTURE
 from bika.lims.permissions import ManageBika
-from types import StringType
-from zope.site.hooks import getSite
 
 class ServicesView(BikaListingView):
     """ bika listing to display a list of services.
@@ -32,7 +25,10 @@ class ServicesView(BikaListingView):
         self.category = category if category else None
         self.context_actions = {}
         self.catalog = "bika_setup_catalog"
-        self.contentFilter = {'review_state': 'impossible_state'}
+        self.contentFilter = {
+            'portal_type': 'AnalysisService',
+            'inactive_state': 'active',
+            'sort_on': 'sortable_title'}
         self.base_url = self.context.absolute_url()
         self.view_url = self.base_url
         self.show_sort_column = False
@@ -41,9 +37,14 @@ class ServicesView(BikaListingView):
         self.show_select_column = True
         self.pagesize = 999999
         self.form_id = 'serviceswidget'
-
         self.show_categories = False
         self.categories = []
+        self.method_filter = None
+        # Filter by method
+        if hasattr(self.context, 'getRestrictToMethod') and\
+                getattr(self.context, 'getMethodUID')():
+            self.method_filter = {
+                'getAvailableMethodsUIDs': self.context.getMethodUID()}
         self.do_cats = self.context.bika_setup.getCategoriseAnalysisServices()
         if self.do_cats:
             self.show_categories = True
@@ -75,11 +76,12 @@ class ServicesView(BikaListingView):
     def folderitems(self):
         checkPermission = self.context.portal_membership.checkPermission
         catalog = getToolByName(self.context, self.catalog)
-        contentFilter = {'portal_type': 'AnalysisService',
-                         'inactive_state': 'active',
-                         'sort_on': 'sortable_title'}
+        contentFilter = self.contentFilter
+        method_uid = None
+        if self.method_filter:
+            contentFilter.update(self.method_filter)
         if self.ajax_categories and self.category:
-             contentFilter[self.category_index] = self.category
+            contentFilter[self.category_index] = self.category
         services = catalog(contentFilter)
         items = []
         for service in services:
@@ -124,10 +126,7 @@ class ServicesView(BikaListingView):
                 item['replace']['Service'] = "<span class='service_title'>%s</span>" % \
                     service_title
             items.append(item)
-
-
         self.categories.sort()
-
         return items
 
 class ServicesWidget(TypesWidget):

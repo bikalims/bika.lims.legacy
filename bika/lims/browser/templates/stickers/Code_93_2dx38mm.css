@@ -1,7 +1,6 @@
 .sticker {
     font-family: Helvetica, Arial;
     font-size:6pt;
-    /* Total width: 3mm + 38mm + 3mm + 38mm + 3mm = 85mm*/
     width: 85mm;
     height:18mm;
     max-height:18mm;
@@ -28,7 +27,7 @@
 .sticker .analysisrequest-info table,
 .sticker .sampling-date-info table {
     border-collapse:collapse;
-    font-size: 6pt;
+    font-size:6pt;
     width:100%;
 }
 .sticker .analysisrequest-info table td,
