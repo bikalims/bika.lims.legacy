@@ -5,8 +5,11 @@
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+
+import transaction
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from Products.ZCatalog.Catalog import CatalogError
 
 from bika.lims import logger
 from Products.CMFCore import permissions
@@ -55,6 +58,7 @@ def upgrade(tool):
     logger.info("Assigning Multiple method to instruments...")
     instrument_multiple_methods(portal)
 
+    logger.info("Updating workflow role mappings for all objects in portal...")
     wf = getToolByName(portal, 'portal_workflow')
     wf.updateRoleMappings()
     # Updating Verifications of Analysis field from integer to String.
@@ -173,8 +177,7 @@ def create_samplingcoordinator(portal):
     bc = getToolByName(portal, 'bika_catalog', None)
     if 'getScheduledSamplingSampler' not in bc.indexes():
         bc.addIndex('getScheduledSamplingSampler', 'FieldIndex')
-
-        bac.clearFindAndRebuild()
+        bc.clearFindAndRebuild()
 
 def departments(portal):
     """ To add department indexes to the catalogs """
@@ -229,10 +232,15 @@ def instrument_multiple_methods(portal):
 
     # First adding new index
     bsc = getToolByName(portal, 'bika_setup_catalog')
-    addIndex(bsc, 'getMethodUIDs', 'KeywordIndex')
+    try:
+        bsc.addIndex('getMethodUIDs', 'KeywordIndex')
+    except CatalogError:
+        # Index already exists form previous run of upgrade step
+        pass
 
     for instrument in portal.bika_setup.bika_instruments.objectValues():
         value = instrument.Schema().get("Method", None).get(instrument)
-        if value:
+        if value and type(value) not in (list, tuple):
+            # Only listify the value if it's not already listified
             instrument.setMethods([value])
 
