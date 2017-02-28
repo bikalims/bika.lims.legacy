@@ -204,16 +204,16 @@ class AnalysisServicesView(BikaListingView):
             'Calculation': {
                 'title': _('Calculation')
             },
-            'CommercialID': {
-                'title': _('Commercial ID'),
-                'attr': 'getCommercialID',
-                'toggle': True
-            },
-            'ProtocolID': {
-                'title': _('Protocol ID'),
-                'attr': 'getProtocolID',
-                'toggle': True
-            },
+            #'CommercialID': {
+            #    'title': _('Commercial ID'),
+            #    'attr': 'getCommercialID',
+            #    'toggle': True
+            #},
+            #'ProtocolID': {
+            #    'title': _('Protocol ID'),
+            #    'attr': 'getProtocolID',
+            #    'toggle': True
+            #},
             'SortKey': {
                 'title': _('Sort Key'),
                 'index': 'sortKey',
@@ -232,8 +232,8 @@ class AnalysisServicesView(BikaListingView):
                          'Keyword',
                          'Method',
                          'Department',
-                         'CommercialID',
-                         'ProtocolID',
+                         #'CommercialID',
+                         #'ProtocolID',
                          'Instrument',
                          'Unit',
                          'Price',
@@ -255,8 +255,8 @@ class AnalysisServicesView(BikaListingView):
                          'Keyword',
                          'Method',
                          'Department',
-                         'CommercialID',
-                         'ProtocolID',
+                         #'CommercialID',
+                         #'ProtocolID',
                          'Instrument',
                          'Unit',
                          'Price',
@@ -276,8 +276,8 @@ class AnalysisServicesView(BikaListingView):
                          'Category',
                          'Method',
                          'Department',
-                         'CommercialID',
-                         'ProtocolID',
+                         #'CommercialID',
+                         #'ProtocolID',
                          'Instrument',
                          'Unit',
                          'Price',
@@ -329,8 +329,8 @@ class AnalysisServicesView(BikaListingView):
             # searches the schema for fields that match columns, it is still
             # not harmful to be explicit:
             item['Keyword'] = obj.getKeyword()
-            item['CommercialID'] = obj.getCommercialID()
-            item['ProtocolID'] = obj.getProtocolID()
+            #item['CommercialID'] = obj.getCommercialID()
+            #item['ProtocolID'] = obj.getProtocolID()
             item['SortKey'] = obj.getSortKey()
 
         cat = obj.getCategoryTitle()
