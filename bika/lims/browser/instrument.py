@@ -636,9 +636,10 @@ class ajaxGetInstrumentMethods(BrowserView):
             plone.protect.CheckAuthenticator(self.request)
         except Forbidden:
             return json.dumps(out)
-        bsc = getToolByName(self, 'bika_setup_catalog')
-        results = bsc(portal_type='Instrument', UID=self.request.get("uid", '0'))
-        instrument = results[0] if results and len(results) == 1 else None
+        uc = getToolByName(self, 'uid_catalog')
+        brains = uc(UID=self.request.get("uid", '0'))
+        if brains:
+        instrument = brains[0] if brains else None
         if instrument:
             instrument_obj = instrument.getObject()
             out["title"] = instrument_obj.Title()
