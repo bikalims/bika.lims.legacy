@@ -140,6 +140,8 @@ class BatchFolderContentsView(BikaListingView):
             obj = items[x]['obj']
 
             bid = obj.getBatchID()
+            if bid == '':
+                bid = obj.id
             items[x]['BatchID'] = bid
             items[x]['replace']['BatchID'] = "<a href='%s/%s'>%s</a>" % (items[x]['url'], 'analysisrequests', bid)
 

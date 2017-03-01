@@ -71,7 +71,7 @@ schema = BikaFolderSchema.copy() + Schema((
         required=False,
         validators=('uniquefieldvalidator',),
         widget=StringWidget(
-            visible=False,
+            visible=True,
             label=_("Batch ID"),
         )
     ),
@@ -287,10 +287,10 @@ class Batch(ATFolder):
                 value.append(val)
         return value
 
-    security.declarePublic('getBatchID')
+    #security.declarePublic('getBatchID')
 
-    def getBatchID(self):
-        return self.getId()
+    #def getBatchID(self):
+    #    return self.getId()
 
     def BatchLabelVocabulary(self):
         """ return all batch labels """
