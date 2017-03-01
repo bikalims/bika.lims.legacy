@@ -9,5 +9,6 @@
     <dependency>profile-Products.TinyMCE:TinyMCE</dependency>
     <dependency>profile-collective.js.jqueryui:default</dependency>
     <dependency>profile-Products.DataGridField:default</dependency>
+    <dependency>collective.cron</dependency>
   </dependencies>
 </metadata>
