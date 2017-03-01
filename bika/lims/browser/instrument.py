@@ -4,7 +4,7 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import bikaMessageFactory as _
+from bika.lims import bikaMessageFactory as _, logger
 from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.content.instrumentmaintenancetask import InstrumentMaintenanceTaskStatuses as mstatus
@@ -635,17 +635,16 @@ class ajaxGetInstrumentMethods(BrowserView):
         try:
             plone.protect.CheckAuthenticator(self.request)
         except Forbidden:
+            logger.warn("Forbidden. Request authenticator missing or invalid.")
             return json.dumps(out)
         uc = getToolByName(self, 'uid_catalog')
         brains = uc(UID=self.request.get("uid", '0'))
         if brains:
-        instrument = brains[0] if brains else None
-        if instrument:
-            instrument_obj = instrument.getObject()
-            out["title"] = instrument_obj.Title()
-            out["instrument"] = instrument.UID
+            instrument = brains[0].getObject()
+            out["title"] = instrument.Title()
+            out["instrument"] = instrument.UID()
             # Handle multiple Methods per instrument
-            methods = instrument_obj.getMethods()
+            methods = instrument.getMethods()
             for method in methods:
                 out["methods"].append({
                     "uid": method.UID(),
