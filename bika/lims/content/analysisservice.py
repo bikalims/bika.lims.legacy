@@ -1203,18 +1203,16 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
             is unset, only the methods assigned manually to that service
             are returned.
         """
-        methods = self.getMethods()
-        muids = [m.UID() for m in methods]
+        methods = {m.UID():m for m in self.getMethods()}
         if self.getInstrumentEntryOfResults() == True:
             # Add the methods from the instruments capable to perform
             # this analysis service
             for ins in self.getInstruments():
                 for method in ins.getMethods():
-                    if method and method.UID() not in muids:
-                        methods.append(method)
-                        muids.append(method.UID())
+                    if method and method.UID() not in methods.keys():
+                        methods.update({method.UID:method})
 
-        return methods
+        return methods.values()
 
     def getAvailableInstruments(self):
         """ Returns the instruments available for this analysis.
