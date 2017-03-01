@@ -410,10 +410,11 @@ class ReferenceSamplesView(BikaListingView):
                     item['review_state'] = 'expired'
                     item['obj'] = obj
 
-        if self.contentFilter.get('review_state', '') \
-           and item.get('review_state', '') == 'expired':
-            # This item must be omitted from the list
-            return None
+        if self.review_state['id'] != 'expired':
+            if self.contentFilter.get('review_state', '') \
+               and item.get('review_state', '') == 'expired':
+                # This item must be omitted from the list
+                return None
 
         item['ID'] = obj.id
         item['DateSampled'] = self.ulocalized_time(obj.getDateSampled(), long_format=True)
