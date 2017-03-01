@@ -287,10 +287,12 @@ class Batch(ATFolder):
                 value.append(val)
         return value
 
-    #security.declarePublic('getBatchID')
+    security.declarePublic('getBatchID')
 
-    #def getBatchID(self):
-    #    return self.getId()
+    def getBatchID(self):
+        if self.BatchID != '':
+            return self.BatchID
+        return self.getId()
 
     def BatchLabelVocabulary(self):
         """ return all batch labels """
