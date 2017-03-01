@@ -49,10 +49,10 @@ from bika.lims.utils import to_utf8
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IInstrument
 from bika.lims.config import QCANALYSIS_TYPES
-from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.content.bikaschema import BikaFolderSchema
-
+from bika.lims import bikaMessageFactory as _
+from bika.lims import deprecated
 
 schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
 
@@ -402,8 +402,6 @@ class Instrument(ATFolder):
                               inactive_state='active')]
         items.sort(lambda x, y: cmp(x[1], y[1]))
         return DisplayList(items)
-
-    from bika.lims import deprecated
 
     @deprecated(comment="bika.lims.content.instrument.getMethodUID is \
                 deprecated and will be removed in Bika LIMS 3.3")
