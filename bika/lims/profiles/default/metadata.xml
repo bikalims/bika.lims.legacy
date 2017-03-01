@@ -2,6 +2,7 @@
 <metadata>
   <version>320</version>
   <dependencies>
+    <dependency>collective.cron</dependency>
     <dependency>profile-jarn.jsi18n:default</dependency>
     <dependency>profile-Products.ATExtensions:default</dependency>
     <dependency>profile-Products.CMFEditions:CMFEditions</dependency>
@@ -9,6 +10,5 @@
     <dependency>profile-Products.TinyMCE:TinyMCE</dependency>
     <dependency>profile-collective.js.jqueryui:default</dependency>
     <dependency>profile-Products.DataGridField:default</dependency>
-    <dependency>collective.cron</dependency>
   </dependencies>
 </metadata>
