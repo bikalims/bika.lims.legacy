@@ -36,6 +36,7 @@ except:
     # Plone < 4.3
     from plone.app.content.batching import Batch
 
+ACTIONS_ALLOWED_ON_INACTIVE = ('reinstate', 'activate', 'expire')
 
 class WorkflowAction:
     """ Workflow actions taken in any Bika contextAnalysisRequest context
@@ -204,7 +205,7 @@ class WorkflowAction:
         for item in items:
             # the only actions allowed on inactive/cancelled
             # items are "reinstate" and "activate"
-            if not isActive(item) and action not in ('reinstate', 'activate'):
+            if not isActive(item) and action not in ACTIONS_ALLOWED_ON_INACTIVE:
                 continue
             if not skip(item, action, peek=True):
                 allowed_transitions = [it['id'] for it in workflow.getTransitionsFor(item)]
