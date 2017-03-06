@@ -125,7 +125,8 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         ),
     ),
 
-    ReferenceField('Methods',
+    ReferenceField(
+        'Methods',
         vocabulary='_getAvailableMethods',
         allowed_types=('Method',),
         relationship='InstrumentMethods',
@@ -137,9 +138,10 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         ),
     ),
 
-    BooleanField('DisposeUntilNextCalibrationTest',
-        default = False,
-        widget = BooleanWidget(
+    BooleanField(
+        'DisposeUntilNextCalibrationTest',
+        default=False,
+        widget=BooleanWidget(
             label=_("De-activate until next calibration test"),
             description=_("If checked, the instrument will be unavailable until the next valid "
                           "calibration was performed. This checkbox will automatically be unchecked."),
@@ -406,7 +408,6 @@ class Instrument(ATFolder):
 
     @deprecated(comment="bika.lims.content.instrument.getMethodUID is \
                 deprecated and will be removed in Bika LIMS 3.3")
-
     def getMethodUIDs(self):
         uids = []
         if self.getMethods():
