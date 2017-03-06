@@ -44,6 +44,7 @@ from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import RecordsWidget
 
 # bika.lims imports
+from bika.lims import api
 from bika.lims.utils import t
 from bika.lims.utils import to_utf8
 from bika.lims.config import PROJECTNAME
@@ -801,6 +802,29 @@ class Instrument(ATFolder):
                    review_state='to_be_verified')
         ans = [p.getObject() for p in prox]
         return [a for a in ans if a.getRawInstrument() == self.UID()]
+
+    def displayValue(self, vocab, value, widget):
+        """Overwrite the Script (Python) `displayValue.py` located at
+           `Products.Archetypes.skins.archetypes` to handle the references
+           of our Picklist Widget (Methods) gracefully.
+           This method gets called by the `picklist.pt` template like this:
+
+           display python:context.displayValue(vocab, value, widget);"
+        """
+        # Taken from the Script (Python)
+        t = self.restrictedTraverse('@@at_utils').translate
+
+        # ensure we have strings, otherwise the `getValue` method of
+        # Products.Archetypes.utils will raise a TypeError
+        def to_string(v):
+            if isinstance(v, basestring):
+                return v
+            return api.get_title(v)
+
+        if isinstance(value, (list, tuple)):
+            value = map(to_string, value)
+
+        return t(vocab, value, widget)
 
 
 schemata.finalizeATCTSchema(schema, folderish=True, moveDiscussion=False)
