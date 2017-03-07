@@ -129,9 +129,9 @@ class InstrumentsView(BikaListingView):
                 title = method.Title()
                 titles.append(title)
                 urls.append("<a href='{0}'>{1}</a>".format(url, title))
-
             items[x]["Methods"] = ", ".join(titles)
             items[x]["replace"]["Methods"] = ", ".join(urls)
+
             items[x]["replace"]["Title"] = "<a href='{0}'>{1}</a>".format(
                 obj.absolute_url(), obj.Title())
 

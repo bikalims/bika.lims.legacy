@@ -838,7 +838,7 @@ class Analysis(BaseContent):
         uids = []
 
         if service.getInstrumentEntryOfResults() == True:
-            uids = [ins.getRawMethod() for ins in service.getInstruments()]
+            uids = [ins.getRawDefaultMethod() for ins in service.getInstruments()]
 
         else:
             # Get only the methods set manually
@@ -881,7 +881,7 @@ class Analysis(BaseContent):
         """
         instr = self.getInstrument() \
             if self.getInstrument() else self.getDefaultInstrument()
-        return instr.getMethod() if instr else None
+        return instr.getDefaultMethod() if instr else None
 
     def getFormattedResult(self, specs=None, decimalmark='.', sciformat=1, html=True):
         """Formatted result:

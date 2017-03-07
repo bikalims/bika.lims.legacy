@@ -338,7 +338,7 @@ def get_method_instrument_constraints(context, uids):
         s_instrums = service.getRawInstruments() if s_ientry else []
         a_dinstrum = service.getInstrument() if s_ientry else None
         s_methods = service.getAvailableMethods()
-        s_dmethod = service.getMethod()
+        s_dmethod = service.getDefaultMethod()
         dmuid = s_dmethod.UID() if s_dmethod else ''
         diuid = a_dinstrum.UID() if a_dinstrum else ''
 

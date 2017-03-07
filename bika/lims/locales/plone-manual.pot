@@ -248,8 +248,8 @@ msgstr "Layout"
 msgid "label_schema_Location"
 msgstr "Location"
 
-msgid "label_schema_Method"
-msgstr "Method"
+msgid "label_schema_DefaultMethod"
+msgstr "Default Method"
 
 msgid "label_schema_Container and Preservation"
 msgstr "Container and Preservation"

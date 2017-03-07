@@ -112,14 +112,14 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
     ),
 
     HistoryAwareReferenceField(
-        'Method',
+        'DefaultMethod',
         vocabulary='_getAvailableMethods',
         allowed_types=('Method',),
-        relationship='InstrumentMethod',
+        relationship='InstrumentDefaultMethod',
         required=0,
         widget=SelectionWidget(
             format='select',
-            label=_("Method"),
+            label=_("Default Method"),
             visible=False,
         ),
     ),
@@ -419,6 +419,15 @@ class Instrument(ATFolder):
                               inactive_state='active')]
         items.sort(lambda x, y: cmp(x[1], y[1]))
         return DisplayList(items)
+
+    security.declarePublic('getMethod')
+    @deprecated(comment="bika.lims.content.instrument.getMethod is \
+                deprecated and will be removed in Bika LIMS 3.3")
+
+    def getMethod(self):
+        """
+        """
+        return self.getDefaultMethod()
 
     def _getAvailableMethods(self):
         """ Returns the available (active) methods.

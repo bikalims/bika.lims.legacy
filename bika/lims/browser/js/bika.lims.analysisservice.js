@@ -11,8 +11,8 @@ function AnalysisServiceEditView() {
     var instr_chk  = $('#archetypes-fieldname-InstrumentEntryOfResults #InstrumentEntryOfResults');
     var methods_fd = $('#archetypes-fieldname-Methods');
     var methods_ms = $('#archetypes-fieldname-Methods #Methods');
-    var method_fd  = $('#archetypes-fieldname-_Method');
-    var method_sel = $('#archetypes-fieldname-_Method #_Method');
+    var method_fd  = $('#archetypes-fieldname-DefaultMethod');
+    var method_sel = $('#archetypes-fieldname-DefaultMethod #DefaultMethod');
     var instrs_fd  = $('#archetypes-fieldname-Instruments');
     var instrs_ms  = $('#archetypes-fieldname-Instruments #Instruments');
     var instr_fd   = $('#archetypes-fieldname-Instrument');

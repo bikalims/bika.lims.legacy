@@ -9,6 +9,7 @@ from plone import api
 from AccessControl import getSecurityManager
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
+from bika.lims.api import get_fields
 from bika.lims.utils import t, dicts_to_dict, format_supsub
 from bika.lims.utils.analysis import format_uncertainty
 from bika.lims.browser import BrowserView
@@ -202,7 +203,7 @@ class AnalysesView(BikaListingView):
         if analysis:
             service = analysis.getService()
             methods = service.getAvailableMethods()
-            if methods and not service.getMethod():
+            if methods and not service.getDefaultMethod():
                 ret.append({'ResultValue': '',
                             'ResultText': _('None')})
             for method in methods:
@@ -232,7 +233,6 @@ class AnalysesView(BikaListingView):
             out-of-date are also returned.
         """
         ret = []
-        instruments = []
         if analysis:
             service = analysis.getService()
             if service.getInstrumentEntryOfResults() == False:
@@ -488,14 +488,15 @@ class AnalysesView(BikaListingView):
                    (items[i]['calculation'] and self.interim_fields[obj.UID()]):
                     items[i]['allow_edit'].append('retested')
 
-
             # TODO: Only the labmanager must be able to change the method
-            # can_set_method = getSecurityManager().checkPermission(SetAnalysisMethod, obj)
-            can_set_method = can_edit_analysis \
-                and item['review_state'] in allowed_method_states
-            method = obj.getMethod() \
-                        if hasattr(obj, 'getMethod') and obj.getMethod() \
-                        else service.getMethod()
+            # can_set_method = getSecurityManager().checkPermission(
+            # SetAnalysisMethod, obj)
+            can_set_method = item['review_state'] in allowed_method_states \
+                             and can_edit_analysis
+
+            field = get_fields(obj).get('Method', None)
+            method = field.get(obj)
+            method = method if method else service.getDefaultMethod()
 
             # Display the methods selector if the AS has at least one
             # method assigned

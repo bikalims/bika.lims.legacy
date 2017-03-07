@@ -29,7 +29,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.validation import validation
 from Products.validation.validators.RegexValidator import RegexValidator
 from Products.CMFCore.WorkflowCore import WorkflowException
-from bika.lims import PMF, bikaMessageFactory as _
+from bika.lims import PMF, bikaMessageFactory as _, deprecated
 from bika.lims.utils import to_utf8 as _c
 from bika.lims.utils import to_unicode as _u
 from bika.lims.utils.analysis import get_significant_digits
@@ -527,8 +527,6 @@ schema = BikaSchema.copy() + Schema((
         )
     ),
     # Default method to be used. This field is used in Analysis Service
-    # Edit view, use getMethod() to retrieve the Method to be used in
-    # this Analysis Service.
     # Gets populated with the methods selected in the multiselection
     # box above or with the default instrument's method.
     # Behavior controlled by js depending on ManualEntry/Instrument/Methods:
@@ -536,14 +534,14 @@ schema = BikaSchema.copy() + Schema((
     # - If InstrumentEntry not checked, populate dynamically with
     #   selected Methods, set the first method selected and non-readonly
     # See browser/js/bika.lims.analysisservice.edit.js
-    ReferenceField('_Method',
+    ReferenceField('DefaultMethod',
         schemata = "Method",
         required = 0,
         searchable = True,
         vocabulary_display_path_bound = sys.maxint,
         allowed_types = ('Method',),
         vocabulary = '_getAvailableMethodsDisplayList',
-        relationship = 'AnalysisServiceMethod',
+        relationship = 'AnalysisServiceDefaultMethod',
         referenceClass = HoldingReference,
         widget = SelectionWidget(
             format='select',
@@ -1111,6 +1109,16 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         price, vat = self.getPrice(), self.getVAT()
         return (float(price) * (float(vat) / 100))
 
+    security.declarePublic('getMethod')
+    @deprecated(comment="bika.lims.content.analyissservice.getMethod is \
+                deprecated and will be removed in Bika LIMS 3.3")
+
+    def getMethod(self):
+        """
+        """
+        return self.getDefaultMethod()
+
+
     def getAnalysisCategories(self):
         bsc = getToolByName(self, 'bika_setup_catalog')
         items = [(o.UID, o.Title) for o in
@@ -1172,27 +1180,11 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
             to false, returns the Deferred Calculation (manually set)
         """
         if self.getUseDefaultCalculation():
-            return self.getMethod().getCalculation() \
-                if (self.getMethod() \
-                    and self.getMethod().getCalculation()) \
-                else None
+            defmethod = self.getDefaultMethod()
+            calculation = defmethod.getCalculation() if defmethod else None
+            return calculation
         else:
             return self.getDeferredCalculation()
-
-    def getMethod(self):
-        """ Returns the method assigned by default to the AS.
-            If Instrument Entry Of Results selected, returns the method
-            from the Default Instrument or None.
-            If Instrument Entry of Results is not selected, returns the
-            method assigned directly by the user using the _Method Field
-        """
-        # TODO This function has been modified after enabling multiple methods
-        # for instruments. Make sure that returning the value of _Method field
-        # is correct.
-        method = None
-        if (self.getInstrumentEntryOfResults() is True):
-            method = self.get_Method()
-        return method
 
     def getAvailableMethods(self):
         """ Returns the methods available for this analysis.

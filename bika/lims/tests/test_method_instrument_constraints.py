@@ -41,7 +41,7 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.instrument3 = self.portal.bika_setup.bika_instruments['instrument-3']
         self.servicemeor = self.service.getManualEntryOfResults()
         self.serviceieor = self.service.getInstrumentEntryOfResults()
-        self.servicemeth = self.service.getMethod()
+        self.servicemeth = self.service.getDefaultMethod()
         methods = self.instrument1.getMethods()
         self.i1method = methods[0] if methods else None
         methods = self.instrument2.getMethods()
@@ -103,8 +103,8 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.assertTrue(self.instrument1 in self.service.getAvailableInstruments())
         self.assertTrue(self.instrument2 in self.service.getAvailableInstruments())
         self.assertEqual(self.service.getInstrument().UID(), self.instrument1.UID())
-        self.assertTrue(len(self.service.getMethod()) == 1)
-        self.assertEqual(self.service.getMethod().UID(), self.method.UID())
+        self.assertTrue(len(self.service.getDefaultMethod()) == 1)
+        self.assertEqual(self.service.getDefaultMethod().UID(), self.method.UID())
         ar = self.create_ar(self.service)
         auids = [ar.getAnalyses()[0].UID]
         constraint = get_method_instrument_constraints(ar, auids)[auids[0]]

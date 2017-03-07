@@ -71,13 +71,13 @@
 	</h5>
 
     <tal:method
-		define="method view/service/getMethod"
+		define="method view/service/getDefaultMethod"
 		condition="method">
 
 		<h5>
 			<img tal:attributes="src string:${portal_url}/++resource++bika.lims.images/method.png"/>
 			<span i18n:translate="">
-				Method:
+				Default Method:
 				<span i18n:name="method_name">
 					<a
 						tal:attributes="href python:method.absolute_url()"
@@ -122,11 +122,11 @@
 	</tal:method>
 
     <tal:nomethod
-		condition="not:view/service/getMethod">
+		condition="not:view/service/getDefaultMethod">
 		<h5>
 			<img tal:attributes="src string:${portal_url}/++resource++bika.lims.images/method.png"/>
 			<span i18n:translate="">
-				Method: None
+				Default Method: None
 			</span>
 		</h5>
 	</tal:nomethod>
@@ -162,7 +162,7 @@
 					<th i18n:translate="">Service</th>
 					<th i18n:translate="">Category</th>
 					<th i18n:translate="">Keyword</th>
-					<th i18n:translate="">Method</th>
+					<th i18n:translate="">Default Method</th>
 					<th i18n:translate="" tal:condition="ShowPrices">Price</th>
 				</tr>
 				<tr tal:repeat="dep deps">
@@ -176,7 +176,7 @@
 					<td tal:content="python:dep.getKeyword()"/>
 					<td>
 						<a
-							tal:define="m python:dep.getMethod()"
+							tal:define="m python:dep.getDefaultMethod()"
 							tal:condition="m"
 							tal:attributes="href python:m.absolute_url()"
 							tal:content="m/Title"/>

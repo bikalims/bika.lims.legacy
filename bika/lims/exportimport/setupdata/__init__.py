@@ -772,7 +772,7 @@ class Instruments(WorksheetImporter):
             obj.setInstrumentType(instrumenttype)
             obj.setManufacturer(manufacturer)
             obj.setSupplier(supplier)
-            obj.setMethod([method])
+            obj.setDefaultMethod([method])
 
             # Attaching the instrument's photo
             if row.get('Photo', None):
@@ -1446,7 +1446,7 @@ class Analysis_Services(WorksheetImporter):
         """
         return self.get_relations(service_title,
                                 default_method,
-                                'Method',
+                                'DefaultMethod',
                                 'portal_catalog',
                                 'AnalysisService Methods',
                                 'Method_title')
@@ -1523,7 +1523,7 @@ class Analysis_Services(WorksheetImporter):
             # 'Methods' from the Schema).
             # If the Analysis Service has at least one method associated, then
             # one of those methods can be set as the defualt method (field
-            # '_Method' from the Schema).
+            # 'DefaultMethod' from the Schema).
             #
             # To make it easier, if a DefaultMethod is declared in the
             # Analysis_Services spreadsheet, but the same AS has no method
@@ -1599,7 +1599,7 @@ class Analysis_Services(WorksheetImporter):
                 Price="%02f" % Float(row['Price']),
                 BulkPrice="%02f" % Float(row['BulkPrice']),
                 VAT="%02f" % Float(row['VAT']),
-                _Method=defaultmethod,
+                DefaultMethod=defaultmethod,
                 Methods=methods,
                 ManualEntryOfResults=allowmanualentry,
                 InstrumentEntryOfResults=allowinstrentry,

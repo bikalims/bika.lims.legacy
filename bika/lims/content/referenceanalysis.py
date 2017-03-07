@@ -304,7 +304,7 @@ class ReferenceAnalysis(BaseContent):
 
         if service.getInstrumentEntryOfResults() is True:
             for ins in service.getInstruments():
-                if uid == ins.getRawMethod():
+                if uid == ins.getRawDefaultMethod():
                     return True
 
         return False

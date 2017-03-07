@@ -101,7 +101,7 @@ class PublishView(BrowserView):
             datalines = []
             for analysis in ar.getAnalyses(full_objects=True):
                 service = analysis.getService()
-                method = service.getMethod()
+                method = service.getDefaultMethod()
                 sample = ar.getSample()
                 result = analysis.getResult()
                 formatted_result = format_numeric_result(analysis, result)

@@ -58,7 +58,7 @@ class ServicesView(BikaListingView):
             'Service': {'title': _('Service')},
             'Keyword': {'title': _('Keyword'),
                         'index': 'getKeyword'},
-            'Method': {'title': _('Method')},
+            'DefaultMethod': {'title': _('Default Method')},
             'Calculation': {'title': _('Calculation')},
         }
         self.review_states = [
@@ -68,7 +68,7 @@ class ServicesView(BikaListingView):
              'transitions': [],
              'columns':['Service',
                         'Keyword',
-                        'Method',
+                        'DefaultMethod',
                         'Calculation', ]
             },
         ]
@@ -92,12 +92,12 @@ class ServicesView(BikaListingView):
             # so we create items from scratch
             service_title = service.Title()
             calculation = service.getCalculation()
-            method = service.getMethod()
+            method = service.getDefaultMethod()
 
             item = {
                 'obj': service,
                 'Keyword': service.getKeyword(),
-                'Method': method and method.Title() or '',
+                'DefaultMethod': method and method.Title() or '',
                 'Calculation': calculation and calculation.Title() or '',
                 'id': service.getId(),
                 'uid': service.UID(),

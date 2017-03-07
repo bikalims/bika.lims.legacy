@@ -98,10 +98,8 @@ class AnalysesView(BaseView):
             items[x]['Pos'] = pos
             items[x]['colspan'] = {'Pos':1}
             service = obj.getService()
-            method = service.getMethod()
             items[x]['Service'] = service.Title()
             items[x]['Priority'] = ''
-            #items[x]['Method'] = method and method.Title() or ''
             items[x]['class']['Service'] = 'service_title'
             items[x]['Category'] = service.getCategory() and service.getCategory().Title() or ''
             if obj.portal_type == "ReferenceAnalysis":
@@ -111,7 +109,6 @@ class AnalysesView(BaseView):
 
             items[x]['Order'] = ''
             instrument = obj.getInstrument()
-            #items[x]['Instrument'] = instrument and instrument.Title() or ''
 
             new_items.append(item)
         items = new_items

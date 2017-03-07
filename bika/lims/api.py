@@ -197,8 +197,8 @@ def get_fields(brain_or_object):
 
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :returns: List of fields
-    :rtype: list
+    :returns: dictionary of fieldnames and fields
+    :rtype: dict
     """
     obj = get_object(brain_or_object)
     schema = get_schema(obj)

@@ -248,7 +248,7 @@
                 </span>
                 <span class="td method_title"
                       tal:attributes="style string:width:${methodcol_width}%"
-                      tal:content="python:transposed[cat_title][service_title]['service'].getMethod().Title() if transposed[cat_title][service_title]['service'].getMethod() else ''"></span>
+                      tal:content="python:transposed[cat_title][service_title]['service'].getDefaultMethod().Title() if transposed[cat_title][service_title]['service'].getMethod() else ''"></span>
                 <span class="td unit"
                       tal:attributes="style string:width:${unitcol_width}%"
                       tal:content="python:transposed[cat_title][service_title]['service'].getUnit()"></span>

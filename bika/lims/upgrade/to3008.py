@@ -41,7 +41,7 @@ def upgrade(tool):
                 oldcalc=rc.lookupObject(rel.targetUID)
             elif rel.relationship == 'AnalysisServiceInstrument':
                 oldinstrument=rc.lookupObject(rel.targetUID)
-            elif rel.relationship == 'AnalysisServiceMethod':
+            elif rel.relationship == 'AnalysisServiceDefaultMethod':
                 oldmethod=rc.lookupObject(rel.targetUID)
             if oldmethod and oldcalc and oldinstrument:
                 break
@@ -49,7 +49,7 @@ def upgrade(tool):
         # Reset the method, instrument and calculations
         if oldmethod:
             an.Schema().getField('Methods').set(an, [oldmethod.UID(),])
-            an.Schema().getField('_Method').set(an, oldmethod.UID())
+            an.Schema().getField('DefaultMethod').set(an, oldmethod.UID())
         if oldinstrument:
             an.Schema().getField('Instruments').set(an, [oldinstrument.UID(),])
             an.Schema().getField('Instrument').set(an, oldinstrument.UID())

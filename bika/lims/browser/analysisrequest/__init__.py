@@ -134,7 +134,7 @@ class JSONReadExtender(object):
             # include_fields in the request.
             method = analysis.getMethod()
             if not method:
-                method = service.getMethod()
+                method = service.getDefaultMethod()
             service = analysis.getService()
             analysis_data = {
                 "Uncertainty": service.getUncertainty(analysis.getResult()),

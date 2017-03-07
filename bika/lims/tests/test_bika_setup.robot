@@ -561,13 +561,13 @@ Repetitive Bika Setup stuff
 #    select from list                    Instruments    AA 1   AA 2   Blott Titrator
 #    select from list                    Instrument     AA 1
 #    Run keyword and expect error        ValueError: Option 'Fiastar' not in list 'Instrument'.    select from list   Instrument   Fiastar
-#    element should be disabled          _Method
+#    element should be disabled          DefaultMethod
 
     # Now remove instrument and set method fields manually
     unselect checkbox                   InstrumentEntryOfResults
     select from list                    Methods    12 dB SINAD   AES   ELISA
-#    Run keyword and expect error        ValueError: Option 'Elution' not in list '_Method'.    Select from list   _Method   Elution
-    select from list                    _Method    AES
+#    Run keyword and expect error        ValueError: Option 'Elution' not in list 'DefaultMethod'.    Select from list   DefaultMethod   Elution
+    select from list                    DefaultMethod    AES
 
     # Set calculation fields manually
     unselect checkbox                   UseDefaultCalculation

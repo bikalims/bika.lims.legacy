@@ -26,7 +26,6 @@ def upgrade(tool):
         if (service.getManualEntryOfResults() == False):
             # Remove any assigned manual method
             service.setMethods([])
-            service.set_Method(None)
 
         service.reindexObject()
 
