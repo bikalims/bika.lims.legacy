@@ -128,7 +128,7 @@ Batch = ReferenceField(
     'Batch',
     allowed_types=('Batch',),
     relationship='ARImportBatch',
-    widget=bReferenceWidget(
+    widget=ReferenceWidget(
         label=_('Batch'),
         visible=True,
         catalog_name='bika_catalog',
