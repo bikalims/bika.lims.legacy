@@ -62,7 +62,7 @@ class ARImportsView(BikaListingView):
             'Title': {'title': _('Title')},
             'Client': {'title': _('Client')},
             'Filename': {'title': _('Filename')},
-            'Creator': {'title': _('Date Created')},
+            'Creator': {'title': _('Creator')},
             'DateCreated': {'title': _('Date Created')},
             'DateValidated': {'title': _('Date Validated')},
             'DateImported': {'title': _('Date Imported')},
