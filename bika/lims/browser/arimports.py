@@ -59,18 +59,20 @@ class ARImportsView(BikaListingView):
         self.description = ""
 
         self.columns = {
-            'Title': {'title': _('Title')},
+            'Title': {'title': _('Title'),
+                      'index': 'sortable_title'},
             'Client': {'title': _('Client')},
             'Filename': {'title': _('Filename')},
             'Creator': {'title': _('Creator')},
-            'DateCreated': {'title': _('Date Created')},
+            'DateCreated': {'title': _('Date Created'),
+                            'index':'created'},
             'DateValidated': {'title': _('Date Validated'),
-                              'index': 'getDateValidated',
-                              #'sortable': True,
-				},
+                              'index': 'getDateValidated'},
             'DateImported': {'title': _('Date Imported')},
-            'state_title': {'title': _('State')},
+            'state_title': {'title': _('State'),
+                            'index': 'review_state'},
         }
+
         self.review_states = [
             {'id': 'all',
              'title': _('All'),
@@ -88,8 +90,8 @@ class ARImportsView(BikaListingView):
                          'state_title']},
             {'id': 'default',
              'title': _('Pending'),
+             'sort_on': 'DateValidated',
              'contentFilter': {'review_state': ['invalid', 'valid'],
-                                'sort_on': 'DateValidated',
                                 'sort_order': 'ascending'},
              'transitions': [{'id': 'cancel'},],
              'custom_actions': [],
@@ -150,7 +152,7 @@ class ARImportsView(BikaListingView):
             items[x]['Filename'] = obj.getFilename()
             parent = obj.aq_parent
             items[x]['Client'] = parent if IClient.providedBy(parent) else ''
-            items[x]['replace']['Client'] = "<a href='%s'>%s</a>" % (
+            items[x]['replace']['Client'] = "<a href='%s'>%s/arimports</a>" % (
                 parent.absolute_url(), parent.Title())
             items[x]['DateCreated'] = ulocalized_time(
                 obj.created(), long_format=True, time_only=False, context=obj)
@@ -172,17 +174,18 @@ class ClientARImportsView(ARImportsView):
         self.show_select_column = True
 
         self.columns = {
-            'Title': {'title': _('Title')},
+            'Title': {'title': _('Title'),
+                      'index': 'sortable_title'},
             'Client': {'title': _('Client')},
             'Filename': {'title': _('Filename')},
-            'Creator': {'title': _('Date Created')},
-            'DateCreated': {'title': _('Date Created')},
+            'Creator': {'title': _('Creator')},
+            'DateCreated': {'title': _('Date Created'),
+                            'index':'created'},
             'DateValidated': {'title': _('Date Validated'),
-                              'index': 'getDateValidated',
-                              #'sortable': True,
-				},
+                              'index': 'getDateValidated'},
             'DateImported': {'title': _('Date Imported')},
-            'state_title': {'title': _('State')},
+            'state_title': {'title': _('State'),
+                            'index':'review_state'},
         }
 
         self.review_states = [
