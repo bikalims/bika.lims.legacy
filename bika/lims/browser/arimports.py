@@ -64,7 +64,10 @@ class ARImportsView(BikaListingView):
             'Filename': {'title': _('Filename')},
             'Creator': {'title': _('Creator')},
             'DateCreated': {'title': _('Date Created')},
-            'DateValidated': {'title': _('Date Validated')},
+            'DateValidated': {'title': _('Date Validated'),
+                              'index': 'getDateValidated',
+                              #'sortable': True,
+				},
             'DateImported': {'title': _('Date Imported')},
             'state_title': {'title': _('State')},
         }
@@ -167,6 +170,20 @@ class ClientARImportsView(ARImportsView):
         }
         #self.allow_edit = True
         self.show_select_column = True
+
+        self.columns = {
+            'Title': {'title': _('Title')},
+            'Client': {'title': _('Client')},
+            'Filename': {'title': _('Filename')},
+            'Creator': {'title': _('Date Created')},
+            'DateCreated': {'title': _('Date Created')},
+            'DateValidated': {'title': _('Date Validated'),
+                              'index': 'getDateValidated',
+                              #'sortable': True,
+				},
+            'DateImported': {'title': _('Date Imported')},
+            'state_title': {'title': _('State')},
+        }
 
         self.review_states = [
             {'id': 'all',

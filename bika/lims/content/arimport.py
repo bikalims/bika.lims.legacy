@@ -18,6 +18,7 @@ from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IARImport, IClient
 from bika.lims.utils import tmpID
 from bika.lims.vocabularies import CatalogVocabulary
+from bika.lims.workflow import getTransitionDate
 from collective.progressbar.events import InitialiseProgressBar
 from collective.progressbar.events import ProgressBar
 from collective.progressbar.events import ProgressState
@@ -35,6 +36,7 @@ from Products.DataGridField import DataGridWidget
 from Products.DataGridField import DateColumn
 from Products.DataGridField import LinesColumn
 from Products.DataGridField import SelectColumn
+from plone.indexer import indexer
 from zope import event
 from zope.event import notify
 from zope.i18nmessageid import MessageFactory
@@ -986,5 +988,9 @@ class ARImport(BaseFolder):
         errors.append(msg)
         self.setErrors(errors)
 
+
+@indexer(IARImport)
+def getDateValidated(instance):
+    return getTransitionDate(instance, 'validate')
 
 atapi.registerType(ARImport, PROJECTNAME)
