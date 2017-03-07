@@ -756,6 +756,11 @@ class BikaSetup(folder.ATFolder):
     schema = schema
     security = ClassSecurityInfo()
 
+    # needed to access the field for the front-page Portlet for Anonymous, w/o
+    # making the whole Laboratory viewable by Anonymous.
+    # Only the permission "Access contents information" is needed
+    security.declarePublic('getAllowDepartmentFiltering')
+
     def getAttachmentsPermitted(self):
         """Attachments permitted
         """

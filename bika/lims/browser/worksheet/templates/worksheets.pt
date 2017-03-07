@@ -39,6 +39,20 @@
             </select>
             <span class="fieldRequired" style=""></span>
         </span>
+        <span class="context_action_dropdown">
+            <select name = "instrument"
+                class='instrument'
+                tal:define="instrlist view/getInstruments">
+                <option value='' i18n:translate="">Select instrument</option>
+                <tal:options repeat="option instrlist">
+                    <option
+                        tal:attributes="value python:option"
+                        tal:content="python:instrlist.getValue(option)"/>
+                </tal:options>
+            </select>
+        </span>
+
+        <br/>
 
         <span class="context_action_dropdown">
             <select name = "template"
@@ -53,18 +67,12 @@
             </select>
         </span>
 
-        <span class="context_action_dropdown">
-            <select name = "instrument"
-                class='instrument'
-                tal:define="instrlist view/getInstruments">
-                <option value='' i18n:translate="">Select instrument</option>
-                <tal:options repeat="option instrlist">
-                    <option
-                        tal:attributes="value python:option"
-                        tal:content="python:instrlist.getValue(option)"/>
-                </tal:options>
-            </select>
-        </span>
+        <select id="WSTClientSelector" name="client" class="listing-filter">
+            <option value="any" i18n:translate="">Filter template analyses by client</option>
+            <tal:options repeat="client view/getClients">
+                <option tal:attributes="value python:client" tal:content="python:client"/>
+            </tal:options>
+        </select>&nbsp;
 
         <span tal:condition="python:context.portal_type == 'WorksheetFolder'">
             <input type='hidden' class='templateinstruments' tal:attributes="value view/getTemplateInstruments"/>

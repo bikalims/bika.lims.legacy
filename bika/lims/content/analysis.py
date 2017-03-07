@@ -14,6 +14,7 @@ from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from bika.lims import logger
 from bika.lims.utils.analysis import format_numeric_result
+from bika.lims.workflow import getTransitionActor
 from plone.indexer import indexer
 from Products.ATContentTypes.content import schemata
 from Products.ATExtensions.ateapi import DateTimeField, DateTimeWidget, RecordsField
@@ -1114,20 +1115,11 @@ class Analysis(BaseContent):
         return True
 
     def getSubmittedBy(self):
-        """
-        Returns the identifier of the user who submitted the result if the
+        """Returns the identifier of the user who submitted the result if the
         state of the current analysis is "to_be_verified" or "verified"
         :return: the user_id of the user who did the last submission of result
         """
-        workflow = getToolByName(self, "portal_workflow")
-        try:
-            review_history = workflow.getInfoFor(self, "review_history")
-            review_history = self.reverseList(review_history)
-            for event in review_history:
-                if event.get("action") == "submit":
-                    return event.get("actor")
-        except WorkflowException:
-            return ''
+        return getTransitionActor(self, 'submit')
 
     def guard_sample_transition(self):
         workflow = getToolByName(self, "portal_workflow")

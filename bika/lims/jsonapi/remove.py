@@ -44,8 +44,8 @@ class Remove(object):
         >>> portal_url = portal.absolute_url()
         >>> from plone.app.testing import SITE_OWNER_NAME
         >>> from plone.app.testing import SITE_OWNER_PASSWORD
-        >>> blah = portal.portal_catalog(Type = "Contact")[-1]
-        >>> uid = blah.UID
+        >>> contact = portal.clients["client-1"]["contact-1"]
+        >>> uid = contact.UID()
 
         >>> browser = layer['getBrowser'](portal, loggedIn=True, username=SITE_OWNER_NAME, password=SITE_OWNER_PASSWORD)
         >>> browser.open(portal_url+"/@@API/remove?UID="+uid)
@@ -65,11 +65,11 @@ class Remove(object):
             "success": True,
             "error": False,
         }
-        
+
         data = uc(UID=_uid)
         if not data:
             raise BadRequest("No objects found")
-        
+
         for proxy in data:
             try:
                 parent = proxy.getObject().aq_parent

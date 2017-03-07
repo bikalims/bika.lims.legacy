@@ -4,8 +4,11 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
+
+from Products.ATExtensions.field import RecordsField
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.utils import t
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.fields import InterimFieldsField
@@ -14,6 +17,7 @@ from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import ICalculation
 from bika.lims.utils import to_utf8
+from bika.lims.utils.analysis import format_numeric_result
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
@@ -24,26 +28,28 @@ from zExceptions import Redirect
 from zope.interface import implements
 import sys
 import re
+import math
 import transaction
 
 
 schema = BikaSchema.copy() + Schema((
-    InterimFieldsField('InterimFields',
-        schemata='Calculation',
+    InterimFieldsField(
+        'InterimFields',
         widget=BikaRecordsWidget(
             label=_("Calculation Interim Fields"),
             description=_(
                 "Define interim fields such as vessel mass, dilution factors, "
-                "should your calculation require them. The field title specified "
-                "here will be used as column headers and field descriptors where "
-                "the interim fields are displayed. If 'Apply wide' is enabled "
-                "the field ill be shown in a selection box on the top of the "
-                "worksheet, allowing to apply a specific value to all the "
-                "corresponding fields on the sheet."),
+                "should your calculation require them. The field title "
+                "specified here will be used as column headers and field "
+                "descriptors where the interim fields are displayed. If "
+                "'Apply wide' is enabled the field will be shown in a "
+                "selection box on the top of the worksheet, allowing to apply "
+                "a specific value to all the corresponding fields on the "
+                "sheet."),
         )
     ),
-    HistoryAwareReferenceField('DependentServices',
-        schemata='Calculation',
+    HistoryAwareReferenceField(
+        'DependentServices',
         required=1,
         multiValued=1,
         vocabulary_display_path_bound=sys.maxsize,
@@ -56,12 +62,12 @@ schema = BikaSchema.copy() + Schema((
             label=_("Dependent Analyses"),
         ),
     ),
-    TextField('Formula',
-        schemata='Calculation',
+    TextField(
+        'Formula',
         validators=('formulavalidator',),
         default_content_type='text/plain',
         allowable_content_types=('text/plain',),
-        widget = TextAreaWidget(
+        widget=TextAreaWidget(
             label=_("Calculation Formula"),
             description=_(
                 "calculation_formula_description",
@@ -75,14 +81,40 @@ schema = BikaSchema.copy() + Schema((
                 "Calcium (ppm) and Magnesium (ppm) ions in water, is entered "
                 "as [Ca] + [Mg], where Ca and MG are the keywords for those "
                 "two Analysis Services.</p>"),
-            )
+        )
     ),
+    RecordsField(
+        'TestParameters',
+        required=False,
+        subfields=('keyword', 'value'),
+        subfield_labels={'keyword': _('Keyword'), 'value': _('Value')},
+        subfield_readonly={'keyword': True, 'value': False},
+        subfield_types={'keyword':'string','value':'float'},
+        default=[{'keyword': '', 'value': 0},],
+        widget=RecordsWidget(
+            label=_("Test Parameters"),
+            description=_("To test the calculation, enter values here for all "
+                          "calculation parameters.  This includes Interim "
+                          "fields defined above, as well as any services that "
+                          "this calculation depends on to calculate results."),
+            allowDelete=False,
+        ),
+    ),
+    TextField(
+        'TestResult',
+        default_content_type='text/plain',
+        allowable_content_types=('text/plain',),
+        widget=TextAreaWidget(
+            label=_('Test Result'),
+            description=_("The result after the calculation has taken place "
+                          "with test values.  You will need to save the "
+                          "calculation before this value will be calculated."),
+        )
+    )
 ))
 
 schema['title'].widget.visible = True
-schema['title'].schemata = 'Description'
 schema['description'].widget.visible = True
-schema['description'].schemata = 'Description'
 
 
 class Calculation(BaseFolder, HistoryAwareMixin):
@@ -171,6 +203,57 @@ class Calculation(BaseFolder, HistoryAwareMixin):
                 calc.getCalculationDependants(deps)
             deps.append(service)
         return deps
+
+    def setTestParameters(self, form_value):
+        """This is called from the objectmodified subscriber, to ensure
+        correct population of the test-parameters field.
+        It collects Keywords for all services that are direct dependencies of
+        this calculatioin, and all of this calculation's InterimFields,
+        and gloms them together.
+        """
+        params = []
+
+        # Set default/existing values for InterimField keywords
+        for interim in self.getInterimFields():
+            keyword = interim['keyword']
+            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            params.append({'keyword': keyword,
+                          'value': ex[0] if ex else interim['value']})
+        # Set existing/blank values for service keywords
+        for service in self.getDependentServices():
+            keyword = service.getKeyword()
+            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            params.append({'keyword': keyword,
+                          'value': ex[0] if ex else ''})
+        self.Schema().getField('TestParameters').set(self, params)
+
+    def setTestResult(self, form_value):
+        """Calculate formula with TestParameters and enter result into
+         TestResult field.
+        """
+        # Create mapping from TestParameters
+        mapping = {x['keyword']:x['value'] for x in self.getTestParameters()}
+        # Gather up and parse formula
+        formula = self.getMinifiedFormula()
+        formula = formula.replace('[', '{').replace(']', '}').replace('  ', '')
+        result = 'Failure'
+
+        try:
+            # print "pre: {}".format(formula)
+            formula = formula.format(**mapping)
+            # print "formatted: {}".format(formula)
+            result = eval(formula, {"__builtins__": None, 'math': math})
+            # print "result: {}".format(result)
+        except TypeError as e:
+            # non-numeric arguments in interim mapping?
+            result = "TypeError: {}".format(str(e.args[0]))
+        except ZeroDivisionError as e:
+            result = "Division by 0: {}".format(str(e.args[0]))
+        except KeyError as e:
+            result = "Key Error: {}".format(str(e.args[0]))
+        except Exception as e:
+            result = "Unspecified exception: {}".format(str(e.args[0]))
+        self.Schema().getField('TestResult').set(self, str(result))
 
     def workflow_script_activate(self):
         wf = getToolByName(self, 'portal_workflow')

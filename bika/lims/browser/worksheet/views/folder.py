@@ -127,7 +127,7 @@ class FolderView(BikaListingView):
             {'id':'default',
              'title': _('All'),
              'contentFilter': {'portal_type': 'Worksheet',
-                               'review_state':['open', 'to_be_verified',],
+                               'review_state':['open', 'to_be_verified', 'verified'],
                                'sort_on':'id',
                                'sort_order': 'reverse'},
              'transitions':[{'id':'retract'},
@@ -438,6 +438,16 @@ class FolderView(BikaListingView):
         self.show_workflow_action_buttons = self.can_reassign
 
         return items
+
+    def getClients(self):
+        """Present a list of client titles for the Template Client dropdown
+        This allows a template to select analyses from only a single client
+        """
+        pc = getToolByName(self.context, 'portal_catalog')
+        return [c.Title for c in
+                pc(portal_type = 'Client',
+                   inactive_state = 'active',
+                   sort_on = 'sortable_title')]
 
     def getAnalysts(self):
         """ Present the LabManagers and Analysts as options for analyst

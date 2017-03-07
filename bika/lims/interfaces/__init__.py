@@ -279,8 +279,16 @@ class IInstrumentLocations(Interface):
     """Physical places, where instruments can be located
     """
 
+class IInstrumentCalibration(Interface):
+    """Instrument Calibration
+    """
+
 class IInstrumentCertification(Interface):
     """Instrument Certification
+    """
+
+class IInstrumentValidation(Interface):
+    """Instrument Validation
     """
 
 class IAnalysisSpecs(Interface):

@@ -2,7 +2,7 @@
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
-
+from Products.CMFCore.WorkflowCore import WorkflowException
 from plone import api
 from AccessControl import ClassSecurityInfo
 from bika.lims import bikaMessageFactory as _, logger
@@ -152,8 +152,12 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
         # is allowed, set it
         instr = self.getInstrument()
         if instr and analysis.isInstrumentAllowed(instr):
-            # Set the method assigned to the selected instrument
-            analysis.setMethod(instr.getMethod())
+            # TODO After enabling multiple methods for instruments, we are
+            # setting intrument's first method as a method.
+            methods = instr.getMethods()
+            if len(methods) > 0:
+                # Set the first method assigned to the selected instrument
+                analysis.setMethod(methods[0])
             analysis.setInstrument(instr)
 
         self.setAnalyses(analyses + [analysis, ])
@@ -203,7 +207,13 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
 
         # overwrite saved context UID for event subscriber
         self.REQUEST['context_uid'] = self.UID()
-        workflow.doActionFor(analysis, 'unassign')
+        try:
+            workflow.doActionFor(analysis, 'unassign')
+        except WorkflowException as e:
+            message = str(e)
+            logger.error(
+                "Cannot use 'unassign' transition on {}: {}".format(
+                analysis, message))
         # Note: subscriber might unassign the AR and/or promote the worksheet
 
         # remove analysis from context.Analyses *after* unassign,
@@ -384,7 +394,7 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
             workflow.doActionFor(duplicate, 'assign')
 
 
-    def applyWorksheetTemplate(self, wst):
+    def applyWorksheetTemplate(self, wst, client_title=None):
         """ Add analyses to worksheet according to wst's layout.
             Will not overwrite slots which are filled already.
             If the selected template has an instrument assigned, it will
@@ -405,12 +415,16 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
         nr_slots = len(wst_slots) - len(ws_slots)
         positions = [pos for pos in wst_slots if pos not in ws_slots]
 
-        analyses = bac(portal_type='Analysis',
-                       getServiceUID=wst_service_uids,
-                       review_state='sample_received',
-                       worksheetanalysis_review_state='unassigned',
-                       cancellation_state = 'active',
-                       sort_on='getDueDate')
+        contentFilter = {'portal_type': 'Analysis',
+                         'getServiceUID': wst_service_uids,
+                         'review_state': 'sample_received',
+                         'worksheetanalysis_review_state': 'unassigned',
+                         'cancellation_state':  'active',
+                         'sort_on': 'getDueDate'}
+        if client_title and client_title != 'any':
+            contentFilter['getClientTitle'] = client_title
+
+        analyses = bac(contentFilter)
 
         # ar_analyses is used to group analyses by AR.
         ar_analyses = {}
@@ -606,8 +620,9 @@ class Worksheet(BaseFolder, HistoryAwareMixin):
             # the WS manage results view will display the an's default
             # method and its instruments displaying, only the instruments
             # for the default method in the picklist.
-            meth = instrument.getMethod()
-            if an.isMethodAllowed(meth):
+            meth = instrument.getMethods()[0] if instrument.getMethods() \
+                    else None
+            if meth and an.isMethodAllowed(meth):
                 an.setMethod(meth)
             success = an.setInstrument(instrument)
             if success is True:

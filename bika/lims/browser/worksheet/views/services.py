@@ -29,7 +29,10 @@ class ServicesView(BikaListingView):
         self.pagesize = 999999
         self.show_workflow_action_buttons = False
         self.show_categories=context.bika_setup.getCategoriseAnalysisServices()
-        self.expand_all_categories=True
+        self.expand_all_categories = False
+        self.ajax_categories = True
+        self.ajax_categories_url = self.base_url + '/service_view'
+        self.category_index = 'getCategoryTitle'
 
         self.columns = {
             'Service': {'title': _('Service'),
@@ -74,9 +77,15 @@ class ServicesView(BikaListingView):
                 ws_services.append(service_uid)
         self.categories = []
         catalog = getToolByName(self, self.catalog)
-        services = catalog(portal_type = "AnalysisService",
-                           inactive_state = "active",
-                           sort_on = 'sortable_title')
+        query = dict(portal_type = "AnalysisService",
+                     inactive_state = "active",
+                     sort_on = 'sortable_title')
+        # This folderitems does not respect the ajax_category index value,
+        # like folderitems from bika_listing.py does.  So we must add it
+        # manually here.
+        if self.category_index and self.request.get('cat'):
+            query[self.category_index] = self.request.get('cat')
+        services = catalog(query)
         items = []
         for service in services:
             service_obj = service.getObject()

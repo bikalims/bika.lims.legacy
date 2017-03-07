@@ -331,6 +331,7 @@ class BikaListingView(BrowserView):
     # and complted inline.  This is useful for list which will have many
     # thousands of entries in many categories, where loading the entire list
     # in HTML would be very slow.
+    # If you want to use service categories set this option ajax_categories_url
     ajax_categories = False
 
     # using the following attribute, some python class may add a CSS class
@@ -574,7 +575,12 @@ class BikaListingView(BrowserView):
 
         self.contentFilter['sort_order'] = self.sort_order
         if self.sort_on:
-            self.contentFilter['sort_on'] = self.sort_on
+            # Ensure we have a valid sort_on index is valid
+            if self.sort_on not in catalog.indexes():
+                logger.warn("Sort index 'sort_on={}' is not in available indexes for the requested catalog '{}'.".format(
+                    self.sort_on, self.catalog))
+            else:
+                self.contentFilter['sort_on'] = self.sort_on
 
         # pagesize
         pagesize = self.request.get(form_id + '_pagesize', self.pagesize)
@@ -865,6 +871,7 @@ class BikaListingView(BrowserView):
                 # otherwise, self.contentsMethod must handle contentFilter
                 brains = self.contentsMethod(contentFilterTemp)
         else:
+            logger.debug("Bika Listing Table Query={}".format(contentFilterTemp))
             brains = self.contentsMethod(contentFilterTemp)
 
         # idx increases one unit each time an object is added to the 'items'
