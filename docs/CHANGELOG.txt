@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+LIMS-2509: Correctly save empty values for CoordinateField and DurationField
 LIMS-2548: Allow entry of negative values for LDL and UDL
 LIMS-2489: Fix error in suppliers view when a Reference Sample is past expiry date
 LIMS-2597: AttributeError: `bika_setup` on login on a new Plone site w/o bika.lims installed
