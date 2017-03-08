@@ -1019,4 +1019,8 @@ class ARImport(BaseFolder):
 def getDateValidated(instance):
     return getTransitionDate(instance, 'validate')
 
+@indexer(IARImport)
+def getDateImported(instance):
+    return getTransitionDate(instance, 'import')
+
 atapi.registerType(ARImport, PROJECTNAME)
