@@ -395,7 +395,7 @@ class ARImport(BaseFolder):
         # document has been written to, and redirect() fails here
         self.REQUEST.response.write(
             '<script>document.location.href="%s"</script>' % (
-                self.absolute_url()))
+                self.aq_parent.absolute_url()))
 
     def get_header_values(self):
         """Scrape the "Header" values from the original input file
