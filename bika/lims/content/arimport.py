@@ -36,6 +36,7 @@ from Products.DataGridField import DataGridWidget
 from Products.DataGridField import DateColumn
 from Products.DataGridField import LinesColumn
 from Products.DataGridField import SelectColumn
+from plone import api
 from plone.indexer import indexer
 from zope import event
 from zope.event import notify
@@ -77,6 +78,25 @@ ClientName = StringField(
     searchable=True,
     widget=StringWidget(
         label=_("Client Name"),
+        visible=False
+    ),
+)
+Client = ReferenceField(
+    'Client',
+    allowed_types=('Client',),
+    relationship='ARImportClient',
+    referenceClass=HoldingReference,
+    vocabulary_display_path_bound=sys.maxint,
+    widget=ReferenceWidget(
+        label=_('Client'),
+        size=20,
+        visible=True,
+        base_query={'inactive_state': 'active'},
+        showOn=True,
+        popup_width='300px',
+        colModel=[#{'columnName': 'UID', 'hidden': True},
+                  {'columnName': 'Name', 'width': '100',
+                   'label': _('Name')}],
     ),
 )
 
@@ -217,6 +237,7 @@ schema = BikaSchema.copy() + Schema((
     Filename,
     NrSamples,
     ClientName,
+    Client,
     ClientID,
     ClientOrderNumber,
     ClientReference,
@@ -413,6 +434,12 @@ class ARImport(BaseFolder):
             return False
 
         # Plain header fields that can be set into plain schema fields:
+        proxies = api.content.find(
+                        portal_type='Client',
+                        getName=headers['Client name'])
+        if proxies:
+            self.setClient(proxies[0].UID)
+
         for h, f in [
             ('File name', 'Filename'),
             ('No of Samples', 'NrSamples'),
@@ -426,7 +453,6 @@ class ARImport(BaseFolder):
                 field = self.schema[f]
                 field.set(self, v)
             del (headers[h])
-
         # Primary Contact
         v = headers.get('Contact', None)
         contacts = [x for x in client.objectValues('Contact')]
@@ -742,9 +768,9 @@ class ARImport(BaseFolder):
         client = self.aq_parent
 
         # Verify Client Name
-        if self.getClientName() != client.Title():
+        if self.getClient() != client:
             self.error("%s: value is invalid (%s)." % (
-                'Client name', self.getClientName()))
+                'Client name', self.getClient()))
 
         # Verify Client ID
         if self.getClientID() != client.getClientID():
