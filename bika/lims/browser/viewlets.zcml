@@ -47,6 +47,15 @@
         layer="bika.lims.interfaces.IBikaLIMS"
         />
 
+    <browser:viewlet
+        for="bika.lims.interfaces.IARImport"
+        name="import_button_viewlet"
+        manager="plone.app.layout.viewlets.interfaces.IAboveContent"
+        template="templates/import_button_viewlet.pt"
+        class="bika.lims.browser.viewlets.ImportButtonViewlet"
+        permission="zope2.View"
+        layer="bika.lims.interfaces.IBikaLIMS"
+      />
     <!-- Hide ByLine for everything -->
     <browser:viewlet
         for="*"

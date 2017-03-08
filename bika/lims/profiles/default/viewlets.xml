@@ -13,4 +13,7 @@
         <viewlet name="bika.lims.authenticator" insert-before="plone.colophon"/>
     </order>
 
+    <order manager="plone.app.layout.viewlets.interfaces.IAboveContentTitle" skinname="bika" based-on="Plone Default">
+        <viewlet name="bika.lims.import_button_viewlet" insert-after="*"/>
+    </order>
 </object>
