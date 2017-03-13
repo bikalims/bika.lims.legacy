@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crons>
+    <cron uid="hellocron"
+        name="ExpireReferenceSamples"
+        user="lemoene"
+        activated="True"
+        periodicity="*/5 * * * *">
+  </cron>
+</crons>
