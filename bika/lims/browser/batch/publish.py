@@ -1,29 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import tempfile
-from bika.lims import bikaMessageFactory as _
-from bika.lims import logger
-from bika.lims.utils import t, formatDecimalMark
-from bika.lims.utils.analysis import format_uncertainty, format_numeric_result
-from bika.lims.browser import BrowserView
-from bika.lims.permissions import *
-from bika.lims.utils import createPdf
-from bika.lims.utils import to_utf8
-from bika.lims.vocabularies import CatalogVocabulary
-from cStringIO import StringIO
-from DateTime import DateTime
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.interface import implements
-from Products.CMFPlone.utils import safe_unicode
 
 import App
-import Globals
 import os
-import plone
+from DateTime import DateTime
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims import logger
+from bika.lims.browser import BrowserView
+from bika.lims.utils import createPdf
+from bika.lims.utils.analysis import format_numeric_result
 
 
 class PublishView(BrowserView):

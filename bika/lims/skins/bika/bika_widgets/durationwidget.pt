@@ -115,7 +115,7 @@
 	    </div>
 	</div>
 	</tal:date>
-	<tal:number condition="python: type in ['float', 'int', 'long']">
+	<tal:number condition="python: type in ['Decimal', 'float', 'int', 'long']">
 	<input type="text"
 	       name=""
 	       value=""

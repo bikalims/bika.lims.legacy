@@ -1,14 +1,14 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims import interfaces
-from bika.lims.browser.bika_listing import WorkflowAction
-from bika.lims.browser.bika_listing import WorkflowAction
-from bika.lims.workflow import doActionFor
-from bika.lims import logger
 from bika.lims import bikaMessageFactory as _
+from bika.lims import interfaces
+from bika.lims import logger
+from bika.lims.workflow import doActionFor
 
 SCHEDULE_SAMPLING_TRANSITION_ID = 'schedule_sampling'
 

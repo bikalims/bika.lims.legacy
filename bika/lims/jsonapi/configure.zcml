@@ -1,6 +1,5 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:browser="http://namespaces.zope.org/browser"
     xmlns:monkey="http://namespaces.plone.org/monkey"
     i18n_domain="bika">
 

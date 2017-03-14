@@ -1,33 +1,32 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import tempfile
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from plone import api
+
+import os
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.utils import safe_unicode
+from email.Utils import formataddr
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims import logger
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import ISample, IAnalysisService, IAnalysis
+from bika.lims.utils import attachPdf
+from bika.lims.utils import createPdf
+from bika.lims.utils import encode_header
 from bika.lims.utils import tmpID
 from bika.lims.utils import to_utf8
-from bika.lims.utils import encode_header
-from bika.lims.utils import createPdf
-from bika.lims.utils import attachPdf
 from bika.lims.utils.sample import create_sample
 from bika.lims.utils.samplepartition import create_samplepartition
-from Products.CMFCore.WorkflowCore import WorkflowException
 from bika.lims.workflow import doActionFor
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.Utils import formataddr
-from os.path import join
-from plone import api
-from Products.CMFPlone.utils import _createObjectByType
-from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
-import os
-import tempfile
 
 
 def create_analysisrequest(context, request, values, analyses=None,

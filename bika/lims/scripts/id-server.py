@@ -3,9 +3,14 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import os, sys, getopt, cgi
 import BaseHTTPServer
 from cPickle import Pickler, Unpickler
+
+import cgi
+import getopt
+import os
+import sys
+
 
 class IDRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 

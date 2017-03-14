@@ -3,8 +3,10 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.interfaces import IFieldIcons
 from zope.interface import implements
+
+from bika.lims.interfaces import IFieldIcons
+
 
 class PriorityIcons(object):
 

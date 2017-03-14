@@ -1,23 +1,27 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from datetime import timedelta
+
 from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
+from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
+from Products.ATContentTypes.utils import DT2dt, dt2DT
+from Products.Archetypes.public import *
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from zope.interface import implements
+
 from bika.lims.browser.fields import DurationField
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import ISamplePartition, ISamplePrepWorkflow
 from bika.lims.workflow import doActionFor
 from bika.lims.workflow import skip
-from DateTime import DateTime
-from datetime import timedelta
-from Products.Archetypes.public import *
-from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.ATContentTypes.utils import DT2dt, dt2DT
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from zope.interface import implements
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField('Container',

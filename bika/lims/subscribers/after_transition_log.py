@@ -1,19 +1,15 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from DateTime import DateTime
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.utils import getToolByName
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims import logger
-from bika.lims.subscribers import skip
-from bika.lims.subscribers import doActionFor
 import App
-import transaction
+
+from bika.lims import logger
+from bika.lims.workflow import skip
+
 
 def AfterTransitionEventHandler(instance, event):
 

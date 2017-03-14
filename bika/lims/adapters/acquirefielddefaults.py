@@ -6,8 +6,9 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.CMFPlone.interfaces import IPloneSiteRoot
-from bika.lims.interfaces import IAcquireFieldDefaults
 from zope.interface import implements
+
+from bika.lims.interfaces import IAcquireFieldDefaults
 
 _marker = []
 

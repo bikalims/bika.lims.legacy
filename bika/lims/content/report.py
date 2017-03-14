@@ -1,22 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.ATContentTypes.content import schemata
-from Products.Archetypes import atapi
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
-from Products.ATExtensions.ateapi import DateTimeField, DateTimeWidget
-from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.Archetypes import atapi
 from Products.Archetypes.public import *
-from Products.CMFCore.permissions import ListFolderContents, View
-from Products.CMFCore.utils import getToolByName
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.config import PROJECTNAME
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from zope.interface import implements
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
 
 schema = BikaSchema.copy() + Schema((
     FileField('ReportFile',

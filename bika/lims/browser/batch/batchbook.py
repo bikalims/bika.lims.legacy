@@ -1,29 +1,32 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from operator import itemgetter
-from AccessControl import getSecurityManager
-from Products.CMFCore.permissions import ModifyPortalContent
-from Products.CMFPlone import PloneMessageFactory
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.permissions import EditResults, AddAnalysisRequest, \
-    ManageAnalysisRequests
-from Products.CMFCore.utils import getToolByName
 
 import re
+from AccessControl import getSecurityManager
+from Products.CMFCore.permissions import ModifyPortalContent
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.permissions import AddAnalysisRequest
+from bika.lims.permissions import EditResults
+from bika.lims.permissions import ManageAnalysisRequests
 
 
 class BatchBookView(BikaListingView):
-
     def __init__(self, context, request):
         super(BatchBookView, self).__init__(context, request)
         self.icon = self.portal_url + \
-            "/++resource++bika.lims.images/batchbook_big.png"
+                    "/++resource++bika.lims.images/batchbook_big.png"
         self.context_actions = {}
-        self.contentFilter = {"sort_on":"created"}
+        self.contentFilter = {"sort_on": "created"}
         self.title = context.Title()
         self.Description = context.Description()
         self.show_select_all_checkbox = True
@@ -96,7 +99,8 @@ class BatchBookView(BikaListingView):
     def __call__(self):
         # Allow "Modify portal content" to see edit widgets
         mtool = getToolByName(self.context, 'portal_membership')
-        self.allow_edit = mtool.checkPermission("Modify portal content", self.context)
+        self.allow_edit = mtool.checkPermission("Modify portal content",
+                                                self.context)
         # Allow certain users to duplicate ARs (Copy to new).
         if self.copy_to_new_allowed:
             review_states = []
@@ -190,11 +194,15 @@ class BatchBookView(BikaListingView):
                 'after': {},
                 'choices': {},
                 'class': {'Batch': 'Title'},
-                'state_class': 'state-active subgroup_{0}'.format(sub_class) if sub_class else 'state-active',
+                'state_class': 'state-active subgroup_{0}'.format(
+                    sub_class) if sub_class else 'state-active',
                 'allow_edit': [],
                 'Batch': '',
-                'SamplePoint': ar.getSamplePoint().Title() if ar.getSamplePoint() else '',
-                'SampleType': ar.getSampleType().Title() if ar.getSampleType() else '',
+                'SamplePoint': ar.getSamplePoint().Title() if
+                ar.getSamplePoint() else '',
+                'SampleType': ar.getSampleType().Title() if ar.getSampleType(
+
+                ) else '',
                 'ClientOrderNumber': ar.getClientOrderNumber(),
                 'AnalysisRequest': '',
                 'state_title': state_title,
@@ -208,7 +216,8 @@ class BatchBookView(BikaListingView):
         for service in services:
             keyword = service.getKeyword()
             self.columns[keyword] = {
-                'title': service.ShortTitle if service.ShortTitle else service.title,
+                'title': service.ShortTitle if service.ShortTitle else
+                service.title,
                 'sortable': True
             }
             self.review_states[0]['columns'].insert(

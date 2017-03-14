@@ -1,34 +1,36 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
+import json
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from string import Template
+
+import plone
+import zope.event
+from DateTime import DateTime
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.Archetypes.event import ObjectInitializedEvent
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode, _createObjectByType
+from email.Utils import formataddr
+
 from bika.lims import PMF
+from bika.lims import bikaMessageFactory as _
+from bika.lims import interfaces
 from bika.lims.browser.bika_listing import WorkflowAction
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.permissions import *
 from bika.lims.utils import changeWorkflowState
 from bika.lims.utils import encode_header
 from bika.lims.utils import isActive
+from bika.lims.utils import t
 from bika.lims.utils import tmpID
-from bika.lims.utils import to_utf8
 from bika.lims.workflow import doActionFor
-from DateTime import DateTime
-from string import Template
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.Utils import formataddr
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.Archetypes.event import ObjectInitializedEvent
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode, _createObjectByType
-from bika.lims import interfaces
-
-import json
-import plone
-import zope.event
 
 
 class AnalysisRequestWorkflowAction(WorkflowAction):

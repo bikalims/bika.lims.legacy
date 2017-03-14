@@ -1,53 +1,53 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """The request for analysis by a client. It contains analysis instances.
 """
+
 import logging
+import sys
+from decimal import Decimal
 from operator import methodcaller
+from plone import api
 
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
-from plone import api
-
-# noinspection PyUnresolvedReferences
 from Products.ATExtensions.field import RecordsField
-from plone.indexer import indexer
 from Products.Archetypes import atapi
+from Products.Archetypes.Widget import RichWidget
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.Archetypes.Widget import RichWidget
 from Products.CMFCore import permissions
 from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 from Products.CMFPlone.utils import _createObjectByType
+from Products.CMFPlone.utils import safe_unicode
+from plone.indexer import indexer
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.fields import ARAnalysesField
+from bika.lims.browser.fields import DateTimeField
+from bika.lims.browser.fields import HistoryAwareReferenceField
+from bika.lims.browser.widgets import DateTimeWidget
+from bika.lims.browser.widgets import DecimalWidget
+from bika.lims.browser.widgets import ReferenceWidget
+from bika.lims.browser.widgets import RejectionWidget
+from bika.lims.browser.widgets import SelectionWidget
 from bika.lims.config import PROJECTNAME
-from bika.lims.permissions import *
-from bika.lims.permissions import Verify as VerifyPermission
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IAnalysisRequest, ISamplePrepWorkflow
-from bika.lims.browser.fields import HistoryAwareReferenceField
-from bika.lims.browser.widgets import DateTimeWidget, DecimalWidget
-from bika.lims.browser.widgets import ReferenceWidget
-from bika.lims.browser.widgets import SelectionWidget
-from bika.lims.browser.widgets import RejectionWidget
-from bika.lims.workflow import skip, isBasicTransitionAllowed, getTransitionDate
-from bika.lims.workflow import doActionFor
-from decimal import Decimal
-from zope.interface import implements
-from bika.lims import bikaMessageFactory as _
+from bika.lims.permissions import *
+from bika.lims.permissions import Verify as VerifyPermission
 from bika.lims.utils import getUsers, dicts_to_dict
 from bika.lims.utils.analysisrequest import notify_rejection
-
-from bika.lims.browser.fields import DateTimeField
-from bika.lims.browser.widgets import SelectionWidget as BikaSelectionWidget
-
-import sys
+from bika.lims.workflow import doActionFor
+from bika.lims.workflow import skip, isBasicTransitionAllowed, getTransitionDate
 
 try:
     from zope.component.hooks import getSite
@@ -570,7 +570,7 @@ schema = BikaSchema.copy() + Schema((
         read_permission=permissions.View,
         write_permission=SampleSample,
         vocabulary='getSamplers',
-        widget=BikaSelectionWidget(
+        widget=SelectionWidget(
             format='select',
             label=_("Sampler"),
             # see SamplingWOrkflowWidgetVisibility
@@ -601,7 +601,7 @@ schema = BikaSchema.copy() + Schema((
         read_permission=permissions.View,
         write_permission=ScheduleSampling,
         vocabulary='getSamplers',
-        widget=BikaSelectionWidget(
+        widget=SelectionWidget(
             description=_("Define the sampler supposed to do the sample in "
                           "the scheduled date"),
             format='select',

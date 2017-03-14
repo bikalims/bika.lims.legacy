@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -10,19 +10,18 @@
 import csv
 import json
 import logging
-import re
 import traceback
 
-from DateTime import DateTime
+import re
 from Products.CMFCore.utils import getToolByName
+from plone.i18n.normalizer.interfaces import IIDNormalizer
+from zope.component import getUtility
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.exportimport.instruments.resultsimport import \
     AnalysisResultsImporter, InstrumentResultsFileParser
 from bika.lims.utils import t
-from cStringIO import StringIO
-from plone.i18n.normalizer.interfaces import IIDNormalizer
-from zope.component import getUtility
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -11,17 +11,17 @@ include objects indexed in catalogs other than portal_catalog
 """
 
 import os
+import plone
 from DateTime import DateTime
-from plone.app.contentlisting.interfaces import IContentListing
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.browser.navtree import getNavigationRoot
 from Products.CMFPlone.PloneBatch import Batch
+from Products.CMFPlone.browser.navtree import getNavigationRoot
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.ZCTextIndex.ParseTree import ParseError
-from zope.i18nmessageid import MessageFactory
+from plone.app.contentlisting.interfaces import IContentListing
 from plone.app.search.browser import Search
 from plone.app.search.browser import quote_chars
-import plone
+from zope.i18nmessageid import MessageFactory
 
 _ = MessageFactory('plone')
 

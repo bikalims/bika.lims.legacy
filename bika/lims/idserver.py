@@ -1,25 +1,21 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ModuleSecurityInfo, allow_module
+import re
+import transaction
+import urllib
 from DateTime import DateTime
-from Products.Archetypes.public import DisplayList
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.TranslationServiceTool import TranslationServiceTool
-from bika.lims.browser import BrowserView
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims import interfaces
-from bika.lims import logger
 from plone.i18n.normalizer.interfaces import IFileNameNormalizer
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from zope.component import getUtility
-from zope.interface import providedBy
-import copy,re,urllib
-import plone.protect
-import transaction
+
+from bika.lims import bikaMessageFactory as _
+
 
 class IDServerUnavailable(Exception):
     pass
@@ -185,7 +181,7 @@ def generateUniqueId(context):
         # no prefix; use portal_type
         # no year inserted here
         # use "IID" normalizer, because we want portal_type to be lowercased.
-        prefix = id_normalize(context.portal_type);
+        prefix = id_normalize(context.portal_type)
         new_id = next_id(prefix)
         return ('%s' + separator + '%s') % (prefix, new_id)
 

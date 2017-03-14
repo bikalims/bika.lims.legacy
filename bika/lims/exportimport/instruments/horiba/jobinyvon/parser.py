@@ -8,12 +8,13 @@
 
 """ HoribaJobinYvon
 """
+import csv
 from datetime import datetime
+
+import re
+
 from bika.lims.exportimport.instruments.resultsimport import \
     InstrumentCSVResultsFileParser
-
-import csv
-import re
 
 
 class HoribaJobinYvonCSVParser(InstrumentCSVResultsFileParser):

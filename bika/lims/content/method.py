@@ -1,24 +1,24 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import sys
+
 from AccessControl import ClassSecurityInfo
-from Products.CMFCore.permissions import ModifyPortalContent, View
-from Products.CMFCore.utils import getToolByName
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.ATExtensions.ateapi import RecordsField as RecordsField
-from bika.lims.browser.fields import HistoryAwareReferenceField
-from bika.lims.browser.widgets import RecordsWidget
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.config import PROJECTNAME
-import sys
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.interfaces import IMethod
-from bika.lims.utils import to_utf8
+from Products.CMFCore.utils import getToolByName
 from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.fields import HistoryAwareReferenceField
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import IMethod
+from bika.lims.utils import t
 
 schema = BikaSchema.copy() + Schema((
     # Method ID should be unique, specified on MethodSchemaModifier

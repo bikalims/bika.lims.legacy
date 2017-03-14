@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """ Generic controller for instrument results import view
 """
 import json
 import traceback
+
 from bika.lims.exportimport.instruments.resultsimport import AnalysisResultsImporter
+
 
 def getFileFormat(request):
     return request.form['instrument_results_file_format']

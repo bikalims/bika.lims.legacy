@@ -1,20 +1,19 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.Registry import registerWidget, registerPropertyType
+from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Widget import TypesWidget
 from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
-from zope.i18n.locales import locales
-from operator import itemgetter
-import json
 from bika.lims.utils import isnumber
+
 
 class AnalysisSpecificationView(BikaListingView):
     """ bika listing to display Analysis Services (AS) table for an
@@ -182,7 +181,7 @@ class AnalysisSpecificationWidget(TypesWidget):
     def process_form(self, instance, field, form, empty_marker = None, emptyReturnsMarker = False):
         """ Return a list of dictionaries fit for AnalysisSpecsResultsField
             consumption. If neither hidemin nor hidemax are specified, only
-            services which have float()able entries in result,min and max field
+            services which have Numerical entries in result,min and max field
             will be included. If hidemin and/or hidemax specified, results
             might contain empty min and/or max fields.
         """

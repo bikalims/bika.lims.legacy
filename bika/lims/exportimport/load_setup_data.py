@@ -1,20 +1,23 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import tempfile
+import traceback
+
+import transaction
 from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
-from bika.lims import PMF
-from bika.lims import logger
-from bika.lims.interfaces import ISetupDataImporter
 from openpyxl import load_workbook
 from pkg_resources import resource_filename
 from zope.component import getAdapters
-import traceback
 
-import tempfile
-import transaction
+from bika.lims import PMF
+from bika.lims import logger
+from bika.lims.browser import BrowserView
+from bika.lims.interfaces import ISetupDataImporter
 
 try:
     from zope.component.hooks import getSite

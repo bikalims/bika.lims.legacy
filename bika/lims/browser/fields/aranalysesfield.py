@@ -1,20 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims import logger
-from bika.lims.permissions import ViewRetractedAnalyses
-from bika.lims.utils import t, dicts_to_dict
-from bika.lims.utils.analysis import create_analysis
 from decimal import Decimal
-from Products.Archetypes.public import *
+
+from AccessControl import ClassSecurityInfo
 from Products.Archetypes.Registry import registerField
+from Products.Archetypes.public import *
 from Products.Archetypes.utils import shasattr
 from Products.CMFCore.utils import getToolByName
-from types import ListType, TupleType, DictType
+
+from bika.lims.permissions import ViewRetractedAnalyses
+from bika.lims.utils.analysis import create_analysis
 
 
 class ARAnalysesField(ObjectField):

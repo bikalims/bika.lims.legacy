@@ -5,10 +5,13 @@
 
 # Data from www.geonames.org. See http://download.geonames.org/export/dump/readme.txt
 
-from bika.lims.browser import BrowserView
-from operator import itemgetter
+
 import json
+from operator import itemgetter
+
 import plone
+
+from bika.lims.browser import BrowserView
 
 COUNTRIES = [
  {'Area(in sq km)': '468',

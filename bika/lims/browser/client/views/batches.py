@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser.batchfolder import BatchFolderContentsView
 from Products.CMFCore.utils import getToolByName
+
+from bika.lims.browser.batchfolder import BatchFolderContentsView
 
 
 class ClientBatchesView(BatchFolderContentsView):

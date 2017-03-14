@@ -1,21 +1,22 @@
 # coding=utf-8
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from datetime import datetime
+
+from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import _createObjectByType, safe_unicode
+from Products.CMFPlone.utils import _createObjectByType
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims.exportimport.instruments.logger import Logger
 from bika.lims.idserver import renameAfterCreation
+from bika.lims.utils import t
 from bika.lims.utils import tmpID
-from Products.Archetypes.config import REFERENCE_CATALOG
-from datetime import datetime
-from DateTime import DateTime
-import os
+
 
 class InstrumentResultsFileParser(Logger):
 

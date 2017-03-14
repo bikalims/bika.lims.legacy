@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -6,10 +8,10 @@
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
-from bika.lims.permissions import AddMultifile
-from Products.Archetypes.BaseContent import BaseContent
-from bika.lims.upgrade import stub
+
 from bika.lims import logger
+from bika.lims.permissions import AddMultifile
+
 
 def upgrade(tool):
     """Upgrade step required for Bika LIMS 3.1.8

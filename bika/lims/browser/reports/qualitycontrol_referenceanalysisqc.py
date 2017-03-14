@@ -1,26 +1,23 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import json
 import tempfile
+from decimal import Decimal, InvalidOperation
 
-from AccessControl import getSecurityManager
-from DateTime import DateTime
-from Products.CMFCore.utils import getToolByName
+import os
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, isAttributeHidden
-from bika.lims.browser import BrowserView
-from bika.lims.browser.reports.selection_macros import SelectionMacrosView
 from gpw import plot
-from bika.lims.utils import to_utf8
-from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
-import os
-import plone
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.browser.reports.selection_macros import SelectionMacrosView
+from bika.lims.utils import t, isAttributeHidden
 
 
 class Report(BrowserView):
@@ -108,14 +105,14 @@ class Report(BrowserView):
             [x for x in sample.getReferenceResults() if x['uid'] == service_uid][
                 0]
             try:
-                result = float(analysis.getResult())
+                result = Decimal(analysis.getResult())
                 results.append(result)
-            except:
+            except (TypeError, ValueError, InvalidOperation):
                 result = analysis.getResult()
             capture_dates.append(analysis.getResultCaptureDate())
 
-            if result < float(resultsrange['min']) or result > float(
-                    resultsrange['max']):
+            if result < Decimal(resultsrange['min']) \
+                    or result > Decimal(resultsrange['max']):
                 out_of_range_count += 1
 
             try:

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,11 +7,12 @@
 
 """ Eltra CS - 2000
 """
+import json
+import traceback
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from . import EltraCSTSVParser, EltraCSImporter
-import json
-import traceback
 
 title = "Eltra CS - 2000"
 

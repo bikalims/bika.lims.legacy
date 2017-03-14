@@ -1,41 +1,36 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """Analysis result range specifications for a client
 """
+
+import sys
+
 from AccessControl import ClassSecurityInfo
-from AccessControl.Permissions import delete_objects
-from Products.ATContentTypes.content import schemata
 from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
 from Products.ATExtensions.field.records import RecordsField
 from Products.Archetypes import atapi
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.Archetypes.utils import shasattr
-from Products.CMFCore import permissions
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.permissions import ListFolderContents, View
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import PMF, bikaMessageFactory as _
+from zope.i18n import translate
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.widgets import AnalysisSpecificationWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IAnalysisSpec
-from types import ListType, TupleType
-from zope.interface import implements
-from zope.i18n import translate
-import sys
-import time
 
 schema = Schema((
     HistoryAwareReferenceField('SampleType',
-        # schemata = 'Description',
-        # required = 1,
         vocabulary = "getSampleTypes",
         vocabulary_display_path_bound = sys.maxint,
         allowed_types = ('SampleType',),
@@ -62,7 +57,6 @@ schema = Schema((
 BikaSchema.copy() + \
 Schema((
     RecordsField('ResultsRange',
-        # schemata = 'Specifications',
         required = 1,
         type = 'resultsrange',
         subfields = ('keyword', 'min', 'max', 'error', 'hidemin', 'hidemax',

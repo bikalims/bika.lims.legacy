@@ -1,21 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
+from plone.app.layout.globals.interfaces import IViewView
+from zope.interface import implements
+
 from bika.lims import PMF
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.permissions import *
 from bika.lims.utils import getUsers
-from plone.app.layout.globals.interfaces import IViewView
-from zope.interface import implements
+from bika.lims.utils import t
 from . import SampleEdit
-import plone
-import App
 
 
 class SampleView(SampleEdit):

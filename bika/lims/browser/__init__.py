@@ -1,20 +1,24 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """Bika's browser views are based on this one, for a nice set of utilities.
 """
+from time import strptime as _strptime
+
+from AccessControl import ClassSecurityInfo
 from DateTime.DateTime import DateTime, safelocaltime
 from DateTime.interfaces import DateTimeError
 from Products.CMFCore.utils import getToolByName
-from AccessControl import ClassSecurityInfo
 from Products.CMFPlone.i18nl10n import ulocalized_time as _ut
 from Products.Five.browser import BrowserView
-from bika.lims import logger
 from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.i18n import translate
-from time import strptime as _strptime
+
+from bika.lims import logger
 
 
 def strptime(context, value):

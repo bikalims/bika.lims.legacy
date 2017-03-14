@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore import permissions
+from Products.CMFCore.utils import getToolByName
+
 from bika.lims.permissions import ManageSupplyOrders, ManageLoginDetails
 
 

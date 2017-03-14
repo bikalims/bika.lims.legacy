@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,11 +7,12 @@
 
 """ Abaxis Vet Scan - VS2
 """
+import json
+import traceback
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from . import AbaxisVetScanCSVParser, AbaxisVetScanImporter
-import json
-import traceback
 
 title = "Abaxis VetScan - VS2"
 

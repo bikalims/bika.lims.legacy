@@ -1,18 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import traceback
+
+import os
 from Products.CMFCore.utils import getToolByName
-from bika.lims import bikaMessageFactory as _, t
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.resource.utils import queryResourceDirectory
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.vocabularies import getStickerTemplates
-from plone.resource.utils import iterDirectoriesOfType, queryResourceDirectory
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-import glob, os, os.path, sys, traceback
 
-import os
 
 class Sticker(BrowserView):
     """ Invoked via URL on an object or list of objects from the types

@@ -1,27 +1,27 @@
 # coding=utf-8
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import glob
+import os
+import traceback
+
 from DateTime import DateTime
-from plone.resource.utils import iterDirectoriesOfType, queryResourceDirectory
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.resource.utils import iterDirectoriesOfType, queryResourceDirectory
 from zope.component import getAdapters
 
-from bika.lims import bikaMessageFactory as _, t
+from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.config import POINTS_OF_CAPTURE
 from bika.lims.interfaces import IResultOutOfRange
-from bika.lims.utils import to_utf8, createPdf, formatDecimalMark, format_supsub
+from bika.lims.utils import to_utf8, formatDecimalMark, format_supsub
 from bika.lims.utils.analysis import format_uncertainty
-
-import glob, os, sys, traceback
-import App
-import Globals
 
 
 class PrintView(BrowserView):

@@ -1,27 +1,25 @@
-# -*- coding:utf-8 -*-
-
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import sys
+
 from AccessControl import ClassSecurityInfo
+from Products.Archetypes.public import *
+from Products.Archetypes.references import HoldingReference
+from Products.CMFCore.utils import getToolByName
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, getUsers
-from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
 from bika.lims.browser.widgets import SRTemplateARTemplatesWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.idserver import renameAfterCreation
-from Products.Archetypes.public import *
-from Products.Archetypes.references import HoldingReference
-from Products.ATExtensions.field.records import RecordsField
 from bika.lims.interfaces import ISamplingRoundTemplate
-from Products.CMFCore.utils import getToolByName
-from zope.interface import implements
-
-import sys
-
+from bika.lims.utils import getUsers
 
 schema = BikaSchema.copy() + Schema((
 

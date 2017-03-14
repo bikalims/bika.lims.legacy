@@ -1,16 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
-from bika.lims.utils import t
-from bika.lims.permissions import *
-from bika.lims.utils import to_unicode
-from Products.ZCTextIndex.ParseTree import ParseError
 import json
+
 import plone
+from Products.CMFCore.utils import getToolByName
+from Products.ZCTextIndex.ParseTree import ParseError
+
+from bika.lims.browser import BrowserView
+from bika.lims.utils import to_unicode, JSONEncoder
 
 
 class ajaxGetSampleTypeInfo(BrowserView):
@@ -65,4 +67,4 @@ class ajaxGetSampleTypeInfo(BrowserView):
                'StorageLocations': dict((sp.UID(),sp.Title()) for sp in st.getStorageLocations()),
                }
 
-        return json.dumps(ret)
+        return json.dumps(ret, cls=JSONEncoder)

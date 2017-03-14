@@ -1,17 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
-from bika.lims.workflow import getTransitionDate
 
 from Products.CMFCore.utils import getToolByName
-from bika.lims.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.utils import formatDateQuery, formatDateParms
 from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.utils import formatDateQuery, formatDateParms
+from bika.lims.utils import t
+from bika.lims.workflow import getTransitionDate
 
 
 class Report(BrowserView):

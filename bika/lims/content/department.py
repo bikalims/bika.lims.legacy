@@ -1,20 +1,21 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """Department - the department in the laboratory.
 """
+import sys
+
+from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.CMFCore.utils import getToolByName
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from AccessControl import ClassSecurityInfo
-import sys
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from zope.interface import implements
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField('Manager',

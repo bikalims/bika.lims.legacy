@@ -1,18 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.config import PROJECTNAME
-from bika.lims.idserver import renameAfterCreation
-from bika.lims.interfaces import IARPriority
 from Products.Archetypes import atapi
 from Products.Archetypes.public import *
 from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.idserver import renameAfterCreation
+from bika.lims.interfaces import IARPriority
 
 schema = BikaSchema.copy() + Schema((
     IntegerField('sortKey',

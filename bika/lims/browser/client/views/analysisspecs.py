@@ -1,7 +1,14 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import _createObjectByType
+from plone.app.layout.globals.interfaces import IViewView
+from zope.interface import implements
 
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
@@ -9,10 +16,6 @@ from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.permissions import *
 from bika.lims.utils import isActive
 from bika.lims.utils import tmpID
-from plone.app.layout.globals.interfaces import IViewView
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import _createObjectByType
-from zope.interface import implements
 
 
 class ClientAnalysisSpecsView(BikaListingView):

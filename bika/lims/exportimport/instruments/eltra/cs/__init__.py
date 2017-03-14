@@ -1,17 +1,16 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """ Eltra CS - 2000
 """
 from datetime import datetime
+
 from bika.lims.exportimport.instruments.resultsimport import \
     AnalysisResultsImporter, InstrumentCSVResultsFileParser
-from bika.lims import bikaMessageFactory as _
 
 
 class EltraCSTSVParser(InstrumentCSVResultsFileParser):

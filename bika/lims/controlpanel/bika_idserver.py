@@ -1,19 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import urllib
+
+import os
 from AccessControl import ClassSecurityInfo
-from App.class_init import InitializeClass
-from OFS.SimpleItem import SimpleItem
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import getToolByName
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.interfaces import IIdServer
 from zope.interface.declarations import implements
-from hashlib import sha1
-import App,os,sys,random,time,urllib,hmac
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IIdServer
 
 try:
     from zope.component.hooks import getSite

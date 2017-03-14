@@ -1,57 +1,55 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 
 "DuplicateAnalysis uses this as it's base.  This accounts for much confusion."
 
+import cgi
+import math
+from decimal import Decimal, InvalidOperation
 from plone import api
-from AccessControl import getSecurityManager
+
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
-from bika.lims import logger
-from bika.lims.utils.analysis import format_numeric_result
-from bika.lims.workflow import getTransitionActor
-from plone.indexer import indexer
-from Products.ATContentTypes.content import schemata
-from Products.ATExtensions.ateapi import DateTimeField, DateTimeWidget, RecordsField
+from Products.ATExtensions.ateapi import DateTimeField, DateTimeWidget
 from Products.Archetypes import atapi
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode, _createObjectByType
 from Products.CMFEditions.ArchivistTool import ArchivistRetrieveError
+from Products.CMFPlone.utils import safe_unicode, _createObjectByType
+from plone.indexer import indexer
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims import logger
 from bika.lims.browser.fields import DurationField
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.fields import InterimFieldsField
-from bika.lims.permissions import *
-from bika.lims.permissions import Verify as VerifyPermission
 from bika.lims.browser.widgets import DurationWidget
-from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
+from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IAnalysis, IDuplicateAnalysis, IReferenceAnalysis, \
-    IRoutineAnalysis, ISamplePrepWorkflow
+from bika.lims.interfaces import IAnalysis
+from bika.lims.interfaces import IDuplicateAnalysis
+from bika.lims.interfaces import IReferenceAnalysis
 from bika.lims.interfaces import IReferenceSample
+from bika.lims.interfaces import ISamplePrepWorkflow
+from bika.lims.permissions import *
+from bika.lims.permissions import Verify as VerifyPermission
 from bika.lims.utils import changeWorkflowState, formatDecimalMark
 from bika.lims.utils import drop_trailing_zeros_decimal
+from bika.lims.utils.analysis import format_numeric_result
 from bika.lims.utils.analysis import get_significant_digits
+from bika.lims.workflow import getTransitionActor
 from bika.lims.workflow import skip
-from bika.lims.workflow import doActionFor
-from decimal import Decimal
-from zope.interface import implements
-import cgi
-import datetime
-import math
+
 
 @indexer(IAnalysis)
 def Priority(instance):
@@ -94,7 +92,7 @@ schema = BikaSchema.copy() + Schema((
         relationship = 'AnalysisAttachment',
     ),
     InterimFieldsField('InterimFields',
-        widget = BikaRecordsWidget(
+        widget = RecordsWidget(
             label = _("Calculation Interim Fields"),
         )
     ),
@@ -331,9 +329,9 @@ class Analysis(BaseContent):
 
         if schu and serv.getAllowManualUncertainty() == True:
             try:
-                schu = float(schu)
+                schu = Decimal(schu)
                 return schu
-            except ValueError:
+            except (TypeError, ValueError, InvalidOperation):
                 # if uncertainty is not a number, return default value
                 return self.getDefaultUncertainty(result)
         return self.getDefaultUncertainty(result)
@@ -365,12 +363,12 @@ class Analysis(BaseContent):
         if operand and operand == '<':
             result = self.getResult()
             try:
-                return float(result)
-            except:
-                logger.warn("The result for the analysis %s is a lower "
-                            "detection limit, but not floatable: '%s'. "
-                            "Returnig AS's default LDL." %
-                            (self.id, result))
+                return Decimal(result)
+            except (TypeError, ValueError, InvalidOperation):
+                logger.warn(
+                    "The result for the analysis %s is a lower detection "
+                    "limit, but not numeric: '%s'. Returnig AS's default "
+                    "LDL." % (self.id, result))
         return self.getService().getLowerDetectionLimit()
 
     def getUpperDetectionLimit(self):
@@ -384,12 +382,12 @@ class Analysis(BaseContent):
         if operand and operand == '>':
             result = self.getResult()
             try:
-                return float(result)
-            except:
-                logger.warn("The result for the analysis %s is a lower "
-                            "detection limit, but not floatable: '%s'. "
-                            "Returnig AS's default LDL." %
-                            (self.id, result))
+                return Decimal(result)
+            except (TypeError, ValueError, InvalidOperation):
+                logger.warn(
+                    "The result for the analysis %s is a lower detection "
+                    "limit, but not numeric: '%s'. Returnig AS's default "
+                    "LDL." % (self.id, result))
         return self.getService().getUpperDetectionLimit()
 
     def isBelowLowerDetectionLimit(self):
@@ -405,9 +403,9 @@ class Analysis(BaseContent):
         elif result:
             ldl = self.getLowerDetectionLimit()
             try:
-                result = float(result)
+                result = Decimal(result)
                 return result < ldl
-            except:
+            except (TypeError, ValueError, InvalidOperation):
                 pass
         return False
 
@@ -424,9 +422,9 @@ class Analysis(BaseContent):
         elif result:
             udl = self.getUpperDetectionLimit()
             try:
-                result = float(result)
+                result = Decimal(result)
                 return result > udl
-            except:
+            except (TypeError, ValueError, InvalidOperation):
                 pass
         return False
 
@@ -503,9 +501,9 @@ class Analysis(BaseContent):
                     # result as a detection limit
                     try:
                         val = val.replace(oper, '', 1)
-                        val = str(float(val))
+                        val = str(Decimal(val))
                         self.Schema().getField('DetectionLimitOperand').set(self, oper)
-                    except:
+                    except (TypeError, ValueError, InvalidOperation):
                         val = value
                 else:
                     # Trying to set a result with an '<,>' operator,
@@ -515,13 +513,13 @@ class Analysis(BaseContent):
                     # is not an indeterminate.
                     try:
                         val = val.replace(oper, '', 1)
-                        val = str(float(val)) # An indeterminate?
+                        val = str(Decimal(val)) # An indeterminate?
                         if oper == '<':
                             val = srv.getLowerDetectionLimit()
                         else:
                             val = srv.getUpperDetectionLimit()
                         self.Schema().getField('DetectionLimitOperand').set(self, oper)
-                    except:
+                    except (TypeError, ValueError, InvalidOperation):
                         # Oops, an indeterminate. Do nothing.
                         val = value
             elif srv:
@@ -537,8 +535,8 @@ class Analysis(BaseContent):
                 # a regular result, but only if not an indeterminate
                 try:
                     val = val.replace(oper, '', 1)
-                    val = str(float(val))
-                except:
+                    val = str(Decimal(val))
+                except (TypeError, ValueError, InvalidOperation):
                     val = value
         elif not val:
             # Reset DL
@@ -674,10 +672,10 @@ class Analysis(BaseContent):
             if 'keyword' not in i:
                 continue
             try:
-                ivalue = float(i['value'])
+                ivalue = Decimal(i['value'])
                 mapping[i['keyword']] = ivalue
-            except:
-                # Interim not float, abort
+            except (TypeError, ValueError, InvalidOperation):
+                # Interim not numeric, abort
                 return False
 
         # Add dependencies results to mapping
@@ -694,7 +692,7 @@ class Analysis(BaseContent):
                     return False
             if result:
                 try:
-                    result = float(str(result))
+                    result = Decimal(str(result))
                     key = dependency.getKeyword()
                     ldl = dependency.getLowerDetectionLimit()
                     udl = dependency.getUpperDetectionLimit()
@@ -706,7 +704,7 @@ class Analysis(BaseContent):
                     mapping['%s.%s' % (key, 'UDL')]=udl
                     mapping['%s.%s' % (key, 'BELOWLDL')]=int(bdl)
                     mapping['%s.%s' % (key, 'ABOVEUDL')]=int(adl)
-                except:
+                except (TypeError, ValueError, InvalidOperation):
                     return False
 
         # Calculate
@@ -764,19 +762,19 @@ class Analysis(BaseContent):
     def getVATAmount(self):
         """
         Compute the VAT amount without member discount.
-        :return: the result as a float
+        :return: the result as a Decimal number
         """
         vat = self.getService().getVAT()
         price = self.getPrice()
-        return float(price) * float(vat) / 100
+        return Decimal(price) * Decimal(vat) / 100
 
     def getTotalPrice(self):
         """
         Obtain the total price without client's member discount. The function keeps in mind the
         client's bulk discount.
-        :return: the result as a float
+        :return: the result as a Decimal number
         """
-        return float(self.getPrice()) + float(self.getVATAmount())
+        return Decimal(self.getPrice()) + Decimal(self.getVATAmount())
 
     def isInstrumentValid(self):
         """ Checks if the instrument selected for this analysis service
@@ -914,7 +912,7 @@ class Analysis(BaseContent):
         dl = self.getDetectionLimitOperand()
         if dl:
             try:
-                res = float(result) # required, check if floatable
+                res = Decimal(result) # required, check if floatable
                 res = drop_trailing_zeros_decimal(res)
                 fdm = formatDecimalMark(res, decimalmark)
                 hdl = cgi.escape(dl) if html else dl
@@ -936,8 +934,8 @@ class Analysis(BaseContent):
 
         # 3. If the result is not floatable, return it without being formatted
         try:
-            result = float(result)
-        except:
+            result = Decimal(result)
+        except(TypeError, ValueError, InvalidOperation):
             return formatDecimalMark(result, decimalmark=decimalmark)
 
         # 4. If the analysis specs has enabled hidemin or hidemax and the
@@ -948,13 +946,13 @@ class Analysis(BaseContent):
         hidemin = specs.get('hidemin', '')
         hidemax = specs.get('hidemax', '')
         try:
-            belowmin = hidemin and result < float(hidemin) or False
-        except:
+            belowmin = hidemin and result < Decimal(hidemin) or False
+        except (TypeError, ValueError, InvalidOperation):
             belowmin = False
             pass
         try:
-            abovemax = hidemax and result > float(hidemax) or False
-        except:
+            abovemax = hidemax and result > Decimal(hidemax) or False
+        except (TypeError, ValueError, InvalidOperation):
             abovemax = False
             pass
 

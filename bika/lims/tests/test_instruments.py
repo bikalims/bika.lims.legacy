@@ -3,15 +3,16 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from datetime import date, timedelta
+
 from Products.CMFPlone.utils import _createObjectByType
-from bika.lims.utils import tmpID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login, logout
+
+from bika.lims.idserver import renameAfterCreation
 from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
 from bika.lims.tests.base import BikaFunctionalTestCase
-from bika.lims.idserver import renameAfterCreation
-from plone.app.testing import login, logout
-from plone.app.testing import TEST_USER_NAME
-from datetime import date, timedelta
-import unittest
+from bika.lims.utils import tmpID
 
 try:
     import unittest2 as unittest

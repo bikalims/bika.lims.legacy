@@ -1,26 +1,28 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser import BrowserView
-from bika.lims.interfaces import IAnalysis
-from bika.lims.interfaces import IFieldIcons
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, isnumber
-from bika.lims import logger
-from bika.lims.utils import to_utf8
+import json
+import math
+from decimal import Decimal, InvalidOperation
+
+import plone
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
 from Products.PythonScripts.standard import html_quote
-from bika.lims.utils.analysis import format_numeric_result
 from zope.component import adapts
 from zope.component import getAdapters
 from zope.interface import implements
 
-import json
-import math
-import plone
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.interfaces import IAnalysis
+from bika.lims.interfaces import IFieldIcons
+from bika.lims.utils import t, isnumber, JSONEncoder
+from bika.lims.utils.analysis import format_numeric_result
 
 
 class CalculationResultAlerts(object):
@@ -89,8 +91,8 @@ class ajaxCalculateAnalysisEntry(BrowserView):
         # values to be returned to form for this UID
         Result = {'uid': uid, 'result': form_result}
         try:
-            Result['result'] = float(form_result)
-        except:
+            Result['result'] = Decimal(form_result)
+        except (TypeError, ValueError, InvalidOperation):
             if form_result == "0/0":
                 Result['result'] = ""
 
@@ -138,15 +140,15 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                 key = analysisvalues.get('keyword',dependency.getService().getKeyword())
 
                 # Analysis result
-                # All result mappings must be float, or they are ignored.
+                # All result mappings must be Decimal numbers, or they are ignored.
                 try:
-                    mapping[key] = float(analysisvalues.get('result'))
-                    mapping['%s.%s' % (key, 'RESULT')] = float(analysisvalues.get('result'))
-                    mapping['%s.%s' % (key, 'LDL')] = float(analysisvalues.get('ldl'))
-                    mapping['%s.%s' % (key, 'UDL')] = float(analysisvalues.get('udl'))
+                    mapping[key] = Decimal(analysisvalues.get('result'))
+                    mapping['%s.%s' % (key, 'RESULT')] = Decimal(analysisvalues.get('result'))
+                    mapping['%s.%s' % (key, 'LDL')] = Decimal(analysisvalues.get('ldl'))
+                    mapping['%s.%s' % (key, 'UDL')] = Decimal(analysisvalues.get('udl'))
                     mapping['%s.%s' % (key, 'BELOWLDL')] = int(analysisvalues.get('belowldl'))
                     mapping['%s.%s' % (key, 'ABOVEUDL')] = int(analysisvalues.get('aboveudl'))
-                except:
+                except (TypeError, ValueError, InvalidOperation):
                     # If not floatable, then abort!
                     unsatisfied = True
                     break
@@ -169,10 +171,10 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                                              'result': '',
                                              'formatted_result': ''})
                         return None
-                    # All interims must be float, or they are ignored.
+                    # All interims must be Decimal numbers or they are ignored.
                     try:
-                        i['value'] = float(i['value'])
-                    except:
+                        i['value'] = Decimal(i['value'])
+                    except (TypeError, ValueError, InvalidOperation):
                         pass
 
                     # all interims are ServiceKeyword.InterimKeyword
@@ -195,15 +197,15 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                 if field.get('hidden', False):
                     hidden_fields.append(field['keyword'])
                     try:
-                        mapping[field['keyword']] = float(field['value'])
-                    except ValueError:
+                        mapping[field['keyword']] = Decimal(field['value'])
+                    except (TypeError, ValueError, InvalidOperation):
                         pass
             # also grab stickier defaults from AnalysisService
             for field in s_fields:
                 if field['keyword'] in hidden_fields:
                     try:
-                        mapping[field['keyword']] = float(field['value'])
-                    except ValueError:
+                        mapping[field['keyword']] = Decimal(field['value'])
+                    except (TypeError, ValueError, InvalidOperation):
                         pass
 
             # convert formula to a valid python string, ready for interpolation
@@ -275,8 +277,8 @@ class ajaxCalculateAnalysisEntry(BrowserView):
         try:
             Result['formatted_result'] = format_numeric_result(analysis,
                                                                Result['result'])
-        except ValueError:
-            # non-float
+        except (TypeError, ValueError, InvalidOperation):
+            # non-decimal
             Result['formatted_result'] = Result['result']
         # calculate Dry Matter result
         # if parent is not an AR, it's never going to be calculable
@@ -295,13 +297,13 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                 # get the current DryMatter analysis result from the form
                 if dry_uid in self.current_results:
                     try:
-                        dry_result = float(self.current_results[dry_uid])
-                    except:
+                        dry_result = Decimal(self.current_results[dry_uid])
+                    except (TypeError, ValueError, InvalidOperation):
                         dm = False
                 else:
                     try:
-                        dry_result = float(dry_analysis.getResult())
-                    except:
+                        dry_result = Decimal(dry_analysis.getResult())
+                    except (TypeError, ValueError, InvalidOperation):
                         dm = False
             else:
                 dm = False
@@ -319,14 +321,14 @@ class ajaxCalculateAnalysisEntry(BrowserView):
         # https://jira.bikalabs.com/browse/LIMS-1808
         flres = Result.get('result', None)
         if flres and isnumber(flres):
-            flres = float(flres)
+            flres = Decimal(flres)
             anvals = self.current_results[uid]
             isldl = anvals.get('isldl', False)
             isudl = anvals.get('isudl', False)
             ldl = anvals.get('ldl',0)
             udl = anvals.get('udl',0)
-            ldl = float(ldl) if isnumber(ldl) else 0
-            udl = float(udl) if isnumber(udl) else 10000000
+            ldl = Decimal(ldl) if isnumber(ldl) else 0
+            udl = Decimal(udl) if isnumber(udl) else 10000000
             belowldl = (isldl or flres < ldl)
             aboveudl = (isudl or flres > udl)
             unc = '' if (belowldl or aboveudl) else analysis.getUncertainty(Result.get('result'))
@@ -402,7 +404,7 @@ class ajaxCalculateAnalysisEntry(BrowserView):
 
         return json.dumps({'alerts': self.alerts,
                            'uncertainties': self.uncertainties,
-                           'results': results})
+                           'results': results}, cls=JSONEncoder)
 
 
 class ajaxGetMethodCalculation(BrowserView):
@@ -419,4 +421,4 @@ class ajaxGetMethodCalculation(BrowserView):
             if calc:
                 calcdict = {'uid': calc.UID(),
                             'title': calc.Title()}
-        return json.dumps(calcdict)
+        return json.dumps(calcdict, cls=JSONEncoder)

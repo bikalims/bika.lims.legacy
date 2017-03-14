@@ -1,18 +1,21 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import csv
+
 from AccessControl import ClassSecurityInfo
 from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from Products.CMFCore import permissions
 from Products.CMFCore.utils import UniqueObject, getToolByName
-from bika.lims.config import ManageAnalysisRequests
-from bika.lims.tools import ToolFolder
-import csv
-from bika.lims.interfaces.tools import Ibika_instrument_import
 from zope.interface import implements
+
+from bika.lims.interfaces.tools import Ibika_instrument_import
+from bika.lims.permissions import ManageAnalysisRequests
+
 
 class bika_instrument_import(UniqueObject, SimpleItem):
     """ InstrumentImportTool """

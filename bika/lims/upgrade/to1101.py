@@ -1,18 +1,14 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import logging
-
-from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 
-from Products.CMFCore import permissions
 from bika.lims.permissions import *
-
-from Products.CMFCore.utils import getToolByName
 
 
 def upgrade(tool):

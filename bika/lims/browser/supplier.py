@@ -1,18 +1,15 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.controlpanel.bika_instruments import InstrumentsView
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from Products.CMFCore.utils import getToolByName
-from bika.lims.utils import to_utf8
-from Products.ATContentTypes.utils import DT2dt
-from datetime import datetime
-
+from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.browser.referencesample import ReferenceSamplesView
+from bika.lims.controlpanel.bika_instruments import InstrumentsView
+
 
 class SupplierInstrumentsView(InstrumentsView):
 

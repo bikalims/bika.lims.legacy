@@ -1,21 +1,17 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.config import ManageInvoices, PROJECTNAME
-from bika.lims.interfaces import IInvoiceFolder, IHaveNoBreadCrumbs
-from Products.Archetypes import atapi
-from Products.Archetypes.public import *
 from Products.ATContentTypes.content import folder
-from Products.ATContentTypes.content import schemata
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import UniqueObject
-from ZODB.POSException import ConflictError
+from Products.Archetypes import atapi
 from zope.interface import implements
+
+from bika.lims.config import PROJECTNAME
+from bika.lims.interfaces import IInvoiceFolder, IHaveNoBreadCrumbs
 
 schema = folder.ATFolderSchema.copy()
 schema['id'].widget.visible = {'edit':'hidden', 'view':'invisible'}

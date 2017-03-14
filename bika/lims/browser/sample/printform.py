@@ -1,27 +1,28 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.Archetypes.public import DisplayList
-from Products.CMFCore.utils import getToolByName
-from plone.resource.utils import iterDirectoriesOfType
-from bika.lims.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims.utils import createPdf
-from bika.lims import logger
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.permissions import *
-from DateTime import DateTime
-from Products.CMFPlone.utils import safe_unicode
 import datetime
-from calendar import monthrange
-import os
 import glob
-import traceback
-import App
 import tempfile
+import traceback
+from calendar import monthrange
+
+import App
+import os
+from DateTime import DateTime
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.resource.utils import iterDirectoriesOfType
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims import logger
+from bika.lims.browser import BrowserView
+from bika.lims.utils import createPdf
 
 
 class SamplesPrint(BrowserView):

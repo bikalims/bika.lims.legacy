@@ -1,30 +1,33 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from plone import api
+
 from AccessControl import ClassSecurityInfo
+from Products.ATExtensions.ateapi import RecordsField
+from Products.Archetypes.public import *
+from Products.Archetypes.references import HoldingReference
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from plone.app.folder.folder import ATFolder
+from plone.indexer import indexer
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
+from bika.lims.browser.widgets import DateTimeWidget
+from bika.lims.browser.widgets import RecordsWidget
+from bika.lims.browser.widgets import ReferenceWidget as ReferenceWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaFolderSchema
 from bika.lims.interfaces import IBatch, IClient
-from bika.lims.workflow import skip, BatchState, StateFlow, getCurrentState,\
-    CancellationState
-from bika.lims.browser.widgets import DateTimeWidget
-from plone import api
-from plone.app.folder.folder import ATFolder
-from Products.Archetypes.public import *
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from zope.interface import implements
-from bika.lims.permissions import EditBatch
-from plone.indexer import indexer
-from Products.Archetypes.references import HoldingReference
-from Products.ATExtensions.ateapi import RecordsField
-from bika.lims.browser.widgets import RecordsWidget as bikaRecordsWidget
-
-from bika.lims.browser.widgets import ReferenceWidget
+from bika.lims.workflow import BatchState
+from bika.lims.workflow import CancellationState
+from bika.lims.workflow import StateFlow
+from bika.lims.workflow import getCurrentState
 
 
 class InheritedObjectsUIField(RecordsField):
@@ -152,7 +155,7 @@ schema = BikaFolderSchema.copy() + Schema((
                            'ObjectID': _('Object ID'),
                            'Description': _('Description')
                            },
-        widget = bikaRecordsWidget(
+        widget = RecordsWidget(
             label=_("Inherit From"),
             description=_(
                 "Include all analysis requests belonging to the selected objects."),

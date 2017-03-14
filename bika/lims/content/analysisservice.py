@@ -1,52 +1,40 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-
 import sys
+from decimal import Decimal, InvalidOperation
 
+import transaction
 from AccessControl import ClassSecurityInfo
-from DateTime import DateTime
-from plone.indexer import indexer
 from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.ATExtensions.Extensions.utils import makeDisplayList
-from Products.ATExtensions.ateapi import RecordField, RecordsField
+from Products.ATExtensions.ateapi import RecordsField
 from Products.Archetypes.Registry import registerField
-from Products.Archetypes.public import DisplayList, ReferenceField, \
-    ComputedField, ComputedWidget, BooleanField, \
-    BooleanWidget, StringField, SelectionWidget, \
-    FixedPointField, DecimalWidget, IntegerField, \
-    IntegerWidget, StringWidget, BaseContent, \
-    Schema, registerType, MultiSelectionWidget, \
-    FloatField
-from Products.Archetypes.utils import IntDisplayList
+from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.CMFCore.permissions import View, ModifyPortalContent
-from Products.CMFCore.utils import getToolByName
-from Products.validation import validation
-from Products.validation.validators.RegexValidator import RegexValidator
+from Products.Archetypes.utils import IntDisplayList
 from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
+from magnitude import mg
+from plone.indexer import indexer
+from zope.interface import implements
+
 from bika.lims import PMF, bikaMessageFactory as _
-from bika.lims.utils import to_utf8 as _c
-from bika.lims.utils import to_unicode as _u
-from bika.lims.utils.analysis import get_significant_digits
+from bika.lims.browser.fields import *
 from bika.lims.browser.widgets.durationwidget import DurationWidget
 from bika.lims.browser.widgets.partitionsetupwidget import PartitionSetupWidget
 from bika.lims.browser.widgets.recordswidget import RecordsWidget
 from bika.lims.browser.widgets.referencewidget import ReferenceWidget
-from bika.lims.browser.fields import *
-from bika.lims.config import ATTACHMENT_OPTIONS, PROJECTNAME, \
-    SERVICE_POINT_OF_CAPTURE
+from bika.lims.config import ATTACHMENT_OPTIONS
+from bika.lims.config import PROJECTNAME
+from bika.lims.config import SERVICE_POINT_OF_CAPTURE
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IAnalysisService, IHaveIdentifiers
-from magnitude import mg, MagnitudeError
-from zope import i18n
-from zope.interface import implements
-import transaction
-import math
+from bika.lims.utils import to_utf8 as _c
+from bika.lims.utils.analysis import get_significant_digits
 
 
 def getContainers(instance,
@@ -84,10 +72,10 @@ x
             capacity = container.getCapacity()
             try:
                 capacity = capacity.split(' ', 1)
-                capacity = mg(float(capacity[0]), capacity[1])
+                capacity = mg(Decimal(capacity[0]), capacity[1])
                 if capacity < minvol:
                     continue
-            except:
+            except (TypeError, ValueError, InvalidOperation):
                 # if there's a unit conversion error, allow the container
                 # to be displayed.
                 pass
@@ -1051,7 +1039,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         price = price and price or 0
         discount = self.bika_setup.getMemberDiscount()
         discount = discount and discount or 0
-        return float(price) - (float(price) * float(discount)) / 100
+        return Decimal(price) - (Decimal(price) * Decimal(discount)) / 100
 
     security.declarePublic('getDiscountedBulkPrice')
 
@@ -1061,7 +1049,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         price = price and price or 0
         discount = self.bika_setup.getMemberDiscount()
         discount = discount and discount or 0
-        return float(price) - (float(price) * float(discount)) / 100
+        return Decimal(price) - (Decimal(price) * Decimal(discount)) / 100
 
     def getTotalPrice(self):
         """ compute total price """
@@ -1069,7 +1057,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         vat = self.getVAT()
         price = price and price or 0
         vat = vat and vat or 0
-        return float(price) + (float(price) * float(vat)) / 100
+        return Decimal(price) + (Decimal(price) * Decimal(vat)) / 100
 
     def getTotalBulkPrice(self):
         """ compute total price """
@@ -1077,7 +1065,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         vat = self.getVAT()
         price = price and price or 0
         vat = vat and vat or 0
-        return float(price) + (float(price) * float(vat)) / 100
+        return Decimal(price) + (Decimal(price) * Decimal(vat)) / 100
 
     security.declarePublic('getTotalDiscountedPrice')
 
@@ -1087,7 +1075,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         vat = self.getVAT()
         price = price and price or 0
         vat = vat and vat or 0
-        return float(price) + (float(price) * float(vat)) / 100
+        return Decimal(price) + (Decimal(price) * Decimal(vat)) / 100
 
     security.declarePublic('getTotalDiscountedCorporatePrice')
 
@@ -1097,7 +1085,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         vat = self.getVAT()
         price = price and price or 0
         vat = vat and vat or 0
-        return float(price) + (float(price) * float(vat)) / 100
+        return Decimal(price) + (Decimal(price) * Decimal(vat)) / 100
 
     def getDefaultVAT(self):
         """ return default VAT from bika_setup """
@@ -1113,7 +1101,7 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         """ Compute VATAmount
         """
         price, vat = self.getPrice(), self.getVAT()
-        return (float(price) * (float(vat) / 100))
+        return (Decimal(price) * (Decimal(vat) / 100))
 
     def getAnalysisCategories(self):
         bsc = getToolByName(self, 'bika_setup_catalog')
@@ -1270,23 +1258,24 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         uncertainties = self.getUncertainties()
         if uncertainties:
             try:
-                result = float(result)
-            except ValueError:
+                result = Decimal(result)
+            except (TypeError, ValueError, InvalidOperation):
                 # if analysis result is not a number, then we assume in range
                 return None
 
             for d in uncertainties:
-                if float(d['intercept_min']) <= result <= float(
-                        d['intercept_max']):
+                if Decimal(d['intercept_min']) \
+                        <= result \
+                        <= Decimal(d['intercept_max']):
                     unc = 0
                     if str(d['errorvalue']).strip().endswith('%'):
                         try:
-                            percvalue = float(d['errorvalue'].replace('%', ''))
-                        except ValueError:
+                            percvalue = Decimal(d['errorvalue'].replace('%', ''))
+                        except (TypeError, ValueError, InvalidOperation):
                             return None
                         unc = result / 100 * percvalue
                     else:
-                        unc = float(d['errorvalue'])
+                        unc = Decimal(d['errorvalue'])
 
                     return unc
         return None
@@ -1297,8 +1286,8 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         """
         ldl = self.Schema().getField('LowerDetectionLimit').get(self)
         try:
-            return float(ldl)
-        except ValueError:
+            return Decimal(ldl)
+        except (TypeError, ValueError, InvalidOperation):
             return 0
 
     def getUpperDetectionLimit(self):
@@ -1307,8 +1296,8 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         """
         udl = self.Schema().getField('UpperDetectionLimit').get(self)
         try:
-            return float(udl)
-        except ValueError:
+            return Decimal(udl)
+        except (TypeError, ValueError, InvalidOperation):
             return 0
 
     def getPrecision(self, result=None):
@@ -1402,8 +1391,8 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
                 return self.Schema().getField('ExponentialFormatPrecision').get(self);
 
             try:
-                result = float(result)
-            except ValueError:
+                result = Decimal(result)
+            except (TypeError, ValueError, InvalidOperation):
                 # if analysis result is not a number, then we assume in range
                 return self.Schema().getField('ExponentialFormatPrecision').get(self)
 

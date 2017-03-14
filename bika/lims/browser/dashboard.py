@@ -1,16 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import datetime
+import json
+from calendar import monthrange
+
+from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims.browser import BrowserView
+
 from bika.lims import bikaMessageFactory as _
-from calendar import monthrange
-from DateTime import DateTime
-import plone, json
-import datetime
+from bika.lims.browser import BrowserView
+from bika.lims.utils import JSONEncoder
+
 
 class DashboardView(BrowserView):
     template = ViewPageTemplateFile("templates/dashboard.pt")
@@ -337,7 +343,7 @@ class DashboardView(BrowserView):
                     'name':         _('Evolution of Analysis Requests'),
                     'class':        'informative',
                     'description':  _('Evolution of Analysis Requests'),
-                    'data':         json.dumps(outevo)})
+                    'data':         json.dumps(outevo, cls=JSONEncoder)})
 
         return {'id': 'analysisrequests',
                 'title': _('Analysis Requests'),
@@ -450,7 +456,7 @@ class DashboardView(BrowserView):
                     'name':         _('Evolution of Worksheets'),
                     'class':        'informative',
                     'description':  _('Evolution of Worksheets'),
-                    'data':         json.dumps(outevo)})
+                    'data':         json.dumps(outevo, cls=JSONEncoder)})
 
         return {'id': 'worksheets',
                 'title': _('Worksheets'),
@@ -576,7 +582,7 @@ class DashboardView(BrowserView):
                     'name':         _('Evolution of Analyses'),
                     'class':        'informative',
                     'description':  _('Evolution of Analyses'),
-                    'data':         json.dumps(outevo)})
+                    'data':         json.dumps(outevo, cls=JSONEncoder)})
         return {'id': 'analyses',
                 'title': _('Analyses'),
                 'panels': out}

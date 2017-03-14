@@ -1,15 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
-from bika.lims.workflow import getTransitionDate
+
+from decimal import Decimal
 
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.layout.globals.interfaces import IViewView
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.browser.reports.selection_macros import SelectionMacrosView
-from plone.app.layout.globals.interfaces import IViewView
-from zope.interface import implements
+from bika.lims.workflow import getTransitionDate
 
 
 class Report(BrowserView):
@@ -88,12 +93,13 @@ class Report(BrowserView):
             totalpublicationlag += publicationlag
 
         # Footer total data
-        totalreceivedcreated_ratio = float(totalreceivedcount) / float(
-            totalcreatedcount)
-        totalpublishedcreated_ratio = float(totalpublishedcount) / float(
-            totalcreatedcount)
-        totalpublishedreceived_ratio = totalreceivedcount and float(
-            totalpublishedcount) / float(totalreceivedcount) or 0
+        totalreceivedcreated_ratio = \
+            Decimal(totalreceivedcount) / Decimal(totalcreatedcount)
+        totalpublishedcreated_ratio = \
+            Decimal(totalpublishedcount) / Decimal(totalcreatedcount)
+        totalpublishedreceived_ratio = \
+            Decimal(totalpublishedcount) / Decimal(totalreceivedcount) \
+                if totalreceivedcount else 0
 
         footline = {'Created': totalcreatedcount,
                     'Received': totalreceivedcount,

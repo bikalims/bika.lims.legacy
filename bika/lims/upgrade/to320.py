@@ -1,20 +1,19 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import transaction
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-
-import transaction
+from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from Products.ZCatalog.Catalog import CatalogError
 
 from bika.lims import logger
-from Products.CMFCore import permissions
-from Products.CMFPlone.utils import _createObjectByType
-from bika.lims.utils import tmpID
 from bika.lims.permissions import *
 from bika.lims.utils import tmpID
 

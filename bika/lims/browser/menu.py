@@ -1,13 +1,16 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+from Products.CMFCore.utils import getToolByName
+from plone.app.contentmenu.menu import WorkflowSubMenuItem as _WorkflowSubMenuItem
+
 
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
-from bika.lims.utils import to_utf8
-from plone.app.contentmenu.menu import WorkflowSubMenuItem as _WorkflowSubMenuItem
-from Products.CMFCore.utils import getToolByName
 
 try:
     from Products.CMFPlacefulWorkflow import ManageWorkflowPolicies

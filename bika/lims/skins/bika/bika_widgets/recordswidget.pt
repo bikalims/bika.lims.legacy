@@ -223,9 +223,9 @@
 								tabindex tabindex/next|nothing;"/>
 					</tal:number>
 
-					<!-- float long -->
+					<!-- float long decimal -->
 
-					<tal:number condition="python: type in ['float', 'long']">
+					<tal:number condition="python: type in ['Decimal', 'float', 'long']">
 						<input type="text" name="" value="" size="10" tabindex="#"
 							tal:attributes="
 								name string:${fieldName}.${key}:${type}:records:ignore_empty;

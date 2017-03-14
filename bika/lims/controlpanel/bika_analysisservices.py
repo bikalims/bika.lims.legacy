@@ -1,27 +1,30 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from Products.ATContentTypes.content import schemata
+from Products.Archetypes import atapi
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType, safe_unicode
+from Products.Five.browser import BrowserView
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.app.folder.folder import ATFolder, ATFolderSchema
+from plone.app.layout.globals.interfaces import IViewView
+from transaction import savepoint
+from zope.interface.declarations import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import PROJECTNAME
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IAnalysisServices
+from bika.lims.utils import t
 from bika.lims.utils import tmpID
 from bika.lims.validators import ServiceKeywordValidator
-from plone.app.content.browser.interfaces import IFolderContentsView
-from plone.app.folder.folder import ATFolder, ATFolderSchema
-from plone.app.layout.globals.interfaces import IViewView
-from Products.Archetypes import atapi
-from Products.ATContentTypes.content import schemata
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from transaction import savepoint
-from zope.interface.declarations import implements
 
 
 class AnalysisServiceCopy(BrowserView):

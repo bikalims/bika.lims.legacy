@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from plone.supermodel import model
-from plone.dexterity.content import Container
-from zope.interface import implements
-from bika.lims.browser.bika_listing import BikaListingView
 from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.app.layout.globals.interfaces import IViewView
+from plone.dexterity.content import Container
+from plone.supermodel import model
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.bika_listing import BikaListingView
 
 
 class SamplingRoundsView(BikaListingView):

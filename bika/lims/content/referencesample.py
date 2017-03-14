@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """ReferenceSample represents a reference sample used for quality control testing
@@ -11,25 +13,21 @@ from DateTime import DateTime
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.CMFCore import permissions
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
-from bika.lims import PMF, bikaMessageFactory as _
-from bika.lims.idserver import renameAfterCreation
-from bika.lims.utils import t
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.fields import ReferenceResultsField
 from bika.lims.browser.widgets import DateTimeWidget as bika_DateTimeWidget
 from bika.lims.browser.widgets import ReferenceResultsWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IReferenceSample
-from bika.lims.utils import sortable_title, tmpID
+from bika.lims.utils import t
+from bika.lims.utils import tmpID
 from bika.lims.utils import to_unicode as _u
-from bika.lims.utils import to_utf8
-from zope.interface import implements
-import sys, time
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField('ReferenceDefinition',

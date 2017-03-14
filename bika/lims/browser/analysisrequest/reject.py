@@ -1,5 +1,13 @@
-from bika.lims.browser import BrowserView
+# -*- coding: utf-8 -*-
+#
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from bika.lims.browser import BrowserView
 
 
 class AnalysisRequestRejectEmailView(BrowserView):

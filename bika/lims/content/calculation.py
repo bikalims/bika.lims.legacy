@@ -1,35 +1,33 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
+import math
+import sys
 
+import re
+import transaction
+from AccessControl import ClassSecurityInfo
+from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
 from Products.ATExtensions.field import RecordsField
+from Products.Archetypes.public import *
+from Products.Archetypes.references import HoldingReference
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.widgets import RecordsWidget
-from bika.lims.utils import t
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.fields import InterimFieldsField
+from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import ICalculation
-from bika.lims.utils import to_utf8
-from bika.lims.utils.analysis import format_numeric_result
-from Products.Archetypes.public import *
-from Products.Archetypes.references import HoldingReference
-from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.CMFCore.permissions import ModifyPortalContent, View
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowCore import WorkflowException
-from zExceptions import Redirect
-from zope.interface import implements
-import sys
-import re
-import math
-import transaction
 
 
 schema = BikaSchema.copy() + Schema((

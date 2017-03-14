@@ -1,20 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+from operator import itemgetter
 
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
-from bika.lims.browser import BrowserView
-from bika.lims import EditSample
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.permissions import *
 from bika.lims.utils import changeWorkflowState, tmpID
 from bika.lims.utils import getUsers
-from operator import itemgetter
-import App
 
 
 class SamplePartitionsView(BikaListingView):

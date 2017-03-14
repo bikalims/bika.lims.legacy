@@ -1,14 +1,13 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser import BrowserView
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from Products.CMFCore.utils import getToolByName
-import json, plone
-import plone.protect
+from plone.protect.authenticator import check as CheckAuthenticator
+
 
 class ajaxDeleteAnalysisAttachment():
     """ Removes an analysis attachment. """
@@ -19,7 +18,7 @@ class ajaxDeleteAnalysisAttachment():
 
     def __call__(self):
         form = self.request.form
-        plone.protect.CheckAuthenticator(self.request.form)
+        CheckAuthenticator(self.request.form)
         attachment_uid = form.get('attachment_uid', None)
         if not attachment_uid:
             return "error"

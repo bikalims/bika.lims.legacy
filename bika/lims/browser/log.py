@@ -1,26 +1,27 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl.SecurityManagement import newSecurityManager
-from Acquisition import aq_inner, aq_parent
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.utils import to_utf8
-from DateTime import DateTime
 from operator import itemgetter
-from plone.app.layout.globals.interfaces import IViewView
-from plone.app.layout.viewlets.content import ContentHistoryView, ContentHistoryViewlet
+
+from Acquisition import aq_inner
+from DateTime import DateTime
 from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFPlone.utils import safe_unicode
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.layout.globals.interfaces import IViewView
+from plone.app.layout.viewlets.content import ContentHistoryViewlet
 from zope.interface import implements
 from zope.publisher.browser import TestRequest
-import json
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.utils import t
+from bika.lims.utils import to_utf8
 
 
 class LogView(BikaListingView):

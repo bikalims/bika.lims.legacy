@@ -1,19 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.config import PROJECTNAME, ManageSuppliers
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.content.organisation import Organisation
-from bika.lims.interfaces import ISupplier
 from Products.Archetypes.public import *
-from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.organisation import Organisation
+from bika.lims.interfaces import ISupplier
+from bika.lims.permissions import ManageSuppliers
 
 schema = Organisation.schema.copy() + ManagedSchema((
     TextField('Remarks',

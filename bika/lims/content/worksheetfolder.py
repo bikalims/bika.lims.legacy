@@ -1,21 +1,21 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """WorksheetFolder is a container for Worksheet instances.
 """
+
+from AccessControl import ClassSecurityInfo
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import getToolByName
+from plone.app.folder import folder
+from zope.interface import implements
+
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IWorksheetFolder, IHaveNoBreadCrumbs
-from plone.app.folder import folder
-from AccessControl import ClassSecurityInfo
-from zope.interface import implements
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 
 schema = folder.ATFolderSchema.copy()
 schema['id'].widget.visible = {'edit':'hidden', 'view': 'invisible'}

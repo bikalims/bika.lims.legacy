@@ -1,36 +1,33 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFPlone.utils import safe_unicode
-from bika.lims import bikaMessageFactory as _, logger
-from bika.lims.utils import t
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.content.instrumentmaintenancetask import InstrumentMaintenanceTaskStatuses as mstatus
-from bika.lims.subscribers import doActionFor, skip
-from operator import itemgetter
-from plone.app.content.browser.interfaces import IFolderContentsView
-from plone.app.layout.globals.interfaces import IViewView
-from plone.app.layout.viewlets import ViewletBase
-from zope.interface import implements
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.config import QCANALYSIS_TYPES
-from bika.lims.utils import to_utf8
-from bika.lims.permissions import *
-from operator import itemgetter
-from bika.lims.browser import BrowserView
-from bika.lims.browser.analyses import AnalysesView
-from bika.lims.browser.multifile import MultifileView
-from bika.lims.browser.analyses import QCAnalysesView
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zExceptions import Forbidden
+import json
+from decimal import Decimal, InvalidOperation
 from operator import itemgetter
 
 import plone
-import json
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.app.layout.globals.interfaces import IViewView
+from plone.app.layout.viewlets import ViewletBase
+from zExceptions import Forbidden
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _, logger
+from bika.lims.browser import BrowserView
+from bika.lims.browser.analyses import AnalysesView
+from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.browser.multifile import MultifileView
+from bika.lims.config import QCANALYSIS_TYPES
+from bika.lims.content.instrumentmaintenancetask import InstrumentMaintenanceTaskStatuses as mstatus
+from bika.lims.utils import t, JSONEncoder
+
 
 class InstrumentMaintenanceView(BikaListingView):
     implements(IFolderContentsView, IViewView)
@@ -463,11 +460,11 @@ class InstrumentReferenceAnalysesView(AnalysesView):
             if uid in rr:
                 specs = rr[uid];
                 try:
-                    smin  = float(specs.get('min', 0))
-                    smax = float(specs.get('max', 0))
-                    error  = float(specs.get('error', 0))
-                    target = float(specs.get('result', 0))
-                    result = float(items[i]['Result'])
+                    smin  = Decimal(specs.get('min', 0))
+                    smax = Decimal(specs.get('max', 0))
+                    error  = Decimal(specs.get('error', 0))
+                    target = Decimal(specs.get('result', 0))
+                    result = Decimal(items[i]['Result'])
                     error_amount = ((target / 100) * error) if target > 0 else 0
                     upper  = smax + error_amount
                     lower   = smin - error_amount
@@ -486,13 +483,13 @@ class InstrumentReferenceAnalysesView(AnalysesView):
                     anrows.append(anrow);
                     trows[qcid] = anrows;
                     self.anjson[serviceref] = trows
-                except:
+                except (TypeError, ValueError, InvalidOperation):
                     pass
 
         return items
 
     def get_analyses_json(self):
-        return json.dumps(self.anjson)
+        return json.dumps(self.anjson, cls=JSONEncoder)
 
 
 class InstrumentCertificationsViewView(BrowserView):
@@ -650,7 +647,7 @@ class ajaxGetInstrumentMethods(BrowserView):
                     "uid": method.UID(),
                     "title": method.Title(),
                 })
-        return json.dumps(out)
+        return json.dumps(out, cls=JSONEncoder)
 
 
 class InstrumentQCFailuresViewlet(ViewletBase):

@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """
@@ -8,23 +10,22 @@
     ARTemplate includes all AR fields, including preset AnalysisProfile
 """
 
+import sys
+
 from AccessControl import ClassSecurityInfo
+from Products.ATExtensions.field.records import RecordsField
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.CMFCore.permissions import View, ModifyPortalContent
-from Products.ATExtensions.field.records import RecordsField
 from Products.CMFCore.utils import getToolByName
-from bika.lims import PMF, bikaMessageFactory as _
-from bika.lims.interfaces import IARTemplate
-from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
-from bika.lims.browser.widgets import ARTemplatePartitionsWidget
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import ARTemplateAnalysesWidget
-from bika.lims.browser.widgets import RecordsWidget
+from bika.lims.browser.widgets import ARTemplatePartitionsWidget
 from bika.lims.browser.widgets import ReferenceWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from zope.interface import Interface, implements
-import sys
+from bika.lims.interfaces import IARTemplate
 
 schema = BikaSchema.copy() + Schema((
     ## SamplePoint and SampleType references are managed with

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,11 +7,12 @@
 
 """ Thermo Scientific 'Gallery 9861x'
 """
+import json
+import traceback
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from . import ThermoGalleryImporter, ThermoGalleryTSVParser
-import json
-import traceback
 
 title = "Thermo Scientific - Gallery 9861x"
 

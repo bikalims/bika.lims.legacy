@@ -3,18 +3,19 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import json
+
+import transaction
+from DateTime import DateTime
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+
+from bika.lims.barcode import barcode_entry
 from bika.lims.testing import BIKA_SIMPLE_FIXTURE
 from bika.lims.tests.base import BikaFunctionalTestCase
 from bika.lims.utils import tmpID, changeWorkflowState
-from plone.app.testing import login
-from plone.app.testing import TEST_USER_NAME
-from Products.CMFCore.utils import getToolByName
-from bika.lims.barcode import barcode_entry
-from DateTime import DateTime
-
-import json
-import transaction
 
 try:
     import unittest2 as unittest

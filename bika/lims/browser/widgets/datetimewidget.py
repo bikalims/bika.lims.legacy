@@ -1,12 +1,15 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.Widget import TypesWidget
-from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Registry import registerPropertyType
+from Products.Archetypes.Registry import registerWidget
+from Products.Archetypes.Widget import TypesWidget
+
 from bika.lims.browser import ulocalized_time as ut
 
 

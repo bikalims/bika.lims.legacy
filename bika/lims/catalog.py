@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -9,10 +11,11 @@ from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.CatalogTool import CatalogTool
 from Products.ZCatalog.ZCatalog import ZCatalog
-from bika.lims.interfaces import IBikaCatalog
-from bika.lims.interfaces import IBikaAnalysisCatalog
-from bika.lims.interfaces import IBikaSetupCatalog
 from zope.interface import implements
+
+from bika.lims.interfaces import IBikaAnalysisCatalog
+from bika.lims.interfaces import IBikaCatalog
+from bika.lims.interfaces import IBikaSetupCatalog
 
 
 def getCatalog(instance, field='UID'):

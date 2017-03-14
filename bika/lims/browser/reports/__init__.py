@@ -5,27 +5,28 @@
 
 import json
 
+import os
+import plone
+from DateTime import DateTime
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.layout.globals.interfaces import IViewView
+from zope.component import getAdapters
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import isAttributeHidden
 from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.browser.reports.selection_macros import SelectionMacrosView
-from bika.lims.utils import createPdf
-from bika.lims.utils import getUsers, logged_in_client
-from bika.lims.utils import to_unicode as _u
-from bika.lims.utils import to_utf8 as _c
+from bika.lims.interfaces import IAdministrationReport
 from bika.lims.interfaces import IProductivityReport
 from bika.lims.interfaces import IQualityControlReport
-from bika.lims.interfaces import IAdministrationReport
-from DateTime import DateTime
-from plone.app.layout.globals.interfaces import IViewView
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getAdapters
-from zope.interface import implements
-import os
-import plone
+from bika.lims.utils import createPdf, JSONEncoder
+from bika.lims.utils import getUsers, logged_in_client
+from bika.lims.utils import isAttributeHidden
+from bika.lims.utils import to_unicode as _u
+from bika.lims.utils import to_utf8 as _c
 
 
 class ProductivityView(BrowserView):

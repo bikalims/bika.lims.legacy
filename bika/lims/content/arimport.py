@@ -1,28 +1,19 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
 import csv
+import sys
+from zope import event
+
+import transaction
+from AccessControl import ClassSecurityInfo
 from DateTime.DateTime import DateTime
-from Products.Archetypes.event import ObjectInitializedEvent
-from Products.CMFCore.WorkflowCore import WorkflowException
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser import ulocalized_time
-from bika.lims.config import PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.content.analysisrequest import schema as ar_schema
-from bika.lims.content.sample import schema as sample_schema
-from bika.lims.idserver import renameAfterCreation
-from bika.lims.interfaces import IARImport, IClient
-from bika.lims.utils import tmpID
-from bika.lims.vocabularies import CatalogVocabulary
-from collective.progressbar.events import InitialiseProgressBar
-from collective.progressbar.events import ProgressBar
-from collective.progressbar.events import ProgressState
-from collective.progressbar.events import UpdateProgressEvent
 from Products.Archetypes import atapi
+from Products.Archetypes.event import ObjectInitializedEvent
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.Archetypes.utils import addStatusMessage
@@ -35,15 +26,25 @@ from Products.DataGridField import DataGridWidget
 from Products.DataGridField import DateColumn
 from Products.DataGridField import LinesColumn
 from Products.DataGridField import SelectColumn
-from zope import event
+from collective.progressbar.events import InitialiseProgressBar
+from collective.progressbar.events import ProgressBar
+from collective.progressbar.events import ProgressState
+from collective.progressbar.events import UpdateProgressEvent
 from zope.event import notify
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implements
 
-from bika.lims.browser.widgets import ReferenceWidget as bReferenceWidget
-
-import sys
-import transaction
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import ulocalized_time
+from bika.lims.browser.widgets import ReferenceWidget
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.analysisrequest import schema as ar_schema
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.content.sample import schema as sample_schema
+from bika.lims.idserver import renameAfterCreation
+from bika.lims.interfaces import IARImport, IClient
+from bika.lims.utils import tmpID
+from bika.lims.vocabularies import CatalogVocabulary
 
 _p = MessageFactory(u"plone")
 
@@ -126,7 +127,7 @@ Batch = ReferenceField(
     'Batch',
     allowed_types=('Batch',),
     relationship='ARImportBatch',
-    widget=bReferenceWidget(
+    widget=ReferenceWidget(
         label=_('Batch'),
         visible=True,
         catalog_name='bika_catalog',

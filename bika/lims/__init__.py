@@ -1,16 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import warnings
 import pkg_resources
+import warnings
+
 __version__ = pkg_resources.get_distribution("bika.lims").version
 
 # import this to create messages in the bika domain.
 from zope.i18nmessageid import MessageFactory
 bikaMessageFactory = MessageFactory('bika')
 _ = MessageFactory('bika.lims')
+# noinspection PyUnresolvedReferences
 from Products.Archetypes import PloneMessageFactory as PMF
 
 # import this to log messages
@@ -21,13 +25,19 @@ from bika.lims.validators import *
 from bika.lims.config import *
 from bika.lims.permissions import *
 
+# noinspection PyUnresolvedReferences
 from AccessControl import ModuleSecurityInfo, allow_module
 from Products.Archetypes.atapi import process_types, listTypes
+# noinspection PyUnresolvedReferences
 from Products.CMFCore import utils
+# noinspection PyUnresolvedReferences
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.CMFCore.utils import ContentInit, ToolInit, getToolByName
+# noinspection PyUnresolvedReferences
 from Products.CMFPlone import PloneMessageFactory
+# noinspection PyUnresolvedReferences
 from Products.CMFPlone.interfaces import IPloneSiteRoot
+# noinspection PyUnresolvedReferences
 from Products.GenericSetup import EXTENSION, profile_registry
 
 allow_module('AccessControl')

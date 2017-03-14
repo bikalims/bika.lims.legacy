@@ -1,20 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser import BrowserView
-from DateTime import DateTime
-from AccessControl import getSecurityManager
-from AccessControl import ClassSecurityInfo
-from Products.CMFCore.utils import getToolByName
-from Products.Archetypes.Widget import TextAreaWidget
-from Products.Archetypes.Registry import registerWidget
 import plone
+from AccessControl import getSecurityManager
+from DateTime import DateTime
+from plone.intelligenttext.transforms \
+    import convertWebIntelligentPlainTextToHtml
 
-from plone.intelligenttext.transforms import \
-     convertWebIntelligentPlainTextToHtml, \
-     convertHtmlToWebIntelligentPlainText
+from bika.lims.browser import BrowserView
+
 
 class ajaxSetRemarks(BrowserView):
     """ Modify Remarks field and return new rendered field value

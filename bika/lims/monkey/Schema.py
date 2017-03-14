@@ -1,5 +1,5 @@
-# -*- coding:utf-8 -*-
-
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -7,9 +7,9 @@
 
 from Products.Archetypes.mimetype_utils import getDefaultContentType
 from Products.Archetypes.utils import shasattr, mapply
-from bika.lims.interfaces import IAcquireFieldDefaults
-
 from zope.component import getAdapters
+
+from bika.lims.interfaces import IAcquireFieldDefaults
 
 _marker = []
 

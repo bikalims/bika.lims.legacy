@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,10 +7,13 @@
 
 """ PANalytical - Omnia Axios XRF
 """
-from bika.lims import bikaMessageFactory as _, t
-from . import AxiosXrfImporter, AxiosXrfCSVParser, AxiosXrfCSVMultiParser
 import json
 import traceback
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.utils import t
+
+from . import AxiosXrfImporter, AxiosXrfCSVParser, AxiosXrfCSVMultiParser
 
 title = "PANalytical - Omnia - Axios XRF"
 

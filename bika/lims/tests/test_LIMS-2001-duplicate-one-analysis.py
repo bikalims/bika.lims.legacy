@@ -6,17 +6,15 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 
-from bika.lims.content.analysis import Analysis
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import _createObjectByType
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login, logout
+
 from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
 from bika.lims.tests.base import BikaFunctionalTestCase
 from bika.lims.utils import tmpID
 from bika.lims.utils.analysisrequest import create_analysisrequest
-from bika.lims.workflow import doActionFor
-from plone.app.testing import login, logout
-from plone.app.testing import TEST_USER_NAME
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import _createObjectByType
-import unittest
 
 try:
     import unittest2 as unittest

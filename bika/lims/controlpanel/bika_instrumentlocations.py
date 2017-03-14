@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
+#
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from zope.interface import implements
-
+from Products.ATContentTypes.content import schemata
+from Products.Archetypes import atapi
+from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.app.folder.folder import ATFolder
 from plone.app.folder.folder import ATFolderSchema
 from plone.app.layout.globals.interfaces import IViewView
-from plone.app.content.browser.interfaces import IFolderContentsView
+from zope.interface import implements
 
-from Products.Archetypes import atapi
-from Products.ATContentTypes.content import schemata
-
-from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
-from bika.lims.interfaces import IInstrumentLocations
 from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.config import PROJECTNAME
+from bika.lims.interfaces import IInstrumentLocations
 
 
 class InstrumentLocationsView(BikaListingView):

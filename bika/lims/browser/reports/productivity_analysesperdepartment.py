@@ -1,15 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from decimal import Decimal
+
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.layout.globals.interfaces import IViewView
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.browser.reports.selection_macros import SelectionMacrosView
-from plone.app.layout.globals.interfaces import IViewView
-from zope.interface import implements
 
 
 class Report(BrowserView):
@@ -113,15 +118,17 @@ class Report(BrowserView):
                 groupperformedcount += 1
                 totalperformedcount += 1
 
-            group_performedrequested_ratio = float(groupperformedcount) / float(
-                grouptotalcount)
-            group_publishedperformed_ratio = groupperformedcount > 0 and float(
-                grouppublishedcount) / float(groupperformedcount) or 0
+            group_performedrequested_ratio = \
+                Decimal(groupperformedcount) / Decimal(grouptotalcount)
+            group_publishedperformed_ratio = \
+                Decimal(grouppublishedcount) / Decimal(groupperformedcount) \
+                    if groupperformedcount > 0 else 0
 
-            anl_performedrequested_ratio = float(deptperformedcount) / float(
-                depttotalcount)
-            anl_publishedperformed_ratio = deptperformedcount > 0 and float(
-                deptpubishedcount) / float(deptperformedcount) or 0
+            anl_performedrequested_ratio = \
+                Decimal(deptperformedcount) / Decimal(depttotalcount)
+            anl_publishedperformed_ratio = \
+                Decimal(deptpubishedcount) / Decimal(deptperformedcount) \
+                    if deptperformedcount > 0 else 0
 
             dataline['Requested'] = grouptotalcount
             dataline['Performed'] = groupperformedcount
@@ -147,10 +154,11 @@ class Report(BrowserView):
             datalines[group] = dataline
 
         # Footer total data
-        total_performedrequested_ratio = float(totalperformedcount) / float(
-            totalcount)
-        total_publishedperformed_ratio = totalperformedcount > 0 and float(
-            totalpublishedcount) / float(totalperformedcount) or 0
+        total_performedrequested_ratio = \
+            Decimal(totalperformedcount) / Decimal(totalcount)
+        total_publishedperformed_ratio = \
+            Decimal(totalpublishedcount) / Decimal(totalperformedcount) \
+                if totalperformedcount > 0 else 0
 
         footline = {'Requested': totalcount,
                     'Performed': totalperformedcount,

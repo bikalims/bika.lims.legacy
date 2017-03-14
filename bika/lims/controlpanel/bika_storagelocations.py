@@ -1,30 +1,29 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
+import json
+
+import plone
 from Products.ATContentTypes.content import schemata
+from Products.Archetypes import PloneMessageFactory as _p
 from Products.Archetypes import atapi
-from Products.Archetypes.ArchetypeTool import registerType
-from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.app.folder.folder import ATFolder, ATFolderSchema
+from plone.app.layout.globals.interfaces import IViewView
+from zope.interface.declarations import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import PROJECTNAME
-from plone.app.layout.globals.interfaces import IViewView
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from Products.Archetypes import PloneMessageFactory as _p
 from bika.lims.interfaces import IStorageLocations
-from bika.lims.content.bikaschema import BikaFolderSchema
-from plone.app.content.browser.interfaces import IFolderContentsView
-from plone.app.folder.folder import ATFolder, ATFolderSchema
-from zope.interface.declarations import implements
-from Products.CMFCore.utils import getToolByName
-import json
-import plone
+
 
 class StorageLocationsView(BikaListingView):
     implements(IFolderContentsView, IViewView)

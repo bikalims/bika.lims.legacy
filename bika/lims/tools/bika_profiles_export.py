@@ -1,19 +1,23 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import csv
+from cStringIO import StringIO
+
 from AccessControl import ClassSecurityInfo
 from App.class_init import InitializeClass
-from Products.Archetypes.config import REFERENCE_CATALOG
 from OFS.SimpleItem import SimpleItem
+from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore import permissions
 from Products.CMFCore.utils import UniqueObject, getToolByName
-from bika.lims.tools import ToolFolder
-from cStringIO import StringIO
-import csv
-from bika.lims.interfaces.tools import Ibika_profiles_export
 from zope.interface import implements
+
+from bika.lims.interfaces.tools import Ibika_profiles_export
+
 
 class bika_profiles_export(UniqueObject, SimpleItem):
     """ ProfilesExportTool """

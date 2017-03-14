@@ -2,17 +2,15 @@
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+from decimal import Decimal
 
-from bika.lims import logger
-from bika.lims.content.analysis import Analysis
+from Products.CMFCore.utils import getToolByName
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import login
+
 from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
 from bika.lims.tests.base import BikaFunctionalTestCase
 from bika.lims.utils.analysisrequest import create_analysisrequest
-from bika.lims.workflow import doActionFor
-from plone.app.testing import login, logout
-from plone.app.testing import TEST_USER_NAME
-from Products.CMFCore.utils import getToolByName
-import unittest
 
 try:
     import unittest2 as unittest
@@ -329,7 +327,7 @@ class TestCalculations(BikaFunctionalTestCase):
                         or an.isUpperDetectionLimit():
                         operator = an.getDetectionLimitOperand()
                         strres = f['analyses'][key].replace(operator, '')
-                        self.assertEqual(an.getResult(), str(float(strres)))
+                        self.assertEqual(an.getResult(), str(Decimal(strres)))
                     else:
                         self.assertEqual(an.getResult(), f['analyses'][key])
                 elif key == self.calcservice.getKeyword():
@@ -340,7 +338,7 @@ class TestCalculations(BikaFunctionalTestCase):
                 intermap = []
                 for i in interims:
                     if i['keyword'] in f['interims']:
-                        ival = float(f['interims'][i['keyword']])
+                        ival = Decimal(f['interims'][i['keyword']])
                         intermap.append({'keyword': i['keyword'],
                                         'value': ival,
                                         'title': i['title'],
@@ -354,7 +352,7 @@ class TestCalculations(BikaFunctionalTestCase):
 
             # Let's go.. calculate and check result
             calcanalysis.calculateResult(override=True, cascade=True)
-            self.assertEqual(float(calcanalysis.getResult()), float(f['exresult']))
+            self.assertEqual(Decimal(calcanalysis.getResult()), Decimal(f['exresult']))
 
     def test_calculation_fixed_precision(self):
         # Input results
@@ -402,7 +400,7 @@ class TestCalculations(BikaFunctionalTestCase):
                             or an.isUpperDetectionLimit():
                             operator = an.getDetectionLimitOperand()
                             strres = f['analyses'][key].replace(operator, '')
-                            self.assertEqual(an.getResult(), str(float(strres)))
+                            self.assertEqual(an.getResult(), str(Decimal(strres)))
                         else:
                             # The analysis' results have to be always strings
                             self.assertEqual(an.getResult(), str(f['analyses'][key]))
@@ -414,7 +412,7 @@ class TestCalculations(BikaFunctionalTestCase):
                     intermap = []
                     for i in interims:
                         if i['keyword'] in f['interims']:
-                            ival = float(f['interims'][i['keyword']])
+                            ival = Decimal(f['interims'][i['keyword']])
                             intermap.append({'keyword': i['keyword'],
                                             'value': ival,
                                             'title': i['title'],
@@ -478,7 +476,7 @@ class TestCalculations(BikaFunctionalTestCase):
                             or an.isUpperDetectionLimit():
                             operator = an.getDetectionLimitOperand()
                             strres = f['analyses'][key].replace(operator, '')
-                            self.assertEqual(an.getResult(), str(float(strres)))
+                            self.assertEqual(an.getResult(), str(Decimal(strres)))
                         else:
                             # The analysis' results have to be always strings
                             self.assertEqual(an.getResult(), str(f['analyses'][key]))
@@ -490,7 +488,7 @@ class TestCalculations(BikaFunctionalTestCase):
                     intermap = []
                     for i in interims:
                         if i['keyword'] in f['interims']:
-                            ival = float(f['interims'][i['keyword']])
+                            ival = Decimal(f['interims'][i['keyword']])
                             intermap.append({'keyword': i['keyword'],
                                             'value': ival,
                                             'title': i['title'],

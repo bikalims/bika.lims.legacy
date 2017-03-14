@@ -1,23 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.config import ManageInvoices, ManageBika, PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IInvoice
-from DateTime import DateTime
+import sys
 from decimal import Decimal
-from persistent.mapping import PersistentMapping
-from Products.Archetypes.public import *
+
+from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
 from Products.ATExtensions.ateapi import DateTimeField, DateTimeWidget
+from Products.Archetypes.public import *
 from Products.CMFCore.permissions import View
 from Products.CMFPlone.utils import safe_unicode
+from persistent.mapping import PersistentMapping
 from zope.interface import implements
-import sys
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import IInvoice
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField('Client',
@@ -121,7 +124,7 @@ class Invoice(BaseFolder):
 
     def getSubtotal(self):
         """ Compute Subtotal """
-        return sum([float(obj['Subtotal']) for obj in self.invoice_lineitems])
+        return sum([Decimal(obj['Subtotal']) for obj in self.invoice_lineitems])
 
     security.declareProtected(View, 'getVATAmount')
 
@@ -133,7 +136,7 @@ class Invoice(BaseFolder):
 
     def getTotal(self):
         """ Compute Total """
-        return sum([float(obj['Total']) for obj in self.invoice_lineitems])
+        return sum([Decimal(obj['Total']) for obj in self.invoice_lineitems])
 
     security.declareProtected(View, 'getInvoiceSearchableText')
 

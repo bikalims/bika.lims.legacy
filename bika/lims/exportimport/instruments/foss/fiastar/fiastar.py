@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,18 +7,20 @@
 
 """ FOSS FIAStar
 """
-from bika.lims.browser import BrowserView
+import csv
+import json
+import traceback
+from cStringIO import StringIO
+
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from zope.component import getUtility
+
 from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
 from bika.lims.utils import t
 from . import FOSSFIAStarCSVParser, FOSSFIAStarImporter
-from cStringIO import StringIO
-import json
-import traceback
-import csv
 
 title = "FOSS - FIAStar"
 

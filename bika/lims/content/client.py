@@ -1,28 +1,32 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """Client - the main organisational entity in bika.
 """
+
+import sys
+
 from AccessControl import ClassSecurityInfo
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
 from Products.Archetypes.utils import DisplayList
-from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import PMF, bikaMessageFactory as _
-from bika.lims import interfaces
-from bika.lims.config import *
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import ARIMPORT_OPTIONS
+from bika.lims.config import DECIMAL_MARKS
+from bika.lims.config import DEFAULT_AR_SPECS
+from bika.lims.config import EMAIL_SUBJECT_OPTIONS
+from bika.lims.config import PROJECTNAME
 from bika.lims.content.organisation import Organisation
 from bika.lims.interfaces import IClient
-from bika.lims.utils import isActive
-from zope.component import getUtility
-from zope.interface import implements
-from zope.interface.declarations import alsoProvides
-import json
-import sys
+from bika.lims.permissions import ManageClients
 from bika.lims.workflow import getCurrentState, StateFlow, InactiveState
 
 schema = Organisation.schema.copy() + atapi.Schema((

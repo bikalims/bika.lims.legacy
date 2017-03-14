@@ -1,15 +1,16 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser import BrowserView
-from plone.app.textfield import RichTextValue
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.CMFPlone import PloneMessageFactory
-from Products.CMFCore.utils import getToolByName
 import plone
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.textfield import RichTextValue
+
+from bika.lims.browser import BrowserView
 
 
 class ARResultsInterpretationView(BrowserView):

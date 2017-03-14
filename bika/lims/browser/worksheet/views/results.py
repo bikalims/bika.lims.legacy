@@ -1,28 +1,26 @@
 # coding=utf-8
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from plone.app.layout.globals.interfaces import IViewView
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import DisplayList
-from Products.CMFPlone.i18nl10n import ulocalized_time
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.utils import safe_unicode
-from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
 
 from bika.lims import bikaMessageFactory as _
-from bika.lims.config import WORKSHEET_LAYOUT_OPTIONS
-from bika.lims.utils import t
 from bika.lims.browser import BrowserView
 from bika.lims.browser.worksheet.tools import checkUserAccess
 from bika.lims.browser.worksheet.tools import showRejectionMessage
 from bika.lims.browser.worksheet.views import AnalysesTransposedView
 from bika.lims.browser.worksheet.views import AnalysesView
+from bika.lims.config import WORKSHEET_LAYOUT_OPTIONS
 from bika.lims.utils import getUsers, tmpID
 
 

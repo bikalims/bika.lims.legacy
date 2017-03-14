@@ -1,39 +1,43 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 
 """ReferenceAnalysis
 """
-from Products.CMFCore.WorkflowCore import WorkflowException
-from bika.lims.workflow import getTransitionActor
+
+from decimal import Decimal
+from decimal import InvalidOperation
 from plone import api
+
 from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
+from Products.ATExtensions.ateapi import DateTimeField
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.Archetypes.public import *
+from Products.Archetypes.references import HoldingReference
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from plone.app.blob.field import BlobField
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, formatDecimalMark
-from bika.lims.utils.analysis import format_numeric_result
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.fields import InterimFieldsField
-from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
+from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.config import STD_TYPES, PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IReferenceAnalysis
 from bika.lims.permissions import Verify as VerifyPermission
-from bika.lims.subscribers import skip
+from bika.lims.utils import formatDecimalMark
+from bika.lims.utils.analysis import format_numeric_result
 from bika.lims.utils.analysis import get_significant_digits
-from DateTime import DateTime
-from plone.app.blob.field import BlobField
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.Archetypes.public import *
-from Products.Archetypes.references import HoldingReference
-from Products.ATExtensions.ateapi import DateTimeField
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from zope.interface import implements
-
+from bika.lims.workflow import getTransitionActor
+from bika.lims.workflow import skip
 
 schema = BikaSchema.copy() + Schema((
     StringField('ReferenceType',
@@ -53,7 +57,7 @@ schema = BikaSchema.copy() + Schema((
         )
     ),
     InterimFieldsField('InterimFields',
-        widget=BikaRecordsWidget(
+        widget=RecordsWidget(
             label=_("Calculation Interim Fields"),
         )
     ),
@@ -211,9 +215,9 @@ class ReferenceAnalysis(BaseContent):
         schu = self.Schema().getField('Uncertainty').get(self)
         if schu and serv.getAllowManualUncertainty() == True:
             try:
-                schu = float(schu)
+                schu = Decimal(schu)
                 return schu
-            except ValueError:
+            except (TypeError, ValueError, InvalidOperation):
                 # if uncertainty is not a number, return default value
                 return self.getDefaultUncertainty(result)
         return self.getDefaultUncertainty(result)
@@ -360,8 +364,8 @@ class ReferenceAnalysis(BaseContent):
 
         # 1. If the result is not floatable, return it without being formatted
         try:
-            result = float(result)
-        except:
+            result = Decimal(result)
+        except (TypeError, ValueError, InvalidOperation):
             return result
 
         # 2. If the analysis specs has enabled hidemin or hidemax and the
@@ -374,13 +378,13 @@ class ReferenceAnalysis(BaseContent):
         hidemin = specs.get('hidemin', '')
         hidemax = specs.get('hidemax', '')
         try:
-            belowmin = hidemin and result < float(hidemin) or False
-        except:
+            belowmin = hidemin and result < Decimal(hidemin) or False
+        except (TypeError, ValueError, InvalidOperation):
             belowmin = False
             pass
         try:
-            abovemax = hidemax and result > float(hidemax) or False
-        except:
+            abovemax = hidemax and result > Decimal(hidemax) or False
+        except (TypeError, ValueError, InvalidOperation):
             abovemax = False
             pass
 

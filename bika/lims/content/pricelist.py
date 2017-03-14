@@ -1,25 +1,24 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from decimal import Decimal
+
 from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
+from Products.Archetypes.public import *
+from Products.CMFCore import permissions
+from persistent.mapping import PersistentMapping
+from plone.app.folder import folder
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.browser.widgets.datetimewidget import DateTimeWidget
 from bika.lims.config import PRICELIST_TYPES, PROJECTNAME
 from bika.lims.content.bikaschema import BikaFolderSchema
 from bika.lims.interfaces import IPricelist
-from DateTime import DateTime
-from persistent.mapping import PersistentMapping
-from plone.app.folder import folder
-from Products.Archetypes.public import *
-from Products.CMFCore import permissions
-from zope.interface import implements
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore import permissions
-
-
 
 schema = BikaFolderSchema.copy() + Schema((
     StringField('Type',
@@ -80,11 +79,11 @@ Field.widget.visible = True
 
 
 def apply_discount(price=None, discount=None):
-    return float(price) - (float(price) * float(discount)) / 100
+    return Decimal(price) - (Decimal(price) * Decimal(discount)) / 100
 
 
 def get_vat_amount(price, vat_perc):
-    return float(price) * float(vat_perc) / 100
+    return Decimal(price) * Decimal(vat_perc) / 100
 
 
 class PricelistLineItem(PersistentMapping):
@@ -144,8 +143,8 @@ def ObjectModifiedEventHandler(instance, event):
                     itemTitle = obj.Title()
                 cat = None
                 if obj.getPrice():
-                    price = float(obj.getPrice())
-                    totalprice = float(obj.getTotalPrice())
+                    price = Decimal(obj.getPrice())
+                    totalprice = Decimal(obj.getTotalPrice())
                     vat = totalprice - price
                 else:
                     price = 0
@@ -162,18 +161,18 @@ def ObjectModifiedEventHandler(instance, event):
                 #
                 cat = obj.getCategoryTitle()
                 if instance.getBulkDiscount():
-                        price = float(obj.getBulkPrice())
+                        price = Decimal(obj.getBulkPrice())
                         vat = get_vat_amount(price, obj.getVAT())
                         totalprice = price + vat
                 else:
                     if instance.getBulkPrice():
                         discount = instance.getBulkPrice()
-                        price = float(obj.getPrice())
+                        price = Decimal(obj.getPrice())
                         price = apply_discount(price, discount)
                         vat = get_vat_amount(price, obj.getVAT())
                         totalprice = price + vat
                     elif obj.getPrice():
-                        price = float(obj.getPrice())
+                        price = Decimal(obj.getPrice())
                         vat = get_vat_amount(price, obj.getVAT())
                         totalprice = price + vat
                     else:

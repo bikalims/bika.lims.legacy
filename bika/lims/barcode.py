@@ -1,16 +1,19 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFCore.utils import getToolByName
+import json
+
+import plone.protect
 from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
 
 from bika.lims.browser import BrowserView
 from bika.lims.permissions import EditResults
-
-import json
-import plone.protect
+from bika.lims.utils import JSONEncoder
 
 
 class barcode_entry(BrowserView):
@@ -66,7 +69,7 @@ class barcode_entry(BrowserView):
     def return_json(self, value):
         output = json.dumps(value)
         self.request.RESPONSE.setHeader('Content-Type', 'application/json')
-        self.request.RESPONSE.write(json.dumps(output))
+        self.request.RESPONSE.write(json.dumps(output, cls=JSONEncoder))
         return output
 
     def handle_AnalysisRequest(self, instance):

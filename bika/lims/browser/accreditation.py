@@ -1,17 +1,17 @@
-# encoding=utf-8
-
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims.controlpanel.bika_analysisservices import AnalysisServicesView
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from plone.app.content.browser.interfaces import IFolderContentsView
 from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.controlpanel.bika_analysisservices import AnalysisServicesView
+from bika.lims.utils import t
 
 
 class AccreditationView(AnalysisServicesView):
@@ -23,8 +23,7 @@ class AccreditationView(AnalysisServicesView):
 
     >>> browser = layer['getBrowser'](portal)
     >>> browser.open(portal_url+"/accreditation")
-    >>> 'SAI is the' in browser.contents
-    True
+    >>> 'SAI is the' in browser.contents True
 
     """
     implements(IFolderContentsView)

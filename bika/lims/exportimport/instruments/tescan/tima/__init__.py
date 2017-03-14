@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,11 +7,11 @@
 
 """ Tescan TIMA
 """
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
+from datetime import datetime
+
 from bika.lims.exportimport.instruments.resultsimport import \
     InstrumentCSVResultsFileParser, AnalysisResultsImporter
-from datetime import datetime
+
 
 class TimaCSVParser(InstrumentCSVResultsFileParser):
 

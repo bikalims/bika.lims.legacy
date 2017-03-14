@@ -1,6 +1,13 @@
-from bika.lims import bikaMessageFactory as _, PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IHaveIdentifiers
+# -*- coding: utf-8 -*-
+#
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+"""Types of IDs that can be assigned to objects.  These IDs are indexed, so
+they can be used in object lookup.
+"""
 
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes import listTypes
@@ -11,7 +18,10 @@ from Products.Archetypes.public import BaseContent
 from Products.Archetypes.public import registerType
 from Products.CMFCore.utils import getToolByName
 
-from ZODB.POSException import ConflictError
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import IHaveIdentifiers
 
 # class IdentifierTypeAttributesField(RecordsField):
 #     """Keeps a list of possible attributes for an identifier of this type

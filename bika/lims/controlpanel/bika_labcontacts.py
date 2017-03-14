@@ -1,25 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl.SecurityInfo import ClassSecurityInfo
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
-from Products.Archetypes.ArchetypeTool import registerType
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import getToolByName
+from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.app.folder.folder import ATFolder, ATFolderSchema
+from plone.app.layout.globals.interfaces import IViewView
+from zope.interface.declarations import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import PROJECTNAME
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.content.bikaschema import BikaFolderSchema
-from bika.lims.content.labcontact import LabContact
-from plone.app.layout.globals.interfaces import IViewView
-from plone.app.content.browser.interfaces import IFolderContentsView
 from bika.lims.interfaces import ILabContacts
-from plone.app.folder.folder import ATFolder, ATFolderSchema
-from zope.interface.declarations import implements
+
 
 class LabContactsView(BikaListingView):
     implements(IFolderContentsView, IViewView)

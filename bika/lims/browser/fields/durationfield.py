@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -6,9 +8,8 @@
 from AccessControl import ClassSecurityInfo
 from Products.ATExtensions.ateapi import RecordField
 from Products.Archetypes.Registry import registerField
-from Products.Archetypes.public import *
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 
 
 class DurationField(RecordField):

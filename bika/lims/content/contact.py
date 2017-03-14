@@ -7,28 +7,25 @@
 
 """The contact person at an organisation.
 """
-import types
-
-from Acquisition import aq_base
-from Acquisition import aq_inner
-from Acquisition import aq_parent
-
-from AccessControl import ClassSecurityInfo
-
-from Products.Archetypes import atapi
-from Products.CMFPlone.utils import safe_unicode
-from Products.Archetypes.utils import DisplayList
 
 from plone import api
+
+import types
+from AccessControl import ClassSecurityInfo
+from Acquisition import aq_inner
+from Acquisition import aq_parent
+from Products.Archetypes import atapi
+from Products.Archetypes.utils import DisplayList
+from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implements
 
-from bika.lims.utils import isActive
-from bika.lims.interfaces import IContact
-from bika.lims.content.person import Person
-from bika.lims.config import PROJECTNAME
-from bika.lims.config import ManageClients
-from bika.lims import logger
 from bika.lims import bikaMessageFactory as _
+from bika.lims import logger
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.person import Person
+from bika.lims.interfaces import IContact
+from bika.lims.permissions import ManageClients
+from bika.lims.utils import isActive
 
 ACTIVE_STATES = ["active"]
 

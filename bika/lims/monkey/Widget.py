@@ -1,13 +1,17 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.interfaces import IATWidgetVisibility
-from types import DictType
 from plone import api
+
 from Acquisition import aq_base
+from types import DictType
 from zope.component import getAdapters
+
+from bika.lims.interfaces import IATWidgetVisibility
 
 _marker = []
 

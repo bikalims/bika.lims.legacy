@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+"""The order of imports in this file is careful to prevent ImportErrors.
+"""
 
 from .datetimewidget import DateTimeWidget
 from .durationwidget import DurationWidget

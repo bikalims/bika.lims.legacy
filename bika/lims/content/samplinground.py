@@ -1,22 +1,27 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims import _
-from plone.supermodel import model
-from plone import api
-from plone.indexer import indexer
-from zope import schema
-from plone.dexterity.content import Item
-from zope.interface import implements
-from zope.schema.vocabulary import SimpleVocabulary
-from Products.CMFCore.utils import getToolByName
-from zope.schema.interfaces import IContextSourceBinder
 from datetime import date
+from plone import api
+from zope import schema
+
+from Products.CMFCore.permissions import ModifyPortalContent, AddPortalContent
+from Products.CMFCore.utils import getToolByName
+from plone.dexterity.content import Item
+from plone.indexer import indexer
+from plone.supermodel import model
+from zope.interface import implements
+from zope.schema.interfaces import IContextSourceBinder
+from zope.schema.vocabulary import SimpleVocabulary
+
+from bika.lims import _
 from bika.lims.workflow import doActionFor
 from bika.lims.workflow import skip
-from Products.CMFCore.permissions import ModifyPortalContent, AddPortalContent
+
 
 # I implemented it here because following this example
 # (http://docs.plone.org/external/plone.app.dexterity/docs/advanced/vocabularies.html#named-vocabularies)

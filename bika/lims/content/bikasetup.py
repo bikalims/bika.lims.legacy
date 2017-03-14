@@ -8,15 +8,7 @@
 import sys
 
 from AccessControl import ClassSecurityInfo
-
-from zope.interface import implements
-from plone.app.folder import folder
-
-from Products.CMFCore.utils import getToolByName
 from Products.ATExtensions.ateapi import RecordsField
-
-from Products.Archetypes.atapi import Schema
-from Products.Archetypes.atapi import registerType
 from Products.Archetypes.atapi import BooleanField
 from Products.Archetypes.atapi import BooleanWidget
 from Products.Archetypes.atapi import DecimalWidget
@@ -27,25 +19,26 @@ from Products.Archetypes.atapi import LinesField
 from Products.Archetypes.atapi import MultiSelectionWidget
 from Products.Archetypes.atapi import ReferenceField
 from Products.Archetypes.atapi import ReferenceWidget
+from Products.Archetypes.atapi import Schema
 from Products.Archetypes.atapi import SelectionWidget
 from Products.Archetypes.atapi import StringField
 from Products.Archetypes.atapi import StringWidget
 from Products.Archetypes.atapi import TextAreaWidget
 from Products.Archetypes.atapi import TextField
+from Products.Archetypes.atapi import registerType
+from Products.Archetypes.references import HoldingReference
 from Products.Archetypes.utils import DisplayList
 from Products.Archetypes.utils import IntDisplayList
-from Products.Archetypes.references import HoldingReference
+from Products.CMFCore.utils import getToolByName
 from archetypes.referencebrowserwidget import ReferenceBrowserWidget
+from plone.app.folder import folder
+from zope.interface import implements
 
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.fields import DurationField
 from bika.lims.browser.widgets import DurationWidget
 from bika.lims.browser.widgets import RecordsWidget
 from bika.lims.browser.widgets import RejectionSetupWidget
-from bika.lims.content.bikaschema import BikaFolderSchema
-from bika.lims.interfaces import IBikaSetup
-from bika.lims.interfaces import IHaveNoBreadCrumbs
-from bika.lims.vocabularies import getStickerTemplates as _getStickerTemplates
-
 from bika.lims.config import ARIMPORT_OPTIONS
 from bika.lims.config import ATTACHMENT_OPTIONS
 from bika.lims.config import CURRENCIES
@@ -55,9 +48,11 @@ from bika.lims.config import MULTI_VERIFICATION_TYPE
 from bika.lims.config import PROJECTNAME
 from bika.lims.config import SCINOTATION_OPTIONS
 from bika.lims.config import WORKSHEET_LAYOUT_OPTIONS
+from bika.lims.content.bikaschema import BikaFolderSchema
+from bika.lims.interfaces import IBikaSetup
+from bika.lims.interfaces import IHaveNoBreadCrumbs
 from bika.lims.locales import COUNTRIES
-
-from bika.lims import bikaMessageFactory as _
+from bika.lims.vocabularies import getStickerTemplates as _getStickerTemplates
 
 
 class PrefixesField(RecordsField):

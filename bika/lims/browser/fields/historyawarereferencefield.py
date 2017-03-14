@@ -1,23 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo, Unauthorized
-from Products.ATExtensions.Extensions.utils import makeDisplayList
-from Products.ATExtensions.ateapi import RecordField, RecordsField
+from AccessControl import ClassSecurityInfo
 from Products.Archetypes.Registry import registerField
+from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.public import *
 from Products.CMFCore.utils import getToolByName
 from Products.CMFEditions.ArchivistTool import ArchivistRetrieveError
-from Products.validation import validation
-from Products.validation.validators.RegexValidator import RegexValidator
-import sys
-from Products.CMFEditions.Permissions import SaveNewVersion
-from Products.CMFEditions.Permissions import AccessPreviousVersions
-from Products.Archetypes.config import REFERENCE_CATALOG
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims import logger
 from bika.lims.utils import to_utf8
 
@@ -131,7 +126,7 @@ class HistoryAwareReferenceField(ReferenceField):
         try:
             uc = getToolByName(instance, "uid_catalog")
         except AttributeError as err:
-            logger.error("AttributeError: {0}".format(err))
+            logger.warning("AttributeError: {0}".format(err))
             return []
 
         try:

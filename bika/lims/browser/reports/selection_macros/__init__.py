@@ -4,12 +4,13 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.CMFCore.utils import getToolByName
-from zope.i18n import translate
-from bika.lims.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims.utils import getUsers
+from zope.i18n import translate
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims import PMF
+from bika.lims.browser import BrowserView
+from bika.lims.utils import getUsers
+
 
 class SelectionMacrosView(BrowserView):
     """ Display snippets for the query form, and

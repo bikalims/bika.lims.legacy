@@ -1,26 +1,27 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFCore.permissions import View
-from AccessControl import getSecurityManager
-from bika.lims.permissions import AddClient
-from bika.lims.permissions import ManageClients
-from Products.CMFCore.utils import getToolByName
-from bika.lims.permissions import ManageAnalysisRequests
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
+import json
 from operator import itemgetter
-from bika.lims.interfaces import IClientFolder
+
+import plone
+from Products.CMFCore.utils import getToolByName
 from plone.app.content.browser.interfaces import IFolderContentsView
-from bika.lims.browser import BrowserView
-from zope.interface import implements
-from Products.CMFCore import permissions
-from zope.component import getUtility
 from plone.registry.interfaces import IRegistry
-import plone,json
+from zope.component import getUtility
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.permissions import AddClient
+from bika.lims.permissions import ManageAnalysisRequests
+from bika.lims.permissions import ManageClients
+from bika.lims.utils import JSONEncoder
 
 
 class ClientFolderContentsView(BikaListingView):
@@ -183,4 +184,4 @@ class ajaxGetClients(BrowserView):
                'records': len(rows),
                'rows': rows[(int(page) - 1) * int(nr_rows): int(page) * int(nr_rows)]}
 
-        return json.dumps(ret)
+        return json.dumps(ret, cls=JSONEncoder)

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,30 +7,16 @@
 
 """ Agilent's 'Masshunter Quant'
 """
-from DateTime import DateTime
-from Products.Archetypes.event import ObjectInitializedEvent
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims import logger
-from bika.lims.browser import BrowserView
-from bika.lims.idserver import renameAfterCreation
-from bika.lims.utils import changeWorkflowState
-from bika.lims.utils import tmpID
-from cStringIO import StringIO
-from datetime import datetime
-from operator import itemgetter
-from plone.i18n.normalizer.interfaces import IIDNormalizer
-from zope.component import getUtility
-import csv
 import json
-import plone
-import zope
-import zope.event
+import traceback
+from datetime import datetime
+from decimal import Decimal
+from decimal import InvalidOperation
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.exportimport.instruments.resultsimport import InstrumentCSVResultsFileParser,\
     AnalysisResultsImporter
-import traceback
+from bika.lims.utils import t
 
 title = "Agilent - Masshunter Quantitative"
 
@@ -347,8 +335,8 @@ class MasshunterQuantCSVParser(InstrumentCSVResultsFileParser):
                 colname = self._sequencesheader[i]
                 if token and colname in self.SEQUENCETABLE_NUMERICHEADERS:
                     try:
-                        sequence[colname] = float(token)
-                    except ValueError:
+                        sequence[colname] = Decimal(token)
+                    except (TypeError, ValueError, InvalidOperation):
                         self.warn(
                             "No valid number ${token} in column ${index} (${column_name})",
                             mapping={"token": token,
@@ -436,8 +424,8 @@ class MasshunterQuantCSVParser(InstrumentCSVResultsFileParser):
                 colname = self._quantitationresultsheader[i]
                 if token and colname in self.QUANTITATIONRESULTS_NUMERICHEADERS:
                     try:
-                        quantitation[colname] = float(token)
-                    except ValueError:
+                        quantitation[colname] = Decimal(token)
+                    except (TypeError, ValueError, InvalidOperation):
                         self.warn(
                             "No valid number ${token} in column ${index} (${column_name})",
                             mapping={"token": token,

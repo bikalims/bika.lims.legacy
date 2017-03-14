@@ -1,20 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import plone, json
-
-from bika.lims.permissions import *
-
-from Acquisition import aq_parent, aq_inner
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.analysisrequest import AnalysisRequestWorkflowAction
-from bika.lims.subscribers import doActionFor
-from bika.lims.utils import isActive
+import plone
+from Acquisition import aq_inner
 from DateTime import DateTime
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.analysisrequest import AnalysisRequestWorkflowAction
+from bika.lims.permissions import *
+from bika.lims.utils import isActive
+from bika.lims.workflow import doActionFor
+
 
 class ClientWorkflowAction(AnalysisRequestWorkflowAction):
     """ This function is called to do the worflow actions

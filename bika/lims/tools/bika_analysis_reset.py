@@ -1,18 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import csv
+from decimal import InvalidOperation, Decimal
+
 from AccessControl import ClassSecurityInfo
 from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import UniqueObject, getToolByName
-from bika.lims.config import ManageAnalysisRequests
-from bika.lims.interfaces.tools import Ibika_analysis_reset
-from bika.lims.tools import ToolFolder
+from Products.CMFCore.utils import UniqueObject
 from zope.interface import implements
-import csv
+
+from bika.lims.interfaces.tools import Ibika_analysis_reset
+from bika.lims.permissions import ManageAnalysisRequests
+
 
 class bika_analysis_reset(UniqueObject, SimpleItem):
     """ AnalysisResetTool """
@@ -71,8 +75,8 @@ class bika_analysis_reset(UniqueObject, SimpleItem):
                 new_cprice = new_cprice.strip('$')
                 if new_cprice:
                     try:
-                        price = float(new_cprice)
-                    except:
+                        price = Decimal(new_cprice)
+                    except (TypeError, ValueError, InvalidOperation):
                         invalid_counter += 1
                         msgs.append('%s %s %s: bulk discount %s is not numeric - not updated' % (counter, cat, service, new_cprice))
                         continue
@@ -85,8 +89,8 @@ class bika_analysis_reset(UniqueObject, SimpleItem):
                 new_price = new_price.strip('$')
                 if new_price:
                     try:
-                        price = float(new_price)
-                    except:
+                        price = Decimal(new_price)
+                    except (TypeError, ValueError, InvalidOperation):
                         invalid_counter += 1
                         msgs.append('%s %s %s: price %s is not numeric - not updated' % (counter, cat, service, new_price))
                         continue

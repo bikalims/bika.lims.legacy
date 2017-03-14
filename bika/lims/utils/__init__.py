@@ -1,35 +1,39 @@
 # -*- coding: utf-8 -*-
-from AccessControl import getSecurityManager
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-
-from AccessControl import ModuleSecurityInfo, allow_module
-
-from bika.lims import api as api
-from bika.lims import logger
-from bika.lims.browser import BrowserView
-from DateTime import DateTime
+import tempfile
+import urllib2
+from decimal import Decimal
+from decimal import InvalidOperation
 from email import Encoders
+from time import time
+
+import os
+import re
+import types
+
+from AccessControl import getSecurityManager
+from AccessControl import ModuleSecurityInfo, allow_module
+from DateTime import DateTime
 from email.MIMEBase import MIMEBase
+from json import JSONEncoder as _baseJSONEncoder
 from plone.memoize import ram
 from plone.registry.interfaces import IRegistry
 from Products.Archetypes.public import DisplayList
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from time import time
 from weasyprint import HTML, CSS
 from zope.component import queryUtility
 from zope.i18n import translate
 from zope.i18n.locales import locales
 
-import os
-import re
-import tempfile
-import types
-import urllib2
+from bika.lims import api as api
+from bika.lims import logger
+from bika.lims.browser import BrowserView
 
 ModuleSecurityInfo('email.Utils').declarePublic('formataddr')
 allow_module('csv')
@@ -185,11 +189,11 @@ def formatDecimalMark(value, decimalmark='.'):
         ::return:: is a string with the decimal mark if needed
     """
     # We have to consider the possibility of working with decimals such as
-    # X.000 where those decimals are important because of the precission
+    # X.000 where those decimals are important because of the precision
     # and significant digits matters
-    # Using 'float' the system delete the extre desimals with 0 as a value
+    # Using 'Decimal' the system delete the extre decimals with 0 as a value
     # Example: float(2.00) -> 2.0
-    # So we have to save the decimal length, this is one reason we are usnig
+    # So we have to save the decimal length, this is one reason we are using
     # strings for results
     rawval = str(value)
     try:
@@ -347,9 +351,9 @@ def tmpID():
 
 def isnumber(s):
     try:
-        float(s)
+        Decimal(s)
         return True
-    except ValueError:
+    except (TypeError, ValueError, InvalidOperation):
         return False
 
 
@@ -582,3 +586,25 @@ def getFromString(obj, string):
             attrobj = None
             break
     return attrobj if attrobj else None
+
+class JSONEncoder(_baseJSONEncoder):
+    """Extensible JSON <http://json.org> encoder for Python data structures.
+    Here we modify the input value to accomodate some types that Bika uses
+    which the default encoder does not support.
+
+    This encoder supports encoding of:
+
+    - Decimals
+    - Decimals as List values
+    - Decimals as Dict values
+    """
+
+    def default(self, o):
+        strdecimal = lambda x: str(x) if isinstance(x, Decimal) else x
+        if type(o) in (list, tuple):
+            o = [self.default(x) for x in o]
+        elif isinstance(o, dict):
+            o = {k: self.default(v) for k, v in o.items()}
+        else:
+            o = strdecimal(o)
+        return o

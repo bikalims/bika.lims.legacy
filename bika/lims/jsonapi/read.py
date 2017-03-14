@@ -1,22 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from zope import interface
+
+import App
+import re
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import logger, to_utf8
-from bika.lims.interfaces import IJSONReadExtender
-from bika.lims.jsonapi import get_include_fields
 from plone.jsonapi.core import router
 from plone.jsonapi.core.interfaces import IRouteProvider
 from plone.protect.authenticator import AuthenticatorView
+from zope.component import getAdapters
+
+from bika.lims import logger
+from bika.lims.interfaces import IJSONReadExtender
+from bika.lims.jsonapi import get_include_fields
 from bika.lims.jsonapi import load_brain_metadata
 from bika.lims.jsonapi import load_field_values
-from Products.CMFCore.utils import getToolByName
-from zope import interface
-from zope.component import getAdapters
-import re
-import App
 
 
 def read(context, request):

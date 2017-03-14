@@ -1,25 +1,28 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import getSecurityManager
-from bika.lims.browser import BrowserView
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.utils import isActive
-from bika.lims.browser.analyses import AnalysesView
+import json
 from datetime import datetime
+from decimal import Decimal
 from operator import itemgetter
-from plone.app.layout.globals.interfaces import IViewView
-from Products.Archetypes.config import REFERENCE_CATALOG
+
 from Products.ATContentTypes.utils import DT2dt
+from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.component import getMultiAdapter
+from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
-import json, plone
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.browser.analyses import AnalysesView
+from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.utils import t, JSONEncoder
+
 
 class ViewView(BrowserView):
     """ Reference Sample View
@@ -183,11 +186,11 @@ class ReferenceAnalysesView(AnalysesView):
         uid = service.UID()
         if uid in rr:
             specs = rr.get(uid, None)
-            smin = float(specs.get('min', 0))
-            smax = float(specs.get('max', 0))
-            error = float(specs.get('error', 0))
-            target = float(specs.get('result', 0))
-            result = float(item['Result'])
+            smin = Decimal(specs.get('min', 0))
+            smax = Decimal(specs.get('max', 0))
+            error = Decimal(specs.get('error', 0))
+            target = Decimal(specs.get('result', 0))
+            result = Decimal(item['Result'])
             error_amount = ((target / 100) * error) if target > 0 else 0
             upper = smax + error_amount
             lower = smin - error_amount
@@ -208,7 +211,7 @@ class ReferenceAnalysesView(AnalysesView):
             self.anjson[serviceref] = trows
 
     def get_analyses_json(self):
-        return json.dumps(self.anjson)
+        return json.dumps(self.anjson, cls=JSONEncoder)
 
 
 class ReferenceResultsView(BikaListingView):

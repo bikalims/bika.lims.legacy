@@ -1,31 +1,31 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import sys
-
-from Products.Archetypes.public import *
+from decimal import Decimal
 
 from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.widgets import DateTimeWidget
-from bika.lims.browser.widgets import ReferenceWidget as BikaReferenceWidget
-from bika.lims.config import PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import ISupplyOrder
-from bika.lims.utils import t
 from DateTime import DateTime
-from persistent.mapping import PersistentMapping
-from decimal import Decimal
 from Products.Archetypes import atapi
+from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.permissions import View
 from Products.CMFPlone.interfaces import IConstrainTypes
 from Products.CMFPlone.utils import safe_unicode
+from persistent.mapping import PersistentMapping
 from zope.component import getAdapter
 from zope.interface import implements
 
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.widgets import DateTimeWidget
+from bika.lims.browser.widgets import ReferenceWidget
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import ISupplyOrder
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField(
@@ -35,7 +35,7 @@ schema = BikaSchema.copy() + Schema((
       allowed_types=('Contact',),
       referenceClass=HoldingReference,
       relationship='SupplyOrderContact',
-      widget=BikaReferenceWidget(
+      widget=ReferenceWidget(
         render_own_label=True,
         showOn=True,
         colModel=[

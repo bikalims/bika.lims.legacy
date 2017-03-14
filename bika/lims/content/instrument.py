@@ -6,54 +6,49 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from datetime import date
+from decimal import Decimal
+from decimal import InvalidOperation
 
 from AccessControl import ClassSecurityInfo
-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from Products.Archetypes.atapi import DisplayList, PicklistWidget
-from Products.Archetypes.atapi import registerType
-
-from zope.interface import implements
-from plone.app.folder.folder import ATFolder
-
-# Schema and Fields
-from Products.Archetypes.atapi import Schema
 from Products.ATContentTypes.content import schemata
-from Products.Archetypes.atapi import ReferenceField
-from Products.Archetypes.atapi import ComputedField
-from Products.Archetypes.atapi import DateTimeField
-from Products.Archetypes.atapi import StringField
-from Products.Archetypes.atapi import TextField
-from Products.Archetypes.atapi import FileField
-from Products.Archetypes.atapi import ImageField
-from Products.Archetypes.atapi import BooleanField
 from Products.ATExtensions.ateapi import RecordsField
-from bika.lims.browser.fields import HistoryAwareReferenceField
-
-# Widgets
+from Products.Archetypes.atapi import BooleanField
+from Products.Archetypes.atapi import BooleanWidget
+from Products.Archetypes.atapi import ComputedField
 from Products.Archetypes.atapi import ComputedWidget
+from Products.Archetypes.atapi import DateTimeField
+from Products.Archetypes.atapi import DisplayList, PicklistWidget
+from Products.Archetypes.atapi import FileField
+from Products.Archetypes.atapi import FileWidget
+from Products.Archetypes.atapi import ImageField
+from Products.Archetypes.atapi import ImageWidget
+from Products.Archetypes.atapi import ReferenceField
+from Products.Archetypes.atapi import ReferenceWidget
+from Products.Archetypes.atapi import Schema
+from Products.Archetypes.atapi import SelectionWidget
+from Products.Archetypes.atapi import StringField
 from Products.Archetypes.atapi import StringWidget
 from Products.Archetypes.atapi import TextAreaWidget
-from Products.Archetypes.atapi import FileWidget
-from Products.Archetypes.atapi import ImageWidget
-from Products.Archetypes.atapi import BooleanWidget
-from Products.Archetypes.atapi import SelectionWidget
-from Products.Archetypes.atapi import ReferenceWidget
-from bika.lims.browser.widgets import DateTimeWidget
-from bika.lims.browser.widgets import RecordsWidget
+from Products.Archetypes.atapi import TextField
+from Products.Archetypes.atapi import registerType
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from plone.app.folder.folder import ATFolder
+from zope.interface import implements
 
-# bika.lims imports
 from bika.lims import api
-from bika.lims.utils import t
-from bika.lims.utils import to_utf8
-from bika.lims.config import PROJECTNAME
-from bika.lims.interfaces import IInstrument
-from bika.lims.config import QCANALYSIS_TYPES
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.content.bikaschema import BikaFolderSchema
 from bika.lims import bikaMessageFactory as _
 from bika.lims import deprecated
+from bika.lims.browser.fields import HistoryAwareReferenceField
+from bika.lims.browser.widgets import DateTimeWidget
+from bika.lims.browser.widgets import RecordsWidget
+from bika.lims.config import PROJECTNAME
+from bika.lims.config import QCANALYSIS_TYPES
+from bika.lims.content.bikaschema import BikaFolderSchema
+from bika.lims.content.bikaschema import BikaSchema
+from bika.lims.interfaces import IInstrument
+from bika.lims.utils import t
+from bika.lims.utils import to_utf8
 
 schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
 
@@ -543,17 +538,17 @@ class Instrument(ATFolder):
 
             specs = rr[uid]
             try:
-                smin = float(specs.get('min', 0))
-                smax = float(specs.get('max', 0))
-                error = float(specs.get('error', 0))
-                target = float(specs.get('result', 0))
-                result = float(last.getResult())
+                smin = Decimal(specs.get('min', 0))
+                smax = Decimal(specs.get('max', 0))
+                error = Decimal(specs.get('error', 0))
+                target = Decimal(specs.get('result', 0))
+                result = Decimal(last.getResult())
                 error_amount = ((target / 100) * error) if target > 0 else 0
                 upper = smax + error_amount
                 lower = smin - error_amount
                 if result < lower or result > upper:
                     return False
-            except:
+            except (TypeError, ValueError, InvalidOperation):
                 # This should never happen.
                 # All Reference Analysis Results and QC Samples specs
                 # must be floatable

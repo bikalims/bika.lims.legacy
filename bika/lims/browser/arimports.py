@@ -1,28 +1,28 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import csv
-from DateTime.DateTime import DateTime
+import os
+from Products.Archetypes.utils import addStatusMessage
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import _createObjectByType
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.contentlisting.interfaces import IContentListing
+from plone.app.layout.globals.interfaces import IViewView
+from plone.protect import CheckAuthenticator
+from zope.interface import alsoProvides
+from zope.interface import implements
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView, ulocalized_time
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.interfaces import IClient
 from bika.lims.utils import tmpID
 from bika.lims.workflow import getTransitionDate
-from plone.app.contentlisting.interfaces import IContentListing
-from plone.app.layout.globals.interfaces import IViewView
-from plone.protect import CheckAuthenticator
-from Products.Archetypes.utils import addStatusMessage
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFPlone.utils import _createObjectByType
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from zope.interface import alsoProvides
-from zope.interface import implements
-
-import os
 
 
 class ARImportsView(BikaListingView):

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,11 +7,10 @@
 
 """ TESCAN TIMA
 """
-from . import TimaCSVParser, TimaImporter
-from bika.lims.exportimport.instruments.resultsimport import \
-    AnalysisResultsImporter
 import json
 import traceback
+
+from . import TimaCSVParser, TimaImporter
 
 title = "Tescan - TIMA"
 

@@ -1,19 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """ An AnalysisRequest report, containing the report itself in pdf and html
     format. Also, includes information about the date when was published, from
     who, the report recipients (and their emails) and the publication mode
 """
+
 from AccessControl import ClassSecurityInfo
 from Products.ATExtensions.ateapi import RecordsField
 from Products.Archetypes import atapi
-from Products.Archetypes.public import ReferenceField, FileField, \
-        StringField, Schema, BaseFolder
-from plone.app.blob.field import BlobField
+from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
+from plone.app.blob.field import BlobField
+
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
 

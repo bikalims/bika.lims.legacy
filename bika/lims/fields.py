@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,16 +7,13 @@
 
 """Generic field extensions
 """
-from Acquisition import aq_inner
-from Acquisition import aq_parent
-from Acquisition import Implicit
-from Acquisition import ImplicitAcquisitionWrapper
-from archetypes.schemaextender.interfaces import IExtensionField
-from Products.Archetypes.public import *
 from Products.ATExtensions.ateapi import DateTimeField
 from Products.ATExtensions.ateapi import RecordField, RecordsField
+from Products.Archetypes.public import *
+from archetypes.schemaextender.interfaces import IExtensionField
 from zope.interface import implements
 from zope.site.hooks import getSite
+
 
 class ExtensionField(object):
 

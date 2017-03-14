@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -6,15 +8,15 @@
 from time import strptime
 
 from AccessControl import ClassSecurityInfo
-
 from DateTime.DateTime import DateTime, safelocaltime
 from DateTime.interfaces import DateTimeError
 from Products.Archetypes.Registry import registerField
 from Products.Archetypes.interfaces import IDateTimeField
 from Products.Archetypes.public import *
 from Products.Archetypes.public import DateTimeField as DTF
-from bika.lims import logger
 from zope.interface import implements
+
+from bika.lims import logger
 
 
 class DateTimeField(DTF):

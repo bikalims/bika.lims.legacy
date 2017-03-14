@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
-
-from zope.interface import implements
+#
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-
-from Products.Archetypes.public import BaseContent
 from Products.Archetypes import atapi
+from Products.Archetypes.public import BaseContent
+from zope.interface import implements
 
-from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IInstrumentLocation
-
 
 schema = BikaSchema.copy()
 

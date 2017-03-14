@@ -1,23 +1,17 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import getSecurityManager
-from Acquisition import aq_inner
-from bika.lims import logger
-from bika.lims.interfaces import IRoutineAnalysis
-from bika.lims.subscribers import doActionFor
-from bika.lims.subscribers import skip
-from bika.lims.utils import changeWorkflowState
-from DateTime import DateTime
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.Archetypes.event import ObjectInitializedEvent
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-import transaction
-import zope.event
+from Products.CMFCore.utils import getToolByName
 from zope.interface import alsoProvides
+
+from bika.lims.interfaces import IRoutineAnalysis
+from bika.lims.utils import changeWorkflowState
+from bika.lims.workflow import skip
 
 
 def ObjectInitializedEventHandler(instance, event):

@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+LIMS-2625: Use Decimal instead of float for all numeric values
 LIMS-2509: Correctly save empty values for CoordinateField and DurationField
 LIMS-2600: Some improvements and fixes for Statements
 LIMS-2567: Show all ARs on worksheet when adding Duplicate analysis

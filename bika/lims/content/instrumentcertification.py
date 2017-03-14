@@ -6,44 +6,36 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import math
-
-from DateTime import DateTime
-from AccessControl import ClassSecurityInfo
-
-from Products.Archetypes.atapi import BaseFolder
-from Products.Archetypes.atapi import DisplayList
-from Products.Archetypes.atapi import registerType
-
-from zope.interface import implements
 from plone import api as ploneapi
 
-# Schema and Fields
-from Products.Archetypes.atapi import Schema
-from Products.Archetypes.atapi import ReferenceField
-from Products.Archetypes.atapi import ComputedField
-from Products.Archetypes.atapi import DateTimeField
-from Products.Archetypes.atapi import StringField
-from Products.Archetypes.atapi import TextField
-from Products.Archetypes.atapi import FileField
+from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
+from Products.Archetypes.atapi import BaseFolder
 from Products.Archetypes.atapi import BooleanField
-
-# Widgets
+from Products.Archetypes.atapi import BooleanWidget
+from Products.Archetypes.atapi import ComputedField
 from Products.Archetypes.atapi import ComputedWidget
+from Products.Archetypes.atapi import DateTimeField
+from Products.Archetypes.atapi import DisplayList
+from Products.Archetypes.atapi import FileField
+from Products.Archetypes.atapi import FileWidget
+from Products.Archetypes.atapi import ReferenceField
+from Products.Archetypes.atapi import Schema
+from Products.Archetypes.atapi import StringField
 from Products.Archetypes.atapi import StringWidget
 from Products.Archetypes.atapi import TextAreaWidget
-from Products.Archetypes.atapi import FileWidget
-from Products.Archetypes.atapi import BooleanWidget
+from Products.Archetypes.atapi import TextField
+from Products.Archetypes.atapi import registerType
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims import logger
+from bika.lims.browser.widgets import ComboBoxWidget
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import ReferenceWidget
-from bika.lims.browser.widgets import ComboBoxWidget
-
-# bika.lims imports
-from bika.lims import logger
 from bika.lims.config import PROJECTNAME
-from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IInstrumentCertification
-
 
 schema = BikaSchema.copy() + Schema((
 

@@ -1,17 +1,16 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import getSecurityManager
 from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.utils import isActive
-from zope.component import getMultiAdapter
-import plone
+
 
 class LateAnalysesView(BikaListingView):
     """ Late analyses (click from portlet_late_analyses More... link)

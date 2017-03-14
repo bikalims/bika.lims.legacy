@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -5,9 +7,11 @@
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from bika.lims.permissions import *
 from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
+
+from bika.lims.permissions import *
+
 
 def upgrade(tool):
     # Hack prevent out-of-date upgrading

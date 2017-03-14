@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -8,16 +8,17 @@
 """ Nuclisens EasyQ
 """
 import csv
-import types
-from cStringIO import StringIO
-from openpyxl import load_workbook
-
-from bika.lims.exportimport.instruments.resultsimport import \
-    AnalysisResultsImporter, InstrumentResultsFileParser
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
 import json
 import traceback
+from cStringIO import StringIO
+
+import types
+from openpyxl import load_workbook
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.exportimport.instruments.resultsimport import \
+    AnalysisResultsImporter, InstrumentResultsFileParser
+from bika.lims.utils import t
 
 title = "Nuclisens EasyQ"
 

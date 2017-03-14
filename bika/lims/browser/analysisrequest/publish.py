@@ -1,41 +1,44 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims import bikaMessageFactory as _, t
+import tempfile
+import traceback
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from operator import itemgetter
+from plone import api
+from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
+
+import App
+import os
+import re
+from DateTime import DateTime
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode, _createObjectByType
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from email.Utils import formataddr
+from plone.registry import Record
+from plone.registry import field
+from plone.registry.interfaces import IRegistry
+from plone.resource.utils import queryResourceDirectory
+from zope.component import getAdapters, getUtility
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.config import POINTS_OF_CAPTURE
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IResultOutOfRange
+from bika.lims.utils import encode_header, createPdf, attachPdf
 from bika.lims.utils import isnumber
-from bika.lims.utils import to_utf8, encode_header, createPdf, attachPdf
-from bika.lims.utils import to_utf8, formatDecimalMark, format_supsub
+from bika.lims.utils import to_utf8, formatDecimalMark, format_supsub, t
 from bika.lims.utils.analysis import format_uncertainty
 from bika.lims.vocabularies import getARReportTemplates
-from DateTime import DateTime
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.Utils import formataddr
-from operator import itemgetter
-from plone.registry.interfaces import IRegistry
-from plone.resource.utils import iterDirectoriesOfType, queryResourceDirectory
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFPlone.utils import safe_unicode, _createObjectByType
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
-from zope.component import getAdapters, getUtility
-
-from plone.registry import Record
-from plone.registry import field
-from plone import api
-
-import App
-import os, traceback
-import re
-import tempfile
 
 
 class AnalysisRequestPublishView(BrowserView):

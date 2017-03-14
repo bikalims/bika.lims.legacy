@@ -1,28 +1,29 @@
 # -*- coding:utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import glob
+
+import os
 from Acquisition import aq_get
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.interfaces import IDisplayListVocabulary, ICustomPubPref
-from bika.lims.utils import to_utf8
 from Products.Archetypes.public import DisplayList
 from Products.CMFCore.utils import getToolByName
-from zope.interface import implements
 from pkg_resources import resource_filename
 from plone.resource.utils import iterDirectoriesOfType
+from zope.component import getAdapters
+from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.component import getAdapters
 from zope.site.hooks import getSite
 
-import os
-import glob
+from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IDisplayListVocabulary, ICustomPubPref
+from bika.lims.utils import t
+from bika.lims.utils import to_utf8
 
 
 class CatalogVocabulary(object):

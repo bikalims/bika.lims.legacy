@@ -5,11 +5,12 @@
 
 """ FOSS 'Winescan FT120'
 """
+import json
+import traceback
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from . import WinescanImporter, WinescanCSVParser
-import json
-import traceback
 
 title = "FOSS - Winescan FT120"
 

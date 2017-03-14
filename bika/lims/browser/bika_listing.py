@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import json
 import copy
+import json
+from plone import api as ploneapi
 
 import plone
 from Acquisition import aq_inner
@@ -14,21 +15,20 @@ from DateTime import DateTime
 from Products.AdvancedQuery import And, Or, MatchRegexp, Between, Generic, Eq
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.content.browser import tableview
+from zope.component import getAdapters
+from zope.component._api import getMultiAdapter
+
 from bika.lims import PMF
 from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.interfaces import IFieldIcons
-from bika.lims.subscribers import doActionFor
-from bika.lims.subscribers import skip
+from bika.lims.utils import getFromString, JSONEncoder
 from bika.lims.utils import isActive, getHiddenAttributesForClass
 from bika.lims.utils import t
 from bika.lims.utils import to_utf8
-from bika.lims.utils import getFromString
-from plone.app.content.browser import tableview
-from plone import api as ploneapi
-from zope.component import getAdapters
-from zope.component._api import getMultiAdapter
+from bika.lims.workflow import doActionFor, skip
 
 try:
     from plone.batching import Batch
@@ -180,7 +180,7 @@ class WorkflowAction:
             filter_val = \
                 [[k, v] for k, v in form.items()
                     if k.startswith('bika_listing_filter_bar_')]
-            filter_val = json.dumps(filter_val)
+            filter_val = json.dumps(filter_val, cls=JSONEncoder)
             # Adding the filter parameters to cookue
             self.request.response.setCookie(
                 'bika_listing_filter_bar', filter_val, path='/', max_age=10)

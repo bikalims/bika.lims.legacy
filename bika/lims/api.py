@@ -1,25 +1,29 @@
 # -*- coding: utf-8 -*-
 #
-# Bika LIMS Framwork API
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Acquisition import aq_base
-from AccessControl.PermissionRole import rolesForPermissionOn
-
-from Products.CMFPlone.utils import base_hasattr
-from Products.CMFCore.interfaces import ISiteRoot
-from Products.Archetypes.BaseObject import BaseObject
-from Products.ZCatalog.interfaces import ICatalogBrain
-from Products.CMFCore.WorkflowCore import WorkflowException
-
-from zope import globalrequest
-from zope.lifecycleevent import modified
-from zope.component import getMultiAdapter
-from zope.security.interfaces import Unauthorized
+"""Bika LIMS Framework API
+"""
 
 from plone import api as ploneapi
+from zope import globalrequest
+
+from AccessControl.PermissionRole import rolesForPermissionOn
+from Acquisition import aq_base
+from Products.Archetypes.BaseObject import BaseObject
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFPlone.utils import base_hasattr
+from Products.ZCatalog.interfaces import ICatalogBrain
 from plone.api.exc import InvalidParameterError
-from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
+from plone.dexterity.interfaces import IDexterityContent
+from zope.component import getMultiAdapter
+from zope.lifecycleevent import modified
+from zope.security.interfaces import Unauthorized
 
 from bika.lims import logger
 

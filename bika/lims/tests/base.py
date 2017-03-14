@@ -5,18 +5,15 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import re
 import unittest
-import pkg_resources
 
-from Acquisition import aq_base
+import pkg_resources
+import re
 from AccessControl.SecurityManagement import newSecurityManager
+from Acquisition import aq_base
 from Products.CMFPlone.tests.utils import MockMailHost as _MMH
 from Products.MailHost.interfaces import IMailHost
 from Testing.ZopeTestCase.functional import Functional
-
-from zope.component import getSiteManager
-
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -24,10 +21,11 @@ from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing import setRoles
 from plone.protect.authenticator import AuthenticatorView
 from plone.testing.z2 import Browser
+from zope.component import getSiteManager
 
 from bika.lims import logger
-from bika.lims.testing import BIKA_SIMPLE_TESTING
 from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
+from bika.lims.testing import BIKA_SIMPLE_TESTING
 
 try:
     pkg_resources.get_distribution('plone.protect')

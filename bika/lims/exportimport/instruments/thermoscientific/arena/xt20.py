@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """ Thermo Scientific 'Arena 20XT' (The file name for importing staff)
 """
+import json
+import traceback
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from . import ThermoArenaImporter, ThermoArenaRPRCSVParser
-import json
-import traceback
 
 title = "Thermo Scientific - Arena 20XT"
 

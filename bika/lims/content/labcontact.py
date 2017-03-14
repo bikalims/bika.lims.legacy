@@ -7,27 +7,22 @@
 
 """The lab staff
 """
+
 import sys
 
 from AccessControl import ClassSecurityInfo
-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-
 from Products.Archetypes import atapi
 from Products.Archetypes.references import HoldingReference
 from Products.Archetypes.utils import DisplayList
-
-from plone import api
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implements
 
-from bika.lims.config import PROJECTNAME
-from bika.lims.content.person import Person
-from bika.lims.content.contact import Contact
-from bika.lims.interfaces import ILabContact
-from bika.lims import logger
 from bika.lims import bikaMessageFactory as _
-
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.contact import Contact
+from bika.lims.content.person import Person
+from bika.lims.interfaces import ILabContact
 
 schema = Person.schema.copy() + atapi.Schema((
     atapi.LinesField('PublicationPreference',

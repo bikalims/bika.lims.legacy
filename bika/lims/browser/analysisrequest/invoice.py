@@ -1,30 +1,31 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
-from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
-from Products.CMFCore.WorkflowCore import WorkflowException
+from decimal import Decimal
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.browser import BrowserView
-from bika.lims.config import VERIFIED_STATES
-from bika.lims.interfaces import IInvoiceView
-from bika.lims.permissions import *
-from bika.lims.utils import to_utf8, isAttributeHidden, encode_header
-from bika.lims.workflow import doActionFor, getTransitionDate
-from DateTime import DateTime
-from Products.Archetypes import PloneMessageFactory as PMF
+from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
+
+import App
+from AccessControl import ClassSecurityInfo
+from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.interface import implements
-from decimal import Decimal
 
-import plone, App
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.config import VERIFIED_STATES
+from bika.lims.interfaces import IInvoiceView
+from bika.lims.utils import isAttributeHidden, encode_header
+from bika.lims.utils import t
+from bika.lims.workflow import getTransitionDate
+
 
 class InvoiceView(BrowserView):
 

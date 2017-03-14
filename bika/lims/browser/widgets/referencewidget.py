@@ -1,26 +1,25 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.browser import BrowserView
-from bika.lims.interfaces import IReferenceWidgetVocabulary
-from bika.lims.permissions import *
-from bika.lims.utils import to_unicode as _u
-from bika.lims.utils import to_utf8 as _c
-from bika.lims import logger
-from Acquisition import aq_base
-from types import DictType
+import json
 from operator import itemgetter
+
+import plone
+from AccessControl import ClassSecurityInfo
 from Products.Archetypes.Registry import registerWidget
 from Products.Archetypes.Widget import StringWidget
-from Products.CMFCore.utils import getToolByName
 from zope.component import getAdapters
-import json
-import plone
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.interfaces import IReferenceWidgetVocabulary
+from bika.lims.utils import to_unicode as _u
+from bika.lims.utils import to_utf8 as _c
+
 
 class ReferenceWidget(StringWidget):
     _properties = StringWidget._properties.copy()

@@ -1,24 +1,21 @@
 # coding=utf-8
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import getSecurityManager
-from plone.app.layout.globals.interfaces import IViewView
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.layout.globals.interfaces import IViewView
 from zope.interface import implements
 
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.permissions import EditWorksheet
 from bika.lims.browser import BrowserView
 from bika.lims.browser.worksheet.tools import checkUserManage
 from bika.lims.browser.worksheet.tools import showRejectionMessage
 from bika.lims.browser.worksheet.views.analysisrequests import AnalysisRequestsView
+from bika.lims.permissions import EditWorksheet
 
 
 class AddDuplicateView(BrowserView):

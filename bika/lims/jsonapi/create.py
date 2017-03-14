@@ -1,27 +1,31 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import getSecurityManager
-from AccessControl import Unauthorized
-from bika.lims.idserver import renameAfterCreation
-from bika.lims.jsonapi import set_fields_from_request
-from bika.lims.jsonapi import resolve_request_lookup
-from bika.lims.permissions import AccessJSONAPI
-from bika.lims.utils import tmpID, dicts_to_dict
-from bika.lims.workflow import doActionFor
-from plone.jsonapi.core import router
-from plone.jsonapi.core.interfaces import IRouteProvider
-from Products.Archetypes.event import ObjectInitializedEvent
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import _createObjectByType
-from zExceptions import BadRequest
+import json
 from zope import event
 from zope import interface
 
-import json
 import transaction
+from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
+from Products.Archetypes.event import ObjectInitializedEvent
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import _createObjectByType
+from plone.jsonapi.core import router
+from plone.jsonapi.core.interfaces import IRouteProvider
+from zExceptions import BadRequest
+
+from bika.lims.idserver import renameAfterCreation
+from bika.lims.jsonapi import resolve_request_lookup
+from bika.lims.jsonapi import set_fields_from_request
+from bika.lims.permissions import AccessJSONAPI
+from bika.lims.utils import tmpID, dicts_to_dict
+from bika.lims.workflow import doActionFor
+
 
 class Create(object):
     interface.implements(IRouteProvider)

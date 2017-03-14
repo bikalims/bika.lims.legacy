@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -6,9 +8,9 @@
 """Sysmex XS
 """
 from datetime import datetime
+
 from bika.lims.exportimport.instruments.resultsimport import \
     AnalysisResultsImporter, InstrumentCSVResultsFileParser
-
 
 
 def csvDate2BikaDate(Date, Time):

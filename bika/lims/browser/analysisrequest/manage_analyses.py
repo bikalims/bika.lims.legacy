@@ -1,29 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import getSecurityManager
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, dicts_to_dict
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.browser.sample import SamplePartitionsView
-from bika.lims.content.analysisrequest import schema as AnalysisRequestSchema
-from bika.lims.permissions import *
-from bika.lims.utils import logged_in_client
-from bika.lims.utils import to_utf8
-from bika.lims.workflow import doActionFor
-from DateTime import DateTime
-from Products.Archetypes import PloneMessageFactory as PMF
-from plone.app.content.browser.interfaces import IFolderContentsView
-from plone.app.layout.globals.interfaces import IViewView
+
+import json
+
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.app.layout.globals.interfaces import IViewView
 from zope.i18n.locales import locales
 from zope.interface import implements
 
-import json
-import plone
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser.bika_listing import BikaListingView
+from bika.lims.browser.sample import SamplePartitionsView
+from bika.lims.utils import logged_in_client, JSONEncoder
+from bika.lims.utils import t, dicts_to_dict
+
 
 class AnalysisRequestAnalysesView(BikaListingView):
     implements(IFolderContentsView, IViewView)
@@ -135,7 +132,7 @@ class AnalysisRequestAnalysesView(BikaListingView):
                         "Related: LIMS-1614"
                 logger.exception(error, keyword)
 
-        return json.dumps(rr_dict_by_service_uid)
+        return json.dumps(rr_dict_by_service_uid, cls=JSONEncoder)
 
     def get_spec_from_ar(self, ar, keyword):
         empty = {'min': '', 'max': '', 'error': '', 'keyword':keyword}

@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+#
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import re
-
 from AccessControl import ClassSecurityInfo
-
-from Products.Archetypes.Widget import TypesWidget
 from Products.Archetypes.Registry import registerWidget
+from Products.Archetypes.Widget import TypesWidget
 
 
 class ComboBoxWidget(TypesWidget):

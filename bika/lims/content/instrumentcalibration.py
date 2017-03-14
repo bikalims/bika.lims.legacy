@@ -6,38 +6,30 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import math
-
-from DateTime import DateTime
-from AccessControl import ClassSecurityInfo
-
-from Products.Archetypes.atapi import BaseFolder
-from Products.Archetypes.atapi import DisplayList
-from Products.Archetypes.atapi import registerType
-
 from plone import api as ploneapi
-from zope.interface import implements
 
-# Schema and Fields
-from Products.Archetypes.atapi import Schema
-from Products.Archetypes.atapi import ReferenceField
+from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
+from Products.Archetypes.atapi import BaseFolder
 from Products.Archetypes.atapi import ComputedField
-from Products.Archetypes.atapi import DateTimeField
-from Products.Archetypes.atapi import StringField
-from Products.Archetypes.atapi import TextField
-
-# Widgets
 from Products.Archetypes.atapi import ComputedWidget
+from Products.Archetypes.atapi import DateTimeField
+from Products.Archetypes.atapi import DisplayList
+from Products.Archetypes.atapi import ReferenceField
+from Products.Archetypes.atapi import Schema
+from Products.Archetypes.atapi import StringField
 from Products.Archetypes.atapi import StringWidget
 from Products.Archetypes.atapi import TextAreaWidget
+from Products.Archetypes.atapi import TextField
+from Products.Archetypes.atapi import registerType
+from zope.interface import implements
 
-# bika.lims imports
-from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
-from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import ReferenceWidget
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IInstrumentCalibration
-
 
 schema = BikaSchema.copy() + Schema((
 

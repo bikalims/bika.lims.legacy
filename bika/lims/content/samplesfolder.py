@@ -1,22 +1,22 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """SamplesFolder is a fake folder to live in the nav bar.  It has
 view from browser/sample.py/SamplesView wired to it.
 """
+
+from AccessControl import ClassSecurityInfo
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import getToolByName
-from bika.lims.config import PROJECTNAME
-from AccessControl import ClassSecurityInfo
-from bika.lims.interfaces import ISamplesFolder, IHaveNoBreadCrumbs
 from plone.app.folder import folder
 from zope.interface import implements
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
+
+from bika.lims.config import PROJECTNAME
+from bika.lims.interfaces import ISamplesFolder, IHaveNoBreadCrumbs
 
 schema = folder.ATFolderSchema.copy()
 

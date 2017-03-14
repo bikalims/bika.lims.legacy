@@ -8,7 +8,6 @@
 import doctest
 
 import unittest2 as unittest
-
 from Testing import ZopeTestCase as ztc
 
 from bika.lims.tests.base import BikaSimpleTestCase

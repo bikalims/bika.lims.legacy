@@ -1,19 +1,23 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import string
+from decimal import Decimal, InvalidOperation
+
+import re
 from Acquisition import aq_parent
-from Products.CMFPlone.utils import safe_unicode
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import to_utf8
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
 from Products.validation import validation
 from Products.validation.interfaces.IValidator import IValidator
 from zope.interface import implements
-from datetime import datetime
-import string
-import re
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.utils import to_utf8
 
 
 class IdentifierTypeAttributesValidator:
@@ -482,15 +486,14 @@ class ResultOptionsValidator:
         form_value = form.get(fieldname)
 
         translate = getToolByName(instance, 'translation_service').translate
-        # bsc = getToolByName(instance, 'bika_setup_catalog')
 
         # ResultValue must always be a number
         for field in form_value:
             try:
-                float(field['ResultValue'])
-            except:
-                return to_utf8(translate(_("Validation failed: "
-                                           "Result Values must be numbers")))
+                Decimal(field['ResultValue'])
+            except (TypeError, ValueError, InvalidOperation):
+                return to_utf8(translate(_(
+                    "Validation failed: Result Values must be numbers")))
             if 'ResultText' not in field:
                 return to_utf8(translate(
                     _("Validation failed: Result Text cannot be blank")))
@@ -651,20 +654,20 @@ class AnalysisSpecificationsValidator:
 
             # Values must be numbers
             try:
-                minv = float(minv)
-            except ValueError:
+                minv = Decimal(minv)
+            except (TypeError, ValueError, InvalidOperation):
                 instance.REQUEST[key] = to_utf8(translate(
                     _("Validation failed: Min values must be numeric")))
                 return instance.REQUEST[key]
             try:
-                maxv = float(maxv)
-            except ValueError:
+                maxv = Decimal(maxv)
+            except (TypeError, ValueError, InvalidOperation):
                 instance.REQUEST[key] = to_utf8(translate(
                     _("Validation failed: Max values must be numeric")))
                 return instance.REQUEST[key]
             try:
-                err = float(err)
-            except ValueError:
+                err = Decimal(err)
+            except (TypeError, ValueError, InvalidOperation):
                 instance.REQUEST[key] = to_utf8(translate(_(
                     "Validation failed: Percentage error values must be "
                     "numeric")))
@@ -718,14 +721,14 @@ class UncertaintiesValidator:
 
             # Values must be numbers
             try:
-                minv = float(value['intercept_min'])
-            except ValueError:
+                minv = Decimal(value['intercept_min'])
+            except (TypeError, ValueError, InvalidOperation):
                 instance.REQUEST[key] = to_utf8(translate(
                     _("Validation failed: Min values must be numeric")))
                 return instance.REQUEST[key]
             try:
-                maxv = float(value['intercept_max'])
-            except ValueError:
+                maxv = Decimal(value['intercept_max'])
+            except (TypeError, ValueError, InvalidOperation):
                 instance.REQUEST[key] = to_utf8(translate(
                     _("Validation failed: Max values must be numeric")))
                 return instance.REQUEST[key]
@@ -738,8 +741,8 @@ class UncertaintiesValidator:
                 perc = True
                 err = err[:-1]
             try:
-                err = float(err)
-            except ValueError:
+                err = Decimal(err)
+            except (TypeError, ValueError, InvalidOperation):
                 instance.REQUEST[key] = to_utf8(translate(
                     _("Validation failed: Error values must be numeric")))
                 return instance.REQUEST[key]
@@ -834,23 +837,23 @@ class ReferenceValuesValidator:
 
             # Values must be numbers
             try:
-                res = float(res)
-            except ValueError:
+                res = Decimal(res)
+            except (TypeError, ValueError, InvalidOperation):
                 return to_utf8(translate(
                     _("Validation failed: Expected values must be numeric")))
             try:
-                min = float(min)
-            except ValueError:
+                min = Decimal(min)
+            except (TypeError, ValueError, InvalidOperation):
                 return to_utf8(translate(
                     _("Validation failed: Min values must be numeric")))
             try:
-                max = float(max)
-            except ValueError:
+                max = Decimal(max)
+            except (TypeError, ValueError, InvalidOperation):
                 return to_utf8(translate(
                     _("Validation failed: Max values must be numeric")))
             try:
-                err = float(err)
-            except ValueError:
+                err = Decimal(err)
+            except (TypeError, ValueError, InvalidOperation):
                 return to_utf8(translate(_(
                     "Validation failed: Percentage error values must be "
                     "numeric")))
@@ -894,8 +897,8 @@ class PercentValidator:
         translate = getToolByName(instance, 'translation_service').translate
 
         try:
-            value = float(value)
-        except:
+            value = Decimal(value)
+        except (TypeError, ValueError, InvalidOperation):
             msg = _("Validation failed: percent values must be numbers")
             return to_utf8(translate(msg))
 
@@ -1087,9 +1090,9 @@ class SortKeyValidator:
         instance = kwargs['instance']
         translate = getToolByName(instance, 'translation_service').translate
         try:
-            value = float(value)
-        except:
-            msg = _("Validation failed: value must be float")
+            value = Decimal(value)
+        except (TypeError, ValueError, InvalidOperation):
+            msg = _("Validation failed: value must be a number")
             return to_utf8(translate(msg))
 
         if value < 0 or value > 1000:

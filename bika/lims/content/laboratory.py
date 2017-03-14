@@ -1,19 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from DateTime import DateTime
 from AccessControl import ClassSecurityInfo
-from Products.CMFCore.utils import UniqueObject
-from Products.CMFCore.permissions import ListFolderContents, \
-    ModifyPortalContent, View
-from plone.app import folder
 from Products.Archetypes.public import *
+from Products.CMFCore.permissions import View
+from Products.CMFCore.utils import UniqueObject
 from Products.CMFPlone.utils import safe_unicode
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
 from bika.lims.content.organisation import Organisation
-from bika.lims.config import ManageBika, PROJECTNAME
-from bika.lims import PMF, bikaMessageFactory as _
+from bika.lims.permissions import ManageBika
 
 schema = Organisation.schema.copy() + Schema((
     StringField('LabURL',

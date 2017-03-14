@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """
@@ -8,20 +10,18 @@
     AnalysisProfile is used to save these common configurations (templates).
 """
 
+from decimal import Decimal
+
 from AccessControl import ClassSecurityInfo
-from bika.lims import PMF, bikaMessageFactory as _
+from Products.ATExtensions.field import RecordsField
+from Products.Archetypes.public import *
+from Products.CMFCore.utils import getToolByName
+from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import AnalysisProfileAnalysesWidget
-from bika.lims.browser.widgets import ServicesWidget
 from bika.lims.config import PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from Products.Archetypes.public import *
-from bika.lims.interfaces import IAnalysisProfile
-from Products.Archetypes.references import HoldingReference
-from Products.ATExtensions.field import RecordsField
-from Products.CMFCore.permissions import View, ModifyPortalContent
-from Products.CMFCore.utils import getToolByName
-from zope.interface import Interface, implements
-import sys
 from bika.lims.interfaces import IAnalysisProfile
 
 schema = BikaSchema.copy() + Schema((
@@ -179,16 +179,16 @@ class AnalysisProfile(BaseContent):
         return sets.get('hidden', False)
 
     def getVATAmount(self):
-        """ Compute AnalysisProfileVATAmount
+        """ Compute AnalysisProfileVATAmount and return as Decimal number
         """
         price, vat = self.getAnalysisProfilePrice(), self.getAnalysisProfileVAT()
-        return float(price) * float(vat) / 100
+        return Decimal(price) * Decimal(vat) / 100
 
     def getTotalPrice(self):
         """
         Computes the final price using the VATAmount and the subtotal price
         """
         price, vat = self.getAnalysisProfilePrice(), self.getVATAmount()
-        return float(price) + float(vat)
+        return Decimal(price) + Decimal(vat)
 
 registerType(AnalysisProfile, PROJECTNAME)

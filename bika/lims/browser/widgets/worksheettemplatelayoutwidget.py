@@ -1,11 +1,14 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
-from Products.Archetypes.Registry import registerWidget
 from Products.ATExtensions.widget.records import RecordsWidget
+from Products.Archetypes.Registry import registerWidget
+
 
 class WorksheetTemplateLayoutWidget(RecordsWidget):
     security = ClassSecurityInfo()

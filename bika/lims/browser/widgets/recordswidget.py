@@ -1,12 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import json
+
 from AccessControl import ClassSecurityInfo
 from Products.ATExtensions.widget import RecordsWidget as ATRecordsWidget
 from Products.Archetypes.Registry import registerWidget
-import json
+
+from bika.lims.utils import JSONEncoder
+
 
 class RecordsWidget(ATRecordsWidget):
     security = ClassSecurityInfo()
@@ -64,7 +70,7 @@ class RecordsWidget(ATRecordsWidget):
         return value, {}
 
     def jsondumps(self, val):
-        return json.dumps(val)
+        return json.dumps(val, cls=JSONEncoder)
 
 registerWidget(RecordsWidget,
                title = 'RecordsWidget',

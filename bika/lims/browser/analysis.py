@@ -1,24 +1,24 @@
-# coding=utf-8
-
+# -*- coding: utf-8 -*-
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFCore.utils import getToolByName
-from bika.lims.jsonapi import get_include_fields
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser import BrowserView
-from bika.lims.utils import t, dicts_to_dict
-from bika.lims.utils.analysis import get_method_instrument_constraints
-from bika.lims.interfaces import IAnalysis, IResultOutOfRange, IJSONReadExtender
-from bika.lims.interfaces import IFieldIcons
-from bika.lims.utils import to_utf8
-from bika.lims.utils import dicts_to_dict
 import json
+from decimal import Decimal, InvalidOperation
+
 import plone
+from Products.CMFCore.utils import getToolByName
 from zope.component import adapts, getAdapters
 from zope.interface import implements
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.interfaces import IAnalysis, IResultOutOfRange, IJSONReadExtender
+from bika.lims.jsonapi import get_include_fields
+from bika.lims.utils import dicts_to_dict, JSONEncoder
+from bika.lims.utils import t
+from bika.lims.utils.analysis import get_method_instrument_constraints
 
 
 class ResultOutOfRangeIcons(object):
@@ -82,8 +82,8 @@ class ResultOutOfRange(object):
             return None
         # if analysis result is not a number, then we assume in range:
         try:
-            result = float(str(result))
-        except ValueError:
+            result = Decimal(str(result))
+        except (TypeError, ValueError, InvalidOperation):
             return None
         # The spec is found in the parent AR's ResultsRange field.
         if not specification:
@@ -110,20 +110,20 @@ class ResultOutOfRange(object):
         spec_min = None
         spec_max = None
         try:
-            result = float(result)
-        except:
+            result = Decimal(result)
+        except (TypeError, ValueError, InvalidOperation):
             return False, None
         try:
-            spec_min = float(Min)
-        except:
+            spec_min = Decimal(Min)
+        except (TypeError, ValueError, InvalidOperation):
             spec_min = None
         try:
-            error = float(error)
-        except:
+            error = Decimal(error)
+        except (TypeError, ValueError, InvalidOperation):
             error = 0
         try:
-            spec_max = float(Max)
-        except:
+            spec_max = Decimal(Max)
+        except (TypeError, ValueError, InvalidOperation):
             spec_max = None
         error_amount = (result / 100) * error
         error_min = result - error_amount
@@ -139,20 +139,20 @@ class ResultOutOfRange(object):
         spec_min = None
         spec_max = None
         try:
-            result = float(result)
-        except:
+            result = Decimal(result)
+        except (TypeError, ValueError, InvalidOperation):
             return False, False
         try:
-            spec_min = float(Min)
-        except:
+            spec_min = Decimal(Min)
+        except (TypeError, ValueError, InvalidOperation):
             spec_min = None
         try:
-            error = float(error)
-        except:
+            error = Decimal(error)
+        except (TypeError, ValueError, InvalidOperation):
             error = 0
         try:
-            spec_max = float(Max)
-        except:
+            spec_max = Decimal(Max)
+        except (TypeError, ValueError, InvalidOperation):
             spec_max = None
         if (spec_min is None and spec_max is None):
             if self.isOutOfShoulderRange(result, Min, Max, error):
@@ -221,4 +221,4 @@ class ajaxGetMethodInstrumentConstraints(BrowserView):
         rowuids = self.request.get('uids', '[]')
         rowuids = json.loads(rowuids)
         constraints = get_method_instrument_constraints(self, rowuids)
-        return json.dumps(constraints)
+        return json.dumps(constraints, cls=JSONEncoder)

@@ -1,21 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import tempfile
+from decimal import Decimal, InvalidOperation
 
+import os
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims import bikaMessageFactory as _
-from bika.lims.interfaces import IResultOutOfRange
-from bika.lims.utils import t, dicts_to_dict
-from bika.lims.browser import BrowserView
-from bika.lims.browser.reports.selection_macros import SelectionMacrosView
 from gpw import plot
 from plone.app.layout.globals.interfaces import IViewView
 from zope.component import getAdapters
 from zope.interface import implements
-import os
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.browser.reports.selection_macros import SelectionMacrosView
+from bika.lims.interfaces import IResultOutOfRange
+from bika.lims.utils import t, dicts_to_dict
+
 
 class Report(BrowserView):
     implements(IViewView)
@@ -138,8 +143,8 @@ class Report(BrowserView):
             if service_title not in analyses.keys():
                 analyses[service_title] = []
             try:
-                result = float(analysis.getResult())
-            except:
+                result = Decimal(analysis.getResult())
+            except (TypeError, ValueError, InvalidOperation):
                 # XXX Unfloatable analysis results should be indicated
                 continue
             analyses[service_title].append({

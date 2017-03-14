@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-
 import math
+from decimal import Decimal, InvalidOperation
+
 import zope.event
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import formatDecimalMark
 from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import _createObjectByType
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.utils import formatDecimalMark
 
 
 def create_analysis(context, service, keyword, interim_fields):
@@ -60,8 +62,8 @@ def get_significant_digits(numeric_value):
             22              0
     """
     try:
-        numeric_value = float(numeric_value)
-    except ValueError:
+        numeric_value = Decimal(numeric_value)
+    except (TypeError, ValueError, InvalidOperation):
         return None
     if numeric_value == 0:
         return 0
@@ -88,12 +90,15 @@ def _format_decimal_or_sci(result, precision, threshold, sciformat):
     # So, if sig_digits is > 0, the power must be expressed in negative
     # Eg.
     #      result=0.0012345, threshold=3, sig_digit=3 -> 1.2345e-3=1.2345·10-³
-    sci = sig_digits >= threshold and abs(threshold) > 0 and sig_digits <= precision
+    sci = sig_digits >= threshold \
+          and abs(threshold) > 0 \
+          and sig_digits <= precision
     sign = '-' if sig_digits > 0 else ''
-    if sig_digits == 0 and abs(threshold) > 0 and abs(int(float(result))) > 0:
+    if sig_digits == 0 and abs(threshold) > 0 and abs(int(Decimal(result))) > 0:
         # Number >= 1, need to check if the number of non-decimal
         # positions is above the threshold
-        sig_digits = int(math.log(abs(float(result)),10)) if abs(float(result)) >= 10 else 0
+        sig_digits = int(math.log(abs(Decimal(result)),10)) \
+            if abs(Decimal(result)) >= 10 else 0
         sci = sig_digits >= abs(threshold)
 
     formatted = ''
@@ -104,12 +109,12 @@ def _format_decimal_or_sci(result, precision, threshold, sciformat):
 
         if sign:
             # 0.0012345 -> 1.2345
-            res = float(nresult)*(10**sig_digits)
+            res = Decimal(nresult)*(10**sig_digits)
         else:
             # Non-decimal positions
             # 123.45 -> 1.2345
-            res = float(nresult)/(10**sig_digits)
-        res = int(res) if res.is_integer() else res
+            res = Decimal(nresult)/(10**sig_digits)
+        res = int(res) if res._isinteger() else res
 
         # Scientific notation
         if sciformat == 2:
@@ -132,7 +137,7 @@ def _format_decimal_or_sci(result, precision, threshold, sciformat):
         # Decimal notation
         prec = precision if precision and precision > 0 else 0
         formatted = str("%%.%sf" % prec) % result
-        if float(formatted) == 0 and '-' in formatted:
+        if Decimal(formatted) == 0 and '-' in formatted:
             # We don't want things like '-0.00'
             formatted = formatted.replace('-','')
     return formatted
@@ -198,14 +203,14 @@ def format_uncertainty(analysis, result, decimalmark='.', sciformat=1):
     :return: the formatted uncertainty
     """
     try:
-        result = float(result)
-    except ValueError:
+        result = Decimal(result)
+    except (TypeError, ValueError, InvalidOperation):
         return ""
 
     objres = None
     try:
-        objres = float(analysis.getResult())
-    except ValueError:
+        objres = Decimal(analysis.getResult())
+    except (TypeError, ValueError, InvalidOperation):
         pass
 
     service = analysis.getService()
@@ -284,8 +289,8 @@ def format_numeric_result(analysis, result, decimalmark='.', sciformat=1):
     :return: the formatted result as string
     """
     try:
-        result = float(result)
-    except ValueError:
+        result = Decimal(result)
+    except (TypeError, ValueError, InvalidOperation):
         return result
 
     # continuing with 'nan' result will cause formatting to fail.

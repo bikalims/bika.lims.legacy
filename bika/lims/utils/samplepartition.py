@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.utils import tmpID
+from decimal import Decimal
+
 from Products.CMFPlone.utils import _createObjectByType
 from magnitude import mg
 
@@ -11,8 +14,8 @@ from magnitude import mg
 def compare_containers(a, b):
     a_capacity = a.getCapacity().lower().split(" ", 1)
     b_capacity = b.getCapacity().lower().split(" ", 1)
-    a_magnitude = mg(float(a_capacity[0]), a_capacity[1])
-    b_magnitude = mg(float(b_capacity[0]), b_capacity[1])
+    a_magnitude = mg(Decimal(a_capacity[0]), a_capacity[1])
+    b_magnitude = mg(Decimal(b_capacity[0]), b_capacity[1])
     return cmp(
         a.getCapacity() and a_magnitude or mg(0, 'ml'),
         b.getCapacity() and b_magnitude or mg(0, 'ml')

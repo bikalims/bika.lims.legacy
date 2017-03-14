@@ -4,8 +4,10 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.CMFPlone.utils import safe_unicode
+
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
+
 
 class Logger:
 

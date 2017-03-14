@@ -2,24 +2,23 @@
 #
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-import re
+from plone import api
 
+import re
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-from plone import api
-from plone.protect import CheckAuthenticator
 from plone.app.controlpanel.usergroups import UsersOverviewControlPanel
+from plone.protect import CheckAuthenticator
 
 from bika.lims import PMF
+from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.content.contact import Contact
 from bika.lims.content.labcontact import LabContact
-from bika.lims import bikaMessageFactory as _
 
 
 class ContactLoginDetailsView(BrowserView):

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
@@ -6,7 +8,7 @@
 from AccessControl import ClassSecurityInfo
 from Products.ATExtensions.widget import RecordWidget
 from Products.Archetypes.Registry import registerWidget
-import datetime
+
 
 class DurationWidget(RecordWidget):
     security = ClassSecurityInfo()

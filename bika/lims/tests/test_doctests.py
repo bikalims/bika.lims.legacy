@@ -9,6 +9,7 @@ import doctest
 import unittest
 
 from plone.testing import layered
+
 from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
 
 OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)

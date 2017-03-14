@@ -5,13 +5,14 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.interfaces import IAnalysisRequestsFolder, IBatch, IClient
-from bika.lims.interfaces import IATWidgetVisibility
-from bika.lims.utils import getHiddenAttributesForClass
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFCore.utils import getToolByName
 from types import DictType
 from zope.interface import implements
+
+from bika.lims.interfaces import IATWidgetVisibility
+from bika.lims.interfaces import IBatch, IClient
+from bika.lims.utils import getHiddenAttributesForClass
 
 _marker = []
 

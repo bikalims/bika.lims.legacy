@@ -1,22 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from archetypes.schemaextender.interfaces import ISchemaModifier, \
-    IOrderableSchemaExtender
-from bika.lims.browser import BrowserView
-from bika.lims.interfaces import IBatch, IAnalysisRequest
-from bika.lims.permissions import *
-from bika.lims.vocabularies import CatalogVocabulary
-from operator import itemgetter
-from Products.CMFPlone.utils import safe_unicode
-from zope.component import adapts
-from zope.interface import implements
-
 import json
+from operator import itemgetter
+
 import plone
 import plone.protect
+
+from bika.lims.browser import BrowserView
+from bika.lims.vocabularies import CatalogVocabulary
 
 
 class ClientContactVocabularyFactory(CatalogVocabulary):

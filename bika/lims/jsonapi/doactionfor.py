@@ -1,17 +1,20 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.jsonapi.read import read
-from plone.jsonapi.core import router
-from plone.jsonapi.core.interfaces import IRouteProvider
-from Products.CMFCore.utils import getToolByName
-from zExceptions import BadRequest
-from zope import interface
 import json
+from zope import interface
 
 import transaction
+from Products.CMFCore.utils import getToolByName
+from plone.jsonapi.core import router
+from plone.jsonapi.core.interfaces import IRouteProvider
+from zExceptions import BadRequest
+
+from bika.lims.jsonapi.read import read
 
 
 class doActionFor(object):

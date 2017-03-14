@@ -1,29 +1,27 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-
 """ Bika setup handlers. """
 
-from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory
-from Products.CMFPlone.utils import _createObjectByType
-
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, tmpID
-from bika.lims import logger
-from bika.lims.config import *
-from bika.lims.permissions import *
-from bika.lims.interfaces \
-        import IHaveNoBreadCrumbs, IARImportFolder, IARPriorities
-from zope.event import notify
-from zope.interface import alsoProvides
+from Products.CMFEditions.Permissions import AccessPreviousVersions
 from Products.CMFEditions.Permissions import ApplyVersionControl
 from Products.CMFEditions.Permissions import SaveNewVersion
-from Products.CMFEditions.Permissions import AccessPreviousVersions
+from Products.CMFPlone.utils import _createObjectByType
+from zope.interface import alsoProvides
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims import logger
+from bika.lims.config import *
+from bika.lims.interfaces import IARImportFolder
+from bika.lims.interfaces import IHaveNoBreadCrumbs
+from bika.lims.permissions import *
+from bika.lims.utils import tmpID
 
 
 class Empty:

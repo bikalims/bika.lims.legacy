@@ -1,17 +1,19 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.ATContentTypes.content import schemata
 from Products.Archetypes import atapi
-from bika.lims import bikaMessageFactory as _
-from bika.lims.controlpanel.bika_setupitems import BikaSetupItemsView
-from bika.lims.config import PROJECTNAME
-from bika.lims.interfaces import IAnalysisProfiles
 from plone.app.folder.folder import ATFolderSchema, ATFolder
 from zope.interface.declarations import implements
-from zope.interface import alsoProvides
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
+from bika.lims.controlpanel.bika_setupitems import BikaSetupItemsView
+from bika.lims.interfaces import IAnalysisProfiles
 
 
 class AnalysisProfilesView(BikaSetupItemsView):

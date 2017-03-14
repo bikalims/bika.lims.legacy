@@ -1,44 +1,40 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 # Testing layer to provide some of the features of PloneTestCase
-from AccessControl import getSecurityManager
-from AccessControl.SecurityManagement import newSecurityManager, \
-    setSecurityManager
-from Products.CMFPlone.utils import _createObjectByType
-from plone.app.robotframework import AutoLogin, Content
-from zope.component.hooks import getSite
-from bika.lims import logger
-from bika.lims.exportimport.load_setup_data import LoadSetupData
-from bika.lims.utils.analysisrequest import create_analysisrequest
 from plone import api
-from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
+
+import Products.ATExtensions
+import Products.PloneTestCase.setup
+import collective.js.jqueryui
+import pkg_resources
+import plone.app.iterate
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.setuphandlers import setupPortalContent
+from Products.CMFPlone.utils import _createObjectByType
+from Testing.makerequest import makerequest
+from plone.app.robotframework import AutoLogin, Content
 from plone.app.robotframework.remote import RemoteLibrary, RemoteLibraryLayer
-from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
-from plone.app.testing import login
-from plone.app.testing import logout
 from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import SITE_OWNER_NAME
-from plone.testing import z2
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.setuphandlers import setupPortalContent
-from Testing.makerequest import makerequest
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
+from plone.app.testing import applyProfile
+from plone.app.testing import login
+from plone.app.testing import logout
+from plone.testing import z2
 from plone.testing.z2 import Browser
 
 import bika.lims
-import pkg_resources
-import collective.js.jqueryui
-import plone.app.iterate
-import Products.ATExtensions
-import Products.PloneTestCase.setup
-
-import transaction
+from bika.lims import logger
+from bika.lims.exportimport.load_setup_data import LoadSetupData
+from bika.lims.utils.analysisrequest import create_analysisrequest
 
 
 class SimpleTestLayer(PloneSandboxLayer):

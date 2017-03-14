@@ -1,23 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import json
+import sys
+from decimal import Decimal
+from decimal import InvalidOperation
+from operator import itemgetter
+
+import plone.protect
 from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from bika.lims.config import PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.vocabularies import CatalogVocabulary
-from magnitude import mg, MagnitudeError
-from Missing import Value
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
 from Products.CMFCore.utils import getToolByName
-from operator import itemgetter
-import json
-import plone.protect
-import sys
+from magnitude import mg
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.config import PROJECTNAME
+from bika.lims.content.bikaschema import BikaSchema
 
 schema = BikaSchema.copy() + Schema((
     ReferenceField('ContainerType',
@@ -93,8 +96,8 @@ class Container(BaseContent):
         default = self.Schema()['Capacity'].get(self)
         try:
             mgdefault = default.split(' ', 1)
-            mgdefault = mg(float(mgdefault[0]), mgdefault[1])
-        except:
+            mgdefault = mg(Decimal(mgdefault[0]), mgdefault[1])
+        except (TypeError, ValueError, InvalidOperation):
             mgdefault = mg(0, 'ml')
         try:
             return str(mgdefault.ounit('ml'))

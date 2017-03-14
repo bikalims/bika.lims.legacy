@@ -13,7 +13,6 @@
 ##title=
 ##
 
-from DateTime import DateTime
 workflow = context.portal_workflow
 
 # False if object is cancelled

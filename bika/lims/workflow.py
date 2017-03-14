@@ -1,25 +1,27 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims import enum
+from plone import api
+
+from Products.CMFCore.WorkflowCore import WorkflowException
+from Products.CMFPlone.interfaces import IWorkflowChain
+from Products.CMFPlone.workflow import ToolWorkflowChain
+from zope.interface import implementer
+from zope.interface import implements
+
 from bika.lims import PMF
+from bika.lims import enum
+from bika.lims import logger
 from bika.lims.browser import ulocalized_time
 from bika.lims.interfaces import IJSONReadExtender
 from bika.lims.jsonapi import get_include_fields
 from bika.lims.utils import changeWorkflowState
 from bika.lims.utils import t
-from bika.lims import logger
-from Products.CMFCore.interfaces import IContentish
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.CMFPlone.interfaces import IWorkflowChain
-from Products.CMFPlone.workflow import ToolWorkflowChain
-from zope.component import adapts
-from zope.interface import implementer
-from zope.interface import implements
-from zope.interface import Interface
-from plone import api
+
 
 def skip(instance, action, peek=False, unskip=False):
     """Returns True if the transition is to be SKIPPED

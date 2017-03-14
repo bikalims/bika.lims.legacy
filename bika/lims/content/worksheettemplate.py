@@ -1,22 +1,23 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import sys
+
 from AccessControl import ClassSecurityInfo
-from Acquisition import aq_base, aq_inner
 from Products.ATExtensions.field.records import RecordsField
 from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
+
+from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.widgets import ServicesWidget
 from bika.lims.browser.widgets import WorksheetTemplateLayoutWidget
 from bika.lims.config import ANALYSIS_TYPES, PROJECTNAME
 from bika.lims.content.bikaschema import BikaSchema
-from bika.lims import PMF, bikaMessageFactory as _
-from zope.interface import implements
-import sys
 
 schema = BikaSchema.copy() + Schema((
     RecordsField('Layout',

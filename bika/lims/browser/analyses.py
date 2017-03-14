@@ -1,39 +1,32 @@
-# coding=utf-8
-
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import json
+from operator import itemgetter
 from plone import api
+
 from AccessControl import getSecurityManager
+from DateTime import DateTime
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
+from zope.component import getAdapters
+
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, dicts_to_dict, format_supsub
-from bika.lims.utils.analysis import format_uncertainty
-from bika.lims.browser import BrowserView
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.config import QCANALYSIS_TYPES
 from bika.lims.interfaces import IResultOutOfRange
 from bika.lims.permissions import *
 from bika.lims.permissions import Verify as VerifyPermission
-from bika.lims.utils import isActive
+from bika.lims.utils import formatDecimalMark, JSONEncoder
 from bika.lims.utils import getUsers
-from bika.lims.utils import to_utf8
-from bika.lims.utils import formatDecimalMark
-from DateTime import DateTime
-from operator import itemgetter
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.WorkflowCore import WorkflowException
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims.utils.analysis import format_numeric_result
-from zope.interface import implements
-from zope.interface import Interface
-from zope.component import getAdapters
-
-import json
-
+from bika.lims.utils import isActive
+from bika.lims.utils import t, dicts_to_dict, format_supsub
+from bika.lims.utils.analysis import format_uncertainty
 
 
 class AnalysesView(BikaListingView):
@@ -660,8 +653,10 @@ class AnalysesView(BikaListingView):
                     defdls = {'min':srv.getLowerDetectionLimit(),
                               'max':srv.getUpperDetectionLimit(),
                               'manual':srv.getAllowManualDetectionLimit()}
-                    defin = '<input type="hidden" id="DefaultDLS.%s" value=\'%s\'/>'
-                    defin = defin % (obj.UID(), json.dumps(defdls))
+                    defin = \
+                        '<input type="hidden" id="DefaultDLS.%s" value="%s"/>'
+                    json_str = json.dumps(defdls, cls=JSONEncoder)
+                    defin = defin % (obj.UID(), json_str)
                     item['after']['DetectionLimit'] = defin
 
                 # LIMS-1769. Allow to use LDL and UDL in calculations.
@@ -685,10 +680,14 @@ class AnalysesView(BikaListingView):
                         dls['is_udl'] = obj.isUpperDetectionLimit()
                         dls['default_ldl'] = service.getLowerDetectionLimit()
                         dls['default_udl'] = service.getUpperDetectionLimit()
-                        dls['manual_allowed'] = service.getAllowManualDetectionLimit()
-                        dls['dlselect_allowed'] = service.getDetectionLimitSelector()
-                    dlsin = '<input type="hidden" id="AnalysisDLS.%s" value=\'%s\'/>'
-                    dlsin = dlsin % (obj.UID(), json.dumps(dls))
+                        dls['manual_allowed'] = \
+                            service.getAllowManualDetectionLimit()
+                        dls['dlselect_allowed'] = \
+                            service.getDetectionLimitSelector()
+                    dlsin = \
+                        '<input type="hidden" id="AnalysisDLS.%s" value="%s"/>'
+                    json_str = json.dumps(dls, cls=JSONEncoder)
+                    dlsin = dlsin % (obj.UID(), json_str)
                     item['after']['Result'] = dlsin
 
             else:
@@ -879,8 +878,9 @@ class AnalysesView(BikaListingView):
         else:
             self.categories.sort()
 
-        # self.json_specs = json.dumps(self.specs)
-        self.json_interim_fields = json.dumps(self.interim_fields)
+        # self.json_specs = json.dumps(self.specs, cls=JSONEncoder)
+        json_str = json.dumps(self.interim_fields, cls=JSONEncoder)
+        self.json_interim_fields = json_str
         self.items = items
 
         # Method and Instrument columns must be shown or hidden at the
