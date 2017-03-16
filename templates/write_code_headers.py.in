@@ -14,6 +14,7 @@ TEMPLATE = """# -*- coding: utf-8 -*-
 #
 # Copyright 2011-{current_year} by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
 """
 
 def get_template():
@@ -57,8 +58,7 @@ if __name__ == "__main__":
     os.path.walk(directory, callback, None)
 
     for path, lines in data.iteritems():
-        # The new header
-        new_lines = get_template().split("\n")
+        new_lines = [get_template()]
 
         marker = False
         for num, line in enumerate(lines):
@@ -72,4 +72,3 @@ if __name__ == "__main__":
         with open(path, "w") as f:
             f.writelines(new_lines)
             print "Wrote header to {}".format(path)
-
