@@ -58,16 +58,25 @@ if __name__ == "__main__":
     os.path.walk(directory, callback, None)
 
     for path, lines in data.iteritems():
+        # the new lines start with our header
         new_lines = [get_template()]
 
-        marker = False
+        skip = True
         for num, line in enumerate(lines):
-            if line and line.startswith("#") is False and marker is False:
-                print "Found first code line for file {} at {}".format(path, num)
-                marker = True
+            # skip all commented lines
+            if skip and line.startswith("#"):
+                continue
+            # skip app empty lines
+            if skip and line == "\n":
+                continue
 
-            if marker:
-                new_lines.append(line)
+            # if we reach this point, we found the first code line
+            if skip:
+                print "Found first code line for file {} at {}".format(path, num)
+                skip = False
+
+            # append all code lines below the new_lines
+            new_lines.append(line)
 
         with open(path, "w") as f:
             f.writelines(new_lines)
