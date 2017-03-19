@@ -38,7 +38,8 @@
 				href python:view.context_actions[add_item]['url'];
 				class python:'context_action_link %s' % (view.context_actions[add_item].get('class',''))"
                style="padding:5px 1px 3px 1px;"
-               tal:condition="python:len(view.context_actions) > 0">ARs
+               tal:condition="python:len(view.context_actions) > 0">
+              <span i18n:translate="">ARs</span>
             </a>
         </tal:add_actions>
     </h1>
