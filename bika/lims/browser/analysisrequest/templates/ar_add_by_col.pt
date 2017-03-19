@@ -6,24 +6,33 @@
     <link rel="stylesheet" type="text/css" media="all" href=""
             tal:attributes="href string:${portal/absolute_url}/bika_widgets/referencewidget.css"/>
     <style media="screen" type="text/css">
-        #singleservice {
-            width:90%;
-        }
-        .partnr {
-            color: #555;
-            font-size: 86%;
-        }
-        .nowrap{
-            white-space: nowrap;
-        }
-        .copybutton {
-            cursor: pointer;
-        }
+     #singleservice {
+         width:90%;
+     }
+     .partnr {
+         color: #555;
+         font-size: 86%;
+     }
+     .nowrap{
+         white-space: nowrap;
+     }
+     .copybutton {
+         cursor: pointer;
+     }
+     .analysisrequest tr:hover>* {
+         background-color: #e7e7e7!important;
+     }
+     .analysisrequest th {
+         width: 10%;
+         border: 1px solid #e7e7e7!important;
+     }
+     .analysisrequest tfoot tr td {
+         border-right: 1px solid #ddd!important;
+     }
     </style>
     <table summary="Add analysis requests"
            class="listing analysisrequest add nosort"
            cellpadding="0" cellspacing="0">
-        <thead>
         <thead class="analysisrequest_add_by_col">
             <!-- All edit fields with fields with add=visible -->
             <tal:field tal:repeat="field python:view.get_fields_with_visibility('edit')">
