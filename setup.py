@@ -75,6 +75,7 @@ setup(name='bika.lims',
       ],
       extras_require={
           'test': [
+              'Products.SecureMailHost',
               'plone.app.robotframework',
               'plone.app.testing',
               'plone.app.textfield',
