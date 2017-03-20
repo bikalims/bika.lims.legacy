@@ -1,13 +1,14 @@
 # --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
 # SOME DESCRIPTIVE TITLE.
 # Translators:
+# Didinson Muñoz <dmunozcster@gmail.com>, 2017
 # Marco Rodriguez <tabarishneo@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-03-17 08:09+0000\n"
-"PO-Revision-Date: 2017-03-17 07:37+0000\n"
-"Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
+"POT-Creation-Date: 2017-03-20 14:35+0000\n"
+"PO-Revision-Date: 2017-03-20 00:32+0000\n"
+"Last-Translator: Didinson Muñoz <dmunozcster@gmail.com>\n"
 "Language-Team: Spanish (Latin America) (http://www.transifex.com/bikalabs/bika-lims/language/es_419/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -97,11 +98,11 @@ msgstr "% Publicado"
 
 #: bika/lims/utils/workflow/schedulesampling.py:33
 msgid "%s can't be transitioned."
-msgstr ""
+msgstr "%s No es posible realizar la transición"
 
 #: bika/lims/utils/analysisrequest.py:312
 msgid "%s has been rejected"
-msgstr ""
+msgstr "%s ha sido rechazado"
 
 #: bika/lims/exportimport/setupdata/__init__.py:35
 msgid "%s has no '%s' column."
@@ -113,65 +114,65 @@ msgstr "&nbsp;"
 
 #: bika/lims/content/bikasetup.py:462
 msgid "'Classic' indicates importing analysis requests per sample and analysis service selection. With 'Profiles', analysis profile keywords are used to select multiple analysis services together"
-msgstr ""
+msgstr "\"Clásico\" indica la importación de solicitudes de análisis por muestra y la selección de los servicios de análisis. Con \"Perfiles\" palabras clave de un perfil son usados para seleccionar múltiples servicios de análisis simultáneamente"
 
 #: bika/lims/browser/analysisrequest/workflow.py:700
 msgid "'Sampling date' and 'Define the Sampler for the scheduled sampling' must be completed and saved in order to schedule a sampling."
-msgstr ""
+msgstr "'Fecha de Muestreo' y 'Definir el muestreador para la toma de muestra' debe ser completado y guardado para programar un muestreo"
 
 #: bika/lims/browser/analysisrequest/workflow.py:686
 msgid "'Sampling date' and 'Define the Sampler for the scheduled sampling' must be completed and saved in order to schedule a sampling. Element: %s"
-msgstr ""
+msgstr "'Fecha de Muestreo' y 'Definir el muestreador para la toma de muestra' debe ser completado y guardado para programar un muestreo. Elemento: %s"
 
 #: bika/lims/content/referencesample.py:190
 #: bika/lims/skins/bika/attachments.pt:205
 msgid "(Blank)"
-msgstr ""
+msgstr "(Blanco)"
 
 #: bika/lims/skins/bika/attachments.pt:212
 msgid "(Control)"
-msgstr ""
+msgstr "(Control)"
 
 #: bika/lims/skins/bika/attachments.pt:219
 msgid "(Duplicate)"
-msgstr ""
+msgstr "(Duplicado)"
 
 #: bika/lims/content/referencesample.py:192
 msgid "(Hazardous)"
-msgstr ""
+msgstr "(Peligroso)"
 
 #: bika/lims/browser/templates/login_details.pt:227
 msgid "(Required)"
-msgstr ""
+msgstr "(Requerido)"
 
 #: bika/lims/browser/analyses.py:105
 #: bika/lims/browser/referencesample.py:121
 #: bika/lims/browser/worksheet/views/analyses.py:46
 msgid "+-"
-msgstr ""
+msgstr "+-"
 
 #: bika/lims/content/arpriority.py:33
 msgid "16x16 pixel icon used for the this priority in listings."
-msgstr ""
+msgstr "Icono de 16x16 píxeles es utilizado para esta prioridad en listados."
 
 #: bika/lims/content/arpriority.py:39
 msgid "32x32 pixel icon used for the this priority in object views."
-msgstr ""
+msgstr "Icono de 32x32 píxeles es utilizado para esta prioridad en vistas de objetos."
 
 #: bika/lims/browser/widgets/analysisspecificationwidget.py:53
 #: bika/lims/content/analysisspec.py:78
 msgid "< Min"
-msgstr ""
+msgstr "< Min"
 
 #: bika/lims/skins/bika/bika_widgets/rejectionwidget.pt:59
 msgid "<input type=\"checkbox\" class=\"rejectionwidget-checkbox-other rejectionwidget-field\" name=\"${DYNAMIC_CONTENT}\" id=\"${DYNAMIC_CONTENT}\" /> Other"
-msgstr ""
+msgstr "<input type=\"checkbox\" class=\"rejectionwidget-checkbox-other rejectionwidget-field\" name=\"${DYNAMIC_CONTENT}\" id=\"${DYNAMIC_CONTENT}\" /> Otro"
 
 msgid "<p>${service} requires the following services to be selected:</p><br/><p>${deps}</p><br/><p>Do you want to apply these selections now?</p>"
-msgstr ""
+msgstr "<p>${service} requiere que los siguientes servicios sean seleccionados:</p><br/><p>${deps}</p><br/><p>Deseas aplicar estos servicios ahora?</p>"
 
 msgid "<p>The following services depend on ${service}, and will be unselected if you continue:</p><br/><p>${deps}</p><br/><p>Do you want to remove these selections now?</p>"
-msgstr ""
+msgstr "<p>Los siguientes servicio dependen de ${service}, y no serán seleccionados si continúa:</p><br/><p>${deps}</p><br/><p>Desea quitar estas selecciones ahora?</p>"
 
 #: bika/lims/skins/bika/bika_widgets/rejectionsetupwidget.pt:33
 msgid "<span>x</span> <span class=\"formHelp\">x</span>"
@@ -180,11 +181,11 @@ msgstr ""
 #: bika/lims/browser/widgets/analysisspecificationwidget.py:54
 #: bika/lims/content/analysisspec.py:79
 msgid "> Max"
-msgstr ""
+msgstr "> Max"
 
 #: bika/lims/content/samplinground.py:141
 msgid "A short name that describes the Round for it to be easily identified on forms and drop-down menus"
-msgstr ""
+msgstr "Un nombre corto que describe la Ronda para que sea fácilmente identificado en los formularios y en los menús desplegables"
 
 #: bika/lims/browser/analysisrequest/add.py:99
 msgid "AR ${ar_number}"
@@ -192,33 +193,33 @@ msgstr ""
 
 #: bika/lims/content/bikasetup.py:475
 msgid "AR Attachment Option"
-msgstr ""
+msgstr "AR Opción de Adjuntos"
 
 #: bika/lims/content/bikasetup.py:690
 msgid "AR ID Padding"
-msgstr ""
+msgstr "AR Relleno en ID"
 
 #: bika/lims/browser/arimports.py:45
 msgid "AR Import"
-msgstr ""
+msgstr "Importar AR"
 
 #: bika/lims/content/bikasetup.py:461
 msgid "AR Import options"
-msgstr ""
+msgstr "Opciones de Importación AR"
 
 #: bika/lims/browser/srtemplate/artemplates.py:38
 msgid "AR Template Title"
-msgstr ""
+msgstr "Nombre Plantilla Solucitud de Análisis"
 
 #: bika/lims/browser/client/views/artemplates.py:34
 #: bika/lims/browser/srtemplate/artemplates.py:33
 #: bika/lims/content/srtemplate.py:85
 msgid "AR Templates"
-msgstr ""
+msgstr "Plantillas de Solicitud de Análisis"
 
 #: bika/lims/browser/analysisrequest/view.py:453
 msgid "AR for retested results"
-msgstr ""
+msgstr "Solicitu de Análisis para re-analizar resultados"
 
 #: bika/lims/browser/analysisrequest/publish.py:1030
 msgid "ARs: ${ars}"
@@ -226,163 +227,163 @@ msgstr ""
 
 #: bika/lims/content/organisation.py:78
 msgid "Account Name"
-msgstr ""
+msgstr "Nombre de Cuenta"
 
 #: bika/lims/content/organisation.py:84
 msgid "Account Number"
-msgstr ""
+msgstr "Número de Cuenta"
 
 #: bika/lims/content/organisation.py:72
 msgid "Account Type"
-msgstr ""
+msgstr "Tipo de Cuenta"
 
 #: bika/lims/browser/accreditation.py:40
 #: bika/lims/content/laboratory.py:64
 msgid "Accreditation"
-msgstr ""
+msgstr "Acreditación"
 
 #: bika/lims/content/laboratory.py:48
 msgid "Accreditation Body Abbreviation"
-msgstr ""
+msgstr "Abreviatura del ente de acreditación"
 
 #: bika/lims/content/laboratory.py:56
 msgid "Accreditation Body URL"
-msgstr ""
+msgstr "URL del ente de Acreditación"
 
 #: bika/lims/content/laboratory.py:79
 msgid "Accreditation Logo"
-msgstr ""
+msgstr "Logo de Acreditación"
 
 #: bika/lims/content/laboratory.py:72
 msgid "Accreditation Reference"
-msgstr ""
+msgstr "Referencia de Acreditación"
 
 #: bika/lims/content/laboratory.py:92
 msgid "Accreditation page header"
-msgstr ""
+msgstr "Acreditación en encabezado de página "
 
 #: bika/lims/browser/analysisrequest/manage_analyses.py:264
 #: bika/lims/browser/widgets/analysisprofileanalyseswidget.py:134
 #: bika/lims/browser/widgets/analysisspecificationwidget.py:105
 msgid "Accredited"
-msgstr ""
+msgstr "Acreditado"
 
 #: bika/lims/browser/log.py:53
 #: bika/lims/browser/reports/templates/administration_usershistory.pt:74
 #: bika/lims/browser/templates/analysisservice_popup.pt:290
 msgid "Action"
-msgstr ""
+msgstr "Acción"
 
 #: bika/lims/browser/reports/templates/administration.pt:137
 msgid "Actions performed by users (or specific user) between a period of time"
-msgstr ""
+msgstr "Acciones realizadas por los usuarios (un usuario específico) en un periodo de tiempo"
 
 #: bika/lims/profiles/default/workflows/bika_inactive_workflow/definition.xml
 msgid "Activate"
-msgstr ""
+msgstr "Activar"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:152
 #: bika/lims/browser/client/views/analysisprofiles.py:49
 #: bika/lims/browser/client/views/analysisspecs.py:55
 msgid "Active"
-msgstr ""
+msgstr "Activo"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:110
 #: bika/lims/browser/sample/printform.py:284
 #: bika/lims/browser/sample/view.py:105
 msgid "Ad-Hoc"
-msgstr ""
+msgstr "Muestra puntual"
 
 #: bika/lims/browser/batchfolder.py:103
 #: bika/lims/browser/client/views/analysisprofiles.py:68
 #: bika/lims/browser/client/views/analysisrequests.py:44
 msgid "Add"
-msgstr ""
+msgstr "Nuevo"
 
 #: bika/lims/browser/worksheet/views/add_analyses.py:33
 msgid "Add Analyses"
-msgstr ""
+msgstr "Nuevo análisis"
 
 #: bika/lims/browser/worksheet/views/add_blank.py:31
 msgid "Add Blank Reference"
-msgstr ""
+msgstr "Añadir Muestra Referencia Blanco"
 
 #: bika/lims/browser/worksheet/views/add_control.py:30
 msgid "Add Control Reference"
-msgstr ""
+msgstr "Añadir Muestra Control"
 
 #: bika/lims/browser/worksheet/views/add_duplicate.py:31
 msgid "Add Duplicate"
-msgstr ""
+msgstr "Añadir Duplicado"
 
 # worksheet.js
 msgid "Add Remark"
-msgstr ""
+msgstr "Añadir Comentario"
 
 #: bika/lims/controlpanel/bika_artemplates.py:41
 msgid "Add Template"
-msgstr ""
+msgstr "Nueva Plantilla"
 
 #: bika/lims/content/bikasetup.py:392
 msgid "Add a remarks field to all analyses"
-msgstr ""
+msgstr "Añadir un campo para observaciones en todos los análisis"
 
 #: bika/lims/browser/batch/analysisrequests.py:34
 #: bika/lims/browser/samplinground/analysisrequests.py:270
 msgid "Add new"
-msgstr ""
+msgstr "Añadir nuevo"
 
 #: bika/lims/browser/analysisrequest/workflow.py:532
 msgid "Additional remarks:"
-msgstr ""
+msgstr "Comentarios adicionales"
 
 #: bika/lims/content/storagelocation.py:87
 #: bika/lims/skins/bika/bika_widgets/addresswidget.pt:122
 msgid "Address"
-msgstr ""
+msgstr "Dirección"
 
 #: bika/lims/content/bikasetup.py:658
 msgid "Adds a two-digit year after the ID prefix"
-msgstr ""
+msgstr "Añadir dos dígitos del año después del prefijo del ID"
 
 #: bika/lims/browser/reports/templates/administration.pt:80
 msgid "Administrative Reports"
-msgstr ""
+msgstr "Reportes Arministrativos"
 
 #: bika/lims/browser/reports/selection_macros/__init__.py:167
 msgid "After ${end_date}"
-msgstr ""
+msgstr "Despúes ${end_date}"
 
 #: bika/lims/browser/instrument.py:537
 #: bika/lims/content/instrumentcertification.py:89
 msgid "Agency"
-msgstr ""
+msgstr "Agencia"
 
 #: bika/lims/browser/accreditation.py:81
 #: bika/lims/browser/aggregatedanalyses.py:81
 #: bika/lims/browser/analyses.py:127
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #: bika/lims/browser/accreditation.py:60
 msgid "All Accredited analysis services are listed here."
-msgstr ""
+msgstr "Todos los servicios de análisis acreditados se listan aquí."
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:787
 msgid "All analyses assigned"
-msgstr ""
+msgstr "Todos los análisis asignados"
 
 #: bika/lims/skins/bika/attachments.pt:271
 msgid "All analyses of type"
-msgstr ""
+msgstr "Todos los tipos de análisis"
 
 #: bika/lims/content/bikasetup.py:127
 msgid "Allow Lab Clerks to create and edit clients"
-msgstr ""
+msgstr "Permitir que los Lab Clerks (empelados adminsitrativos) crear y editar clientes"
 
 #: bika/lims/content/analysisservice.py:339
 msgid "Allow Manual Detection Limit input"
-msgstr ""
+msgstr "Permitir la entrada manual del Límite de Detección"
 
 #: bika/lims/content/bikasetup.py:135
 msgid "Allow access to worksheets only to assigned analysts"
@@ -390,156 +391,156 @@ msgstr ""
 
 #: bika/lims/content/analysisservice.py:864
 msgid "Allow manual uncertainty value input"
-msgstr ""
+msgstr "Permitir el ingreso manual de la incertidumbre"
 
 #: bika/lims/config.py:124
 msgid "Allow same user to verify multiple times"
-msgstr ""
+msgstr "Permitir que el mismo usuario verifique varias veces"
 
 #: bika/lims/config.py:125
 msgid "Allow same user to verify multiple times, but not consecutively"
-msgstr ""
+msgstr "Permitir que el mismo usuario verifique varias veces, pero no consecutivamente"
 
 #: bika/lims/content/bikasetup.py:404
 msgid "Allow self-verification of results"
-msgstr ""
+msgstr "Permitir la auto-verificación de los resultados"
 
 #: bika/lims/content/analysisservice.py:340
 msgid "Allow the analyst to manually replace the default Detection Limits (LDL and UDL) on results entry views"
-msgstr ""
+msgstr "Permitir a los analistas reemplazar manualmente el valor prederminado para los Límites de Detección (LDL y UDL) sobre las entradas de los resultados"
 
 #: bika/lims/content/analysisservice.py:865
 msgid "Allow the analyst to manually replace the default uncertainty value."
-msgstr ""
+msgstr "Permitir a lo analistas reemplazar manualmente el valor predeterminado de la incertidumbre."
 
 #: bika/lims/content/bikasetup.py:740
 msgid "Allow users to filter datas by department."
-msgstr ""
+msgstr "Permitir a los usuarios filtrar datos por departamento."
 
 #: bika/lims/content/analysisservice.py:626
 msgid "Alternative Calculation"
-msgstr ""
+msgstr "Fórmula de cálculo alternativo"
 
 #: bika/lims/content/client.py:85
 msgid "Always expand the selected categories in client views"
-msgstr ""
+msgstr "Expandir siempre las categorias seleccionadas en la vista de Clientes"
 
 #: bika/lims/browser/sample/printform.py:280
 msgid "Ambiental Conditions"
-msgstr ""
+msgstr "Condicione ambientales"
 
 #: bika/lims/browser/reports/administration_arsnotinvoiced.py:73
 msgid "Amount"
-msgstr ""
+msgstr "Cantidad"
 
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_analyses.pt:106
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_manage_results.pt:57
 #: bika/lims/browser/dashboard.py:581
 msgid "Analyses"
-msgstr ""
+msgstr "Análisis"
 
 #: bika/lims/browser/reports/qualitycontrol_resultspersamplepoint.py:305
 msgid "Analyses in error shoulder range"
-msgstr ""
+msgstr "Análisis en el rango de los límites de error"
 
 #: bika/lims/browser/reports/qualitycontrol_analysesoutofrange.py:31
 #: bika/lims/browser/reports/qualitycontrol_referenceanalysisqc.py:235
 #: bika/lims/browser/reports/qualitycontrol_resultspersamplepoint.py:301
 msgid "Analyses out of range"
-msgstr ""
+msgstr "Análisis fuera de rango"
 
 #: bika/lims/browser/aggregatedanalyses.py:48
 #: bika/lims/browser/dashboard.py:506
 msgid "Analyses pending"
-msgstr ""
+msgstr "Análisis pendientes"
 
 #: bika/lims/browser/reports/productivity_analysesperservice.py:34
 msgid "Analyses per analysis service"
-msgstr ""
+msgstr "Análisis por Servicios de Análisis"
 
 #: bika/lims/browser/reports/productivity_analysespersampletype.py:34
 #: bika/lims/browser/reports/templates/productivity.pt:211
 msgid "Analyses per sample type"
-msgstr ""
+msgstr "Análisis por tipo de Muestra"
 
 #: bika/lims/browser/reports/templates/productivity.pt:165
 msgid "Analyses per service"
-msgstr ""
+msgstr "Análisis por Servicio"
 
 #: bika/lims/browser/reports/templates/productivity.pt:415
 #: bika/lims/browser/reports/templates/productivity_analysesperformedpertotal.pt:77
 msgid "Analyses performed and published as % of total"
-msgstr ""
+msgstr "Análisis realizados y publicados como % del total"
 
 #: bika/lims/browser/reports/productivity_analysesperformedpertotal.py:195
 msgid "Analyses performed as % of total"
-msgstr ""
+msgstr "Análisis realizados como% del total"
 
 #: bika/lims/browser/reports/templates/administration.pt:91
 #: bika/lims/browser/reports/templates/productivity.pt:160
 msgid "Analyses related reports"
-msgstr ""
+msgstr "Análisis de reportes relacionados"
 
 #: bika/lims/browser/reports/templates/qualitycontrol.pt:37
 msgid "Analyses repeated"
-msgstr ""
+msgstr "Análisis Repetidos"
 
 #: bika/lims/browser/reports/qualitycontrol_analysesoutofrange.py:32
 msgid "Analyses results out of specified range"
-msgstr ""
+msgstr "Resultados de análisis fuera del rango de especificación"
 
 #: bika/lims/browser/reports/qualitycontrol_analysesrepeated.py:30
 msgid "Analyses retested"
-msgstr ""
+msgstr "Análisis re-analizados"
 
 #: bika/lims/browser/reports/productivity_analysesperdepartment.py:205
 #: bika/lims/browser/reports/templates/productivity.pt:378
 #: bika/lims/browser/reports/templates/productivity_analysesperdepartment.pt:77
 msgid "Analyses summary per department"
-msgstr ""
+msgstr "Resumen de análisis por departamento"
 
 #: bika/lims/browser/reports/qualitycontrol_analysesrepeated.py:31
 msgid "Analyses which have been retested"
-msgstr ""
+msgstr "Análisis que han sido re-analizados"
 
 #: bika/lims/browser/analyses.py:69
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_analyses_not_requested.pt:69
 #: bika/lims/browser/late_analyses.py:44
 msgid "Analysis"
-msgstr ""
+msgstr "Análisis"
 
 #: bika/lims/content/bikasetup.py:489
 msgid "Analysis Attachment Option"
-msgstr ""
+msgstr "Opciones de Adjuntos en Análisis"
 
 #: bika/lims/controlpanel/bika_analysiscategories.py:22
 msgid "Analysis Categories"
-msgstr ""
+msgstr "Categorías de Análisis"
 
 #: bika/lims/content/analysisservice.py:712
 msgid "Analysis Category"
-msgstr ""
+msgstr "Categoría de Análisis"
 
 #: bika/lims/content/analysisservice.py:372
 msgid "Analysis Keyword"
-msgstr ""
+msgstr "Palabra clave para el análisis"
 
 #: bika/lims/content/analysisrequest.py:483
 #: bika/lims/content/artemplate.py:165
 msgid "Analysis Profile"
-msgstr ""
+msgstr "Perfil de Análisis"
 
 #: bika/lims/browser/client/views/analysisprofiles.py:35
 #: bika/lims/content/analysisrequest.py:504
 #: bika/lims/controlpanel/bika_analysisprofiles.py:22
 msgid "Analysis Profiles"
-msgstr ""
+msgstr "Perfiles de Análisis"
 
 #: bika/lims/browser/aggregatedanalyses.py:72
 #: bika/lims/browser/batch/batchbook.py:46
 #: bika/lims/browser/templates/analyses_retractedlist.pt:17
 msgid "Analysis Request"
-msgstr ""
+msgstr "Solicitud de Análisis"
 
 #: bika/lims/config.py:74
 msgid "Analysis Request ID"
