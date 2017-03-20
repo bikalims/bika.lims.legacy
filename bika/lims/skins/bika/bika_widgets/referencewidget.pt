@@ -27,6 +27,7 @@
             <span tal:define="value python: (values and hasattr(values, 'Title')) and values.Title() or '';"
               tal:condition="python:not context.Schema()[fieldName].multiValued"
             tal:content="value">reference</span>
+          </span>
         </span>
     </metal:view_macro>
 
