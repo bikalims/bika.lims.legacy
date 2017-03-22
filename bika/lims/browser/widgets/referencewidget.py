@@ -192,10 +192,6 @@ class ajaxReferenceWidgetSearch(BrowserView):
         rows = []
 
         brains = []
-        self.request['search_query'] = json.dumps(
-                {'path' : {"query": 
-                            '/'.join(self.context.getPhysicalPath()) }
-                })
         for name, adapter in getAdapters((self.context, self.request), IReferenceWidgetVocabulary):
             brains.extend(adapter())
 
