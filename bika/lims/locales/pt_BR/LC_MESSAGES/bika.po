@@ -24,8 +24,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-03-20 14:35+0000\n"
-"PO-Revision-Date: 2017-03-17 20:09+0000\n"
+"POT-Creation-Date: 2017-03-23 16:24+0000\n"
+"PO-Revision-Date: 2017-03-22 17:28+0000\n"
 "Last-Translator: cruzrenato1 <renatorlcruz@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/bikalabs/bika-lims/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -4664,7 +4664,7 @@ msgstr "Frequência de amostragem"
 #: bika/lims/profiles/default/workflows/bika_ar_workflow/definition.xml
 #: bika/lims/profiles/default/workflows/bika_sample_workflow/definition.xml
 msgid "Sampling workflow"
-msgstr ""
+msgstr "Processo de amostragem"
 
 #: bika/lims/browser/analysisrequest/manage_analyses.py:98
 #: bika/lims/browser/analysisrequest/templates/ar_add.pt:125
@@ -4679,13 +4679,13 @@ msgstr "Salvar comentários"
 #: bika/lims/profiles/default/workflows/bika_ar_workflow/definition.xml
 #: bika/lims/profiles/default/workflows/bika_sample_workflow/definition.xml
 msgid "Schedule sampling"
-msgstr ""
+msgstr "Amostragem programada"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:266
 #: bika/lims/browser/dashboard.py:204
 #: bika/lims/profiles/default/workflows/bika_ar_workflow/definition.xml
 msgid "Scheduled sampling"
-msgstr ""
+msgstr "Amostragem programada"
 
 #: bika/lims/browser/instrument.py:275
 msgid "Scheduled task"
@@ -4706,11 +4706,11 @@ msgstr "Segundos"
 #: bika/lims/browser/sample/partitions.py:41
 #: bika/lims/browser/samplinground/analysisrequests.py:29
 msgid "Security Seal Intact"
-msgstr ""
+msgstr "Selo de segurança intacto"
 
 #: bika/lims/content/container.py:72
 msgid "Security Seal Intact Y/N"
-msgstr ""
+msgstr "Selo de segurança intacto S/N"
 
 #: bika/lims/content/bikasetup.py:582
 msgid "Select 'Register' if you want stickers to be automatically printed when new ARs or sample records are created. Select 'Receive' to print stickers when ARs or Samples are received. Select 'None' to disable automatic printing"
@@ -4746,7 +4746,7 @@ msgstr "Selecionar todos os itens"
 
 #: bika/lims/content/instrument.py:182
 msgid "Select an Export interface for this instrument."
-msgstr ""
+msgstr "Selecione uma interface de exportação para este instrumento."
 
 #: bika/lims/content/artemplate.py:184
 msgid "Select analyses to include in this template"
@@ -4762,7 +4762,7 @@ msgstr "Selecione arquivo existente"
 
 #: bika/lims/adapters/identifiers.py:46
 msgid "Select identifiers by which this object can be referenced."
-msgstr ""
+msgstr "Selecione os identificadores pelos quais este objeto pode ser referenciado."
 
 #: bika/lims/content/analysisrequest.py:1267
 msgid "Select if analyses to be excluded from invoice"
@@ -4782,11 +4782,11 @@ msgstr "Selecione caso as descrições devem ser incluídas"
 
 #: bika/lims/content/analysisservice.py:410
 msgid "Select if the results for tests of this type of analysis can be set by using an instrument. If disabled, no instruments will be available for tests of this type of analysis in manage results view, even though the method selected for the test has instruments assigned."
-msgstr ""
+msgstr "Selecione se os resultados para os testes deste tipo de análise podem ser definidos usando um instrumento. Se estiver desativado, não haverá instrumentos disponíveis para testes desse tipo de análise na exibição de resultados de gerenciamento, mesmo que o método selecionado para o teste tenha instrumentos atribuídos."
 
 #: bika/lims/content/analysisservice.py:390
 msgid "Select if the results for tests of this type of analysis can be set manually. If selected, the user will be able to set a result for a test of this type of analysis in manage results view without the need of selecting an instrument, even though the method selected for the test has instruments assigned."
-msgstr ""
+msgstr "Selecione se os resultados para os testes desse tipo de análise podem ser definidos manualmente. Se selecionado, o usuário poderá definir um resultado para um teste deste tipo de análise na exibição de resultados de gerenciamento sem a necessidade de selecionar um instrumento, mesmo que o método selecionado para o teste tenha instrumentos atribuídos."
 
 #: bika/lims/browser/worksheet/templates/worksheets.pt:46
 msgid "Select instrument"
@@ -4820,7 +4820,7 @@ msgstr "Seleccione a página inicial padrão. Isso é usado quando um usuário c
 
 #: bika/lims/browser/sample/templates/print_form.pt:45
 msgid "Select the filter to apply"
-msgstr ""
+msgstr "Selecione o filtro a ser aplicado"
 
 #: bika/lims/content/worksheettemplate.py:66
 msgid "Select the preferred instrument"
@@ -4828,23 +4828,23 @@ msgstr "Selecione o instrumento preferencial."
 
 #: bika/lims/profiles/default/registry.xml
 msgid "Select the template which will be used, by default, when publishing ARs."
-msgstr ""
+msgstr "Selecione o modelo que será usado por padrão, ao publicar ARs."
 
 #: bika/lims/content/identifiertype.py:41
 msgid "Select the types that this ID is used to identify."
-msgstr ""
+msgstr "Selecione os tipos que esse ID é usado para identificar."
 
 #: bika/lims/content/bikasetup.py:730
 msgid "Select this to activate automatic notifications via email to the Client when a Sample or Analysis Request is rejected."
-msgstr ""
+msgstr "Selecione esta opção para ativar notificações automáticas via e-mail para o Cliente quando uma Amostra ou Pedido de Análise for rejeitada."
 
 #: bika/lims/content/bikasetup.py:553
 msgid "Select this to activate the dashboard as a default front page."
-msgstr ""
+msgstr "Selecione esta opção para ativar o painel de controle como uma página inicial padrão."
 
 #: bika/lims/content/bikasetup.py:718
 msgid "Select this to activate the rejection workflow for Samples and Analysis Requests. A 'Reject' option will be displayed in the actions menu for these objects."
-msgstr ""
+msgstr "Selecione esta opção para ativar o fluxo de trabalho de rejeição para amostras e solicitações de análise. A opção \"Rejeitar\" será exibida no menu de ações para esses objetos."
 
 #: bika/lims/content/bikasetup.py:314
 msgid "Select this to activate the sample collection workflow steps."
@@ -4852,7 +4852,7 @@ msgstr "Selecione aqui para ativar os passos do processo (workflow) de coleção
 
 #: bika/lims/content/bikasetup.py:323
 msgid "Select this to allow a Sampling Coordinator to schedule a sampling. This functionality only takes effect when 'Sampling workflow' is active"
-msgstr ""
+msgstr "Selecione isto para permitir que um Coordenador de Amostragem programe uma amostragem. Esta funcionalidade só tem efeito quando o 'Fluxo de trabalho de amostragem' está ativo"
 
 #: bika/lims/content/worksheettemplate.py:52
 msgid "Select which Analyses should be included on the Worksheet"
@@ -4860,11 +4860,11 @@ msgstr "Selecione quais Análises devem ser incluídas na Planilha"
 
 #: bika/lims/content/bikasetup.py:617
 msgid "Select which sticker should be used as the 'large' sticker by default"
-msgstr ""
+msgstr "Selecione qual etiqueta deve ser usada como a etiqueta 'grande' por padrão"
 
 #: bika/lims/content/bikasetup.py:606
 msgid "Select which sticker should be used as the 'small' sticker by default"
-msgstr ""
+msgstr "Selecione qual etiqueta deve ser usada como a etiqueta 'pequena' por padrão"
 
 #: bika/lims/content/bikasetup.py:595
 msgid "Select which sticker to print when automatic sticker printing is enabled"
@@ -4872,7 +4872,7 @@ msgstr "Selecione qual etiqueta imprimir quando a impressão automática estiver
 
 #: bika/lims/content/analysisservice.py:969
 msgid "Self-verification of results"
-msgstr ""
+msgstr "Auto-verificação dos resultados"
 
 #: bika/lims/browser/templates/pricelist_email_form.pt:63
 msgid "Send email"
@@ -4898,7 +4898,7 @@ msgstr "Serviço"
 
 # ../browser/js/analysisrequest.js
 msgid "Service dependencies"
-msgstr ""
+msgstr "Dependências de serviços"
 
 #: bika/lims/browser/templates/analysisservice_popup.pt:59
 msgid "Service is included in the ${accreditation_body_abbrev}"
@@ -4913,7 +4913,7 @@ msgstr "Serviços"
 #: bika/lims/content/analysisrequest.py:705
 #: bika/lims/content/sample.py:613
 msgid "Set the Sample Rejection workflow and the reasons"
-msgstr ""
+msgstr "Defina o fluxo de trabalho de Rejeição de amostra e as razões"
 
 #: bika/lims/content/instrumentmaintenancetask.py:113
 msgid "Set the maintenance task as closed."
@@ -4961,7 +4961,7 @@ msgstr "Mostrar Análises do CQ"
 
 #: bika/lims/browser/templates/bika_listing_table.pt:297
 msgid "Show more"
-msgstr ""
+msgstr "Show more"
 
 #: bika/lims/content/client.py:100
 msgid "Show only selected categories in client views"
@@ -4969,7 +4969,7 @@ msgstr "Mostre apenas as categorias selecionadas em visualizações do cliente"
 
 #: bika/lims/browser/templates/dashboard.pt:381
 msgid "Show/hide timeline summary"
-msgstr ""
+msgstr "Mostrar / ocultar o resumo do cronograma"
 
 #: bika/lims/content/labcontact.py:42
 msgid "Signature"
@@ -4995,7 +4995,7 @@ msgstr "Tamanho"
 
 # ../browser/js/attachments.js
 msgid "Slot"
-msgstr ""
+msgstr "Encaixe"
 
 #: bika/lims/content/arpriority.py:32
 msgid "Small Icon"
@@ -5003,7 +5003,7 @@ msgstr "Ícone pequeno"
 
 #: bika/lims/content/bikasetup.py:605
 msgid "Small sticker"
-msgstr ""
+msgstr "Etiqueta pequena"
 
 #: bika/lims/browser/analysisrequest/manage_results.py:90
 #: bika/lims/browser/worksheet/views/results.py:212
@@ -5040,7 +5040,7 @@ msgstr "Data inicial"
 
 #: bika/lims/validators.py:132
 msgid "Start date must be before End Date"
-msgstr ""
+msgstr "A data de início deve ser anterior à data de término"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:137
 #: bika/lims/browser/arimports.py:67
@@ -5050,7 +5050,7 @@ msgstr "Estado"
 
 #: bika/lims/browser/invoicefolder.py:25
 msgid "Statements"
-msgstr ""
+msgstr "Afirmações"
 
 #: bika/lims/browser/analyses.py:87
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_analyses_not_requested.pt:72
@@ -5097,15 +5097,15 @@ msgid "Submit a valid Open XML (.XLSX) file containing Bika setup records to con
 msgstr "Enviar um arquivo válido Open XML (.xlsx) contendo registros de configuração do BIka para continuar."
 
 msgid "Submit for verification"
-msgstr ""
+msgstr "Enviar para verificação"
 
 #: bika/lims/browser/analyses.py:792
 msgid "Submited and verified by the same user- "
-msgstr ""
+msgstr "Enviado e verificado pelo mesmo usuário-"
 
 #: bika/lims/content/arimport.py:290
 msgid "Submitting AR Import"
-msgstr ""
+msgstr "Enviando AR Importação"
 
 #: bika/lims/browser/invoicebatch.py:45
 #: bika/lims/browser/reports/templates/productivity_analysesperdepartment.pt:122
@@ -5132,23 +5132,23 @@ msgstr "Sobrenome"
 
 #: bika/lims/browser/templates/dashboard.pt:15
 msgid "Switch to Frontpage"
-msgstr ""
+msgstr "Mudar para a Pagina Inicial"
 
 #: bika/lims/browser/templates/bika-frontpage.pt:6
 msgid "Switch to dashboard"
-msgstr ""
+msgstr "Mudar para o painel de controle"
 
 #: bika/lims/browser/templates/dashboard.pt:6
 msgid "Switch to frontpage"
-msgstr ""
+msgstr "Mudar para a pagina inicial"
 
 #: bika/lims/browser/templates/dashboard.pt:12
 msgid "System Dashboard"
-msgstr ""
+msgstr "Painel de Controle do Sistema"
 
 #: bika/lims/content/analysisservice.py:1451
 msgid "System default"
-msgstr ""
+msgstr "Padrão do Sistema"
 
 #: bika/lims/browser/instrument.py:59
 msgid "Task"
@@ -5156,7 +5156,7 @@ msgstr "Tarefa"
 
 #: bika/lims/content/instrumentcertification.py:53
 msgid "Task ID"
-msgstr ""
+msgstr "ID da tarefa"
 
 #. Default: "Type"
 #: bika/lims/browser/instrument.py:61
@@ -5180,15 +5180,15 @@ msgstr "Modelo"
 
 #: bika/lims/content/calculation.py:95
 msgid "Test Parameters"
-msgstr ""
+msgstr "Parâmetros de teste"
 
 #: bika/lims/content/calculation.py:108
 msgid "Test Result"
-msgstr ""
+msgstr "Resultado do teste"
 
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_retract_pdf.pt:114
 msgid "Tests requested"
-msgstr ""
+msgstr "Testes solicitados"
 
 #: bika/lims/content/artemplate.py:166
 msgid "The Analysis Profile selection for this template"
@@ -5253,7 +5253,7 @@ msgstr "A data o instrumento foi instalado"
 
 #: bika/lims/content/samplinground.py:182
 msgid "The date to do the sampling process"
-msgstr ""
+msgstr "A data para fazer o processo de amostragem"
 
 #: bika/lims/content/client.py:118
 msgid "The decimal mark selected in Bika Setup will be used."
@@ -5261,7 +5261,7 @@ msgstr "O marcador decimal nas configurações Bika serão usados."
 
 #: bika/lims/content/samplinground.py:161
 msgid "The default Sampler for these Sampling Round"
-msgstr ""
+msgstr "O coletador padrão para estas rodadas de amostragem"
 
 #: bika/lims/content/sampletype.py:78
 msgid "The default container type. New sample partitions are automatically assigned a container of this type, unless it has been specified in more details per analysis service"
@@ -5290,19 +5290,19 @@ msgstr "O número do modelo do instrumento"
 
 #: bika/lims/content/instrumentcertification.py:107
 msgid "The interval is calculated from the 'From' field and defines when the certificate expires in days. Setting this inverval overwrites the 'To' field on save."
-msgstr ""
+msgstr "O intervalo é calculado a partir do campo 'De' e define quando o certificado expira em dias. Definir esta inversão sobrescreve o campo 'Fazer' em salvar."
 
 #: bika/lims/browser/analysisrequest/workflow.py:692
 msgid "The item %s can't be transitioned."
-msgstr ""
+msgstr "O item %s não pode ser transferido."
 
 #: bika/lims/browser/analysisrequest/workflow.py:705
 msgid "The item can't be transitioned."
-msgstr ""
+msgstr "O item não pode ser transferido."
 
 #: bika/lims/content/samplinground.py:168
 msgid "The lab department responsible for the sampling round"
-msgstr ""
+msgstr "O departamento de laboratório responsável pela rodada de amostragem"
 
 #: bika/lims/browser/accreditation.py:58
 msgid "The lab is not accredited, or accreditation has not been configured. "
@@ -5316,7 +5316,7 @@ msgstr "O departamento do laboratório"
 
 #: bika/lims/content/labcontact.py:78
 msgid "The laboratory departments"
-msgstr ""
+msgstr "Os departamentos laboratoriais"
 
 #: bika/lims/content/bikasetup.py:668
 msgid "The length of the zero-padding for Sample IDs"
@@ -5340,11 +5340,11 @@ msgstr "As unidades de medida para os resultados deste serviço de análise, por
 
 #: bika/lims/utils/analysis.py:405
 msgid "The method %s is not valid: no manual entry allowed and no instrument assigned"
-msgstr ""
+msgstr "O método %s não é válido: nenhuma entrada manual permitida e nenhum instrumento atribuído"
 
 #: bika/lims/utils/analysis.py:407
 msgid "The method %s is not valid: only instrument entry for this analysis is allowed, but the method has no instrument assigned"
-msgstr ""
+msgstr "O método %s não é válido: somente a entrada pelo instrumento para essa análise é permitida, mas o método não possui nenhum instrumento atribuído"
 
 #: bika/lims/content/sampletype.py:67
 msgid "The minimum sample volume required for analysis eg. '10 ml' or '1 kg'."
@@ -5373,7 +5373,7 @@ msgstr "O número de dias antes que uma amostra expire e não possa mais ser ana
 #: bika/lims/content/samplinground.py:175
 #: bika/lims/content/srtemplate.py:62
 msgid "The number of days between recurring field trips"
-msgstr ""
+msgstr "O número de dias entre viagens de campo recorrentes"
 
 #: bika/lims/content/bikasetup.py:117
 msgid "The number of minutes before a user is automatically logged off. 0 disables automatic log-off"
@@ -5426,7 +5426,7 @@ msgstr "O código de referência emitido pelo órgão de certificação."
 
 #: bika/lims/content/calculation.py:109
 msgid "The result after the calculation has taken place with test values.  You will need to save the calculation before this value will be calculated."
-msgstr ""
+msgstr "O resultado após o cálculo foi realizado com valores de teste. Você precisará salvar o cálculo antes que esse valor seja calculado."
 
 #: bika/lims/content/method.py:83
 msgid "The results for the Analysis Services that use this method can be set manually"
@@ -5446,7 +5446,7 @@ msgstr "Os instrumentos selecionados têm suporte para este método. Use a visua
 
 #: bika/lims/content/bikasetup.py:564
 msgid "The selected landing page is displayed for non-authenticated users and if the Dashboard is not selected as the default front page. If no landing page is selected, the default Bika frontpage is displayed."
-msgstr ""
+msgstr "A página de destino selecionada é exibida para usuários não autenticados e se o Painel não estiver selecionado como página inicial padrão. Se nenhuma página de destino for selecionada, a página inicial do Bika padrão será exibida."
 
 #: bika/lims/content/instrument.py:111
 msgid "The serial number that uniquely identifies the instrument"
@@ -5466,11 +5466,11 @@ msgstr "A configuração padrão para todo o sistema que define se anexos são r
 
 #: bika/lims/content/analysisservice.py:516
 msgid "The tests of this type of analysis can be performed by using more than one method with the 'Manual entry of results' option enabled. A selection list with the methods selected here is populated in the manage results view for each test of this type of analysis. Note that only methods with 'Allow manual entry' option enabled are displayed here; if you want the user to be able to assign a method that requires instrument entry, enable the 'Instrument assignment is allowed' option."
-msgstr ""
+msgstr "Os testes desse tipo de análise podem ser realizados usando mais de um método com a opção \"Entrada manual de resultados\" ativada. Uma lista de seleção com os métodos selecionados aqui é preenchida na exibição de resultados de gerenciamento para cada teste desse tipo de análise. Observe que somente os métodos com a opção 'Permitir entrada manual' ativada são exibidos aqui; Se você deseja que o usuário seja capaz de atribuir um método que requer a entrada do instrumento, habilite a opção 'Instrumento atribuído é permitida'."
 
 #: bika/lims/content/samplinground.py:225
 msgid "The total number of Containers included in the Round."
-msgstr ""
+msgstr "O número total de recipientes incluídos na Rodada."
 
 #: bika/lims/browser/reports/productivity_analysestats.py:35
 msgid "The turnaround time of analyses"
@@ -5498,7 +5498,7 @@ msgstr "Sem resultados"
 
 #: bika/lims/skins/bika/bika_widgets/rejectionsetupwidget.pt:33
 msgid "These reasons will be displayed for its selection during the rejection process."
-msgstr ""
+msgstr "Essas razões serão exibidas para sua seleção durante o processo de rejeição."
 
 #: bika/lims/content/analysisrequest.py:1235
 #: bika/lims/content/analysisservice.py:350
@@ -5532,7 +5532,7 @@ msgstr "O Serviço de Análise não pode ser desativado pois um ou mais cálculo
 
 #: bika/lims/content/analysisservice.py:476
 msgid "This is the instrument the system will assign by default to tests from this type of analysis in manage results view. The method associated to this instrument will be assigned as the default method too.Note the instrument's method will prevail over any of the methods choosen if the 'Instrument assignment is not required' option is enabled."
-msgstr ""
+msgstr "Este é o instrumento que o sistema atribuirá por padrão a testes desse tipo de análise na exibição de resultados de gerenciamento. O método associado a este instrumento será atribuído como o método padrão também. Observe que o método do instrumento prevalecerá sobre qualquer um dos métodos escolhidos se a opção 'A atribuição do instrumento não é necessária' estiver ativada."
 
 #: bika/lims/browser/templates/analysisservice_popup.pt:224
 msgid "This service does not require a separate partition"
@@ -5544,7 +5544,7 @@ msgstr "Este serviço requer um recipiente separado."
 
 #: bika/lims/content/samplinground.py:148
 msgid "This text is also displayed upon a mouse-over of the Title field"
-msgstr ""
+msgstr "Este texto também é exibido ao passar o mouse sobre o campo Título"
 
 #: bika/lims/content/bikasetup.py:284
 msgid "This text will be appended to results reports."
@@ -5556,7 +5556,7 @@ msgstr "Este valor é reportado no final dos Laudos publicados"
 
 # ../browser/js/client.js
 msgid "This will remove all existing client analysis specifications and create copies of all lab specifications. Are you sure you want to do this?"
-msgstr ""
+msgstr "Isso removerá todas as especificações de análise de cliente existentes e criará cópias de todas as especificações de laboratório. Você tem certeza de que quer fazer isso?"
 
 #: bika/lims/browser/worksheet/tools.py:64
 msgid "This worksheet has been created to replace the rejected worksheet at ${ws_id}"
@@ -5612,17 +5612,17 @@ msgstr "A ser exibido abaixo de cada seção de Categoria de Análise nos Laudos
 #: bika/lims/profiles/default/workflows/bika_analysis_workflow/definition.xml
 #: bika/lims/profiles/default/workflows/bika_ar_workflow/definition.xml
 msgid "To be preserved"
-msgstr ""
+msgstr "Para ser preservado"
 
 #: bika/lims/browser/dashboard.py:284
 msgid "To be published"
-msgstr ""
+msgstr "A ser publicado"
 
 #: bika/lims/browser/dashboard.py:164
 #: bika/lims/browser/sample/view.py:163
 #: bika/lims/profiles/default/workflows/bika_analysis_workflow/definition.xml
 msgid "To be sampled"
-msgstr ""
+msgstr "Para ser amostrado"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:375
 #: bika/lims/browser/dashboard.py:264
@@ -5632,15 +5632,15 @@ msgstr "A verificar"
 
 #: bika/lims/content/calculation.py:96
 msgid "To test the calculation, enter values here for all calculation parameters.  This includes Interim fields defined above, as well as any services that this calculation depends on to calculate results."
-msgstr ""
+msgstr "Para testar o cálculo, insira aqui valores para todos os parâmetros de cálculo. Isso inclui os campos intermediários definidos acima, bem como quaisquer serviços que este cálculo depende para calcular os resultados."
 
 #: bika/lims/browser/sample/templates/print_form.pt:87
 msgid "To:"
-msgstr ""
+msgstr "Para:"
 
 #: bika/lims/browser/arimports.py:203
 msgid "Too few lines in CSV file"
-msgstr ""
+msgstr "Poucas linhas no arquivo CSV"
 
 #: bika/lims/browser/invoicebatch.py:49
 #: bika/lims/browser/reports/productivity_analysesattachments.py:114
@@ -5681,11 +5681,11 @@ msgstr "Rastreabilidade"
 
 #: bika/lims/browser/analysisrequest/workflow.py:667
 msgid "Transition done."
-msgstr ""
+msgstr "Transição feita."
 
 #: bika/lims/config.py:121
 msgid "Transposed"
-msgstr ""
+msgstr "Transposto"
 
 #: bika/lims/content/bikasetup.py:335
 msgid "Turn this on if you want to work with sample partitions"
@@ -5707,17 +5707,17 @@ msgstr "Erro de tipo"
 
 #: bika/lims/content/multifile.py:50
 msgid "Type of document (e.g. user manual, instrument specifications, image, ...)"
-msgstr ""
+msgstr "Tipo de documento (por exemplo, manual do utilizador, especificações do instrumento, imagem, ...)"
 
 #: bika/lims/content/storagelocation.py:65
 msgid "Type of location"
 msgstr "Tipo de Local"
 
 msgid "Unable to apply the selected instrument"
-msgstr ""
+msgstr "Não é possível aplicar o instrumento selecionado"
 
 msgid "Unable to load instruments: ${invalid_list}"
-msgstr ""
+msgstr "Não foi possível carregar os instrumentos: ${invalid_list}"
 
 #: bika/lims/browser/analysisrequest/publish.py:201
 #: bika/lims/browser/sample/printform.py:450
@@ -5751,7 +5751,7 @@ msgstr "Indefinido"
 
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_retract_pdf.pt:82
 msgid "Unique ID"
-msgstr ""
+msgstr "ID único"
 
 #: bika/lims/browser/accreditation.py:72
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_analyses_not_requested.pt:70
@@ -5765,19 +5765,19 @@ msgstr "IBAN países desconhecidos %s"
 
 #: bika/lims/browser/templates/login_details.pt:116
 msgid "Unlink User"
-msgstr ""
+msgstr "Desvincular o usuário"
 
 #: bika/lims/browser/templates/login_details.pt:108
 msgid "Unlink and delete User"
-msgstr ""
+msgstr "Desassociar e apagar o usuário"
 
 #: bika/lims/browser/contact.py:172
 msgid "Unlinked User"
-msgstr ""
+msgstr "Usuário não vinculado"
 
 #: bika/lims/browser/contact.py:169
 msgid "Unlinked and deleted User"
-msgstr ""
+msgstr "Usuário desvinculado e excluído"
 
 #: bika/lims/browser/reports/templates/productivity_samplereceivedvsreported.pt:35
 #: bika/lims/profiles/default/workflows/bika_publication_workflow/definition.xml
@@ -5796,11 +5796,11 @@ msgstr "Formato do arquivo não reconhecido ${fileformat}"
 
 #: bika/lims/exportimport/instruments/horiba/jobinyvon/icp.py:42
 msgid "Unrecognized file format ${format}"
-msgstr ""
+msgstr "Formato de arquivo não reconhecido ${format}"
 
 #: bika/lims/profiles/default/workflows/bika_duplicateanalysis_workflow/definition.xml
 msgid "Unsassign"
-msgstr ""
+msgstr "Desassociar"
 
 #: bika/lims/content/labcontact.py:43
 msgid "Upload a scanned signature to be used on printed analysis results reports. Ideal size is 250 pixels wide by 150 high"
@@ -5816,7 +5816,7 @@ msgstr "Use Perfil de Análise de Preço"
 
 #: bika/lims/content/bikasetup.py:552
 msgid "Use Dashboard as default front page"
-msgstr ""
+msgstr "Usar o Painel de Controle como página inicial padrão"
 
 #: bika/lims/content/analysisservice.py:570
 msgid "Use default calculation"
@@ -5847,7 +5847,7 @@ msgstr "Histórico de usuário"
 
 #: bika/lims/browser/contact.py:159
 msgid "User linked to this Contact"
-msgstr ""
+msgstr "Usuário vinculado a este contato"
 
 #: bika/lims/browser/reports/administration_usershistory.py:183
 #: bika/lims/browser/reports/templates/administration_usershistory.pt:56
@@ -5884,7 +5884,7 @@ msgstr "Número do IVA"
 
 #: bika/lims/profiles/default/workflows/bika_arimport_workflow/definition.xml
 msgid "Valid"
-msgstr ""
+msgstr "Válido"
 
 #: bika/lims/browser/instrument.py:539
 msgid "Valid from"
@@ -5896,7 +5896,7 @@ msgstr "Validado por"
 
 #: bika/lims/profiles/default/workflows/bika_arimport_workflow/definition.xml
 msgid "Validate"
-msgstr ""
+msgstr "Validar"
 
 #: bika/lims/content/instrumentscheduledtask.py:93
 msgid "Validation"
@@ -6070,11 +6070,11 @@ msgstr "Validação falhou: título requerido"
 
 #: bika/lims/validators.py:1096
 msgid "Validation failed: value must be between 0 and 1000"
-msgstr ""
+msgstr "Falha na validação: o valor deve estar entre 0 e 1000"
 
 #: bika/lims/validators.py:1092
 msgid "Validation failed: value must be float"
-msgstr ""
+msgstr "Falha na validação: o valor deve ser flutuante"
 
 #: bika/lims/content/instrumentvalidation.py:47
 msgid "Validation report date"
@@ -6105,7 +6105,7 @@ msgstr "Verificado"
 #: bika/lims/profiles/default/workflows/bika_ar_workflow/definition.xml
 #: bika/lims/profiles/default/workflows/bika_duplicateanalysis_workflow/definition.xml
 msgid "Verify"
-msgstr ""
+msgstr "Verificar"
 
 #: bika/lims/browser/log.py:50
 msgid "Version"
@@ -6127,7 +6127,7 @@ msgstr "Website."
 
 #: bika/lims/browser/templates/dashboard.pt:360
 msgid "Weekly"
-msgstr ""
+msgstr "Semanal"
 
 #: bika/lims/controlpanel/bika_instruments.py:57
 msgid "Weeks To Expire"
@@ -6181,7 +6181,7 @@ msgstr "Tamanho de IBAN errado por %s: %s muito curto por %i"
 
 #: bika/lims/browser/templates/dashboard.pt:364
 msgid "Yearly"
-msgstr ""
+msgstr "Anual"
 
 #: bika/lims/browser/analysisservice.py:102
 #: bika/lims/browser/header_table.py:84
@@ -6231,15 +6231,15 @@ msgstr "e outros"
 
 #: bika/lims/browser/dashboard.py:564
 msgid "assigned"
-msgstr ""
+msgstr "Atribuído"
 
 #: bika/lims/browser/dashboard.py:440
 msgid "attachment_due"
-msgstr ""
+msgstr "Anexo feito"
 
 #: bika/lims/content/instrumentcertification.py:258
 msgid "biannually"
-msgstr ""
+msgstr "Duas vezes por ano"
 
 #. the ISO 17025 standard. Bika is Open Source, flexible and allows
 #. customisations to your lab's specific requirements."
@@ -6275,7 +6275,7 @@ msgstr "comentário"
 
 #: bika/lims/content/instrumentcertification.py:254
 msgid "daily"
-msgstr ""
+msgstr "diariamente"
 
 #: bika/lims/browser/batch/publish.py:118
 msgid "datalines"
@@ -6290,7 +6290,7 @@ msgstr "datalines"
 #. ${b} ${d}, ${Y} ${I}:${M} ${p}
 #: ./TranslationServiceTool.py
 msgid "date_format_long"
-msgstr ""
+msgstr "Formato_de_data_longo"
 
 #. Default: "${Y}-${m}-${d}"
 #. The variables used here are the same as used in the strftime formating.
@@ -6301,13 +6301,14 @@ msgstr ""
 #. ${b} ${d}, ${Y}
 #: ./TranslationServiceTool.py
 msgid "date_format_short"
-msgstr ""
+msgstr "Formato_de_data_curto"
 
 #. Date format used with the datepicker jqueryui plugin.
 #. Please only use 'dd', 'mm', 'yy', '-', '/', '.' in this string.
 #. Default: "mm/dd/yy"
+#, fuzzy
 msgid "date_format_short_datepicker"
-msgstr ""
+msgstr "Formato_de_data_curto_datepicker"
 
 #: bika/lims/browser/templates/referencesample_view.pt:124
 msgid "deactivate"
@@ -6320,7 +6321,7 @@ msgstr "cabecalho_prioridadera"
 
 #: bika/lims/browser/dashboard.py:329
 msgid "inactive"
-msgstr ""
+msgstr "inativo"
 
 #: bika/lims/skins/bika/attachments.pt:65
 msgid "keywords"
@@ -6348,7 +6349,7 @@ msgstr "mínimo"
 
 #: bika/lims/content/instrumentcertification.py:256
 msgid "monthly"
-msgstr ""
+msgstr "por mês"
 
 #: bika/lims/skins/bika/attachments.pt:61
 msgid "name"
@@ -6369,23 +6370,23 @@ msgstr "titulo_nova_versao_disponivel"
 
 #: bika/lims/browser/dashboard.py:171
 msgid "of"
-msgstr ""
+msgstr "de"
 
 #: bika/lims/browser/dashboard.py:438
 msgid "open"
-msgstr ""
+msgstr "aberto"
 
 #: bika/lims/browser/dashboard.py:330
 msgid "other_status"
-msgstr ""
+msgstr "outro_status"
 
 #: bika/lims/browser/dashboard.py:328
 msgid "published"
-msgstr ""
+msgstr "Publicados"
 
 #: bika/lims/content/instrumentcertification.py:257
 msgid "quarterly"
-msgstr ""
+msgstr "trimestral"
 
 #: bika/lims/content/instrumentscheduledtask.py:105
 msgid "repeating every"
@@ -6397,11 +6398,11 @@ msgstr "repetirperíodo"
 
 #: bika/lims/browser/dashboard.py:324
 msgid "sample_due"
-msgstr ""
+msgstr "amostra_devida"
 
 #: bika/lims/browser/dashboard.py:325
 msgid "sample_received"
-msgstr ""
+msgstr "amostra_recebida"
 
 #: bika/lims/skins/bika/attachments.pt:63
 msgid "size"
@@ -6420,7 +6421,7 @@ msgstr "texto_padrao_titulo_site"
 
 #: bika/lims/content/samplinground.py:218
 msgid "the total number of Sample Points defined in the Round."
-msgstr ""
+msgstr "O número total de Pontos de Amostra definidos na Rodada."
 
 #. Default: "${I}:${M} ${p}"
 #. The variables used here are the same as used in the strftime formating.
@@ -6431,7 +6432,7 @@ msgstr ""
 #. ${I}:${M} ${p}
 #: ./TranslationServiceTool.py
 msgid "time_format"
-msgstr ""
+msgstr "formato_hora"
 
 #. Default: "Required"
 #: bika/lims/browser/templates/header_table.pt:39
@@ -6444,7 +6445,7 @@ msgstr "para"
 
 #: bika/lims/browser/dashboard.py:326
 msgid "to_be_verified"
-msgstr ""
+msgstr "a_ser_verificado"
 
 #: bika/lims/skins/bika/attachments.pt:62
 msgid "type"
@@ -6474,20 +6475,20 @@ msgstr "valor"
 
 #: bika/lims/browser/analyses.py:769
 msgid "verification(s) pending"
-msgstr ""
+msgstr "Verificação(s) pendente"
 
 #: bika/lims/browser/dashboard.py:327
 msgid "verified"
-msgstr ""
+msgstr "verificado"
 
 #: bika/lims/content/instrumentcertification.py:255
 msgid "weekly"
-msgstr ""
+msgstr "semanal"
 
 #: bika/lims/content/instrumentcertification.py:259
 msgid "yearly"
-msgstr ""
+msgstr "anual"
 
 #: bika/lims/controlpanel/bika_instruments.py:120
 msgid "{} weeks and {} day(s)"
-msgstr ""
+msgstr "{} Semanas e {} dia(s)"
