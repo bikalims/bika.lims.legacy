@@ -735,3 +735,8 @@ class IAcquireFieldDefaults(Interface):
     def __call__(context, field):
         """This function must return the surrogate (source) value directly.
         """
+
+class IProxyField(Interface):
+    """A field that proxies transparently to the field of another object.
+    Mainly needed for AnalysisRequest fields that are actually stored on the Sample.
+    """
