@@ -40,6 +40,7 @@ from Products.Archetypes.atapi import FixedPointField
 from Products.ATExtensions.field import RecordsField
 
 # Bika Fields
+from bika.lims.browser.fields import ProxyField
 from bika.lims.browser.fields import DateTimeField
 from bika.lims.browser.fields import ARAnalysesField
 from bika.lims.browser.fields import HistoryAwareReferenceField
@@ -569,9 +570,11 @@ schema = BikaSchema.copy() + Schema((
             showOn=True,
         ),
     ),
+
     # Sample field
-    DateTimeField(
+    ProxyField(
         'DateSampled',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=SampleSample,
@@ -604,8 +607,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    StringField(
+    ProxyField(
         'Sampler',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=SampleSample,
@@ -636,8 +640,10 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    StringField(
+    # Sample field
+    ProxyField(
         'ScheduledSamplingSampler',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=ScheduleSampling,
@@ -665,8 +671,10 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    DateTimeField(
+    # Sample field
+    ProxyField(
         'SamplingDate',
+        proxy="context.getSample()",
         required=1,
         mode="rw",
         read_permission=permissions.View,
@@ -700,8 +708,10 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    ReferenceField(
+    # Sample field
+    ProxyField(
         'SampleType',
+        proxy="context.getSample()",
         required=1,
         allowed_types='SampleType',
         relationship='AnalysisRequestSampleType',
@@ -865,8 +875,10 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    ReferenceField(
+    # Sample field
+    ProxyField(
         'SamplePoint',
+        proxy="context.getSample()",
         allowed_types='SamplePoint',
         relationship='AnalysisRequestSamplePoint',
         mode="rw",
@@ -905,8 +917,10 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    ReferenceField(
+    # Sample field
+    ProxyField(
         'StorageLocation',
+        proxy="context.getSample()",
         allowed_types='StorageLocation',
         relationship='AnalysisRequestStorageLocation',
         mode="rw",
@@ -979,8 +993,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    StringField(
+    ProxyField(
         'ClientReference',
+        proxy="context.getSample()",
         searchable=True,
         mode="rw",
         read_permission=permissions.View,
@@ -1015,8 +1030,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    StringField(
+    ProxyField(
         'ClientSampleID',
+        proxy="context.getSample()",
         searchable=True,
         mode="rw",
         read_permission=permissions.View,
@@ -1050,8 +1066,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    ReferenceField(
+    ProxyField(
         'SamplingDeviation',
+        proxy="context.getSample()",
         allowed_types=('SamplingDeviation',),
         relationship='AnalysisRequestSamplingDeviation',
         referenceClass=HoldingReference,
@@ -1090,8 +1107,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    ReferenceField(
+    ProxyField(
         'SampleCondition',
+        proxy="context.getSample()",
         allowed_types=('SampleCondition',),
         relationship='AnalysisRequestSampleCondition',
         referenceClass=HoldingReference,
@@ -1129,8 +1147,10 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    StringField(
+    # Sample field
+    ProxyField(
         'EnvironmentalConditions',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
@@ -1200,8 +1220,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    BooleanField(
+    ProxyField(
         'AdHoc',
+        proxy="context.getSample()",
         default=False,
         mode="rw",
         read_permission=permissions.View,
@@ -1235,8 +1256,9 @@ schema = BikaSchema.copy() + Schema((
     ),
 
     # Sample field
-    BooleanField(
+    ProxyField(
         'Composite',
+        proxy="context.getSample()",
         default=False,
         mode="rw",
         read_permission=permissions.View,
@@ -2454,236 +2476,10 @@ class AnalysisRequest(BaseFolder):
             rr.update(value)
         return self.Schema()['ResultsRange'].set(self, rr.values())
 
-    # Then a string of fields which are defined on the AR, but need to be set
-    # and read from the sample
-
-    security.declarePublic('setSamplingDate')
-
-    def setSamplingDate(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSamplingDate(value)
-
-    security.declarePublic('getSamplingDate')
-
-    def getSamplingDate(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSamplingDate()
-
-    security.declarePublic('setSampler')
-
-    def setSampler(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSampler(value)
-        self.Schema()['Sampler'].set(self, value)
-
-    security.declarePublic('getSampler')
-
-    def getSampler(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSampler()
-        return self.Schema().getField('Sampler').get(self)
-
-    security.declarePublic('setDateSampled')
-
-    def setDateSampled(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setDateSampled(value)
-        self.Schema()['DateSampled'].set(self, value)
-
-    security.declarePublic('getDateSampled')
-
-    def getDateSampled(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getDateSampled()
-        return self.Schema().getField('DateSampled').get(self)
-
     security.declarePublic('getDatePublished')
 
     def getDatePublished(self):
         return getTransitionDate(self, 'publish')
-
-    security.declarePublic('setSamplePoint')
-
-    def setSamplePoint(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSamplePoint(value)
-        self.Schema()['SamplePoint'].set(self, value)
-
-    security.declarePublic('getSamplepoint')
-
-    def getSamplePoint(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSamplePoint()
-        return self.Schema().getField('SamplePoint').get(self)
-
-    security.declarePublic('setSampleType')
-
-    def setSampleType(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSampleType(value)
-        self.Schema()['SampleType'].set(self, value)
-
-    security.declarePublic('getSampleType')
-
-    def getSampleType(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSampleType()
-        return self.Schema().getField('SampleType').get(self)
-
-    security.declarePublic('setClientReference')
-
-    def setClientReference(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setClientReference(value)
-        self.Schema()['ClientReference'].set(self, value)
-
-    security.declarePublic('getClientReference')
-
-    def getClientReference(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getClientReference()
-        return self.Schema().getField('ClientReference').get(self)
-
-    security.declarePublic('setClientSampleID')
-
-    def setClientSampleID(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setClientSampleID(value)
-        self.Schema()['ClientSampleID'].set(self, value)
-
-    security.declarePublic('getClientSampleID')
-
-    def getClientSampleID(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getClientSampleID()
-        return self.Schema().getField('ClientSampleID').get(self)
-
-    security.declarePublic('setSamplingDeviation')
-
-    def setSamplingDeviation(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSamplingDeviation(value)
-        self.Schema()['SamplingDeviation'].set(self, value)
-
-    security.declarePublic('getSamplingDeviation')
-
-    def getSamplingDeviation(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSamplingDeviation()
-        return self.Schema().getField('SamplingDeviation').get(self)
-
-    security.declarePublic('setSampleCondition')
-
-    def setSampleCondition(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSampleCondition(value)
-        self.Schema()['SampleCondition'].set(self, value)
-
-    security.declarePublic('getSampleCondition')
-
-    def getSampleCondition(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSampleCondition()
-        return self.Schema().getField('SampleCondition').get(self)
-
-    security.declarePublic('setEnvironmentalConditions')
-
-    def setEnvironmentalConditions(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setEnvironmentalConditions(value)
-        self.Schema()['EnvironmentalConditions'].set(self, value)
-
-    security.declarePublic('getEnvironmentalConditions')
-
-    def getEnvironmentalConditions(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getEnvironmentalConditions()
-        return self.Schema().getField('EnvironmentalConditions').get(self)
-
-    security.declarePublic('setComposite')
-
-    def setComposite(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setComposite(value)
-        self.Schema()['Composite'].set(self, value)
-
-    security.declarePublic('getComposite')
-
-    def getComposite(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getComposite()
-        return self.Schema().getField('Composite').get(self)
-
-    security.declarePublic('setStorageLocation')
-
-    def setStorageLocation(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setStorageLocation(value)
-        self.Schema()['StorageLocation'].set(self, value)
-
-    security.declarePublic('getStorageLocation')
-
-    def getStorageLocation(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getStorageLocation()
-        return self.Schema().getField('StorageLocation').get(self)
-
-    security.declarePublic('setAdHoc')
-
-    def setAdHoc(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setAdHoc(value)
-        self.Schema()['AdHoc'].set(self, value)
-
-    security.declarePublic('getAdHoc')
-
-    def getAdHoc(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getAdHoc()
-        return self.Schema().getField('AdHoc').get(self)
-
-    security.declarePublic('setScheduledSamplingSampler')
-
-    def setScheduledSamplingSampler(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setScheduledSamplingSampler(value)
-        self.Schema()['ScheduledSamplingSampler'].set(self, value)
-
-    security.declarePublic('getScheduledSamplingSampler')
-
-    def getScheduledSamplingSampler(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getScheduledSamplingSampler()
-        return self.Schema() \
-            .getField('ScheduledSamplingSampler').get(self)
 
     def getSamplers(self):
         return getUsers(self, ['LabManager', 'Sampler'])
