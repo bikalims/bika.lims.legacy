@@ -1,6 +1,7 @@
 3.2.1 (unreleased)
 ------------------
 
+#1992: Data Duplication between Analysis Requests and Samples
 #1971: Allow Reports in Landscape
 Issue-1975: Matching the labels to the fields is not easy when the user wants to add a single AR
 LIMS-2509: Correctly save empty values for CoordinateField and DurationField
