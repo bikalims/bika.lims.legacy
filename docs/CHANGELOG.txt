@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+Issue-1997: Calculation "Formula" field description keeps untranslated
 Issue-1981: Transifex Error processing bika/lims/skins/bika/bika_widgets/referencewidget.pt
 Issue-1975: Matching the labels to the fields is not easy when the user wants to add a single AR
 LIMS-2509: Correctly save empty values for CoordinateField and DurationField
