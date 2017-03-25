@@ -82,7 +82,6 @@ schema = BikaSchema.copy() + Schema((
         widget=TextAreaWidget(
             label=_("Calculation Formula"),
             description=_(
-                "calculation_formula_description",
                 "<p>The formula you type here will be dynamically calculated "
                 "when an analysis using this calculation is displayed.</p>"
                 "<p>To enter a Calculation, use standard maths operators,  "
