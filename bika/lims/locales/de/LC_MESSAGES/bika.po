@@ -30,8 +30,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-03-23 16:24+0000\n"
-"PO-Revision-Date: 2017-03-23 13:26+0000\n"
+"POT-Creation-Date: 2017-03-25 17:45+0000\n"
+"PO-Revision-Date: 2017-03-25 17:44+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: German (http://www.transifex.com/bikalabs/bika-lims/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -197,6 +197,15 @@ msgstr "<p>${service} benötigt die folgenden ausgewählten Dienste: </p><br/><p
 
 msgid "<p>The following services depend on ${service}, and will be unselected if you continue:</p><br/><p>${deps}</p><br/><p>Do you want to remove these selections now?</p>"
 msgstr "<p>Die folgenden Dienste hängen von ${service} ab, und werden deselektiert wenn Sie fortfahren:</p><br/><p>${deps}</p><br/><p>Wollen Sie die Auswahl jetzt löschen?</p>"
+
+#: bika/lims/content/calculation.py:84
+msgid "<p>The formula you type here will be dynamically calculated when an analysis using this calculation is displayed.</p><p>To enter a Calculation, use standard maths operators,  + - * / ( ), and all keywords available, both from other Analysis Services and the Interim Fields specified here, as variables. Enclose them in square brackets [ ].</p><p>E.g, the calculation for Total Hardness, the total of Calcium (ppm) and Magnesium (ppm) ions in water, is entered as [Ca] + [Mg], where Ca and MG are the keywords for those two Analysis Services.</p>"
+msgstr ""
+"<p>Die Formel die Sie hier eingeben wird dynamisch berechnet, sobald eine Analyse angezeigt wird, welche diese Formel verwendet.</p>\n"
+"\n"
+"<p>Verwenden Sie für neue Berechnungen die mathematischen Standardoperationen + - * / ( ), sowie die verfügbaren Schlüsselwörter aus anderen Analysenleistungen und den Interimfeldern als Variablen. Letztere müssen in eckigen Klammern [ ] eingefügt werden.</p>\n"
+"\n"
+"<p>Beispiel: Um den Härtegrad zu berechnen, wird die Gesamtzahl der Calcium (ppm) und Magnesium (ppm) Ionen als [Ca] + [Mg] eingegeben, wobei Ca und Mg die Schlüsselwörter dieser beiden Analysenleistungen sind.</p>"
 
 #: bika/lims/skins/bika/bika_widgets/rejectionsetupwidget.pt:33
 msgid "<span>x</span> <span class=\"formHelp\">x</span>"
@@ -757,7 +766,7 @@ msgstr "Vorlage anwenden"
 
 #: bika/lims/browser/fields/interimfieldsfield.py:30
 msgid "Apply wide"
-msgstr "Generell anwenden"
+msgstr "Global anwenden"
 
 #: bika/lims/content/instrumentcertification.py:167
 msgid "Approved by"
@@ -1013,13 +1022,13 @@ msgstr "Berechne Präzision aus Unsicherheiten"
 msgid "Calculation"
 msgstr "Berechnung"
 
-#: bika/lims/content/calculation.py:71
+#: bika/lims/content/calculation.py:83
 msgid "Calculation Formula"
 msgstr "Berechnungsformel"
 
 #: bika/lims/content/analysis.py:98
 #: bika/lims/content/analysisservice.py:652
-#: bika/lims/content/calculation.py:39
+#: bika/lims/content/calculation.py:49
 msgid "Calculation Interim Fields"
 msgstr "Zwischenrechnungsfeld"
 
@@ -1072,11 +1081,11 @@ msgstr "Abbrechen"
 msgid "Cancelled"
 msgstr "Storniert"
 
-#: bika/lims/content/calculation.py:269
+#: bika/lims/content/calculation.py:286
 msgid "Cannot activate calculation, because the following service dependencies are inactive: ${inactive_services}"
 msgstr "Berechnung kann nicht verwendet werden weil die folgende Service zuordnung fehlt: ${inactive_services}"
 
-#: bika/lims/content/calculation.py:288
+#: bika/lims/content/calculation.py:305
 msgid "Cannot deactivate calculation, because it is in use by the following services: ${calc_services}"
 msgstr "Berechnung kann nicht verwendet da sie von folgenden Service verwendet wird: ${calc_services}"
 
@@ -1768,7 +1777,7 @@ msgstr "Definieren Sie den Datumsbereich"
 msgid "Define an identifier code for the method. It must be unique."
 msgstr "Definieren Sie einen ID Code für die Methode. Die ID ist eindeutig zu wählen."
 
-#: bika/lims/content/calculation.py:40
+#: bika/lims/content/calculation.py:50
 msgid "Define interim fields such as vessel mass, dilution factors, should your calculation require them. The field title specified here will be used as column headers and field descriptors where the interim fields are displayed. If 'Apply wide' is enabled the field will be shown in a selection box on the top of the worksheet, allowing to apply a specific value to all the corresponding fields on the sheet."
 msgstr "Definieren sie Interimfelder, wie z.B. Gefäßmaß oder Verdünnungsfaktor, falls Ihre Berechnung das erfordern sollte. Das Titelfeld wird als Spaltenüberschrift und Feldbezeichner verwendet, wo das Interimfeld verwendet wird. Wenn die Option 'Global anwenden' aktiviert ist, wird das Feld in einer Auswahlliste oberhalb eines Arbeitsblatts angezeigt, welches es erlaubt einen bestimmten Wert auf alle übereinstimmenden Felder auf dem Arbeitsblatt anzuwenden."
 
@@ -1812,7 +1821,7 @@ msgid "Departments"
 msgstr "Abteilungen"
 
 #: bika/lims/browser/templates/analysisservice_popup.pt:155
-#: bika/lims/content/calculation.py:62
+#: bika/lims/content/calculation.py:73
 msgid "Dependent Analyses"
 msgstr "Abhängige Analysen"
 
@@ -5184,11 +5193,11 @@ msgstr "Temperatur"
 msgid "Template"
 msgstr "Vorlage"
 
-#: bika/lims/content/calculation.py:95
+#: bika/lims/content/calculation.py:107
 msgid "Test Parameters"
 msgstr "Parameter testen"
 
-#: bika/lims/content/calculation.py:108
+#: bika/lims/content/calculation.py:121
 msgid "Test Result"
 msgstr "Ergebnis testen"
 
@@ -5430,7 +5439,7 @@ msgstr "Das Kennwort wird in Importdateien genutzt um es eindeutig dem entsprech
 msgid "The reference code issued to the lab by the accreditation body"
 msgstr "Die Referenznummer, die dem Labor von der Akkreditierungsstelle zugewiesen wurde."
 
-#: bika/lims/content/calculation.py:109
+#: bika/lims/content/calculation.py:122
 msgid "The result after the calculation has taken place with test values.  You will need to save the calculation before this value will be calculated."
 msgstr "Das Ergebnis nach dieser Berechnung wurde aufgrund von Testwerten berechnet. Sie müssen die Berechnung speichern,  bevor dieser Wert berechnet werden kann."
 
@@ -5636,7 +5645,7 @@ msgstr "Zu beproben"
 msgid "To be verified"
 msgstr "Zu überprüfen"
 
-#: bika/lims/content/calculation.py:96
+#: bika/lims/content/calculation.py:108
 msgid "To test the calculation, enter values here for all calculation parameters.  This includes Interim fields defined above, as well as any services that this calculation depends on to calculate results."
 msgstr "Geben Sie hier die Werte für alle Berechnungsparameter ein, um diese Berechnung zu testen. Dies beinhaltet sowohl die Interimfelder, die zuvor definiert wurden, wie auch jede abhängige Analysenleistung, die für die Berechnung der Ergebnisse benötigt werden"
 
@@ -6092,7 +6101,7 @@ msgid "Validator"
 msgstr "Validiert von"
 
 #: bika/lims/browser/worksheet/templates/results.pt:146
-#: bika/lims/content/calculation.py:90
+#: bika/lims/content/calculation.py:102
 #: bika/lims/content/instrument.py:196
 msgid "Value"
 msgstr "Wert"
@@ -6261,22 +6270,6 @@ msgstr "Bika LIMS Arbeitsprozesse passen zu allen Labor Disziplinen und sind kon
 #, fuzzy
 msgid "bika-frontpage-title"
 msgstr "<img src=\\\"${DYNAMIC_CONTENT}\\\" /> Willkomen auf Bika LIMS ${version} ${DYNAMIC_CONTENT}"
-
-#. an analysis using this calculation is displayed.</p><p>To enter a
-#. Calculation, use standard maths operators,  + - * / ( ), and all keywords
-#. available, both from other Analysis Services and the Interim Fields
-#. specified here, as variables. Enclose them in square brackets [
-#. ].</p><p>E.g, the calculation for Total Hardness, the total of Calcium
-#. (ppm) and Magnesium (ppm) ions in water, is entered as [Ca] + [Mg], where
-#. Ca and MG are the keywords for those two Analysis Services.</p>"
-#. Default: "<p>The formula you type here will be dynamically calculated when an analysis using this calculation is displayed.</p><p>To enter a Calculation, use standard maths operators,  + - * / ( ), and all keywords available, both from other Analysis Services and the Interim Fields specified here, as variables. Enclose them in square brackets [ ].</p><p>E.g, the calculation for Total Hardness, the total of Calcium (ppm) and Magnesium (ppm) ions in water, is entered as [Ca] + [Mg], where Ca and MG are the keywords for those two Analysis Services.</p>"
-#: bika/lims/content/calculation.py:72
-#, fuzzy
-msgid "calculation_formula_description"
-msgstr ""
-"<p>Die Formel die Sie hier eingeben wird dynamisch berechnet, sobald eine Analyse angezeigt wird, welche diese Formel verwendet.</p>\n"
-"<p>Verwenden Sie für neue Berechnungen die mathematischen Standardoperationen <pre>+ - * / ()</pre>, sowie die verfügbaren Schlüsselwörter aus anderen Analysenleistungen und den Interimfeldern als Variablen. Letztere müssen in eckigen Klammern <pre>[]</pre> eingefügt werden.</p>\n"
-"<p>Beispiel: Um den Härtegrad zu berechnen, wird die Gesamtzahl der Calcium und Magnesium Ionen (ppm) wie folgt eingegeben <pre>[Ca] + [Mg]</pre>, wobei <pre>Ca</pre> und <pre>Mg</pre> die Schlüsselwörter dieser beiden Analysenleistungen ist."
 
 #: bika/lims/browser/reports/administration_usershistory.py:148
 msgid "comment"
