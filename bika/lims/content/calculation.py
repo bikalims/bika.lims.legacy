@@ -262,14 +262,14 @@ class Calculation(BaseFolder, HistoryAwareMixin):
 
         # Set default/existing values for InterimField keywords
         for interim in self.getInterimFields():
-            keyword = interim['keyword']
-            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            keyword = interim.get('keyword')
+            ex = [x.get('value') for x in form_value if x.get('keyword') == keyword]
             params.append({'keyword': keyword,
-                          'value': ex[0] if ex else interim['value']})
+                          'value': ex[0] if ex else interim.get('value')})
         # Set existing/blank values for service keywords
         for service in self.getDependentServices():
             keyword = service.getKeyword()
-            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            ex = [x.get('value') for x in form_value if x.get('keyword') == keyword]
             params.append({'keyword': keyword,
                           'value': ex[0] if ex else ''})
         self.Schema().getField('TestParameters').set(self, params)
