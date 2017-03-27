@@ -7,12 +7,17 @@ class ExpireReferenceSamples(crontab.Runner):
             workflow = api.portal.get_tool('portal_workflow')
             bc = api.portal.get_tool('bika_catalog')
             query = {'portal_type': 'ReferenceSample',
-                     'getExpiryDate': {'query': datetime.today(), 'range': 'max'},
+                     'getExpiryDate': {'query': datetime.today(),
+                                       'range': 'max'},
                      'review_state': 'current',
                     }
             brains = bc(query)
             for brain in brains:
-                workflow.doActionFor(brain.getObject(), 'expire')
+                obj = brain.getObject()
+                state = api.content.get_state(obj=brain.getObject())
+                if state == 'current':
+                    api.content.transition(obj=obj, transition='expire')
+                ##workflow.doActionFor(brain.getObject(), 'expire')
 
         except Exception, e:
             raise

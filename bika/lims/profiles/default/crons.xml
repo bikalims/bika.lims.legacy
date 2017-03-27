@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <crons>
     <cron uid="expirereferencesamplesuid"
-        name="ExpireReferenceSamples"
+        name="expireReferenceSamples"
         activated="True"
         periodicity="*/5 * * * *">
   </cron>
