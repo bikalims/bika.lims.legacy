@@ -282,6 +282,12 @@ class Calculation(BaseFolder, HistoryAwareMixin):
         mapping = {x['keyword']: x['value'] for x in self.getTestParameters()}
         # Gather up and parse formula
         formula = self.getMinifiedFormula()
+        test_result_field = self.Schema().getField('TestResult')
+
+        # Flush the TestResult field and return
+        if not formula:
+            return test_result_field.set(self, "")
+
         formula = formula.replace('[', '{').replace(']', '}').replace('  ', '')
         result = 'Failure'
 
