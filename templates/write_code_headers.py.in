@@ -79,5 +79,9 @@ if __name__ == "__main__":
             new_lines.append(line)
 
         with open(path, "w") as f:
+            # get the last line
+            last_line = new_lines[-1]
+            # remove all trailing empty lines and add a single one
+            new_lines[-1] = last_line.rstrip("\n") + "\n"
             f.writelines(new_lines)
             print "Wrote header to {}".format(path)
