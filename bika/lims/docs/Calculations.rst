@@ -71,8 +71,10 @@ The `Formula` field references the Keywords from Analysis Services::
 
 The `Calculation` depends now on the two Analysis Services::
 
-    >>> calc.getCalculationDependencies()
-    {'...': {}, '...': {}}
+    >>> sorted(calc.getCalculationDependencies(flat=True))
+    [<AnalysisService at /plone/bika_setup/bika_analysisservices/analysisservice-1>, <AnalysisService at /plone/bika_setup/bika_analysisservices/analysisservice-2>]
+
+It is also possible to find out if an `AnalysisService` depends on the calculation::
 
     >>> as1.set_Calculation(calc)
     >>> calc.getCalculationDependants()
