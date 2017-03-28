@@ -588,6 +588,9 @@ msgstr ""
 msgid "Analysis Requests"
 msgstr "Demandes d'analyse"
 
+msgid "ARs"
+msgstr "Demandes d'analyse"
+
 #: bika/lims/browser/dashboard.py:186
 msgid "Analysis Requests to be preserved"
 msgstr ""

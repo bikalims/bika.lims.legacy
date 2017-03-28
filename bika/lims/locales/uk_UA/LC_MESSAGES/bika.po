@@ -571,6 +571,9 @@ msgstr ""
 msgid "Analysis Requests"
 msgstr "Запити на аналіз"
 
+msgid "ARs"
+msgstr "Запити на аналіз"
+
 #: bika/lims/browser/dashboard.py:186
 msgid "Analysis Requests to be preserved"
 msgstr ""
