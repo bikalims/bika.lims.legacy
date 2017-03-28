@@ -1,38 +1,48 @@
+# -*- coding: utf-8 -*-
+
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import re
+import sys
+import math
+
+import transaction
+from zope.interface import implements
 from AccessControl import ClassSecurityInfo
 
-from Products.ATExtensions.field import RecordsField
+from Products.Archetypes.atapi import Schema
+from Products.Archetypes.atapi import BaseFolder
+from Products.Archetypes.atapi import registerType
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.widgets import RecordsWidget
-from bika.lims.utils import t
-from bika.lims.browser.fields import HistoryAwareReferenceField
-from bika.lims.browser.fields import InterimFieldsField
-from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
-from bika.lims.config import PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import ICalculation
-from bika.lims.utils import to_utf8
-from bika.lims.utils.analysis import format_numeric_result
-from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.CMFCore.permissions import ModifyPortalContent, View
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-from zExceptions import Redirect
-from zope.interface import implements
-import sys
-import re
-import math
-import transaction
+from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
+
+# Fields
+from Products.Archetypes.atapi import TextField
+from Products.ATExtensions.field import RecordsField
+from bika.lims.browser.fields import InterimFieldsField
+from bika.lims.browser.fields import HistoryAwareReferenceField
+
+# Widgets
+from Products.Archetypes.atapi import ReferenceWidget
+from Products.Archetypes.atapi import TextAreaWidget
+from bika.lims.browser.widgets import RecordsWidget
+from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
+
+# bika.lims imports
+from bika.lims.config import PROJECTNAME
+from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import ICalculation
+from bika.lims.content.bikaschema import BikaSchema
 
 
 schema = BikaSchema.copy() + Schema((
+
     InterimFieldsField(
         'InterimFields',
         widget=BikaRecordsWidget(
@@ -48,6 +58,7 @@ schema = BikaSchema.copy() + Schema((
                 "sheet."),
         )
     ),
+
     HistoryAwareReferenceField(
         'DependentServices',
         required=1,
@@ -62,6 +73,7 @@ schema = BikaSchema.copy() + Schema((
             label=_("Dependent Analyses"),
         ),
     ),
+
     TextField(
         'Formula',
         validators=('formulavalidator',),
@@ -70,7 +82,6 @@ schema = BikaSchema.copy() + Schema((
         widget=TextAreaWidget(
             label=_("Calculation Formula"),
             description=_(
-                "calculation_formula_description",
                 "<p>The formula you type here will be dynamically calculated "
                 "when an analysis using this calculation is displayed.</p>"
                 "<p>To enter a Calculation, use standard maths operators,  "
@@ -83,14 +94,15 @@ schema = BikaSchema.copy() + Schema((
                 "two Analysis Services.</p>"),
         )
     ),
+
     RecordsField(
         'TestParameters',
         required=False,
         subfields=('keyword', 'value'),
         subfield_labels={'keyword': _('Keyword'), 'value': _('Value')},
         subfield_readonly={'keyword': True, 'value': False},
-        subfield_types={'keyword':'string','value':'float'},
-        default=[{'keyword': '', 'value': 0},],
+        subfield_types={'keyword': 'string', 'value': 'float'},
+        default=[{'keyword': '', 'value': 0}],
         widget=RecordsWidget(
             label=_("Test Parameters"),
             description=_("To test the calculation, enter values here for all "
@@ -100,6 +112,7 @@ schema = BikaSchema.copy() + Schema((
             allowDelete=False,
         ),
     ),
+
     TextField(
         'TestResult',
         default_content_type='text/plain',
@@ -110,7 +123,8 @@ schema = BikaSchema.copy() + Schema((
                           "with test values.  You will need to save the "
                           "calculation before this value will be calculated."),
         )
-    )
+    ),
+
 ))
 
 schema['title'].widget.visible = True
@@ -118,10 +132,13 @@ schema['description'].widget.visible = True
 
 
 class Calculation(BaseFolder, HistoryAwareMixin):
+    """Calculation for Analysis Results
+    """
+    implements(ICalculation)
+
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
-    implements(ICalculation)
 
     _at_rename_after_creation = True
 
@@ -181,8 +198,8 @@ class Calculation(BaseFolder, HistoryAwareMixin):
 
             set flat=True to get a simple list of AnalysisService objects
         """
-        if deps == None:
-            deps = [] if flat == True else {}
+        if deps is None:
+            deps = [] if flat is True else {}
 
         for service in self.getDependentServices():
             calc = service.getCalculation()
@@ -232,7 +249,7 @@ class Calculation(BaseFolder, HistoryAwareMixin):
          TestResult field.
         """
         # Create mapping from TestParameters
-        mapping = {x['keyword']:x['value'] for x in self.getTestParameters()}
+        mapping = {x['keyword']: x['value'] for x in self.getTestParameters()}
         # Gather up and parse formula
         formula = self.getMinifiedFormula()
         formula = formula.replace('[', '{').replace(']', '}').replace('  ', '')
@@ -291,5 +308,6 @@ class Calculation(BaseFolder, HistoryAwareMixin):
             pu.addPortalMessage(msg, 'error')
             transaction.get().abort()
             raise WorkflowException
+
 
 registerType(Calculation, PROJECTNAME)
