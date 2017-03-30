@@ -3,7 +3,7 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.jsonapi import load_field_values
+from bika.lims.jsonapi.v1 import load_field_values
 from bika.lims.interfaces import IJSONReadExtender, IAnalysisProfile
 from zope.component import adapts
 from zope.interface import implements

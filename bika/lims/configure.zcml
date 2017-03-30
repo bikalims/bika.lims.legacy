@@ -29,7 +29,8 @@
   <include package=".content" />
   <include package=".controlpanel" />
   <include package=".exportimport" />
-  <include package=".jsonapi" />
+  <include package=".jsonapi.v1" />
+  <include package=".jsonapi.v2" />
   <include package=".locales" />
   <include package=".monkey" />
   <include package=".search" />

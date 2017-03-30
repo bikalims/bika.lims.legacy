@@ -6,12 +6,12 @@
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import logger, to_utf8
 from bika.lims.interfaces import IJSONReadExtender
-from bika.lims.jsonapi import get_include_fields
+from bika.lims.jsonapi.v1 import get_include_fields
 from plone.jsonapi.core import router
 from plone.jsonapi.core.interfaces import IRouteProvider
 from plone.protect.authenticator import AuthenticatorView
-from bika.lims.jsonapi import load_brain_metadata
-from bika.lims.jsonapi import load_field_values
+from bika.lims.jsonapi.v1 import load_brain_metadata
+from bika.lims.jsonapi.v1 import load_field_values
 from Products.CMFCore.utils import getToolByName
 from zope import interface
 from zope.component import getAdapters

@@ -3,7 +3,7 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.jsonapi.read import read
+from bika.lims.jsonapi.v1.read import read
 from plone.jsonapi.core import router
 from plone.jsonapi.core.interfaces import IRouteProvider
 from Products.CMFCore.utils import getToolByName

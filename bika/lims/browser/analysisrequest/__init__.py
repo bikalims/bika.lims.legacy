@@ -4,9 +4,9 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from bika.lims.adapters.referencewidgetvocabulary import DefaultReferenceWidgetVocabulary
-from bika.lims.jsonapi import get_include_fields
-from bika.lims.jsonapi import load_brain_metadata
-from bika.lims.jsonapi import load_field_values
+from bika.lims.jsonapi.v1 import get_include_fields
+from bika.lims.jsonapi.v1 import load_brain_metadata
+from bika.lims.jsonapi.v1 import load_field_values
 from bika.lims.utils import dicts_to_dict
 from bika.lims.interfaces import IAnalysisRequest, IClient, IBatch
 from bika.lims.interfaces import IFieldIcons

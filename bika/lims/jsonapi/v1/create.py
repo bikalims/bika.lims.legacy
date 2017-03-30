@@ -6,8 +6,8 @@
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from bika.lims.idserver import renameAfterCreation
-from bika.lims.jsonapi import set_fields_from_request
-from bika.lims.jsonapi import resolve_request_lookup
+from bika.lims.jsonapi.v1 import set_fields_from_request
+from bika.lims.jsonapi.v1 import resolve_request_lookup
 from bika.lims.permissions import AccessJSONAPI
 from bika.lims.utils import tmpID, dicts_to_dict
 from bika.lims.workflow import doActionFor

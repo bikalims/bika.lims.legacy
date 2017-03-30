@@ -6,7 +6,7 @@
 from bika.lims.browser import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from bika.lims import bikaMessageFactory as _
-from bika.lims.jsonapi import load_field_values, get_include_fields
+from bika.lims.jsonapi.v1 import load_field_values, get_include_fields
 from bika.lims.utils import t
 from bika.lims.config import POINTS_OF_CAPTURE
 from bika.lims.browser.log import LogView

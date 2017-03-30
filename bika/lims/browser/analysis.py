@@ -6,7 +6,7 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.CMFCore.utils import getToolByName
-from bika.lims.jsonapi import get_include_fields
+from bika.lims.jsonapi.v1 import get_include_fields
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.utils import t, dicts_to_dict
