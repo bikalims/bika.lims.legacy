@@ -3,6 +3,6 @@
     <cron uid="expirereferencesamplesuid"
         name="expireReferenceSamples"
         activated="True"
-        periodicity="*/5 * * * *">
+        periodicity="0 0 * * * *">
   </cron>
 </crons>
