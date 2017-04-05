@@ -2465,9 +2465,13 @@ function AnalysisRequestAddByCol() {
                    var arnum = $(e).parents("[arnum]").attr("arnum")
                    var fieldname = $(e).parents("[fieldname]").attr("fieldname")
                    var value = $(e).attr("uid")
-                     ? $(e).attr("uid")
-                     : $(e).val()
-                   state_set(arnum, fieldname, value)
+                   if (value){
+                       state_set(arnum, fieldname, value)
+                   }
+                   //var value = $(e).attr("uid")
+                   //  ? $(e).attr("uid")
+                   //  : $(e).val()
+                   //state_set(arnum, fieldname, value)
                })
         // checkboxes inside ar_add_widget table.
         $.each($('[ar_add_ar_widget] input[type="checkbox"]').not('[class^="rejectionwidget-checkbox"]'),
