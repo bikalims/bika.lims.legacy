@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-03-25 17:45+0000\n"
-"PO-Revision-Date: 2017-03-25 17:35+0000\n"
+"POT-Creation-Date: 2017-04-08 10:07+0000\n"
+"PO-Revision-Date: 2017-04-08 10:02+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Turkish (Turkey) (http://www.transifex.com/bikalabs/bika-lims/language/tr_TR/)\n"
 "MIME-Version: 1.0\n"
@@ -227,6 +227,10 @@ msgstr "AT Şablonlar"
 #: bika/lims/browser/analysisrequest/view.py:453
 msgid "AR for retested results"
 msgstr "Yeniden test edilenlerin sonuçları için AT'ler"
+
+#: bika/lims/browser/analysisrequest/templates/analysisrequests.pt:42
+msgid "ARs"
+msgstr ""
 
 #: bika/lims/browser/analysisrequest/publish.py:1030
 msgid "ARs: ${ars}"
@@ -577,9 +581,6 @@ msgstr ""
 #: bika/lims/browser/dashboard.py:343
 #: bika/lims/skins/bika/portlet_to_be_verified.pt:69
 msgid "Analysis Requests"
-msgstr "Analiz Talepleri"
-
-msgid "ARs"
 msgstr "Analiz Talepleri"
 
 #: bika/lims/browser/dashboard.py:186

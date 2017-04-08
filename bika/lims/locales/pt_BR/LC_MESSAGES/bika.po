@@ -24,8 +24,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-03-25 17:45+0000\n"
-"PO-Revision-Date: 2017-03-25 17:35+0000\n"
+"POT-Creation-Date: 2017-04-08 10:07+0000\n"
+"PO-Revision-Date: 2017-04-08 10:02+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/bikalabs/bika-lims/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -194,7 +194,7 @@ msgstr "<p>Os seguintes serviços dependem de ${service} e não serão seleciona
 
 #: bika/lims/content/calculation.py:84
 msgid "<p>The formula you type here will be dynamically calculated when an analysis using this calculation is displayed.</p><p>To enter a Calculation, use standard maths operators,  + - * / ( ), and all keywords available, both from other Analysis Services and the Interim Fields specified here, as variables. Enclose them in square brackets [ ].</p><p>E.g, the calculation for Total Hardness, the total of Calcium (ppm) and Magnesium (ppm) ions in water, is entered as [Ca] + [Mg], where Ca and MG are the keywords for those two Analysis Services.</p>"
-msgstr ""
+msgstr "<p>A fórmula que você digitar aqui será calculada dinamicamente quando uma análise usando este cálculo for exibida.</p><p> Para inserir um Cálculo, use operadores de matemática padrão, + - * / () e todas as palavras-chave disponíveis, ambos de outros serviços de análises e os campos provisórios especificados aqui, como variáveis. Por exemplo, o cálculo da Dureza Total, o total de íons de Cálcio (ppm) e Magnésio (ppm) na água, é inserido como [Ca] + [Mg], Onde Ca e MG são as palavras-chave para esses dois serviços de análises.</p>"
 
 #: bika/lims/skins/bika/bika_widgets/rejectionsetupwidget.pt:33
 msgid "<span>x</span> <span class=\"formHelp\">x</span>"
@@ -242,6 +242,10 @@ msgstr "Modelos de RA"
 #: bika/lims/browser/analysisrequest/view.py:453
 msgid "AR for retested results"
 msgstr "RA para resultados retestados"
+
+#: bika/lims/browser/analysisrequest/templates/analysisrequests.pt:42
+msgid "ARs"
+msgstr ""
 
 #: bika/lims/browser/analysisrequest/publish.py:1030
 msgid "ARs: ${ars}"
