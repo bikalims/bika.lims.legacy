@@ -99,5 +99,5 @@ class ProxyField(ObjectField):
 registerField(
     ProxyField,
     title='Proxy',
-    description=('Used to proxy a value to an underlying object.')
+    description=('Used to proxy a value to a similar field on another object.')
 )
