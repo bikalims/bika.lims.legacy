@@ -8,6 +8,7 @@ from Products.Archetypes.Field import ObjectField
 from Products.Archetypes.Registry import registerField
 
 from bika.lims.interfaces import IProxyField
+from bika.lims import logger
 
 """A field that proxies to an object which is retrieved by the evaluation of
 the `proxy` property, e.g. `proxy="context.getSample()"`.
@@ -35,6 +36,8 @@ class ProxyField(ObjectField):
     def _get_proxy(self, instance):
         """Evaluate the `proxy` property to retrieve the proxy object.
         """
+        # evaluates the 'proxy' expression on the field definition in the schema,
+        # e.g. 'context.getSample()' on an AR
         return eval(self.proxy, {'context': instance, 'here': instance})
 
     security.declarePrivate('get')
@@ -43,23 +46,26 @@ class ProxyField(ObjectField):
         """retrieves the value of the same named field on the proxy object
         """
         # Retrieve the proxy object
-        proxy = self._get_proxy(instance)
+        proxy_object = self._get_proxy(instance)
 
-        # Bail out if we do not find a proxy object
-        if proxy is None:
+        # Return None if we could not find a proxied object, e.g. through
+        # the proxy expression 'context.getSample()' on an AR
+        if proxy_object is None:
+            logger.error("Expression '{}' did not return a valid Proxy Object on {}"
+                         .format(self.proxy, instance))
             return None
 
         # Lookup the proxied field by name
         field_name = self.getName()
-        field = proxy.getField(field_name)
+        field = proxy_object.getField(field_name)
 
-        # Bail out it the proxy object has no identical named field
-        if not field:
-            raise KeyError("Expression '{}' did not return a valid Proxy Object on {}"
-                           .format(self.proxy, self.instance))
+        # Bail out if the proxy object has no identical named field
+        if field is None:
+            raise KeyError("Object '{}' with id '{}' has no field named '{}'".format(
+                proxy_object.portal_type, proxy_object.getId(), field_name))
 
         # return the value of the proxy field
-        return field.get(proxy)
+        return field.get(proxy_object)
 
     security.declarePrivate('set')
 
@@ -67,24 +73,26 @@ class ProxyField(ObjectField):
         """writes the value to the same named field on the proxy object
         """
         # Retrieve the proxy object
-        proxy = self._get_proxy(instance)
+        proxy_object = self._get_proxy(instance)
 
-        # Bail out if we do not find a proxy object
-        if not proxy:
-            raise KeyError("Expression '{}' did not return a valid Proxy Object on {}"
-                           .format(self.proxy, self.instance))
+        # Return None if we could not find a proxied object, e.g. through
+        # the proxy expression 'context.getSample()' on an AR
+        if not proxy_object:
+            logger.error("Expression '{}' did not return a valid Proxy Object on {}"
+                         .format(self.proxy, instance))
+            return None
 
         # Lookup the proxied field by name
         field_name = self.getName()
-        field = proxy.getField(field_name)
+        field = proxy_object.getField(field_name)
 
-        # Bail out it the proxy object has no identical named field.
+        # Bail out if the proxy object has no identical named field.
         if field is None:
-            raise KeyError("Object '{}' has no field named '{}'".format(
-                proxy.portal_type, field_name))
+            raise KeyError("Object '{}' with id '{}' has no field named '{}'".format(
+                proxy_object.portal_type, proxy_object.getId(), field_name))
 
         # set the value on the proxy object
-        field.set(proxy, value, **kwargs)
+        field.set(proxy_object, value, **kwargs)
 
 
 # Register the field
