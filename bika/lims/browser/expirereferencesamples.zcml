@@ -1,0 +1,16 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="bika">
+
+    <browser:page
+      for="*"
+      name="expire_reference_samples"
+      class="bika.lims.browser.expirereferencesamples.ExpireReferenceSamplesView"
+      permission="cmf.ManagePortal"
+      attribute="expire_reference_samples"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+</configure>

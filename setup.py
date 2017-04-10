@@ -47,7 +47,6 @@ setup(name='bika.lims',
       zip_safe=False,
       install_requires=[
           'CairoSVG==1.0.20',
-          'collective.cron',
           'collective.js.jqueryui',
           'collective.monkeypatcher',
           'collective.progressbar',
