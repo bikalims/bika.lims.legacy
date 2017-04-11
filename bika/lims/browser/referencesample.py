@@ -411,7 +411,10 @@ class ReferenceSamplesView(BikaListingView):
 
     def folderitem(self, obj, item, index):
         workflow = getToolByName(obj, 'portal_workflow')
-        if item.get('review_state', 'current') == 'current':
+        review_state = item.get('review_state', 'current')
+        content_filter = self.contentFilter.get('review_state', False)
+
+        if review_state == 'current':
             # Check expiry date
             exdate = obj.getExpiryDate()
             if exdate:
@@ -422,11 +425,10 @@ class ReferenceSamplesView(BikaListingView):
                     item['review_state'] = 'expired'
                     item['obj'] = obj
 
-        if self.review_state['id'] != 'expired':
-            if self.contentFilter.get('review_state', '') \
-               and item.get('review_state', '') == 'expired':
-                # This item must be omitted from the list
-                return None
+        if self.review_state['id'] == 'expired':
+            return None
+        if review_state == "expired" and content_filter:
+            return None
 
         item['ID'] = obj.id
         item['DateSampled'] = self.ulocalized_time(obj.getDateSampled(), long_format=True)
