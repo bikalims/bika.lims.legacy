@@ -9,7 +9,6 @@
       name="expire_reference_samples"
       class="bika.lims.browser.expirereferencesamples.ExpireReferenceSamplesView"
       permission="cmf.ManagePortal"
-      attribute="expire_reference_samples"
       layer="bika.lims.interfaces.IBikaLIMS"
     />
 

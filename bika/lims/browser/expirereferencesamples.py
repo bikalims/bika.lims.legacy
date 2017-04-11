@@ -10,18 +10,19 @@ import re
 from Products.CMFPlone.utils import safe_unicode
 
 from datetime import datetime
-from plone import api
 
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims import bikaMessageFactory as _
 
+from plone import api
+from plone.api.exc import InvalidParameterError
+
 class ExpireReferenceSamplesView(BrowserView):
     """Expireference Samples
     """
 
-    def expire_reference_samples(self):
-        workflow = api.portal.get_tool('portal_workflow')
+    def __call__(self):
         bc = api.portal.get_tool('bika_catalog')
         query = {'portal_type': 'ReferenceSample',
                  'getExpiryDate': {'query': datetime.today(),
@@ -32,13 +33,12 @@ class ExpireReferenceSamplesView(BrowserView):
         cnt = 0
         for brain in brains:
             obj = brain.getObject()
-            state = api.content.get_state(obj=brain.getObject())
             try:
                 api.content.transition(obj=obj, transition='expire')
                 cnt += 1
-            except Exception, e:
+            except InvalidParameterError, e:
                 path = '/'.join(obj.getPhysicalPath())
-                raise RuntimeError('Expire Reference Samples \
-                        Could not Expire %s') % path
+                msg = 'ExpireReferenceSamplesView:%s, path:%s' % (str(e), path)
+                raise RuntimeError(msg)
 
         return 'Expired %s Reference Samples' % cnt
