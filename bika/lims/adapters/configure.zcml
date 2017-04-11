@@ -97,7 +97,6 @@
     <adapter name='bika.lims.IHaveIdentifiersModifier' factory=".identifiers.IHaveIdentifiersSchemaModifier"/>
 
     <adapter factory=".identifiers.IdentifiersIndexer" name="Identifiers"/>
-    <adapter factory=".cron.ExpireReferenceSamples" name="expireReferenceSamples"/>
 
     <browser:page
       for="*"
