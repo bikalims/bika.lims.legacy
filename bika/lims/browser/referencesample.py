@@ -425,9 +425,8 @@ class ReferenceSamplesView(BikaListingView):
                     item['review_state'] = 'expired'
                     item['obj'] = obj
 
-        if self.review_state['id'] == 'expired':
-            return None
-        if review_state == "expired" and content_filter:
+        if self.review_state['id'] != 'expired' \
+                and review_state == "expired" and content_filter:
             return None
 
         item['ID'] = obj.id
