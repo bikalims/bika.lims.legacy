@@ -45,6 +45,9 @@ class ProxyField(ObjectField):
     def get(self, instance, **kwargs):
         """retrieves the value of the same named field on the proxy object
         """
+        # The default value
+        default = self.getDefault(instance)
+
         # Retrieve the proxy object
         proxy_object = self._get_proxy(instance)
 
@@ -53,7 +56,7 @@ class ProxyField(ObjectField):
         if proxy_object is None:
             logger.debug("Expression '{}' did not return a valid Proxy Object on {}"
                          .format(self.proxy, instance))
-            return self.default
+            return default
 
         # Lookup the proxied field by name
         field_name = self.getName()
@@ -65,7 +68,7 @@ class ProxyField(ObjectField):
                 proxy_object.portal_type, proxy_object.getId(), field_name))
 
         # return the value of the proxy field
-        return field.get(proxy_object) or self.default
+        return field.get(proxy_object)
 
     security.declarePrivate('set')
 
@@ -80,7 +83,7 @@ class ProxyField(ObjectField):
         if not proxy_object:
             logger.debug("Expression '{}' did not return a valid Proxy Object on {}"
                          .format(self.proxy, instance))
-            return self.default
+            return None
 
         # Lookup the proxied field by name
         field_name = self.getName()
