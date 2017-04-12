@@ -1100,3 +1100,27 @@ class SortKeyValidator:
 
 
 validation.register(SortKeyValidator())
+
+
+class ImportValidator:
+    """Checks if a dotted name can be imported or not
+    """
+    implements(IValidator)
+    name = "importvalidator"
+
+    def __call__(self, module, **kwargs):
+
+        # some needed tools
+        instance = kwargs['instance']
+        translate = getToolByName(instance, 'translation_service').translate
+
+        try:
+            import importlib
+            importlib.import_module(module)
+        except ImportError:
+            msg = _("Validation failed: Could not import module '%s'" % module)
+            return to_utf8(translate(msg))
+
+        return True
+
+validation.register(ImportValidator())

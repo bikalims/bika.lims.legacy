@@ -1,7 +1,9 @@
 3.2.1 (unreleased)
 ------------------
 
+Issue-1999: Allow external Python library functions to be used in Calculation Formulas
 Issue-1971: Allow Reports in Landscape
+Issue-1967: Dashboard Link to "aggregatedanalyses" results in a 404
 Issue-1984: Analysisrequest "Add XX ARs" context action not translated
 Issue-1997: Calculation "Formula" field description keeps untranslated
 Issue-1981: Transifex Error processing bika/lims/skins/bika/bika_widgets/referencewidget.pt
