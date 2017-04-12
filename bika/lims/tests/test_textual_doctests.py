@@ -22,6 +22,7 @@ DOCTESTS = [
     "../docs/Instruments.rst",
     "../docs/Versioning.rst",
     "../docs/AnalysisRequests.rst",
+    "../docs/Calculations.rst",
 ]
 
 

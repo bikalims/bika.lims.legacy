@@ -8,6 +8,8 @@
 import re
 import sys
 import math
+import inspect
+import importlib
 
 import transaction
 from zope.interface import implements
@@ -71,6 +73,34 @@ schema = BikaSchema.copy() + Schema((
             checkbox_bound=0,
             visible=False,
             label=_("Dependent Analyses"),
+        ),
+    ),
+
+    RecordsField(
+        'PythonImports',
+        required=False,
+        subfields=('module', 'function'),
+        subfield_labels={'module': _('Module'), 'function': _('Function')},
+        subfield_readonly={'module': False, 'function': False},
+        subfield_types={'module': 'string', 'function': 'string'},
+        default=[
+            {'module': 'math', 'function': 'ceil'},
+            {'module': 'math', 'function': 'floor'},
+        ],
+        subfield_validators={
+            'module': 'importvalidator',
+        },
+        widget=RecordsWidget(
+            label=_("Additional Python Libraries"),
+            description=_(
+                "If your formula needs a special function from an external "
+                "Python library, you can import it here. E.g. if you want to "
+                "use the 'floor' function from the Python 'math' module, you "
+                "add 'math' to the Module field and 'floor' to the function field. "
+                "The equivalent in Python would be 'from math import floor'. "
+                "In your calculation you could use then 'floor([Ca] + [Mg])'. "
+            ),
+            allowDelete=True,
         ),
     ),
 
@@ -232,14 +262,14 @@ class Calculation(BaseFolder, HistoryAwareMixin):
 
         # Set default/existing values for InterimField keywords
         for interim in self.getInterimFields():
-            keyword = interim['keyword']
-            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            keyword = interim.get('keyword')
+            ex = [x.get('value') for x in form_value if x.get('keyword') == keyword]
             params.append({'keyword': keyword,
-                          'value': ex[0] if ex else interim['value']})
+                          'value': ex[0] if ex else interim.get('value')})
         # Set existing/blank values for service keywords
         for service in self.getDependentServices():
             keyword = service.getKeyword()
-            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            ex = [x.get('value') for x in form_value if x.get('keyword') == keyword]
             params.append({'keyword': keyword,
                           'value': ex[0] if ex else ''})
         self.Schema().getField('TestParameters').set(self, params)
@@ -252,6 +282,12 @@ class Calculation(BaseFolder, HistoryAwareMixin):
         mapping = {x['keyword']: x['value'] for x in self.getTestParameters()}
         # Gather up and parse formula
         formula = self.getMinifiedFormula()
+        test_result_field = self.Schema().getField('TestResult')
+
+        # Flush the TestResult field and return
+        if not formula:
+            return test_result_field.set(self, "")
+
         formula = formula.replace('[', '{').replace(']', '}').replace('  ', '')
         result = 'Failure'
 
@@ -259,7 +295,7 @@ class Calculation(BaseFolder, HistoryAwareMixin):
             # print "pre: {}".format(formula)
             formula = formula.format(**mapping)
             # print "formatted: {}".format(formula)
-            result = eval(formula, {"__builtins__": None, 'math': math})
+            result = eval(formula, self._getGlobals())
             # print "result: {}".format(result)
         except TypeError as e:
             # non-numeric arguments in interim mapping?
@@ -268,9 +304,46 @@ class Calculation(BaseFolder, HistoryAwareMixin):
             result = "Division by 0: {}".format(str(e.args[0]))
         except KeyError as e:
             result = "Key Error: {}".format(str(e.args[0]))
+        except ImportError as e:
+            result = "Import Error: {}".format(str(e.args[0]))
         except Exception as e:
             result = "Unspecified exception: {}".format(str(e.args[0]))
-        self.Schema().getField('TestResult').set(self, str(result))
+        test_result_field.set(self, str(result))
+
+    def _getGlobals(self, **kwargs):
+        """Return the globals dictionary for the formula calculation
+        """
+        # Default globals
+        globs = {"__builtins__": None, 'math': math}
+        # Update with keyword arguments
+        globs.update(kwargs)
+        # Update with additional Python libraries
+        for imp in self.getPythonImports():
+            module = imp["module"]
+            func = imp["function"]
+            member = self._getModuleMember(module, func)
+            if member is None:
+                raise ImportError("Could not find member {} of module {}".format(
+                    func, module))
+            globs[func] = member
+        return globs
+
+    def _getModuleMember(self, dotted_name, member):
+        """Get the member object of a module.
+
+        :param dotted_name: The dotted name of the module, e.g. 'scipy.special'
+        :type dotted_name: string
+        :param member: The name of the member function, e.g. 'gammaincinv'
+        :type member: string
+        :returns: member object or None
+        """
+        try:
+            module = importlib.import_module(dotted_name)
+        except ImportError:
+            return None
+
+        members = dict(inspect.getmembers(module))
+        return members.get(member)
 
     def workflow_script_activate(self):
         wf = getToolByName(self, 'portal_workflow')
