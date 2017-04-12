@@ -51,9 +51,9 @@ class ProxyField(ObjectField):
         # Return None if we could not find a proxied object, e.g. through
         # the proxy expression 'context.getSample()' on an AR
         if proxy_object is None:
-            logger.error("Expression '{}' did not return a valid Proxy Object on {}"
+            logger.debug("Expression '{}' did not return a valid Proxy Object on {}"
                          .format(self.proxy, instance))
-            return None
+            return self.default
 
         # Lookup the proxied field by name
         field_name = self.getName()
@@ -65,7 +65,7 @@ class ProxyField(ObjectField):
                 proxy_object.portal_type, proxy_object.getId(), field_name))
 
         # return the value of the proxy field
-        return field.get(proxy_object)
+        return field.get(proxy_object) or self.default
 
     security.declarePrivate('set')
 
@@ -78,9 +78,9 @@ class ProxyField(ObjectField):
         # Return None if we could not find a proxied object, e.g. through
         # the proxy expression 'context.getSample()' on an AR
         if not proxy_object:
-            logger.error("Expression '{}' did not return a valid Proxy Object on {}"
+            logger.debug("Expression '{}' did not return a valid Proxy Object on {}"
                          .format(self.proxy, instance))
-            return None
+            return self.default
 
         # Lookup the proxied field by name
         field_name = self.getName()
