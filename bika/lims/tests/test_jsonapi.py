@@ -9,19 +9,12 @@ import doctest
 import unittest
 
 from plone.testing import layered
-from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
+from bika.lims.testing import BIKA_SIMPLE_TESTING
 
 OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 DOCTESTS = [
-    'bika.lims.browser.accreditation',
-    'bika.lims.browser.analysisrequest.add',
-    'bika.lims.browser.bika_listing',
-    'bika.lims.browser.instrument',
-    'bika.lims.jsonapi.create',
-    'bika.lims.jsonapi.v1.update',
-    'bika.lims.jsonapi.v1.remove',
-    'bika.lims.vocabularies',
+    'bika.lims.jsonapi.request',
 ]
 
 
@@ -30,6 +23,6 @@ def test_suite():
     for module in DOCTESTS:
         suite.addTests([
             layered(doctest.DocTestSuite(module=module, optionflags=OPTIONFLAGS),
-                    layer=BIKA_FUNCTIONAL_TESTING),
+                    layer=BIKA_SIMPLE_TESTING),
         ])
     return suite
