@@ -3,6 +3,19 @@
 from zope import interface
 
 
+class IDataManager(interface.Interface):
+    """A Data Manager is able to set/get the values of a field.
+    """
+
+    def get(name):
+        """Get the value of the named field
+        """
+
+    def set(name, value):
+        """Set the value of the named field
+        """
+
+
 class IBatch(interface.Interface):
     """Plone Batch Interface
     """

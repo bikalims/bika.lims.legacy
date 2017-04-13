@@ -3,6 +3,35 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="bika">
 
+  <!-- Data Manager -->
+
+  <!-- Default Data adapter (AT based content types) -->
+  <adapter
+      for="*"
+      factory=".datamanager.ATDataManager"
+      />
+
+  <!-- Data adapter for Catalog brains -->
+  <adapter
+      for="Products.ZCatalog.interfaces.ICatalogBrain"
+      factory=".datamanager.BrainDataManager"
+      />
+
+  <!-- Data adapter for Portal manipulation -->
+  <adapter
+      for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
+      factory=".datamanager.PortalDataManager"
+      />
+
+  <!-- Data adapter for Dexterity Field manipulation -->
+  <adapter
+      for="plone.dexterity.interfaces.IDexterityContent"
+      factory=".datamanager.DexterityDataManager"
+      />
+
+
+  <!-- Plone Batching -->
+
   <!-- Adapter for Plone Batching -->
   <adapter
       for="*"
