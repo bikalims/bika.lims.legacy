@@ -15,6 +15,7 @@ OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 DOCTESTS = [
     'bika.lims.jsonapi.request',
+    'bika.lims.jsonapi.underscore',
 ]
 
 

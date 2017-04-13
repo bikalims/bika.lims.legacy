@@ -123,8 +123,6 @@ def to_string(thing):
         'None'
         >>> to_string(object())
         '<object ...>'
-        >>> to_string(u"üu")
-        '??u'
     """
     try:
         return str(thing)
