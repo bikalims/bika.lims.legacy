@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="bika">
+
+  <!-- Adapter for Plone Batching -->
+  <adapter
+      for="*"
+      factory=".batch.Batch"
+      />
+
+  <!-- Adapter for Plone 4.2 Batching -->
+  <adapter
+      for="ZTUtils.Batch.Batch"
+      factory=".batch.Batch42"
+      />
+
+</configure>
