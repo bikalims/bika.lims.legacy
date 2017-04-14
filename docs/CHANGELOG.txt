@@ -1,5 +1,6 @@
 3.2.1 (unreleased)
 ------------------
+Issue-2015: Copy AS functionality from the "bika_analysisservices" view raises an error
 Issue-1967: Dashboard Link to "aggregatedanalyses" results in a 404
 Issue-1984: Analysisrequest "Add XX ARs" context action not translated
 Issue-1997: Calculation "Formula" field description keeps untranslated

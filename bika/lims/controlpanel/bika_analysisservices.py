@@ -70,9 +70,12 @@ class AnalysisServiceCopy(BrowserView):
                 if field.getType() == "Products.Archetypes.Field.ComputedField" \
                         or fieldname in self.skip_fieldnames:
                     continue
-                getter = field.getAccessor(src_service)
+                value = field.getAccessor(src_service)()
+                # https://github.com/bikalabs/bika.lims/issues/2015
+                if fieldname in ["UpperDetectionLimit", "LowerDetectionLimit"]:
+                    value = str(value)
                 setter = dst_service.Schema()[fieldname].getMutator(dst_service)
-                setter(getter())
+                setter(value)
             dst_service.reindexObject()
             return dst_title
         else:
