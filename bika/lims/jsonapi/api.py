@@ -139,7 +139,6 @@ def get_endpoint(brain_or_object):
     """
     portal_type = api.get_portal_type(brain_or_object)
     resource = portal_type_to_resource(portal_type)
-    return resource
 
     # XXX Hack to get the right namespaced endpoint
     endpoints = router.DefaultRouter.view_functions.keys()
@@ -293,10 +292,13 @@ def get_url_info(brain_or_object, endpoint=None):
         endpoint = get_endpoint(brain_or_object)
 
     uid = api.get_uid(brain_or_object)
+    portal_type = api.get_portal_type(brain_or_object)
+    resource = portal_type_to_resource(portal_type)
+
     return {
         "uid": uid,
         "url": get_url(brain_or_object),
-        "api_url": url_for(endpoint, uid=uid),
+        "api_url": url_for(endpoint, resource=resource, uid=uid),
     }
 
 
@@ -352,23 +354,17 @@ def get_parent_info(brain_or_object, endpoint=None):
 
     # get the parent object
     parent = api.get_parent(brain_or_object)
+    portal_type = api.get_portal_type(parent)
+    resource = portal_type_to_resource(portal_type)
 
     # fall back if no endpoint specified
     if endpoint is None:
         endpoint = get_endpoint(parent)
 
-    # return portal information
-    if api.is_portal(parent):
-        return {
-            "parent_id": api.get_id(parent),
-            "parent_uid": 0,
-            "parent_url": url_for("plonesites", uid=0),
-        }
-
     return {
         "parent_id": api.get_id(parent),
         "parent_uid": api.get_uid(parent),
-        "parent_url": url_for(endpoint, uid=api.get_uid(parent))
+        "parent_url": url_for(endpoint, resource=resource, uid=api.get_uid(parent))
     }
 
 
