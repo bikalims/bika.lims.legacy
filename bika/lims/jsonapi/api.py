@@ -120,11 +120,12 @@ def portal_type_to_resource(portal_type):
     """Converts a portal type name to a pluralized resource name
     """
     resource = portal_type.lower()
-    if resource.endswith("y"):
-        resource = resource.rstrip("y")
-        resource = resource + "ies"
-    elif not resource.endswith("s"):
-        resource = resource + "s"
+    resource = resource.replace(" ", "")
+    # if resource.endswith("y"):
+    #     resource = resource.rstrip("y")
+    #     resource = resource + "ies"
+    # elif not resource.endswith("s"):
+    #     resource = resource + "s"
     return resource
 
 
@@ -175,6 +176,8 @@ def get_portal_types():
 def is_uid(uid):
     """Check if the passed in uid is a valid uid
     """
+    if uid == "0":
+        return True
     if not isinstance(uid, basestring):
         return False
     if len(uid) != 32:
