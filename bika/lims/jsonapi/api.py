@@ -19,9 +19,9 @@ from bika.lims.jsonapi.interfaces import IDataManager
 _marker = object()
 
 
-# GET BATCHED
+# GET BATCHED ITEMS
 def get_batched(portal_type=None, uid=None, endpoint=None, **kw):
-    """ returns a batched result record (dictionary)
+    """Get the batched item(s)
     """
     # fetch the catalog results
     results = get_search_results(portal_type=portal_type, uid=uid, **kw)
@@ -39,6 +39,76 @@ def get_batched(portal_type=None, uid=None, endpoint=None, **kw):
     # return a batched record
     return get_batch(results, size, start, endpoint=endpoint,
                      complete=complete)
+
+
+# UPDATE ITEMS
+def update_items(portal_type=None, uid=None, endpoint=None, **kw):
+    """Update item(s)
+
+    1. If the uid is given, the user wants to update the object with the data
+       given in request body
+    2. If no uid is given, the user wants to update a bunch of objects.
+       -> each record contains either an UID, path or parent_path + id
+    """
+
+    # disable CSRF
+    req.disable_csrf_protection()
+
+    # the data to update
+    records = req.get_request_data()
+
+    # we have an uid -> try to get an object for it
+    obj = api.get_object_by_uid(uid)
+    if obj:
+        record = records[0]  # ignore other records if we got an uid
+        obj = update_object_with_data(obj, record)
+        return make_items_for([obj], endpoint=endpoint)
+
+    # no uid -> go through the record items
+    results = []
+    for record in records:
+        obj = get_object_by_record(record)
+
+        # no object found for this record
+        if obj is None:
+            logger.warn("Could not find any object for record %r - skipping" % record)
+            continue
+
+        # update the object with the given record data
+        obj = update_object_with_data(obj, record)
+        results.append(obj)
+
+    if not results:
+        raise APIError(400, "No Objects updated")
+
+    return make_items_for(results, endpoint=endpoint)
+
+
+def get_object_by_record(record):
+    """Find an object by a given record
+
+    Inspects request the record to locate an object
+
+    :param record: A dictionary representation of an object
+    :type record: dict
+    :returns: Found Object or None
+    :rtype: object
+    """
+
+    # nothing to do here
+    if not record:
+        return None
+
+    if record.get("uid"):
+        return api.get_object_by_uid(record["uid"])
+    if record.get("path"):
+        return api.get_object_by_path(record["path"])
+    if record.get("parent_path") and record.get("id"):
+        path = "/".join([record["parent_path"], record["id"]])
+        return api.get_object_by_path(path)
+
+    logger.warn("get_object_by_record::No object found! record='%r'" % record)
+    return None
 
 
 def get_search_results(portal_type=None, uid=None, **kw):
