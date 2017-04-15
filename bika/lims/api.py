@@ -7,6 +7,7 @@ from AccessControl.PermissionRole import rolesForPermissionOn
 
 from Products.CMFPlone.utils import base_hasattr
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.interfaces import IFolderish
 from Products.Archetypes.BaseObject import BaseObject
 from Products.ZCatalog.interfaces import ICatalogBrain
 from Products.CMFCore.WorkflowCore import WorkflowException
@@ -171,6 +172,32 @@ def is_at_content(brain_or_object):
     :rtype: bool
     """
     return isinstance(brain_or_object, BaseObject)
+
+
+def is_folderish(brain_or_object):
+    """Checks if the passed in object is folderish
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: True if the object is folderish
+    :rtype: bool
+    """
+    if hasattr(brain_or_object, "is_folderish"):
+        if callable(brain_or_object.is_folderish):
+            return brain_or_object.is_folderish()
+        return brain_or_object.is_folderish
+    return IFolderish.providedBy(get_object(brain_or_object))
+
+
+def get_portal_type(brain_or_object):
+    """Get the portal type for this object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: Portal type
+    :rtype: string
+    """
+    return brain_or_object.portal_type
 
 
 def get_schema(brain_or_object):
