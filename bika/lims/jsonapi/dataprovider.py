@@ -20,6 +20,7 @@ from Products.ATContentTypes.interfaces import IATContentType
 
 from bika.lims import api
 from bika.lims import logger
+from bika.lims.jsonapi.api import get_url_info
 from bika.lims.jsonapi import request as req
 from bika.lims.jsonapi.interfaces import IInfo
 from bika.lims.jsonapi.interfaces import IDataManager
@@ -247,7 +248,7 @@ def get_json_value(obj, fieldname, value=_marker, default=None):
 
     # handle objects from reference fields
     if isinstance(value, ImplicitAcquisitionWrapper):
-        return api.get_url_info(value)
+        return get_url_info(value)
 
     # extract the value from the object if omitted
     if value is _marker:
