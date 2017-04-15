@@ -15,9 +15,9 @@ from AccessControl import getSecurityManager
 from Products.CMFCore import permissions
 from Products.Archetypes.utils import mapply
 
-from bika.lims.exceptions import APIError
-from bika.lims.interfaces import IDataManager
 from bika.lims.jsonapi import underscore as _
+from bika.lims.jsonapi.exceptions import APIError
+from bika.lims.jsonapi.interfaces import IDataManager
 from bika.lims import logger
 
 import pkg_resources

@@ -3,6 +3,19 @@
 from zope import interface
 
 
+class IInfo(interface.Interface):
+    """JSON Info Interface for Portal contents
+    """
+
+    def to_dict():
+        """Return the dictionary representation of the object
+        """
+
+    def __call__():
+        """Return the dictionary representation of the object
+        """
+
+
 class IDataManager(interface.Interface):
     """A Data Manager is able to set/get the values of a field.
     """
