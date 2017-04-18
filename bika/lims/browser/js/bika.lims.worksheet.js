@@ -41,6 +41,11 @@ function WorksheetAddAnalysesView() {
 
     that.load = function() {
 
+        // Search fields (in Add Analyses) trigger the search button on change
+        $('.auto-search-on-change').live("change", function(){
+            $('.ws-analyses-search-button').click();
+        })
+
         // search form - selecting a category fills up the service selector
         $('[name="list_getCategoryTitle"]').live("change", function(){
             val = $('[name="list_getCategoryTitle"]').val();

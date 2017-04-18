@@ -103,7 +103,6 @@ class Test_MethodInstrumentConstraints(BikaFunctionalTestCase):
         self.assertTrue(self.instrument1 in self.service.getAvailableInstruments())
         self.assertTrue(self.instrument2 in self.service.getAvailableInstruments())
         self.assertEqual(self.service.getInstrument().UID(), self.instrument1.UID())
-        self.assertTrue(len(self.service.getMethod()) == 1)
         self.assertEqual(self.service.getMethod().UID(), self.method.UID())
         ar = self.create_ar(self.service)
         auids = [ar.getAnalyses()[0].UID]

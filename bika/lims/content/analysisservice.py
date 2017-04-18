@@ -536,6 +536,10 @@ schema = BikaSchema.copy() + Schema((
     # - If InstrumentEntry not checked, populate dynamically with
     #   selected Methods, set the first method selected and non-readonly
     # See browser/js/bika.lims.analysisservice.edit.js
+    #
+    # N.B. Never use the value of this field directly, as it is populated by
+    #      JavaScript (see comment above). Instead use getMethod(), which
+    #      implements the logic in Python Code.
     ReferenceField('_Method',
         schemata = "Method",
         required = 0,
@@ -1186,13 +1190,31 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
             If Instrument Entry of Results is not selected, returns the
             method assigned directly by the user using the _Method Field
         """
-        # TODO This function has been modified after enabling multiple methods
-        # for instruments. Make sure that returning the value of _Method field
-        # is correct.
-        method = None
-        if (self.getInstrumentEntryOfResults() is True):
-            method = self.get_Method()
-        return method
+        field = self.getField("_Method")
+        default_method = field.get(self)
+
+        # if this field is already populated, we assume it is correctly set by
+        # the JavaScript and we just return its value
+        if default_method is not None:
+            return default_method
+
+        # otherwise we check if it is allowed to get results from an instrument
+        # and return the default instruments method
+        default_instrument = self.getInstrument()
+        allow_instrument_entry = self.getInstrumentEntryOfResults()
+        if default_instrument and allow_instrument_entry:
+            default_instrument_method = default_instrument.getMethod()
+            if default_instrument_method:
+                return default_instrument_method
+
+        # when we couldn't get the default method from our default instrument,
+        # we return the first method of from our available methods
+        available_methods = self.getMethods()
+        if available_methods and isinstance(available_methods, list):
+            return available_methods[0]
+
+        # we couldn't get any suitable method -> return None
+        return None
 
     def getAvailableMethods(self):
         """ Returns the methods available for this analysis.

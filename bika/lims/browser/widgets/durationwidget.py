@@ -15,6 +15,15 @@ class DurationWidget(RecordWidget):
         'macro': "bika_widgets/durationwidget",
     })
 
+    def process_form(self, instance, field, form, empty_marker=None,
+                     emptyReturnsMarker=False, validating=True):
+        value = form.get(field.getName(), empty_marker)
+        if value is empty_marker:
+            value = {}
+        if emptyReturnsMarker and not value:
+            value = {}
+        return value, {}
+
 registerWidget(DurationWidget,
                title = 'DurationWidget',
                description = (''),
