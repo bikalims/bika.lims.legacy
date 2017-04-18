@@ -17,6 +17,7 @@ from bika.lims import bikaMessageFactory as _
 
 from plone import api
 from plone.api.exc import InvalidParameterError
+from Products.ATContentTypes.utils import dt2DT
 
 class ExpireReferenceSamplesView(BrowserView):
     """Expireference Samples
@@ -25,7 +26,7 @@ class ExpireReferenceSamplesView(BrowserView):
     def __call__(self):
         bc = api.portal.get_tool('bika_catalog')
         query = {'portal_type': 'ReferenceSample',
-                 'getExpiryDate': {'query': datetime.today(),
+                 'getExpiryDate': {'query': dt2DT(datetime.today()),
                                    'range': 'max'},
                  'review_state': 'current',
                 }
