@@ -1,6 +1,8 @@
 ## Description of the issue/feature this PR addresses
 
 https://jira.bikalabs.com/browse/LIMS-XXX
+https://github.com/bikalabs/bika.lims/issues/
+
 
 ## Current behavior before PR
 

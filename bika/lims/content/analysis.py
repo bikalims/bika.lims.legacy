@@ -714,11 +714,11 @@ class Analysis(BaseContent):
         formula = formula.replace('[', '%(').replace(']', ')f')
         try:
             formula = eval("'%s'%%mapping" % formula,
-                               {"__builtins__": None,
-                                'math': math,
-                                'context': self},
-                               {'mapping': mapping})
-            result = eval(formula)
+                           {"__builtins__": None,
+                            'math': math,
+                            'context': self},
+                           {'mapping': mapping})
+            result = eval(formula, calc._getGlobals())
         except TypeError:
             self.setResult("NA")
             return True
@@ -726,6 +726,9 @@ class Analysis(BaseContent):
             self.setResult('0/0')
             return True
         except KeyError as e:
+            self.setResult("NA")
+            return True
+        except ImportError as e:
             self.setResult("NA")
             return True
 

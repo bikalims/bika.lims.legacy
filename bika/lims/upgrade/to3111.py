@@ -15,6 +15,12 @@ def upgrade(tool):
     """Upgrade step required for Bika LIMS 3.1.11
     """
     portal = aq_parent(aq_inner(tool))
+    # Hack prevent out-of-date upgrading
+    # Related: PR #1484
+    # https://github.com/bikalabs/Bika-LIMS/pull/1484
+    from bika.lims.upgrade import skip_pre315
+    if skip_pre315(aq_parent(aq_inner(tool))):
+        return True
 
     qi = portal.portal_quickinstaller
     ufrom = qi.upgradeInfo('bika.lims')['installedVersion']
