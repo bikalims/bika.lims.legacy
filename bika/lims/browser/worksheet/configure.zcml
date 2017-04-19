@@ -107,6 +107,16 @@
 
     <!-- Ajax signatures -->
 
+    <!-- For add_control and blanks using service categories -->
+    <browser:page
+      for="bika.lims.interfaces.IWorksheet"
+      name="service_view"
+      class="bika.lims.browser.worksheet.views.ServicesView"
+      permission="zope.Public"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+
     <browser:page
       for="bika.lims.interfaces.IWorksheet"
       name="getServices"

@@ -8,8 +8,7 @@ from AccessControl import getSecurityManager
 
 from AccessControl import ModuleSecurityInfo, allow_module
 
-import math
-
+from bika.lims import api as api
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from DateTime import DateTime
@@ -20,15 +19,12 @@ from plone.registry.interfaces import IRegistry
 from Products.Archetypes.public import DisplayList
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from socket import timeout
 from time import time
 from weasyprint import HTML, CSS
 from zope.component import queryUtility
 from zope.i18n import translate
 from zope.i18n.locales import locales
 
-import App
-import Globals
 import os
 import re
 import tempfile
@@ -116,18 +112,10 @@ def getUsers(context, roles, allow_empty=True):
     pairs.sort(lambda x, y: cmp(x[1], y[1]))
     return DisplayList(pairs)
 
-def isActive(obj):
+def isActive(object_or_brain):
     """ Check if obj is inactive or cancelled.
     """
-    wf = getToolByName(obj, 'portal_workflow')
-    if (hasattr(obj, 'inactive_state') and obj.inactive_state == 'inactive') or \
-       wf.getInfoFor(obj, 'inactive_state', 'active') == 'inactive':
-        return False
-    if (hasattr(obj, 'cancellation_state') and obj.inactive_state == 'cancelled') or \
-       wf.getInfoFor(obj, 'cancellation_state', 'active') == 'cancelled':
-        return False
-    return True
-
+    return api.is_active(object_or_brain)
 
 def formatDateQuery(context, date_id):
     """ Obtain and reformat the from and to dates

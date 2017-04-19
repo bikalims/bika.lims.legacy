@@ -395,19 +395,19 @@ class CoordinateValidator:
         translate = getToolByName(instance, 'translation_service').translate
 
         try:
-            degrees = int(form_value['degrees'])
+            degrees = int(form_value.get('degrees', 0))
         except ValueError:
             return to_utf8(
                 translate(_("Validation failed: degrees must be numeric")))
 
         try:
-            minutes = int(form_value['minutes'])
+            minutes = int(form_value.get('minutes', 0))
         except ValueError:
             return to_utf8(
                 translate(_("Validation failed: minutes must be numeric")))
 
         try:
-            seconds = int(form_value['seconds'])
+            seconds = int(form_value.get('seconds', 0))
         except ValueError:
             return to_utf8(
                 translate(_("Validation failed: seconds must be numeric")))
@@ -420,7 +420,7 @@ class CoordinateValidator:
             return to_utf8(
                 translate(_("Validation failed: seconds must be 0 - 59")))
 
-        bearing = form_value['bearing']
+        bearing = form_value.get('bearing', '')
 
         if fieldname == 'Latitude':
             if not 0 <= degrees <= 90:
@@ -1100,3 +1100,27 @@ class SortKeyValidator:
 
 
 validation.register(SortKeyValidator())
+
+
+class ImportValidator:
+    """Checks if a dotted name can be imported or not
+    """
+    implements(IValidator)
+    name = "importvalidator"
+
+    def __call__(self, module, **kwargs):
+
+        # some needed tools
+        instance = kwargs['instance']
+        translate = getToolByName(instance, 'translation_service').translate
+
+        try:
+            import importlib
+            importlib.import_module(module)
+        except ImportError:
+            msg = _("Validation failed: Could not import module '%s'" % module)
+            return to_utf8(translate(msg))
+
+        return True
+
+validation.register(ImportValidator())

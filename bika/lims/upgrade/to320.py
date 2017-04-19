@@ -5,8 +5,11 @@
 
 from Acquisition import aq_inner
 from Acquisition import aq_parent
+
+import transaction
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
+from Products.ZCatalog.Catalog import CatalogError
 
 from bika.lims import logger
 from Products.CMFCore import permissions
@@ -51,6 +54,11 @@ def upgrade(tool):
     migrate_instrument_locations(portal)
     """Update workflow permissions
     """
+    # Adding old method of instrument as a set .
+    logger.info("Assigning Multiple method to instruments...")
+    instrument_multiple_methods(portal)
+
+    logger.info("Updating workflow role mappings for all objects in portal...")
     wf = getToolByName(portal, 'portal_workflow')
     wf.updateRoleMappings()
     # Updating Verifications of Analysis field from integer to String.
@@ -169,8 +177,7 @@ def create_samplingcoordinator(portal):
     bc = getToolByName(portal, 'bika_catalog', None)
     if 'getScheduledSamplingSampler' not in bc.indexes():
         bc.addIndex('getScheduledSamplingSampler', 'FieldIndex')
-
-        bac.clearFindAndRebuild()
+        bc.clearFindAndRebuild()
 
 def departments(portal):
     """ To add department indexes to the catalogs """
@@ -186,15 +193,6 @@ def create_CAS_IdentifierType(portal):
     """LIMS-1391 The CAS Nr IdentifierType is normally created by
     setuphandlers during site initialisation.
     """
-    pc = getToolByName(portal, 'portal_catalog', None)
-    objs = pc(portal_type="Analyses",review_state="to_be_verified")
-    for obj_brain in objs:
-        obj = obj_brain.getObject()
-        old_field = obj.Schema().get("NumberOfVerifications", None)
-        if old_field:
-            new_value=''
-            for n in range(0,old_field):
-                new_value+='admin'
     bsc = getToolByName(portal, 'bika_catalog', None)
     idtypes = bsc(portal_type = 'IdentifierType', title='CAS Nr')
     if not idtypes:
@@ -205,21 +203,44 @@ def create_CAS_IdentifierType(portal):
                     description='Chemical Abstracts Registry number',
                     portal_types=['Analysis Service'])
 
+
 def multi_verification(portal):
     """
     Getting all analyses with review_state in to_be_verified and
     adding "admin" as a verificator as many times as this analysis verified before.
     """
     pc = getToolByName(portal, 'portal_catalog', None)
-    objs = pc(portal_type="Analyses",review_state="to_be_verified")
+    objs = pc(portal_type="Analyses", review_state="to_be_verified")
     for obj_brain in objs:
         obj = obj_brain.getObject()
-        old_field = obj.Schema().get("NumberOfVerifications", None)
+        old_field = obj.Schema().get("NumberOfVerifications", None).get(obj)
         if old_field:
-            new_value=''
-            for n in range(0,old_field):
-                new_value+='admin'
-                if n<old_field:
-                    new_value+=','
+            new_value = ''
+            for n in range(0, old_field):
+                new_value += 'admin'
+                if n < old_field:
+                    new_value += ','
             obj.setVerificators(new_value)
+    transaction.commit()
+
+
+
+
+def instrument_multiple_methods(portal):
+    # An instrument had only a single relevant field called "Method".
+    # This field has been replaced with a multiValued "Methods" field.
+
+    # First adding new index
+    bsc = getToolByName(portal, 'bika_setup_catalog')
+    try:
+        bsc.addIndex('getMethodUIDs', 'KeywordIndex')
+    except CatalogError:
+        # Index already exists form previous run of upgrade step
+        pass
+
+    for instrument in portal.bika_setup.bika_instruments.objectValues():
+        value = instrument.Schema().get("Method", None).get(instrument)
+        if value and type(value) not in (list, tuple):
+            # Only listify the value if it's not already listified
+            instrument.setMethods([value])
 

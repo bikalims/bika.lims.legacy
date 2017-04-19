@@ -69,7 +69,7 @@ class AnalysisRequestsView(BikaListingView):
                 'url': ar.absolute_url(),
                 'relative_url': ar.absolute_url(),
                 'view_url': ar.absolute_url(),
-                'Position': pos,
+                'Position': int(pos) if pos.isdigit() else pos,
                 'RequestID': ar.id,
                 'Client': ar.aq_parent.Title(),
                 'created': self.ulocalized_time(ar.created()),

@@ -16,7 +16,7 @@ from bika.lims.content.analysisrequest import schema as ar_schema
 from bika.lims.content.sample import schema as sample_schema
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IARImport, IClient
-from bika.lims.utils import tmpID
+from bika.lims.utils import tmpID, getUsers
 from bika.lims.vocabularies import CatalogVocabulary
 from collective.progressbar.events import InitialiseProgressBar
 from collective.progressbar.events import ProgressBar
@@ -33,8 +33,10 @@ from Products.DataGridField import Column
 from Products.DataGridField import DataGridField
 from Products.DataGridField import DataGridWidget
 from Products.DataGridField import DateColumn
+from Products.DataGridField import DatetimeColumn
 from Products.DataGridField import LinesColumn
 from Products.DataGridField import SelectColumn
+from Products.DataGridField import TimeColumn
 from zope import event
 from zope.event import notify
 from zope.i18nmessageid import MessageFactory
@@ -170,6 +172,7 @@ SampleData = DataGridField(
     columns=('ClientSampleID',
              'SamplingDate',
              'DateSampled',
+             'Sampler',
              'SamplePoint',
              'SampleMatrix',
              'SampleType',  # not a schema field!
@@ -184,7 +187,8 @@ SampleData = DataGridField(
         columns={
             'ClientSampleID': Column('Sample ID'),
             'SamplingDate': DateColumn('Sampling Date'),
-            'DateSampled': DateColumn('Date Sampled'),
+            'DateSampled': DatetimeColumn('Date Sampled'),
+            'Sampler': Column('Sampler'),
             'SamplePoint': SelectColumn(
                 'Sample Point', vocabulary='Vocabulary_SamplePoint'),
             'SampleMatrix': SelectColumn(
@@ -283,6 +287,34 @@ class ARImport(BaseFolder):
     def workflow_script_import(self):
         """Create objects from valid ARImport
         """
+
+        def convert_date_string(datestr):
+            return datestr.replace('-', '/')
+
+        def lookup_sampler_uid(import_user):
+            #Lookup sampler's uid
+            found = False
+            userid = None
+            user_ids = []
+            users = getUsers(self, ['LabManager', 'Sampler']).items()
+            for (samplerid, samplername) in users:
+                if import_user == samplerid:
+                    found = True
+                    userid = samplerid
+                    break
+                if import_user == samplername:
+                    user_ids.append(samplerid)
+            if found:
+                return userid
+            if len(user_ids) == 1:
+                return user_ids[0]
+            if len(user_ids) > 1:
+                #raise ValueError('Sampler %s is ambiguous' % import_user)
+                return None
+            #Otherwise
+            #raise ValueError('Sampler %s not found' % import_user)
+            return None
+
         bsc = getToolByName(self, 'bika_setup_catalog')
         workflow = getToolByName(self, 'portal_workflow')
         client = self.aq_parent
@@ -352,6 +384,10 @@ class ARImport(BaseFolder):
             row['ClientReference'] = self.getClientReference()
             row['ClientOrderNumber'] = self.getClientOrderNumber()
             row['Contact'] = self.getContact()
+            row['DateSampled'] = convert_date_string(row['DateSampled'])
+            if row['Sampler']:
+                row['Sampler'] = lookup_sampler_uid(row['Sampler'])
+
             # Create AR
             ar = _createObjectByType("AnalysisRequest", client, tmpID())
             ar.setSample(sample)
@@ -540,6 +576,12 @@ class ARImport(BaseFolder):
             # in put spreadsheet
             gridrow = {'sid': row['Samples']}
             del (row['Samples'])
+
+            gridrow = {'ClientSampleID': row['ClientSampleID']}
+            del (row['ClientSampleID'])
+
+            gridrow['Sampler'] = row['Sampler']
+            del (row['Sampler'])
 
             # We'll use this later to verify the number against selections
             if 'Total number of Analyses or Profiles' in row:

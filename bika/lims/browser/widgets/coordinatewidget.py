@@ -15,6 +15,15 @@ class CoordinateWidget(RecordWidget):
         'macro': "bika_widgets/coordinatewidget",
     })
 
+    def process_form(self, instance, field, form, empty_marker=None,
+                     emptyReturnsMarker=False, validating=True):
+        value = form.get(field.getName(), empty_marker)
+        if value is empty_marker:
+            value = {}
+        if emptyReturnsMarker and not value:
+            value = {}
+        return value, {}
+
 registerWidget(CoordinateWidget,
                title = 'CoordinateWidget',
                description = '',

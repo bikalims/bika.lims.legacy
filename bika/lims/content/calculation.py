@@ -1,38 +1,50 @@
+# -*- coding: utf-8 -*-
+
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import re
+import sys
+import math
+import inspect
+import importlib
+
+import transaction
+from zope.interface import implements
 from AccessControl import ClassSecurityInfo
 
-from Products.ATExtensions.field import RecordsField
+from Products.Archetypes.atapi import Schema
+from Products.Archetypes.atapi import BaseFolder
+from Products.Archetypes.atapi import registerType
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import bikaMessageFactory as _
-from bika.lims.browser.widgets import RecordsWidget
-from bika.lims.utils import t
-from bika.lims.browser.fields import HistoryAwareReferenceField
-from bika.lims.browser.fields import InterimFieldsField
-from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
-from bika.lims.config import PROJECTNAME
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import ICalculation
-from bika.lims.utils import to_utf8
-from bika.lims.utils.analysis import format_numeric_result
-from Products.Archetypes.public import *
 from Products.Archetypes.references import HoldingReference
-from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.CMFCore.permissions import ModifyPortalContent, View
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.WorkflowCore import WorkflowException
-from zExceptions import Redirect
-from zope.interface import implements
-import sys
-import re
-import math
-import transaction
+from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
+
+# Fields
+from Products.Archetypes.atapi import TextField
+from Products.ATExtensions.field import RecordsField
+from bika.lims.browser.fields import InterimFieldsField
+from bika.lims.browser.fields import HistoryAwareReferenceField
+
+# Widgets
+from Products.Archetypes.atapi import ReferenceWidget
+from Products.Archetypes.atapi import TextAreaWidget
+from bika.lims.browser.widgets import RecordsWidget
+from bika.lims.browser.widgets import RecordsWidget as BikaRecordsWidget
+
+# bika.lims imports
+from bika.lims.config import PROJECTNAME
+from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import ICalculation
+from bika.lims.content.bikaschema import BikaSchema
 
 
 schema = BikaSchema.copy() + Schema((
+
     InterimFieldsField(
         'InterimFields',
         widget=BikaRecordsWidget(
@@ -48,6 +60,7 @@ schema = BikaSchema.copy() + Schema((
                 "sheet."),
         )
     ),
+
     HistoryAwareReferenceField(
         'DependentServices',
         required=1,
@@ -62,6 +75,35 @@ schema = BikaSchema.copy() + Schema((
             label=_("Dependent Analyses"),
         ),
     ),
+
+    RecordsField(
+        'PythonImports',
+        required=False,
+        subfields=('module', 'function'),
+        subfield_labels={'module': _('Module'), 'function': _('Function')},
+        subfield_readonly={'module': False, 'function': False},
+        subfield_types={'module': 'string', 'function': 'string'},
+        default=[
+            {'module': 'math', 'function': 'ceil'},
+            {'module': 'math', 'function': 'floor'},
+        ],
+        subfield_validators={
+            'module': 'importvalidator',
+        },
+        widget=RecordsWidget(
+            label=_("Additional Python Libraries"),
+            description=_(
+                "If your formula needs a special function from an external "
+                "Python library, you can import it here. E.g. if you want to "
+                "use the 'floor' function from the Python 'math' module, you "
+                "add 'math' to the Module field and 'floor' to the function field. "
+                "The equivalent in Python would be 'from math import floor'. "
+                "In your calculation you could use then 'floor([Ca] + [Mg])'. "
+            ),
+            allowDelete=True,
+        ),
+    ),
+
     TextField(
         'Formula',
         validators=('formulavalidator',),
@@ -70,7 +112,6 @@ schema = BikaSchema.copy() + Schema((
         widget=TextAreaWidget(
             label=_("Calculation Formula"),
             description=_(
-                "calculation_formula_description",
                 "<p>The formula you type here will be dynamically calculated "
                 "when an analysis using this calculation is displayed.</p>"
                 "<p>To enter a Calculation, use standard maths operators,  "
@@ -83,14 +124,15 @@ schema = BikaSchema.copy() + Schema((
                 "two Analysis Services.</p>"),
         )
     ),
+
     RecordsField(
         'TestParameters',
         required=False,
         subfields=('keyword', 'value'),
         subfield_labels={'keyword': _('Keyword'), 'value': _('Value')},
         subfield_readonly={'keyword': True, 'value': False},
-        subfield_types={'keyword':'string','value':'float'},
-        default=[{'keyword': '', 'value': 0},],
+        subfield_types={'keyword': 'string', 'value': 'float'},
+        default=[{'keyword': '', 'value': 0}],
         widget=RecordsWidget(
             label=_("Test Parameters"),
             description=_("To test the calculation, enter values here for all "
@@ -100,6 +142,7 @@ schema = BikaSchema.copy() + Schema((
             allowDelete=False,
         ),
     ),
+
     TextField(
         'TestResult',
         default_content_type='text/plain',
@@ -110,7 +153,8 @@ schema = BikaSchema.copy() + Schema((
                           "with test values.  You will need to save the "
                           "calculation before this value will be calculated."),
         )
-    )
+    ),
+
 ))
 
 schema['title'].widget.visible = True
@@ -118,10 +162,13 @@ schema['description'].widget.visible = True
 
 
 class Calculation(BaseFolder, HistoryAwareMixin):
+    """Calculation for Analysis Results
+    """
+    implements(ICalculation)
+
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
-    implements(ICalculation)
 
     _at_rename_after_creation = True
 
@@ -181,8 +228,8 @@ class Calculation(BaseFolder, HistoryAwareMixin):
 
             set flat=True to get a simple list of AnalysisService objects
         """
-        if deps == None:
-            deps = [] if flat == True else {}
+        if deps is None:
+            deps = [] if flat is True else {}
 
         for service in self.getDependentServices():
             calc = service.getCalculation()
@@ -215,14 +262,14 @@ class Calculation(BaseFolder, HistoryAwareMixin):
 
         # Set default/existing values for InterimField keywords
         for interim in self.getInterimFields():
-            keyword = interim['keyword']
-            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            keyword = interim.get('keyword')
+            ex = [x.get('value') for x in form_value if x.get('keyword') == keyword]
             params.append({'keyword': keyword,
-                          'value': ex[0] if ex else interim['value']})
+                          'value': ex[0] if ex else interim.get('value')})
         # Set existing/blank values for service keywords
         for service in self.getDependentServices():
             keyword = service.getKeyword()
-            ex = [x['value'] for x in form_value if x['keyword'] == keyword]
+            ex = [x.get('value') for x in form_value if x.get('keyword') == keyword]
             params.append({'keyword': keyword,
                           'value': ex[0] if ex else ''})
         self.Schema().getField('TestParameters').set(self, params)
@@ -232,9 +279,15 @@ class Calculation(BaseFolder, HistoryAwareMixin):
          TestResult field.
         """
         # Create mapping from TestParameters
-        mapping = {x['keyword']:x['value'] for x in self.getTestParameters()}
+        mapping = {x['keyword']: x['value'] for x in self.getTestParameters()}
         # Gather up and parse formula
         formula = self.getMinifiedFormula()
+        test_result_field = self.Schema().getField('TestResult')
+
+        # Flush the TestResult field and return
+        if not formula:
+            return test_result_field.set(self, "")
+
         formula = formula.replace('[', '{').replace(']', '}').replace('  ', '')
         result = 'Failure'
 
@@ -242,7 +295,7 @@ class Calculation(BaseFolder, HistoryAwareMixin):
             # print "pre: {}".format(formula)
             formula = formula.format(**mapping)
             # print "formatted: {}".format(formula)
-            result = eval(formula, {"__builtins__": None, 'math': math})
+            result = eval(formula, self._getGlobals())
             # print "result: {}".format(result)
         except TypeError as e:
             # non-numeric arguments in interim mapping?
@@ -251,9 +304,46 @@ class Calculation(BaseFolder, HistoryAwareMixin):
             result = "Division by 0: {}".format(str(e.args[0]))
         except KeyError as e:
             result = "Key Error: {}".format(str(e.args[0]))
+        except ImportError as e:
+            result = "Import Error: {}".format(str(e.args[0]))
         except Exception as e:
             result = "Unspecified exception: {}".format(str(e.args[0]))
-        self.Schema().getField('TestResult').set(self, str(result))
+        test_result_field.set(self, str(result))
+
+    def _getGlobals(self, **kwargs):
+        """Return the globals dictionary for the formula calculation
+        """
+        # Default globals
+        globs = {"__builtins__": None, 'math': math}
+        # Update with keyword arguments
+        globs.update(kwargs)
+        # Update with additional Python libraries
+        for imp in self.getPythonImports():
+            module = imp["module"]
+            func = imp["function"]
+            member = self._getModuleMember(module, func)
+            if member is None:
+                raise ImportError("Could not find member {} of module {}".format(
+                    func, module))
+            globs[func] = member
+        return globs
+
+    def _getModuleMember(self, dotted_name, member):
+        """Get the member object of a module.
+
+        :param dotted_name: The dotted name of the module, e.g. 'scipy.special'
+        :type dotted_name: string
+        :param member: The name of the member function, e.g. 'gammaincinv'
+        :type member: string
+        :returns: member object or None
+        """
+        try:
+            module = importlib.import_module(dotted_name)
+        except ImportError:
+            return None
+
+        members = dict(inspect.getmembers(module))
+        return members.get(member)
 
     def workflow_script_activate(self):
         wf = getToolByName(self, 'portal_workflow')
@@ -291,5 +381,6 @@ class Calculation(BaseFolder, HistoryAwareMixin):
             pu.addPortalMessage(msg, 'error')
             transaction.get().abort()
             raise WorkflowException
+
 
 registerType(Calculation, PROJECTNAME)
