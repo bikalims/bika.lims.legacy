@@ -1,0 +1,22 @@
+/* Stylesheet for the 'bika' Plone theme */
+/*Instrument Impor*/
+td.instrument-import {
+    padding-bottom: 20px;
+    white-space: nowrap;
+}
+td.instrument-import-selector{
+    vertical-align:top;
+    padding-right:30px;
+    padding-top:10px;
+}
+td.instrument-import-padding-top{
+    padding-top:10px;
+}
+tr.instrument-import-border-top{
+    border-top: 1px black solid;
+}
+p.instrument-import-paragraph{
+    color: #3F3F3F;
+    font-size: 0.87em;
+}
+/**/
