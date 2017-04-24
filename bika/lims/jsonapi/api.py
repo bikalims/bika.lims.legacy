@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# from AccessControl import Unauthorized
+import json
+import datetime
 
+from DateTime import DateTime
+# from AccessControl import Unauthorized
 from Products.CMFPlone.PloneBatch import Batch
 
+from plone import api as ploneapi
 from plone.jsonapi.core import router
 
 from bika.lims import api
@@ -343,6 +347,57 @@ def is_uid(uid):
     return True
 
 
+def is_json_serializable(thing):
+    """Checks if the given thing can be serialized to JSON
+
+    :param thing: The object to check if it can be serialized
+    :type thing: arbitrary object
+    :returns: True if it can be JSON serialized
+    :rtype: bool
+    """
+    try:
+        json.dumps(thing)
+        return True
+    except TypeError:
+        return False
+
+
+def is_date(thing):
+    """Checks if the given thing represents a date
+
+    :param thing: The object to check if it is a date
+    :type thing: arbitrary object
+    :returns: True if we have a date object
+    :rtype: bool
+    """
+    # known date types
+    date_types = (datetime.datetime,
+                  datetime.date,
+                  DateTime)
+    return isinstance(thing, date_types)
+
+
+def to_iso_date(date, default=None):
+    """ISO representation for the date object
+
+    :param date: A date object
+    :type field: datetime/DateTime
+    :returns: The ISO format of the date
+    :rtype: str
+    """
+
+    # not a date
+    if not is_date(date):
+        return default
+
+    # handle Zope DateTime objects
+    if isinstance(date, (DateTime)):
+        return date.ISO8601()
+
+    # handle python datetime objects
+    return date.isoformat()
+
+
 def get_contents(brain_or_object, depth=1):
     """Lookup folder contents for this object
 
@@ -401,12 +456,6 @@ def get_parent_path(brain_or_object):
     """Proxy to bika.lims.api.get_parent_path
     """
     return api.get_parent_path(brain_or_object)
-
-
-def get_portal():
-    """Proxy to bika.lims.api.get_portal
-    """
-    return api.get_portal()
 
 
 def get_id(brain_or_object):
@@ -589,3 +638,66 @@ def get_object_by_path(path):
         return portal
 
     return portal.restrictedTraverse(path)
+
+
+def is_anonymous():
+    """Check if the current user is authenticated or not
+
+    :returns: True if the current user is authenticated
+    :rtype: bool
+    """
+    return ploneapi.user.is_anonymous()
+
+
+def get_current_user():
+    """Get the current logged in user
+
+    :returns: Member
+    :rtype: object
+    """
+    return ploneapi.user.get_current()
+
+
+def get_member_ids():
+    """Return all member ids of the portal.
+    """
+    pm = get_tool("portal_membership")
+    member_ids = pm.listMemberIds()
+    # How can it be possible to get member ids with None?
+    return filter(lambda x: x, member_ids)
+
+
+def get_user(user_or_username=None):
+    """Return Plone User
+
+    :param user_or_username: Plone user or user id
+    :type groupname:  PloneUser/MemberData/str
+    :returns: Plone MemberData
+    :rtype: object
+    """
+    if user_or_username is None:
+        return None
+    if hasattr(user_or_username, "getUserId"):
+        return ploneapi.user.get(user_or_username.getUserId())
+    return ploneapi.user.get(userid=_.to_string(user_or_username))
+
+
+def get_user_properties(user_or_username):
+    """Return User Properties
+
+    :param user_or_username: Plone group identifier
+    :type groupname:  PloneUser/MemberData/str
+    :returns: Plone MemberData
+    :rtype: object
+    """
+    user = get_user(user_or_username)
+    if user is None:
+        return {}
+    if not callable(user.getUser):
+        return {}
+    out = {}
+    plone_user = user.getUser()
+    for sheet in plone_user.listPropertysheets():
+        ps = plone_user.getPropertysheet(sheet)
+        out.update(dict(ps.propertyItems()))
+    return out

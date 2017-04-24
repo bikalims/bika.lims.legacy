@@ -4,10 +4,25 @@ import pkgutil
 
 from bika.lims import logger
 from bika.lims.jsonapi.v2 import routes
+from bika.lims.jsonapi import add_route as add_bika_route
 
 __build__ = 0
 __version__ = 2
-__date__ = "2017-03-30"
+__date__ = "2017-04-24"
+
+BASE_URL = "/v2"
+
+
+def add_route(route, endpoint=None, **kw):
+    """Add a new v2 JSON API route
+    """
+
+    # ensure correct amout of slashes
+    def apiurl(route):
+        return '/'.join(s.strip('/') for s in ["", BASE_URL, route])
+
+    return add_bika_route(apiurl(route), endpoint, **kw)
+
 
 prefix = routes.__name__ + "."
 for importer, modname, ispkg in pkgutil.iter_modules(

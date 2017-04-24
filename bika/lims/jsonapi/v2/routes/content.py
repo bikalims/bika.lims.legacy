@@ -2,12 +2,12 @@
 
 from bika.lims.jsonapi import api
 # from bika.lims.jsonapi import url_for
-from bika.lims.jsonapi import add_route
+from bika.lims.jsonapi.v2 import add_route
 from bika.lims.jsonapi.exceptions import APIError
 
 
-@add_route("/v2/<string:resource>", "bika.lims.jsonapi.v2.get", methods=["GET"])
-@add_route("/v2/<string:resource>/<string:uid>", "bika.lims.jsonapi.v2.get", methods=["GET"])
+@add_route("/<string:resource>", "bika.lims.jsonapi.v2.get", methods=["GET"])
+@add_route("/<string:resource>/<string:uid>", "bika.lims.jsonapi.v2.get", methods=["GET"])
 def get(context, request, resource=None, uid=None):
     """GET
     """
