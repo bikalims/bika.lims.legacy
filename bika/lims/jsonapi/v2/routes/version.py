@@ -8,6 +8,7 @@ from bika.lims.jsonapi.v2 import __build__
 from bika.lims.jsonapi.v2 import __date__
 
 
+@add_route("/v2", "bika.lims.jsonapi.v2.version", methods=["GET"])
 @add_route("/v2/version", "bika.lims.jsonapi.v2.version", methods=["GET"])
 def version(context, request):
     """get the version, build number and date of this API

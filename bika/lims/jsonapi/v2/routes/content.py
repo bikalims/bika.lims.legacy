@@ -19,3 +19,14 @@ def get(context, request, resource=None, uid=None):
     if portal_type is None:
         raise APIError(404, "Not Found")
     return api.get_batched(portal_type=portal_type, uid=uid, endpoint="bika.lims.jsonapi.v2.get")
+
+
+@add_route("/search", "bika.lims.jsonapi.v2.search", methods=["GET"])
+def search(context, request):
+    """Generic search route
+
+    <Plonesite>/@@API/v2/search -> returns all contents of the portal
+    <Plonesite>/@@API/v2/search?portal_type=Folder -> returns only folders
+    ...
+    """
+    return api.get_batched()
