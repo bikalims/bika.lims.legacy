@@ -3,34 +3,49 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="bika">
 
-    <!-- Data Provider -->
+  <!-- <Catalog> -->
 
-    <!-- Default data provider (AT based content types) -->
-    <adapter
-        for="*"
-        factory=".dataprovider.ATDataProvider"
-        />
+  <!-- Default catalog adapter -->
+  <adapter
+      for="*"
+      factory=".catalog.Catalog"
+      />
 
-    <!-- Adapter for Catalog Brains -->
-    <adapter
-        for="Products.ZCatalog.interfaces.ICatalogBrain"
-        factory=".dataprovider.ZCDataProvider"
-        />
-
-    <!-- Adapter for the Plone Site -->
-    <adapter
-        for="Products.CMFCore.interfaces.ISiteRoot"
-        factory=".dataprovider.SiteRootDataProvider"
-        />
-
-    <!-- Adapter for Dexterity Content Types -->
-    <adapter
-        for="plone.dexterity.interfaces.IDexterityContent"
-        factory=".dataprovider.DexterityDataProvider"
-        />
+  <!-- Default catalog query adapter -->
+  <adapter
+      for=".interfaces.ICatalog"
+      factory=".catalog.CatalogQuery"
+      />
 
 
-  <!-- Data Manager -->
+  <!-- <Data Provider> -->
+
+  <!-- Default data provider (AT based content types) -->
+  <adapter
+      for="*"
+      factory=".dataprovider.ATDataProvider"
+      />
+
+  <!-- Adapter for Catalog Brains -->
+  <adapter
+      for="Products.ZCatalog.interfaces.ICatalogBrain"
+      factory=".dataprovider.ZCDataProvider"
+      />
+
+  <!-- Adapter for the Plone Site -->
+  <adapter
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      factory=".dataprovider.SiteRootDataProvider"
+      />
+
+  <!-- Adapter for Dexterity Content Types -->
+  <adapter
+      for="plone.dexterity.interfaces.IDexterityContent"
+      factory=".dataprovider.DexterityDataProvider"
+      />
+
+
+  <!-- <Data Manager> -->
 
   <!-- Default Data adapter (AT based content types) -->
   <adapter
@@ -57,7 +72,7 @@
       />
 
 
-  <!-- Plone Batching -->
+  <!-- <Batching> -->
 
   <!-- Adapter for Plone Batching -->
   <adapter

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import urlparse
 import pkg_resources
 
 from zope import interface
@@ -24,10 +25,7 @@ TRUE_VALUES = ["y", "yes", "1", "true", True]
 
 
 def get_request():
-    """Get the current request
-
-    >>> get_request()
-    <HTTPRequest, URL=http://nohost>
+    """ return the request object
     """
     return getRequest()
 
@@ -47,34 +45,27 @@ def disable_csrf_protection():
 
 
 def get_form():
-    """Get the request form dictionary
-
-    >>> get_form()
-    {}
+    """ return the request form dictionary
     """
     return get_request().form
 
 
-def get(key, default=None):
-    """Get the value for the given key from the request
-
-    >>> get("limit", 0)
-    0
+def get_query_string():
+    """ return the parsed query string
     """
-    return get_form().get(key, default)
+    qs = get_request().get("QUERY_STRING")
+    return dict(urlparse.parse_qsl(qs))
+
+
+def get(key, default=None):
+    """ return the key from the request
+    """
+    data = get_form() or get_query_string()
+    return data.get(key, default)
 
 
 def is_true(key, default=False):
-    """Check if the value is in TRUE_VALUES
-
-    >>> request = get_request()
-
-    >>> out = []
-    >>> for tv in TRUE_VALUES:
-    ...     request.form["param"] = tv
-    ...     out.append(is_true("param"))
-    >>> all(out)
-    True
+    """ Check if the value is in TRUE_VALUES
     """
     value = get(key, default)
     if isinstance(value, list):
@@ -87,68 +78,43 @@ def is_true(key, default=False):
 
 
 def get_cookie(key, default=None):
-    """Get the cookie by key
+    """ return the key from the request
     """
     return get_request().cookies.get(key, default)
 
 
 def get_complete(default=None):
-    """Get the 'complete' value from the request
-
-    >>> request = get_request()
-    >>> request.form["complete"] = "yes"
-    >>> get_complete()
-    True
+    """ returns the 'complete' from the request
     """
     return is_true("complete", default)
 
 
 def get_children(default=None):
-    """Get the 'children' value from the request
-
-    >>> request = get_request()
-    >>> request.form["children"] = "yes"
-    >>> get_children()
-    True
+    """ returns the 'children' from the request
     """
     return is_true("children", default)
 
 
 def get_filedata(default=None):
-    """Get the 'filedata' value from the request
-
-    >>> request = get_request()
-    >>> request.form["filedata"] = "yes"
-    >>> get_filedata()
-    True
+    """ returns the 'filedata' from the request
     """
     return is_true('filedata')
 
 
 def get_workflow(default=None):
-    """Get the 'workflow' value from the request
-
-    >>> request = get_request()
-    >>> request.form["workflow"] = "yes"
-    >>> get_workflow()
-    True
+    """ returns the 'workflow' from the request
     """
     return is_true("workflow", default)
 
 
 def get_sharing(default=None):
-    """Get the 'sharing' value from the request
-
-    >>> request = get_request()
-    >>> request.form["sharing"] = "yes"
-    >>> get_sharing()
-    True
+    """ returns the 'sharing' from the request
     """
     return is_true("sharing", default)
 
 
 def get_sort_limit():
-    """Get the 'sort_limit' value from the request
+    """ returns the 'sort_limit' from the request
     """
     limit = _.convert(get("sort_limit"), _.to_int)
     if (limit < 1):
@@ -157,41 +123,40 @@ def get_sort_limit():
 
 
 def get_batch_size():
-    """Get the 'limit' value from the request
+    """ returns the 'limit' from the request
     """
     return _.convert(get("limit"), _.to_int) or 25
 
 
 def get_batch_start():
-    """Get the 'b_start' value from the request
+    """ returns the 'start' from the request
     """
     return _.convert(get("b_start"), _.to_int) or 0
 
 
 def get_sort_on(allowed_indexes=None):
-    """Get the 'sort_on' value from the request
+    """ returns the 'sort_on' from the request
     """
-    sort_on = get("sort_on", "getObjPositionInParent")
+    sort_on = get("sort_on")
     if allowed_indexes and sort_on not in allowed_indexes:
-        logger.warn("Index '%s' is not in allowed_indexes" % sort_on)
-        return "id"
+        logger.warn("Index '{}' is not in allowed_indexes".format(sort_on))
+        return None
     return sort_on
 
 
 def get_sort_order():
-    """Get the 'sort_order' value from the request
+    """ returns the 'sort_order' from the request
     """
-    sort_order = get("sort_order")
+    sort_order = get("sort_order", "ascending")
     if sort_order in ["ASC", "ascending", "a", "asc", "up", "high"]:
         return "ascending"
     if sort_order in ["DESC", "descending", "d", "desc", "down", "low"]:
         return "descending"
-    # https://github.com/collective/plone.jsonapi.routes/issues/31
-    return "ascending"
+    return sort_order
 
 
 def get_query():
-    """Get the 'query' from the request
+    """ returns the 'query' from the request
     """
     q = get("q", "")
 
@@ -202,37 +167,33 @@ def get_query():
 
 
 def get_path():
-    """Get the 'path' value from the request
+    """ returns the 'path' from the request
     """
     return get("path", "")
 
 
 def get_depth():
-    """Get the 'depth' value from the request
+    """ returns the 'depth' from the request
     """
     return _.convert(get("depth", 0), _.to_int)
 
 
 def get_recent_created():
-    """Get the 'recent_created' value from the request
+    """ returns the 'recent_created' from the request
     """
     return get("recent_created", None)
 
 
 def get_recent_modified():
-    """Get the 'recent_modified' value from the request
+    """ returns the 'recent_modified' from the request
     """
     return get("recent_modified", None)
 
 
 def get_request_data():
-    """Extract and convert the json data from the request
+    """ extract and convert the json data from the request
 
-    >>> get_request_data()
-    [{}]
-
-    :returns: A list of dictionaries
-    :rtype: list
+    returns a list of dictionaries
     """
     request = get_request()
     data = request.get("BODY", "{}")
@@ -243,31 +204,20 @@ def get_request_data():
 
 
 def get_json():
-    """Get the request json payload
-
-    >>> get_json()
-    {}
+    """ get the request json payload
     """
     data = get_request_data().pop()
     return data or dict()
 
 
 def get_json_key(key, default=None):
-    """Get the key from the json payload
-
-    >>> set_json_item("test", True)
-    >>> get_json_key("test")
-    True
+    """ return the key from the json payload
     """
     return get_json().get(key, default)
 
 
 def set_json_item(key, value):
-    """Manipulate JSON data on the fly
-
-    >>> set_json_item("name", "test")
-    >>> get_json_key("name")
-    u'test'
+    """ manipulate json data on the fly
     """
     data = get_json()
     data[key] = value
@@ -278,13 +228,6 @@ def set_json_item(key, value):
 
 def is_json_deserializable(thing):
     """Checks if the given thing can be deserialized from JSON
-
-    >>> is_json_deserializable("{}")
-    True
-    >>> is_json_deserializable("[]")
-    True
-    >>> is_json_deserializable("<>")
-    False
 
     :param thing: The object to check if it can be serialized
     :type thing: arbitrary object

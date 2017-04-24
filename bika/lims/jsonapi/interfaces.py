@@ -3,6 +3,40 @@
 from zope import interface
 
 
+class ICatalog(interface.Interface):
+    """ Plone catalog interface
+    """
+
+    def search(query):
+        """ search the catalog and return the results
+        """
+
+    def get_catalog():
+        """ get the used catalog tool
+        """
+
+    def get_indexes():
+        """ get all indexes managed by this catalog
+        """
+
+    def get_index(name):
+        """ get an index by name
+        """
+
+    def to_index_value(value, index):
+        """ Convert the value for a given index
+        """
+
+
+class ICatalogQuery(interface.Interface):
+    """ Plone catalog query interface
+    """
+
+    def make_query(**kw):
+        """ create a new query or augment an given query
+        """
+
+
 class IInfo(interface.Interface):
     """JSON Info Interface for Portal contents
     """
