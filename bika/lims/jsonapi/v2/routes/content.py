@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from bika.lims.jsonapi import api
-# from bika.lims.jsonapi import url_for
 from bika.lims.jsonapi.v2 import add_route
 from bika.lims.jsonapi.exceptions import APIError
 
@@ -19,6 +18,33 @@ def get(context, request, resource=None, uid=None):
     if portal_type is None:
         raise APIError(404, "Not Found")
     return api.get_batched(portal_type=portal_type, uid=uid, endpoint="bika.lims.jsonapi.v2.get")
+
+
+@add_route("/<string:action>", "bika.lims.jsonapi.v2.action", methods=["POST"])
+@add_route("/<string:action>/<string:uid>", "bika.lims.jsonapi.v2.action", methods=["POST"])
+@add_route("/<string:resource>/<string:uid>/<string:action>", "bika.lims.jsonapi.v2.action", methods=["POST"])
+def action(context, request, action=None, resource=None, uid=None):
+    """Various HTTP POST actions
+    """
+    # supported actions (see API function <action>_items(...))
+    actions = ["create", "update", "delete"]
+    if action not in actions:
+        api.fail(401, "Action '{}' is not supported".format(action))
+
+    # Fetch and call the action function of the API
+    func_name = "{}_items".format(action)
+    action_func = getattr(api, func_name, None)
+    if action_func is None:
+        api.fail(500, "API has no member named '{}'".format(func_name))
+
+    portal_type = api.resource_to_portal_type(resource)
+    items = action_func(portal_type=portal_type, uid=uid)
+
+    return {
+        "count": len(items),
+        "items": items,
+        "url": api.url_for("bika.lims.jsonapi.v2.action", action=action),
+    }
 
 
 @add_route("/search", "bika.lims.jsonapi.v2.search", methods=["GET"])

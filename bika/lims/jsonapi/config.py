@@ -1,0 +1,9 @@
+# -*- coding: utf-8 -*-
+
+
+CONTAINER_PATHS_FOR_PORTAL_TYPES = {
+}
+
+ALLOWED_PORTAL_TYPES_TO_CREATE = [
+]
+
