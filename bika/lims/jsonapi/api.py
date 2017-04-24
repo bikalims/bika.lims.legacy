@@ -383,10 +383,10 @@ def get_parent(brain_or_object):
     return brain_or_object.aq_parent
 
 
-def get_object_by_uid(uid):
+def get_object_by_uid(uid, default=None):
     """Proxy to bika.lims.api.get_object_by_uid
     """
-    return api.get_object_by_uid(uid)
+    return api.get_object_by_uid(uid, default)
 
 
 def get_path(brain_or_object):
@@ -864,7 +864,7 @@ def find_objects(uid=None):
 
     # get the object by the given uid or try to find it by the request
     # parameters
-    obj = get_object_by_uid(uid, None) or get_object_by_request()
+    obj = get_object_by_uid(uid) or get_object_by_request()
 
     if obj:
         objects.append(obj)

@@ -15,6 +15,7 @@ from AccessControl import getSecurityManager
 from Products.CMFCore import permissions
 from Products.Archetypes.utils import mapply
 
+from bika.lims.jsonapi import api
 from bika.lims.jsonapi import underscore as _
 from bika.lims.jsonapi.exceptions import APIError
 from bika.lims.jsonapi.interfaces import IDataManager
@@ -174,13 +175,34 @@ class ATDataManager(object):
             if not isinstance(value, types.DictType):
                 logger.warn("Value for reference fields must be a dictionary")
                 return False
+
             reference = field.get(self.context)
             if reference is None:
                 logger.warn("Skipping empty Reference Field")
                 return False
-            # update the reference
-            from bika.lims.jsonapi.api import update_object_with_data
-            value = update_object_with_data(reference, value)
+
+            # update the reference?
+            # from bika.lims.jsonapi.api import update_object_with_data
+            # value = update_object_with_data(reference, value)
+
+            # search for a reference which matches and update
+            ref_portal_type = api.get_portal_type(reference)
+            new_reference = api.search(portal_type=ref_portal_type, **value)
+
+            # No reference found
+            if not new_reference:
+                logger.warn("No referenced of type '{}' is found by the query '{}'"
+                            .format(ref_portal_type, value))
+                return False
+
+            # More than one reference found
+            if len(new_reference) > 1:
+                logger.warn("Multiple references of type '{}' are found by the query '{}'"
+                            .format(ref_portal_type, value))
+                return False
+
+            # Update with the single reference we found
+            value = api.get_object(new_reference[0])
 
         # id fields take only strings
         if name == "id":
