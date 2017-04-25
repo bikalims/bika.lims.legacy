@@ -697,10 +697,10 @@ function AnalysisRequestAddByCol() {
             }
             // select element
             else if ($(td1).find('select').length > 0) {
-                var input = $(td1).find('.rejectionwidget-input-other').val();
+                var input = $(td1).find('select').val();
                 for (var arnum = 1; arnum < nr_ars; arnum++) {
                     td = $(tr).find('td[arnum="' + arnum + '"]')[0];
-                    e = $(td).find('.rejectionwidget-input-other')[0];
+                    e = $(td).find('select')[0];
                     $(e).val(input);
                     $(e).trigger('copy');
                 }
@@ -2472,9 +2472,13 @@ function AnalysisRequestAddByCol() {
                    var arnum = $(e).parents("[arnum]").attr("arnum")
                    var fieldname = $(e).parents("[fieldname]").attr("fieldname")
                    var value = $(e).attr("uid")
-                     ? $(e).attr("uid")
-                     : $(e).val()
-                   state_set(arnum, fieldname, value)
+                   if (value){
+                       state_set(arnum, fieldname, value)
+                   }
+                   //var value = $(e).attr("uid")
+                   //  ? $(e).attr("uid")
+                   //  : $(e).val()
+                   //state_set(arnum, fieldname, value)
                })
         // checkboxes inside ar_add_widget table.
         $.each($('[ar_add_ar_widget] input[type="checkbox"]').not('[class^="rejectionwidget-checkbox"]'),
