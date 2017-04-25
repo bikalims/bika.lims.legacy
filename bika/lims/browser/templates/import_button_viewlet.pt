@@ -1,5 +1,5 @@
 <div style="width:40%: margin:2px;padding:5px">
-<span style="color:#444; font-size:0.8em">Change State :&nbsp </span>
+<span style="color:#444; font-size:1em">Change State :&nbsp </span>
 <tal:loop repeat="state view/changeStatus">
     <a
      style="background-color:grey; border: 1px solid; border-radius: 1px;
