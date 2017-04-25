@@ -29,6 +29,23 @@ _marker = object()
 #   JSON API (CRUD) Functions
 # -----------------------------------------------------------------------------
 
+# GET RECORD
+def get_record(uid=None):
+    """Get a single record
+    """
+    obj = None
+    if uid is not None:
+        obj = get_object_by_uid(uid)
+    else:
+        obj = get_object_by_request()
+    if obj is None:
+        fail(404, "No object found")
+    complete = req.get_complete(default=_marker)
+    if complete is _marker:
+        complete = True
+    items = make_items_for([obj], complete=complete)
+    return _.first(items)
+
 
 # GET BATCHED
 def get_batched(portal_type=None, uid=None, endpoint=None, **kw):
