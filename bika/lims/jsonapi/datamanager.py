@@ -14,6 +14,7 @@ from AccessControl import getSecurityManager
 
 from Products.CMFCore import permissions
 from Products.Archetypes.utils import mapply
+from Products.Archetypes.public import ReferenceField
 
 from bika.lims.jsonapi import api
 from bika.lims.jsonapi import underscore as _
@@ -130,10 +131,10 @@ class ATDataManager(object):
             return True
         return False
 
-    def is_reference_field(sekf, field):
+    def is_reference_field(self, field):
         """Checks if the field is a reference field
         """
-        return hasattr(field, "relationship")
+        return isinstance(field, ReferenceField)
 
     def get_field(self, name):
         """Get the field by name
@@ -176,18 +177,20 @@ class ATDataManager(object):
                 logger.warn("Value for reference fields must be a dictionary")
                 return False
 
-            reference = field.get(self.context)
-            if reference is None:
-                logger.warn("Skipping empty Reference Field")
-                return False
-
-            # update the reference?
+            # update the reference object with data?
+            #
+            # reference = field.get(self.context)
+            # if reference is None:
+            #     logger.warn("Skipping empty Reference Field")
+            #     return False
+            #
             # from bika.lims.jsonapi.api import update_object_with_data
             # value = update_object_with_data(reference, value)
 
-            # search for a reference which matches and update
-            ref_portal_type = api.get_portal_type(reference)
-            new_reference = api.search(portal_type=ref_portal_type, **value)
+            # ... or search for a reference which matches the query given and
+            # update the reference of the current field.
+            allowed_types = field.allowed_types
+            new_reference = api.search(portal_type=allowed_types, **value)
 
             # No reference found
             if not new_reference:
