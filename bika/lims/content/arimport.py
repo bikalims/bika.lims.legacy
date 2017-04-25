@@ -433,12 +433,8 @@ class ARImport(BaseFolder):
         if not headers:
             return False
 
-        # Plain header fields that can be set into plain schema fields:
-        proxies = api.content.find(
-                        portal_type='Client',
-                        getName=headers['Client name'])
-        if proxies:
-            self.setClient(proxies[0].UID)
+        if client:
+            self.setClient(client)
 
         for h, f in [
             ('File name', 'Filename'),
