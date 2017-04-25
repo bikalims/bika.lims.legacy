@@ -153,11 +153,6 @@ class ATDataManager(object):
         """Get the field by name
         """
         field = self.context.getField(name)
-        # Handle Proxy Objects
-        if self.is_proxy_field(field):
-            proxy_object = field._get_proxy(self.context)
-            if proxy_object:
-                return proxy_object.getField(name)
         return field
 
 
@@ -170,6 +165,12 @@ class ATDataManager(object):
 
         # fetch the field by name
         field = self.get_field(name)
+
+        # Handle Proxy fields to get the right field type below
+        if self.is_proxy_field(field):
+            proxy_object = field._get_proxy(self.context)
+            if proxy_object:
+                field = proxy_object.getField(name)
 
         # bail out if we have no field
         if not field:

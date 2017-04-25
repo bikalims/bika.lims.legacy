@@ -987,11 +987,6 @@ def create_object(container, portal_type, **data):
     except Unauthorized:
         fail(401, "You are not allowed to create this content")
 
-    # if is_at_content(obj):
-    #     # Will finish Archetypes content item creation process,
-    #     # rename-after-creation and such
-    #     obj.processForm()
-
     # Update the object with the given data, but omit the id
     try:
         update_object_with_data(obj, data)
