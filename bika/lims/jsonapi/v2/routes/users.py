@@ -93,6 +93,7 @@ def get(context, request, username=None):
 
 
 @add_route("/auth", "bika.lims.jsonapi.v2.auth", methods=["GET"])
+@add_route("/users/auth", "bika.lims.jsonapi.v2.login", methods=["GET"])
 def auth(context, request):
     """ Basic Authentication
     """
@@ -106,15 +107,16 @@ def auth(context, request):
     return {}
 
 
-@add_route("/login", "bika.lims.jsonapi.v2.login", methods=["GET"])
+@add_route("/login", "bika.lims.jsonapi.v2.login", methods=["GET", "POST"])
+@add_route("/users/login", "bika.lims.jsonapi.v2.login", methods=["GET", "POST"])
 def login(context, request):
     """ Login Route
 
     Login route to authenticate a user against Plone.
     """
     # extract the data
-    __ac_name = request.form.get("__ac_name", None)
-    __ac_password = request.form.get("__ac_password", None)
+    __ac_name = request.get("__ac_name", None)
+    __ac_password = request.get("__ac_password", None)
 
     logger.info("*** LOGIN %s ***" % __ac_name)
 
@@ -141,6 +143,7 @@ def login(context, request):
 
 
 @add_route("/logout", "bika.lims.jsonapi.v2.logout", methods=["GET"])
+@add_route("/users/logout", "bika.lims.jsonapi.v2.logout", methods=["GET"])
 def logout(context, request):
     """ Logout Route
     """

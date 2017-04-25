@@ -5,8 +5,10 @@ from bika.lims.jsonapi.v2 import add_route
 from bika.lims.jsonapi.exceptions import APIError
 
 
-@add_route("/<string:resource>", "bika.lims.jsonapi.v2.get", methods=["GET"])
-@add_route("/<string:resource>/<string:uid>", "bika.lims.jsonapi.v2.get", methods=["GET"])
+@add_route("/<string:resource>",
+           "bika.lims.jsonapi.v2.get", methods=["GET"])
+@add_route("/<string:resource>/<string(maxlength=32):uid>",
+           "bika.lims.jsonapi.v2.get", methods=["GET"])
 def get(context, request, resource=None, uid=None):
     """GET
     """
@@ -20,16 +22,19 @@ def get(context, request, resource=None, uid=None):
     return api.get_batched(portal_type=portal_type, uid=uid, endpoint="bika.lims.jsonapi.v2.get")
 
 
-@add_route("/<string:action>", "bika.lims.jsonapi.v2.action", methods=["POST"])
-@add_route("/<string:action>/<string:uid>", "bika.lims.jsonapi.v2.action", methods=["POST"])
-@add_route("/<string:resource>/<string:uid>/<string:action>", "bika.lims.jsonapi.v2.action", methods=["POST"])
+# http://werkzeug.pocoo.org/docs/0.11/routing/#builtin-converters
+# http://werkzeug.pocoo.org/docs/0.11/routing/#custom-converters
+@add_route("/<any(create,update,delete):action>",
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
+@add_route("/<any(create,update,delete):action>/<string(maxlength=32):uid>",
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
+@add_route("/<string:resource>/<any(create,update,delete):action>",
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
+@add_route("/<string:resource>/<string(maxlength=32):uid>/<any(create,update,delete):action>",
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
 def action(context, request, action=None, resource=None, uid=None):
     """Various HTTP POST actions
     """
-    # supported actions (see API function <action>_items(...))
-    actions = ["create", "update", "delete"]
-    if action not in actions:
-        api.fail(401, "Action '{}' is not supported".format(action))
 
     # Fetch and call the action function of the API
     func_name = "{}_items".format(action)
@@ -47,7 +52,8 @@ def action(context, request, action=None, resource=None, uid=None):
     }
 
 
-@add_route("/search", "bika.lims.jsonapi.v2.search", methods=["GET"])
+@add_route("/search",
+           "bika.lims.jsonapi.v2.search", methods=["GET"])
 def search(context, request):
     """Generic search route
 
