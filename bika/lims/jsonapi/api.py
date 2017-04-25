@@ -1011,6 +1011,9 @@ def create_analysisrequest(container, **data):
     sample_type = data.get("SampleType")
     if sample_type is None:
         fail(400, "Please provide a SampleType")
+
+    # TODO We should handle the same values as in the DataManager for this field
+    #      (UID, path, objects, dictionaries ...)
     results = search(portal_type="SampleType", title=sample_type)
 
     values = {
