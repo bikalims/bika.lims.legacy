@@ -21,6 +21,7 @@ from bika.lims.jsonapi.interfaces import ICatalog
 from bika.lims.jsonapi.exceptions import APIError
 from bika.lims.jsonapi.interfaces import IDataManager
 from bika.lims.jsonapi.interfaces import ICatalogQuery
+from bika.lims.utils.analysisrequest import create_analysisrequest as create_ar
 
 _marker = object()
 
@@ -309,6 +310,25 @@ def is_uid(uid):
     if not isinstance(uid, basestring):
         return False
     if uid != "0" and len(uid) != 32:
+        return False
+    return True
+
+
+def is_path(path):
+    """Checks if the passed in path is a valid Path within the portal
+
+    :param path: The path to check
+    :type uid: string
+    :return: True if the path is a valid path within the portal
+    :rtype: bool
+    """
+    if not isinstance(path, basestring):
+        return False
+    portal_path = get_path(get_portal())
+    if not path.startswith(portal_path):
+        return False
+    obj = get_object_by_path(path)
+    if obj is None:
         return False
     return True
 
@@ -645,13 +665,14 @@ def get_object_by_path(path):
     portal = get_portal()
     portal_path = get_path(portal)
 
-    if not path.startswith(portal_path):
-        raise APIError(404, "Not a physical path inside the portal")
-
     if path == portal_path:
         return portal
 
-    return portal.restrictedTraverse(path)
+    if path.startswith(portal_path):
+        segments = path.split("/")
+        path = "/".join(segments[2:])
+
+    return portal.restrictedTraverse(str(path))
 
 
 def is_anonymous():
@@ -955,14 +976,21 @@ def create_object(container, portal_type, **data):
                     "generates a proper ID for you" .format(id))
 
     try:
-        obj = api.create(container, portal_type, **data)
+        # Special case for ARs
+        # => return immediately w/o update
+        if portal_type == "AnalysisRequest":
+            obj = create_analysisrequest(container, **data)
+            data["Client"] = container
+        # Standard content creation
+        else:
+            obj = api.create(container, portal_type, **data)
     except Unauthorized:
         fail(401, "You are not allowed to create this content")
 
-    if is_at_content(obj):
-        # Will finish Archetypes content item creation process,
-        # rename-after-creation and such
-        obj.processForm()
+    # if is_at_content(obj):
+    #     # Will finish Archetypes content item creation process,
+    #     # rename-after-creation and such
+    #     obj.processForm()
 
     # Update the object with the given data, but omit the id
     try:
@@ -974,6 +1002,28 @@ def create_object(container, portal_type, **data):
         raise
 
     return obj
+
+
+def create_analysisrequest(container, **data):
+    """Create a minimun viable AnalysisRequest
+
+    :param container: A single folderish catalog brain or content object
+    :type container: ATContentType/DexterityContentType/CatalogBrain
+    """
+    container = get_object(container)
+    request = req.get_request()
+    # we need to resolve the SampleType to a full object
+    sample_type = data.get("SampleType")
+    if sample_type is None:
+        fail(400, "Please provide a SampleType")
+    results = search(portal_type="SampleType", title=sample_type)
+
+    values = {
+        "Analyses": data.get("Analyses", []),
+        "SampleType": results and get_object(results[0]) or None,
+    }
+
+    return create_ar(container, request, values)
 
 
 def update_object_with_data(content, record):

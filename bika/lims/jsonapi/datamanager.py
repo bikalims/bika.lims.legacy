@@ -9,18 +9,21 @@ from zope.schema.interfaces import IObject
 from plone import api as ploneapi
 from plone.behavior.interfaces import IBehaviorAssignable
 
+from DateTime import DateTime
 from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 
 from Products.CMFCore import permissions
 from Products.Archetypes.utils import mapply
 from Products.Archetypes.public import ReferenceField
+from Products.Archetypes.public import DateTimeField
 
 from bika.lims.jsonapi import api
 from bika.lims.jsonapi import underscore as _
 from bika.lims.jsonapi.exceptions import APIError
 from bika.lims.jsonapi.interfaces import IDataManager
 from bika.lims import logger
+from bika.lims.browser.fields import ProxyField
 
 import pkg_resources
 try:
@@ -136,10 +139,27 @@ class ATDataManager(object):
         """
         return isinstance(field, ReferenceField)
 
+    def is_datetime_field(self, field):
+        """Checks if the field is a datetime field
+        """
+        return isinstance(field, DateTimeField)
+
+    def is_proxy_field(self, field):
+        """Checks if the field is a datetime field
+        """
+        return isinstance(field, ProxyField)
+
     def get_field(self, name):
         """Get the field by name
         """
-        return self.context.getField(name)
+        field = self.context.getField(name)
+        # Handle Proxy Objects
+        if self.is_proxy_field(field):
+            proxy_object = field._get_proxy(self.context)
+            if proxy_object:
+                return proxy_object.getField(name)
+        return field
+
 
     def set(self, name, value, **kw):
         """Set the field to the given value.
@@ -159,7 +179,17 @@ class ATDataManager(object):
         if not field.checkPermission("write", self.context):
             raise Unauthorized("Not allowed to write the field %s" % name)
 
-        # set the field value
+        # Handle DateTime Fields
+        if self.is_datetime_field(field):
+            try:
+                value = DateTime(value)
+            except SyntaxError:
+                logger.warn("Value '{}' is not a valid DateTime string"
+                            .format(value))
+                return False
+
+
+        # Handle File Fields
         if self.is_file_field(field):
             logger.debug("ATDataManager::set:File field detected ('%r'), "
                          "base64 decoding value", field)
@@ -173,39 +203,60 @@ class ATDataManager(object):
         # Handle Reference Fields
         if self.is_reference_field(field):
             logger.debug("ATDataManager::set:Reference Field detected -> ('%r')", field)
-            if not isinstance(value, types.DictType):
-                logger.warn("Value for reference fields must be a dictionary")
-                return False
 
-            # update the reference object with data?
-            #
-            # reference = field.get(self.context)
-            # if reference is None:
-            #     logger.warn("Skipping empty Reference Field")
-            #     return False
-            #
-            # from bika.lims.jsonapi.api import update_object_with_data
-            # value = update_object_with_data(reference, value)
-
-            # ... or search for a reference which matches the query given and
-            # update the reference of the current field.
+            # Allowed objects to set as a reference
             allowed_types = field.allowed_types
-            new_reference = api.search(portal_type=allowed_types, **value)
+
+            # The new reference
+            new_reference = None
+
+            # The value is already an object
+            if api.is_at_content(value):
+                new_reference = value
+
+            # Value is an UID
+            if api.is_uid(value):
+                new_reference = api.get_object_by_uid(value)
+
+            # Value is a dictionary
+            # => handle it like a catalog query
+            if _.is_dict(value):
+                results = api.search(portal_type=allowed_types, **value)
+                if len(results) == 1:
+                    new_reference = api.get_object(results[0])
+                if len(results) == 0:
+                    logger.warn("No reference of type(s) '{}' found for the query '{}'"
+                                .format(allowed_types, value))
+                    return False
+                if len(results) > 1:
+                    logger.warn("Multiple references of type(s) '{}' found by the query '{}'"
+                                .format(allowed_types, value))
+                    return False
+            # Value is a path
+            if api.is_path(value):
+                new_reference = api.get_object_by_path(value)
+
+            # No object found but we have a value
+            if not new_reference and value:
+                # query for an id
+                results = api.search(portal_type=allowed_types, title=value)
+                if len(results) == 1:
+                    new_reference = api.get_object(results[0])
 
             # No reference found
             if not new_reference:
-                logger.warn("No referenced of type '{}' is found by the query '{}'"
-                            .format(ref_portal_type, value))
+                logger.warn("No objects of type(s) '{}' found for the value '{}'"
+                            .format(allowed_types, value))
                 return False
 
-            # More than one reference found
-            if len(new_reference) > 1:
-                logger.warn("Multiple references of type '{}' are found by the query '{}'"
-                            .format(ref_portal_type, value))
+            portal_type = api.get_portal_type(new_reference)
+            if portal_type not in allowed_types:
+                logger.warn("Portal type '{}' is not in the list of allowed types for this field '{}'"
+                            .format(portal_type, allowed_types))
                 return False
 
-            # Update with the single reference we found
-            value = api.get_object(new_reference[0])
+            value = new_reference
+
 
         # id fields take only strings
         if name == "id":
