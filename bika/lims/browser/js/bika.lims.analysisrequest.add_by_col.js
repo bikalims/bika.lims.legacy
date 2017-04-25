@@ -1116,16 +1116,19 @@ function AnalysisRequestAddByCol() {
             .live('copy', function (event, item) {
                 var arnum = $(this).parents('td').attr('arnum');
                 // We'll use this array to get the ALL profiles
-                var uids_array = $("#Profiles-" + arnum).attr('uid').split(',');
-                template_unset(arnum);
-                for (var i = 0; i < uids_array.length; i++) {
-                    profile_set(arnum, uids_array[i])
-                        .then(function () {
-                            specification_apply();
-                            partition_indicators_set(arnum)
-                        })
-                }
-                recalc_prices(arnum);
+                var profiles = $("#Profiles-" + arnum);
+                if (profiles.attr()){
+                  var uids_array = profiles.attr('uid').split(',');
+                  template_unset(arnum);
+                  for (var i = 0; i < uids_array.length; i++) {
+                      profile_set(arnum, uids_array[i])
+                          .then(function () {
+                              specification_apply();
+                              partition_indicators_set(arnum)
+                          })
+                  }
+                  recalc_prices(arnum);
+              }
             })
             .each(function (i, e) {
                 if ($(e).val()) {
@@ -1475,6 +1478,7 @@ function AnalysisRequestAddByCol() {
                       '_authenticator': $('input[name="_authenticator"]').val()
                   },
                   function (data) {
+                    if(!!data){
                       for (var i = 0; i < data.length; i++) {
                           var fieldname = data[i][0];
                           var fieldvalue = data[i][1];
@@ -1521,6 +1525,7 @@ function AnalysisRequestAddByCol() {
                               state_set(arnum, fieldname, fieldvalue)
                           }
                       }
+                    }
                   })
     }
 
@@ -1727,18 +1732,20 @@ function AnalysisRequestAddByCol() {
         var services = []
         var defs = []
         var expanded_categories = []
-        for (var si = 0; si < service_data.length; si++) {
-            // Expand category
-            var service = service_data[si]
-            services.push(service)
-            var th = $("table[form_id='" + service['PointOfCapture'] + "'] " +
-                       "th[cat='" + service['CategoryTitle'] + "']")
-            if(expanded_categories.indexOf(th) < 0) {
-                expanded_categories.push(th)
-                var def = $.Deferred()
-                def = category_header_expand_handler(th)
-                defs.push(def)
-            }
+        if(!!service_data){
+          for (var si = 0; si < service_data.length; si++) {
+              // Expand category
+              var service = service_data[si]
+              services.push(service)
+              var th = $("table[form_id='" + service['PointOfCapture'] + "'] " +
+                         "th[cat='" + service['CategoryTitle'] + "']")
+              if(expanded_categories.indexOf(th) < 0) {
+                  expanded_categories.push(th)
+                  var def = $.Deferred()
+                  def = category_header_expand_handler(th)
+                  defs.push(def)
+              }
+          }
         }
         // Call $.when with all deferreds
         $.when.apply(null, defs).then(function () {

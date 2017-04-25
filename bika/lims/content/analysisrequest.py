@@ -10,65 +10,82 @@ import logging
 from decimal import Decimal
 from operator import methodcaller
 
-from DateTime import DateTime
 from AccessControl import ClassSecurityInfo
+from DateTime import DateTime
 
-# noinspection PyUnresolvedReferences
-from Products.Archetypes import atapi
+from plone import api as ploneapi
+from plone.indexer import indexer
+from zope.interface import implements
+
+from Products.CMFCore import permissions
+from Products.CMFCore.permissions import View
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+from Products.CMFPlone.utils import _createObjectByType
+
+from Products.Archetypes.atapi import Schema
 from Products.Archetypes.atapi import BaseFolder
+from Products.Archetypes.atapi import DisplayList
+from Products.Archetypes.atapi import registerType
 from Products.Archetypes.config import REFERENCE_CATALOG
 from Products.Archetypes.references import HoldingReference
-from Products.Archetypes.utils import DisplayList
 
-# Fields
-from Products.ATExtensions.field import RecordsField
-from Products.Archetypes.atapi import StringField
-from Products.Archetypes.atapi import ReferenceField
+# AT Fields
 from Products.Archetypes.atapi import TextField
-from Products.Archetypes.atapi import ComputedField
-from Products.Archetypes.atapi import FixedPointField
+from Products.Archetypes.atapi import StringField
 from Products.Archetypes.atapi import BooleanField
-from bika.lims.browser.fields import ARAnalysesField
-from bika.lims.browser.fields import DateTimeField
+from Products.Archetypes.atapi import ComputedField
+from Products.Archetypes.atapi import ReferenceField
+from Products.Archetypes.atapi import FixedPointField
+from Products.ATExtensions.field import RecordsField
 
-# Widgets
+# Bika Fields
+from bika.lims.browser.fields import ProxyField
+from bika.lims.browser.fields import DateTimeField
+from bika.lims.browser.fields import ARAnalysesField
+from bika.lims.browser.fields import HistoryAwareReferenceField
+
+# AT Widgets
 from Products.Archetypes.Widget import RichWidget
 from Products.Archetypes.atapi import StringWidget
 from Products.Archetypes.atapi import BooleanWidget
 from Products.Archetypes.atapi import ComputedWidget
 from Products.Archetypes.atapi import TextAreaWidget
+
+# Bika Widgets
+from bika.lims.browser.widgets import DecimalWidget
+from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import ReferenceWidget
 from bika.lims.browser.widgets import SelectionWidget
 from bika.lims.browser.widgets import RejectionWidget
 from bika.lims.browser.widgets import SelectionWidget as BikaSelectionWidget
 
-from Products.CMFCore import permissions
-from Products.CMFCore.permissions import View
-from Products.CMFPlone.utils import safe_unicode
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import _createObjectByType
-
-from zope.interface import implements
-
-from plone import api
-from plone.indexer import indexer
-
-from bika.lims.config import PROJECTNAME
-from bika.lims.permissions import EditARContact
+# Bika Permissions
 from bika.lims.permissions import SampleSample
 from bika.lims.permissions import ScheduleSampling
+from bika.lims.permissions import EditARContact
 from bika.lims.permissions import ManageInvoices
 from bika.lims.permissions import Verify as VerifyPermission
-from bika.lims.content.bikaschema import BikaSchema
-from bika.lims.interfaces import IAnalysisRequest, ISamplePrepWorkflow
-from bika.lims.browser.fields import HistoryAwareReferenceField
-from bika.lims.browser.widgets import DateTimeWidget, DecimalWidget
-from bika.lims.workflow import skip, isBasicTransitionAllowed, getTransitionDate
-from bika.lims.workflow import doActionFor
 
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import getUsers, dicts_to_dict
+# Bika Workflow
+from bika.lims.workflow import skip
+from bika.lims.workflow import doActionFor
+from bika.lims.workflow import getTransitionDate
+from bika.lims.workflow import isBasicTransitionAllowed
+
+# Bika Utils
+from bika.lims.utils import getUsers
+from bika.lims.utils import dicts_to_dict
 from bika.lims.utils.analysisrequest import notify_rejection
+
+# Bika Interfaces
+from bika.lims.interfaces import IAnalysisRequest
+from bika.lims.interfaces import ISamplePrepWorkflow
+
+from bika.lims import api
+from bika.lims.config import PROJECTNAME
+from bika.lims import bikaMessageFactory as _
+from bika.lims.content.bikaschema import BikaSchema
 
 """The request for analysis by a client. It contains analysis instances.
 """
@@ -102,15 +119,18 @@ def SamplingRoundUID(instance):
 
 @indexer(IAnalysisRequest)
 def getDepartmentUIDs(instance):
-    """ Returns department UIDs assigned to the Analyses
-        from this Analysis Request
+    """Returns department UIDs assigned to the Analyses
+       from this Analysis Request
     """
     ans = [an.getObject() for an in instance.getAnalyses()]
-    depts = [an.getService().getDepartment().UID() for an in ans if an.getService().getDepartment()]
+    depts = [an.getService().getDepartment().UID() for an in ans
+             if an.getService().getDepartment()]
     return depts
 
 
-schema = BikaSchema.copy() + atapi.Schema((
+# SCHEMA DEFINITION
+schema = BikaSchema.copy() + Schema((
+
     StringField(
         'RequestID',
         searchable=True,
@@ -124,6 +144,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                      'edit': 'invisible'},
         ),
     ),
+
     ReferenceField(
         'Contact',
         required=1,
@@ -146,8 +167,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'prominent',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -165,14 +185,16 @@ schema = BikaSchema.copy() + atapi.Schema((
             base_query={'inactive_state': 'active'},
             showOn=True,
             popup_width='400px',
-            colModel=[{'columnName': 'UID', 'hidden': True},
-                      {'columnName': 'Fullname', 'width': '50',
-                       'label': _('Name')},
-                      {'columnName': 'EmailAddress', 'width': '50',
-                       'label': _('Email Address')},
-                      ],
+            colModel=[
+                {'columnName': 'UID', 'hidden': True},
+                {'columnName': 'Fullname', 'width': '50',
+                 'label': _('Name')},
+                {'columnName': 'EmailAddress', 'width': '50',
+                 'label': _('Email Address')},
+            ],
         ),
     ),
+
     ReferenceField(
         'CCContact',
         multiValued=1,
@@ -192,8 +214,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'prominent',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -211,14 +232,16 @@ schema = BikaSchema.copy() + atapi.Schema((
             base_query={'inactive_state': 'active'},
             showOn=True,
             popup_width='400px',
-            colModel=[{'columnName': 'UID', 'hidden': True},
-                      {'columnName': 'Fullname', 'width': '50',
-                       'label': _('Name')},
-                      {'columnName': 'EmailAddress', 'width': '50',
-                       'label': _('Email Address')},
-                      ],
+            colModel=[
+                {'columnName': 'UID', 'hidden': True},
+                {'columnName': 'Fullname', 'width': '50',
+                 'label': _('Name')},
+                {'columnName': 'EmailAddress', 'width': '50',
+                 'label': _('Email Address')},
+            ],
         ),
     ),
+
     StringField(
         'CCEmails',
         mode="rw",
@@ -233,8 +256,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'prominent',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -251,6 +273,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             size=20,
         ),
     ),
+
     ReferenceField(
         'Client',
         required=1,
@@ -269,11 +292,9 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'invisible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'invisible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
-                'scheduled_sampling':
-                    {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                 'sampled': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
                 'sample_received': {'view': 'invisible', 'edit': 'invisible'},
@@ -288,6 +309,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     ReferenceField(
         'Sample',
         vocabulary_display_path_bound=sys.maxsize,
@@ -307,8 +329,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
                 'sampled': {'view': 'visible', 'edit': 'invisible'},
@@ -329,6 +350,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     ReferenceField(
         'Batch',
         allowed_types=('Batch',),
@@ -345,8 +367,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -367,6 +388,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     ReferenceField(
         'SamplingRound',
         allowed_types=('SamplingRound',),
@@ -383,8 +405,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -404,6 +425,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     ReferenceField(
         'SubGroup',
         required=False,
@@ -419,8 +441,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -450,6 +471,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     ReferenceField(
         'Template',
         allowed_types=('ARTemplate',),
@@ -468,8 +490,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
                 'sampled': {'view': 'visible', 'edit': 'invisible'},
@@ -489,6 +510,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     # TODO: Profile'll be delated
     ReferenceField(
         'Profile',
@@ -528,8 +550,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
                 'sampled': {'view': 'visible', 'edit': 'invisible'},
@@ -549,9 +570,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     # Sample field
-    DateTimeField(
+    ProxyField(
         'DateSampled',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=SampleSample,
@@ -582,9 +605,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             render_own_label=True,
         ),
     ),
+
     # Sample field
-    StringField(
+    ProxyField(
         'Sampler',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=SampleSample,
@@ -614,8 +639,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             render_own_label=True,
         ),
     ),
-    StringField(
+
+    # Sample field
+    ProxyField(
         'ScheduledSamplingSampler',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=ScheduleSampling,
@@ -642,8 +670,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             render_own_label=True,
         ),
     ),
-    DateTimeField(
+
+    # Sample field
+    ProxyField(
         'SamplingDate',
+        proxy="context.getSample()",
         required=1,
         mode="rw",
         read_permission=permissions.View,
@@ -660,8 +691,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'header_table': 'visible',
                 'secondary': 'disabled',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'invisible'},
@@ -677,8 +707,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
-    ReferenceField(
+
+    # Sample field
+    ProxyField(
         'SampleType',
+        proxy="context.getSample()",
         required=1,
         allowed_types='SampleType',
         relationship='AnalysisRequestSampleType',
@@ -696,11 +729,9 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
-                'scheduled_sampling':
-                    {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                 'sampled': {'view': 'visible', 'edit': 'invisible'},
                 'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
                 'sample_due': {'view': 'visible', 'edit': 'invisible'},
@@ -717,6 +748,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     RecordsField(
         'RejectionReasons',
         widget=RejectionWidget(
@@ -729,8 +761,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
                 'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
@@ -745,6 +776,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     ReferenceField(
         'Specification',
         required=0,
@@ -763,8 +795,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -795,15 +826,16 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     # see setResultsRange below.
     RecordsField(
         'ResultsRange',
         required=0,
         type='resultsrange',
-        subfields=('keyword', 'min', 'max', 'error', 'hidemin', 'hidemax',
-                   'rangecomment'),
+        subfields=('keyword', 'min', 'max', 'error', 'hidemin', 'hidemax', 'rangecomment'),
         widget=ComputedWidget(visible=False),
     ),
+
     ReferenceField(
         'PublicationSpecification',
         required=0,
@@ -824,8 +856,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'header_table': 'visible',
                 'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
-                'scheduled_sampling':
-                    {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                 'sampled': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
                 'sample_due': {'view': 'invisible', 'edit': 'invisible'},
@@ -843,8 +874,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
-    ReferenceField(
+
+    # Sample field
+    ProxyField(
         'SamplePoint',
+        proxy="context.getSample()",
         allowed_types='SamplePoint',
         relationship='AnalysisRequestSamplePoint',
         mode="rw",
@@ -861,8 +895,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 # LIMS-1159
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
@@ -883,8 +916,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
-    ReferenceField(
+
+    # Sample field
+    ProxyField(
         'StorageLocation',
+        proxy="context.getSample()",
         allowed_types='StorageLocation',
         relationship='AnalysisRequestStorageLocation',
         mode="rw",
@@ -922,6 +958,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     StringField(
         'ClientOrderNumber',
         searchable=True,
@@ -937,8 +974,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -955,9 +991,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     # Sample field
-    StringField(
+    ProxyField(
         'ClientReference',
+        proxy="context.getSample()",
         searchable=True,
         mode="rw",
         read_permission=permissions.View,
@@ -990,9 +1028,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     # Sample field
-    StringField(
+    ProxyField(
         'ClientSampleID',
+        proxy="context.getSample()",
         searchable=True,
         mode="rw",
         read_permission=permissions.View,
@@ -1008,15 +1048,15 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'secondary': 'disabled',
                 'header_table': 'visible',
                 'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
-                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                'sampled': {'view': 'visible', 'edit': 'visible'},
-                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
-                'sample_due': {'view': 'visible', 'edit': 'visible'},
-                'sample_prep': {'view': 'visible', 'edit': 'visible'},
-                'sample_received': {'view': 'visible', 'edit': 'visible'},
-                'attachment_due': {'view': 'visible', 'edit': 'visible'},
-                'to_be_verified': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
+                'sampled': {'view': 'visible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                'sample_prep': {'view': 'visible', 'edit': 'invisible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'attachment_due': {'view': 'visible', 'edit': 'invisible'},
+                'to_be_verified': {'view': 'visible', 'edit': 'invisible'},
                 'verified': {'view': 'visible', 'edit': 'invisible'},
                 'published': {'view': 'visible', 'edit': 'invisible'},
                 'invalid': {'view': 'visible', 'edit': 'invisible'},
@@ -1024,9 +1064,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     # Sample field
-    ReferenceField(
+    ProxyField(
         'SamplingDeviation',
+        proxy="context.getSample()",
         allowed_types=('SamplingDeviation',),
         relationship='AnalysisRequestSamplingDeviation',
         referenceClass=HoldingReference,
@@ -1043,8 +1085,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1064,9 +1105,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     # Sample field
-    ReferenceField(
+    ProxyField(
         'SampleCondition',
+        proxy="context.getSample()",
         allowed_types=('SampleCondition',),
         relationship='AnalysisRequestSampleCondition',
         referenceClass=HoldingReference,
@@ -1083,8 +1126,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1104,8 +1146,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
-    StringField(
+
+    # Sample field
+    ProxyField(
         'EnvironmentalConditions',
+        proxy="context.getSample()",
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
@@ -1116,8 +1161,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'prominent',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1134,6 +1178,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             size=20,
         ),
     ),
+
     ReferenceField(
         'DefaultContainerType',
         allowed_types=('ContainerType',),
@@ -1153,8 +1198,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
                 'sampled': {'view': 'visible', 'edit': 'invisible'},
@@ -1174,9 +1218,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             showOn=True,
         ),
     ),
+
     # Sample field
-    BooleanField(
+    ProxyField(
         'AdHoc',
+        proxy="context.getSample()",
         default=False,
         mode="rw",
         read_permission=permissions.View,
@@ -1208,9 +1254,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     # Sample field
-    BooleanField(
+    ProxyField(
         'Composite',
+        proxy="context.getSample()",
         default=False,
         mode="rw",
         read_permission=permissions.View,
@@ -1224,8 +1272,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'add': 'edit',
                 'secondary': 'disabled',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1242,6 +1289,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     BooleanField(
         'ReportDryMatter',
         default=False,
@@ -1257,8 +1305,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1275,6 +1322,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     BooleanField(
         'InvoiceExclude',
         default=False,
@@ -1290,8 +1338,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1308,6 +1355,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     ARAnalysesField(
         'Analyses',
         required=1,
@@ -1318,11 +1366,11 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible={
                 'edit': 'invisible',
                 'view': 'invisible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'invisible'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'invisible'},
             }
         ),
     ),
+
     ReferenceField(
         'Attachment',
         multiValued=1,
@@ -1339,6 +1387,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         )
     ),
+
     ReferenceField(
         'Invoice',
         vocabulary_display_path_bound=sys.maxsize,
@@ -1355,6 +1404,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         )
     ),
+
     DateTimeField(
         'DateReceived',
         mode="rw",
@@ -1366,11 +1416,9 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'edit': 'visible',
                 'view': 'visible',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'invisible', 'edit': 'invisible'},
+                'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
-                'scheduled_sampling':
-                    {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                 'sampled': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
                 'sample_due': {'view': 'invisible', 'edit': 'invisible'},
@@ -1385,6 +1433,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     DateTimeField(
         'DatePublished',
         mode="r",
@@ -1399,8 +1448,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'header_table': 'visible',
                 'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
-                'scheduled_sampling':
-                    {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
                 'sampled': {'view': 'invisible', 'edit': 'invisible'},
                 'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
                 'sample_due': {'view': 'invisible', 'edit': 'invisible'},
@@ -1415,6 +1463,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     TextField(
         'Remarks',
         searchable=True,
@@ -1437,6 +1486,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     FixedPointField(
         'MemberDiscount',
         default_method='getDefaultMemberDiscount',
@@ -1455,6 +1505,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             },
         ),
     ),
+
     ComputedField(
         'ClientUID',
         searchable=True,
@@ -1463,6 +1514,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'SampleTypeTitle',
         searchable=True,
@@ -1472,6 +1524,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'SamplePointTitle',
         searchable=True,
@@ -1481,6 +1534,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'SampleUID',
         expression="here.getSample() and here.getSample().UID() or ''",
@@ -1488,6 +1542,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'SampleID',
         expression="here.getSample() and here.getSample().getId() or ''",
@@ -1495,6 +1550,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'ContactUID',
         expression="here.getContact() and here.getContact().UID() or ''",
@@ -1502,6 +1558,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'ProfilesUID',
         expression="here.getProfiles() and "
@@ -1510,6 +1567,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ComputedField(
         'Invoiced',
         expression='here.getInvoice() and True or False',
@@ -1518,6 +1576,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ReferenceField(
         'ChildAnalysisRequest',
         allowed_types=('AnalysisRequest',),
@@ -1530,6 +1589,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     ReferenceField(
         'ParentAnalysisRequest',
         allowed_types=('AnalysisRequest',),
@@ -1542,6 +1602,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             visible=False,
         ),
     ),
+
     StringField(
         'PreparationWorkflow',
         mode="rw",
@@ -1557,8 +1618,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
                 'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
@@ -1574,6 +1634,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             render_own_label=True,
         ),
     ),
+
     HistoryAwareReferenceField(
         'Priority',
         allowed_types=('ARPriority',),
@@ -1591,8 +1652,7 @@ schema = BikaSchema.copy() + atapi.Schema((
                 'view': 'visible',
                 'add': 'edit',
                 'header_table': 'visible',
-                'sample_registered':
-                    {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
                 'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                 'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
                 'sampled': {'view': 'visible', 'edit': 'visible'},
@@ -1646,6 +1706,7 @@ schema = BikaSchema.copy() + atapi.Schema((
             rows=3,
             visible=False),
     ),
+
     RecordsField('ResultsInterpretationDepts',
                  subfields=('uid',
                             'richtext'),
@@ -1663,21 +1724,20 @@ schema = BikaSchema.copy() + atapi.Schema((
                  subfields=('uid', 'hidden',),
                  widget=ComputedWidget(visible=False),
                  ),
-)
-)
+))
+# /SCHEMA DEFINITION
 
+
+# Some schema rearrangement
 schema['title'].required = False
-
 schema['id'].widget.visible = {
     'edit': 'invisible',
     'view': 'invisible',
 }
-
 schema['title'].widget.visible = {
     'edit': 'invisible',
     'view': 'invisible',
 }
-
 schema.moveField('Client', before='Contact')
 schema.moveField('ResultsInterpretation', pos='bottom')
 schema.moveField('ResultsInterpretationDepts', pos='bottom')
@@ -1700,16 +1760,18 @@ class AnalysisRequest(BaseFolder):
         return getCatalog(self)
 
     def getRequestID(self):
-        """ Return the id as RequestID
+        """Return the id as RequestID
         """
         return safe_unicode(self.getId()).encode('utf-8')
 
     def Title(self):
-        """ Return the Request ID as title """
+        """Return the Request ID as title
+        """
         return self.getRequestID()
 
     def Description(self):
-        """ Return searchable data as Description """
+        """Returns searchable data as Description
+        """
         descr = " ".join((self.getRequestID(), self.aq_parent.Title()))
         return safe_unicode(descr).encode('utf-8')
 
@@ -1784,17 +1846,19 @@ class AnalysisRequest(BaseFolder):
             return self.Schema()['Batch'].get(self)
 
     def getDefaultMemberDiscount(self):
-        """ compute default member discount if it applies """
+        """Compute default member discount if it applies
+        """
         if hasattr(self, 'getMemberDiscountApplies'):
             if self.getMemberDiscountApplies():
-                portal = api.portal.get()
-                settings = portal.bika_setup
+                plone = api.get_portal()
+                settings = plone.bika_setup
                 return settings.getMemberDiscount()
             else:
                 return "0.00"
 
     def setDefaultPriority(self):
-        """ compute default priority """
+        """Compute default priority
+        """
         bsc = getToolByName(self, 'bika_setup_catalog')
         priorities = bsc(
             portal_type='ARPriority',
@@ -1812,7 +1876,8 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getResponsible')
 
     def getAnalysesNum(self):
-        """ Return the amount of analyses verified/total in the current AR """
+        """Return the amount of analyses verified/total in the current AR
+        """
         verified = 0
         total = 0
         for analysis in self.getAnalyses():
@@ -1824,7 +1889,8 @@ class AnalysisRequest(BaseFolder):
         return verified, total
 
     def getResponsible(self):
-        """ Return all manager info of responsible departments """
+        """Return all manager info of responsible departments
+        """
         managers = {}
         departments = []
         for analysis in self.objectValues('Analysis'):
@@ -1870,7 +1936,8 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getResponsible')
 
     def getManagers(self):
-        """ Return all managers of responsible departments """
+        """Return all managers of responsible departments
+        """
         manager_ids = []
         manager_list = []
         departments = []
@@ -1895,7 +1962,8 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getLate')
 
     def getLate(self):
-        """ return True if any analyses are late """
+        """Return True if any analyses are late
+        """
         workflow = getToolByName(self, 'portal_workflow')
         review_state = workflow.getInfoFor(self, 'review_state', '')
         resultdate = 0
@@ -1908,8 +1976,7 @@ class AnalysisRequest(BaseFolder):
             if review_state == 'published':
                 continue
             calculation = analysis.getService().getCalculation()
-            if not calculation or (
-                    calculation and not calculation.getDependentServices()):
+            if not calculation or (calculation and not calculation.getDependentServices()):
                 resultdate = analysis.getResultCaptureDate()
             duedate = analysis.getDueDate()
             # noinspection PyCallingNonCallable
@@ -1922,18 +1989,17 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getBillableItems')
 
     def getBillableItems(self):
-        """
-        The main purpose of this function is to obtain the analysis services
+        """The main purpose of this function is to obtain the analysis services
         and profiles from the analysis request
         whose prices are needed to quote the analysis request.
         If an analysis belongs to a profile, this analysis will only be
         included in the analyses list if the profile
         has disabled "Use Analysis Profile Price".
-        :return: a tuple of two lists. The first one only contains analysis
-        services not belonging to a profile
-                 with active "Use Analysis Profile Price".
-                 The second list contains the profiles with activated "Use
-                 Analysis Profile Price".
+
+        :returns: a tuple of two lists. The first one only contains analysis
+                  services not belonging to a profile with active "Use Analysis
+                  Profile Price". The second list contains the profiles with
+                  activated "Use Analysis Profile Price".
         """
         workflow = getToolByName(self, 'portal_workflow')
         # REMEMBER: Analysis != Analysis services
@@ -1977,16 +2043,17 @@ class AnalysisRequest(BaseFolder):
                 for analysis in analyses:
                     if analysis_service.getKeyword() == analysis.getService().getKeyword() and \
                        analysis.getService().getKeyword() not in to_be_billed:
+
                         analyses.remove(analysis)
         return analyses, analysis_profiles
 
     def getServicesAndProfiles(self):
-        """
-        This function gets all analysis services and all profiles and removes
+        """This function gets all analysis services and all profiles and removes
         the services belonging to a profile.
-        :return: a tuple of three lists, where the first list contains the
+
+        :returns: a tuple of three lists, where the first list contains the
         analyses and the second list the profiles.
-                 The third contains the analyses objects used by the profiles.
+        The third contains the analyses objects used by the profiles.
         """
         # Getting requested analyses
         workflow = getToolByName(self, 'portal_workflow')
@@ -2016,7 +2083,7 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getSubtotal')
 
     def getSubtotal(self):
-        """ Compute Subtotal (without member discount and without vat)
+        """Compute Subtotal (without member discount and without vat)
         """
         analyses, a_profiles = self.getBillableItems()
         return sum(
@@ -2027,7 +2094,8 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getSubtotalVATAmount')
 
     def getSubtotalVATAmount(self):
-        """ Compute VAT amount without member discount"""
+        """Compute VAT amount without member discount
+        """
         analyses, a_profiles = self.getBillableItems()
         if len(analyses) > 0 or len(a_profiles) > 0:
             return sum(
@@ -2039,14 +2107,14 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getSubtotalTotalPrice')
 
     def getSubtotalTotalPrice(self):
-        """ Compute the price with VAT but no member discount"""
+        """Compute the price with VAT but no member discount
+        """
         return self.getSubtotal() + self.getSubtotalVATAmount()
 
     security.declareProtected(View, 'getDiscountAmount')
 
     def getDiscountAmount(self):
-        """
-        It computes and returns the analysis service's discount amount
+        """It computes and returns the analysis service's discount amount
         without VAT
         """
         has_client_discount = self.aq_parent.getMemberDiscountApplies()
@@ -2057,11 +2125,10 @@ class AnalysisRequest(BaseFolder):
             return 0
 
     def getVATAmount(self):
-        """
-        It computes the VAT amount from (subtotal-discount.)*VAT/100,
-        but each analysis has its
-        own VAT!
-        :return: the analysis request VAT amount with the discount
+        """It computes the VAT amount from (subtotal-discount.)*VAT/100, but
+        each analysis has its own VAT!
+
+        :returns: the analysis request VAT amount with the discount
         """
         has_client_discount = self.aq_parent.getMemberDiscountApplies()
         VATAmount = self.getSubtotalVATAmount()
@@ -2074,12 +2141,10 @@ class AnalysisRequest(BaseFolder):
     security.declareProtected(View, 'getTotalPrice')
 
     def getTotalPrice(self):
-        """
-        It gets the discounted price from analyses and profiles to obtain the
-        total value with the VAT
-        and the discount applied
-        :return: the analysis request's total price including the VATs and
-        discounts
+        """It gets the discounted price from analyses and profiles to obtain the
+        total value with the VAT and the discount applied
+
+        :returns: the analysis request's total price including the VATs and discounts
         """
         price = (self.getSubtotal() - self.getDiscountAmount() +
                  self.getVATAmount())
@@ -2091,7 +2156,7 @@ class AnalysisRequest(BaseFolder):
 
     # noinspection PyUnusedLocal
     def issueInvoice(self, REQUEST=None, RESPONSE=None):
-        """ issue invoice
+        """Issue invoice
         """
         # check for an adhoc invoice batch for this month
         # noinspection PyCallingNonCallable
@@ -2135,14 +2200,14 @@ class AnalysisRequest(BaseFolder):
 
     # noinspection PyUnusedLocal
     def printInvoice(self, REQUEST=None, RESPONSE=None):
-        """ print invoice
+        """Print invoice
         """
         invoice = self.getInvoice()
         invoice_url = invoice.absolute_url()
         RESPONSE.redirect('{}/invoice_print'.format(invoice_url))
 
     def addARAttachment(self, REQUEST=None, RESPONSE=None):
-        """ Add the file as an attachment
+        """Add the file as an attachment
         """
         workflow = getToolByName(self, 'portal_workflow')
 
@@ -2189,7 +2254,8 @@ class AnalysisRequest(BaseFolder):
             RESPONSE.redirect(self.absolute_url())
 
     def delARAttachment(self, REQUEST=None, RESPONSE=None):
-        """ delete the attachment """
+        """Delete the attachment
+        """
         tool = getToolByName(self, REFERENCE_CATALOG)
         if 'Attachment' in self.REQUEST.form:
             attachment_uid = self.REQUEST.form['Attachment']
@@ -2239,8 +2305,7 @@ class AnalysisRequest(BaseFolder):
     security.declarePublic('getContactUIDForUser')
 
     def getContactUIDForUser(self):
-        """ get the UID of the contact associated with the authenticated
-            user
+        """get the UID of the contact associated with the authenticated user
         """
         user = self.REQUEST.AUTHENTICATED_USER
         user_id = user.getUserName()
@@ -2253,18 +2318,22 @@ class AnalysisRequest(BaseFolder):
     security.declarePublic('current_date')
 
     def current_date(self):
-        """ return current date """
+        """return current date
+        """
         # noinspection PyCallingNonCallable
         return DateTime()
 
     def getQCAnalyses(self, qctype=None, review_state=None):
-        """ return the QC analyses performed in the worksheet in which, at
-            least, one sample of this AR is present.
-            Depending on qctype value, returns the analyses of:
+        """return the QC analyses performed in the worksheet in which, at
+        least, one sample of this AR is present.
+
+        Depending on qctype value, returns the analyses of:
+
             - 'b': all Blank Reference Samples used in related worksheet/s
             - 'c': all Control Reference Samples used in related worksheet/s
             - 'd': duplicates only for samples contained in this AR
-            If qctype==None, returns all type of qc analyses mentioned above
+
+        If qctype==None, returns all type of qc analyses mentioned above
         """
         qcanalyses = []
         suids = []
@@ -2309,13 +2378,13 @@ class AnalysisRequest(BaseFolder):
         return qcanalyses
 
     def isInvalid(self):
-        """ return if the Analysis Request has been invalidated
+        """return if the Analysis Request has been invalidated
         """
         workflow = getToolByName(self, 'portal_workflow')
         return workflow.getInfoFor(self, 'review_state') == 'invalid'
 
     def getLastChild(self):
-        """ return the last child Request due to invalidation
+        """return the last child Request due to invalidation
         """
         child = self.getChildAnalysisRequest()
         while child and child.getChildAnalysisRequest():
@@ -2323,9 +2392,8 @@ class AnalysisRequest(BaseFolder):
         return child
 
     def getRequestedAnalyses(self):
-        """
-        It returns all requested analyses, even if they belong to an analysis
-        profile or not.
+        """It returns all requested analyses, even if they belong to an
+        analysis profile or not.
         """
         #
         # title=Get requested analyses
@@ -2352,9 +2420,8 @@ class AnalysisRequest(BaseFolder):
         return result
 
     def getSamplingRoundUID(self):
-        """
-        Obtains the sampling round UID
-        :return: a UID
+        """Obtains the sampling round UID
+        :returns: UID
         """
         if self.getSamplingRound():
             return self.getSamplingRound().UID()
@@ -2409,236 +2476,10 @@ class AnalysisRequest(BaseFolder):
             rr.update(value)
         return self.Schema()['ResultsRange'].set(self, rr.values())
 
-    # Then a string of fields which are defined on the AR, but need to be set
-    # and read from the sample
-
-    security.declarePublic('setSamplingDate')
-
-    def setSamplingDate(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSamplingDate(value)
-
-    security.declarePublic('getSamplingDate')
-
-    def getSamplingDate(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSamplingDate()
-
-    security.declarePublic('setSampler')
-
-    def setSampler(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSampler(value)
-        self.Schema()['Sampler'].set(self, value)
-
-    security.declarePublic('getSampler')
-
-    def getSampler(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSampler()
-        return self.Schema().getField('Sampler').get(self)
-
-    security.declarePublic('setDateSampled')
-
-    def setDateSampled(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setDateSampled(value)
-        self.Schema()['DateSampled'].set(self, value)
-
-    security.declarePublic('getDateSampled')
-
-    def getDateSampled(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getDateSampled()
-        return self.Schema().getField('DateSampled').get(self)
-
     security.declarePublic('getDatePublished')
 
     def getDatePublished(self):
         return getTransitionDate(self, 'publish')
-
-    security.declarePublic('setSamplePoint')
-
-    def setSamplePoint(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSamplePoint(value)
-        self.Schema()['SamplePoint'].set(self, value)
-
-    security.declarePublic('getSamplepoint')
-
-    def getSamplePoint(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSamplePoint()
-        return self.Schema().getField('SamplePoint').get(self)
-
-    security.declarePublic('setSampleType')
-
-    def setSampleType(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSampleType(value)
-        self.Schema()['SampleType'].set(self, value)
-
-    security.declarePublic('getSampleType')
-
-    def getSampleType(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSampleType()
-        return self.Schema().getField('SampleType').get(self)
-
-    security.declarePublic('setClientReference')
-
-    def setClientReference(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setClientReference(value)
-        self.Schema()['ClientReference'].set(self, value)
-
-    security.declarePublic('getClientReference')
-
-    def getClientReference(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getClientReference()
-        return self.Schema().getField('ClientReference').get(self)
-
-    security.declarePublic('setClientSampleID')
-
-    def setClientSampleID(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setClientSampleID(value)
-        self.Schema()['ClientSampleID'].set(self, value)
-
-    security.declarePublic('getClientSampleID')
-
-    def getClientSampleID(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getClientSampleID()
-        return self.Schema().getField('ClientSampleID').get(self)
-
-    security.declarePublic('setSamplingDeviation')
-
-    def setSamplingDeviation(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSamplingDeviation(value)
-        self.Schema()['SamplingDeviation'].set(self, value)
-
-    security.declarePublic('getSamplingDeviation')
-
-    def getSamplingDeviation(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSamplingDeviation()
-        return self.Schema().getField('SamplingDeviation').get(self)
-
-    security.declarePublic('setSampleCondition')
-
-    def setSampleCondition(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setSampleCondition(value)
-        self.Schema()['SampleCondition'].set(self, value)
-
-    security.declarePublic('getSampleCondition')
-
-    def getSampleCondition(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getSampleCondition()
-        return self.Schema().getField('SampleCondition').get(self)
-
-    security.declarePublic('setEnvironmentalConditions')
-
-    def setEnvironmentalConditions(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setEnvironmentalConditions(value)
-        self.Schema()['EnvironmentalConditions'].set(self, value)
-
-    security.declarePublic('getEnvironmentalConditions')
-
-    def getEnvironmentalConditions(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getEnvironmentalConditions()
-        return self.Schema().getField('EnvironmentalConditions').get(self)
-
-    security.declarePublic('setComposite')
-
-    def setComposite(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setComposite(value)
-        self.Schema()['Composite'].set(self, value)
-
-    security.declarePublic('getComposite')
-
-    def getComposite(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getComposite()
-        return self.Schema().getField('Composite').get(self)
-
-    security.declarePublic('setStorageLocation')
-
-    def setStorageLocation(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setStorageLocation(value)
-        self.Schema()['StorageLocation'].set(self, value)
-
-    security.declarePublic('getStorageLocation')
-
-    def getStorageLocation(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getStorageLocation()
-        return self.Schema().getField('StorageLocation').get(self)
-
-    security.declarePublic('setAdHoc')
-
-    def setAdHoc(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setAdHoc(value)
-        self.Schema()['AdHoc'].set(self, value)
-
-    security.declarePublic('getAdHoc')
-
-    def getAdHoc(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getAdHoc()
-        return self.Schema().getField('AdHoc').get(self)
-
-    security.declarePublic('setScheduledSamplingSampler')
-
-    def setScheduledSamplingSampler(self, value):
-        sample = self.getSample()
-        if sample and value:
-            sample.setScheduledSamplingSampler(value)
-        self.Schema()['ScheduledSamplingSampler'].set(self, value)
-
-    security.declarePublic('getScheduledSamplingSampler')
-
-    def getScheduledSamplingSampler(self):
-        sample = self.getSample()
-        if sample:
-            return sample.getScheduledSamplingSampler()
-        return self.Schema() \
-            .getField('ScheduledSamplingSampler').get(self)
 
     def getSamplers(self):
         return getUsers(self, ['LabManager', 'Sampler'])
@@ -2657,8 +2498,8 @@ class AnalysisRequest(BaseFolder):
         return DisplayList(prep_workflows)
 
     def getDepartments(self):
-        """ Returns a set with the departments assigned to the Analyses
-            from this Analysis Request
+        """Returns a set with the departments assigned to the Analyses
+        from this Analysis Request
         """
         ans = [an.getObject() for an in self.getAnalyses()]
         depts = [an.getService().getDepartment() for an in ans if
@@ -2666,13 +2507,12 @@ class AnalysisRequest(BaseFolder):
         return set(depts)
 
     def getResultsInterpretationByDepartment(self, department=None):
-        """ Returns the results interpretation for this Analysis Request
-            and department. If department not set, returns the results
-            interpretation tagged as 'General'.
+        """Returns the results interpretation for this Analysis Request
+           and department. If department not set, returns the results
+           interpretation tagged as 'General'.
 
-            Returns a dict with the following keys:
-            {'uid': <department_uid> or 'general',
-             'richtext': <text/plain>}
+        :returns: a dict with the following keys:
+            {'uid': <department_uid> or 'general', 'richtext': <text/plain>}
         """
         uid = department.UID() if department else 'general'
         rows = self.Schema()['ResultsInterpretationDepts'].get(self)
@@ -2688,16 +2528,17 @@ class AnalysisRequest(BaseFolder):
         return row
 
     def getAnalysisServiceSettings(self, uid):
-        """ Returns a dictionary with the settings for the analysis
-            service that match with the uid provided.
-            If there are no settings for the analysis service and
-            analysis requests:
-            1. looks for settings in AR's ARTemplate. If found, returns
-                the settings for the AnalysisService set in the Template
-            2. If no settings found, looks in AR's ARProfile. If found,
-                returns the settings for the AnalysisService from the
-                AR Profile. Otherwise, returns a one entry dictionary
-                with only the key 'uid'
+        """Returns a dictionary with the settings for the analysis service that
+        match with the uid provided.
+
+        If there are no settings for the analysis service and
+        analysis requests:
+
+        1. looks for settings in AR's ARTemplate. If found, returns the
+           settings for the AnalysisService set in the Template
+        2. If no settings found, looks in AR's ARProfile. If found, returns the
+           settings for the AnalysisService from the AR Profile. Otherwise,
+           returns a one entry dictionary with only the key 'uid'
         """
         sets = [s for s in self.getAnalysisServicesSettings()
                 if s.get('uid', '') == uid]
@@ -2717,10 +2558,10 @@ class AnalysisRequest(BaseFolder):
         return sets[0] if sets else {'uid': uid}
 
     def getPartitions(self):
-        """
-        This functions returns the partitions from the analysis request's
+        """This functions returns the partitions from the analysis request's
         analyses.
-        :return: a list with the full partition objects
+
+        :returns: a list with the full partition objects
         """
         analyses = self.getRequestedAnalyses()
         partitions = []
@@ -2730,10 +2571,10 @@ class AnalysisRequest(BaseFolder):
         return partitions
 
     def getContainers(self):
-        """
-        This functions returns the containers from the analysis request's
+        """This functions returns the containers from the analysis request's
         analyses
-        :return: a list with the full partition objects
+
+        :returns: a list with the full partition objects
         """
         partitions = self.getPartitions()
         containers = []
@@ -2743,14 +2584,15 @@ class AnalysisRequest(BaseFolder):
         return containers
 
     def isAnalysisServiceHidden(self, uid):
-        """ Checks if the analysis service that match with the uid
-            provided must be hidden in results.
-            If no hidden assignment has been set for the analysis in
-            this request, returns the visibility set to the analysis
-            itself.
-            Raise a TypeError if the uid is empty or None
-            Raise a ValueError if there is no hidden assignment in this
-                request or no analysis service found for this uid.
+        """Checks if the analysis service that match with the uid provided must
+        be hidden in results. If no hidden assignment has been set for the
+        analysis in this request, returns the visibility set to the analysis
+        itself.
+
+        Raise a TypeError if the uid is empty or None
+
+        Raise a ValueError if there is no hidden assignment in this request or
+        no analysis service found for this uid.
         """
         if not uid:
             raise TypeError('None type or empty uid')
@@ -2765,8 +2607,7 @@ class AnalysisRequest(BaseFolder):
         return sets.get('hidden', False)
 
     def getRejecter(self):
-        """
-        If the Analysis Request has been rejected, returns the user who did the
+        """If the Analysis Request has been rejected, returns the user who did the
         rejection. If it was not rejected or the current user has not enough
         privileges to access to this information, returns None.
         """
@@ -2786,8 +2627,7 @@ class AnalysisRequest(BaseFolder):
         return None
 
     def isVerifiable(self):
-        """
-        Checks it the current Analysis Request can be verified. This is, its
+        """Checks it the current Analysis Request can be verified. This is, its
         not a cancelled Analysis Request and all the analyses that contains
         are verifiable too. Note that verifying an Analysis Request is in fact,
         the same as verifying all the analyses that contains. Therefore, the
@@ -2831,19 +2671,19 @@ class AnalysisRequest(BaseFolder):
             return canbeverified
 
     def isUserAllowedToVerify(self, member):
-        """
-        Checks if the specified user has enough privileges to verify the
+        """Checks if the specified user has enough privileges to verify the
         current AR. Apart from the roles, this function also checks if the
         current user has enough privileges to verify all the analyses contained
         in this Analysis Request. Note that this function only returns if the
         user can verify the analysis request according to his/her privileges
         and the analyses contained (see isVerifiable function)
+
         :member: user to be tested
-        :return: true or false
+        :returns: true or false
         """
         # Check if the user has "Bika: Verify" privileges
         username = member.getUserName()
-        allowed = api.user.has_permission(VerifyPermission, username=username)
+        allowed = ploneapi.user.has_permission(VerifyPermission, username=username)
         if not allowed:
             return False
         # Check if the user is allowed to verify all the contained analyses
@@ -2852,11 +2692,11 @@ class AnalysisRequest(BaseFolder):
         return not notallowed
 
     def guard_verify_transition(self):
-        """
-        Checks if the verify transition can be performed to the current
+        """Checks if the verify transition can be performed to the current
         Analysis Request by the current user depending on the user roles, as
         well as the statuses of the analyses assigned to this Analysis Request
-        :return: true or false
+
+        :returns: true or false
         """
         mtool = getToolByName(self, "portal_membership")
         # Check if the Analysis Request is in a "verifiable" state
@@ -2889,8 +2729,8 @@ class AnalysisRequest(BaseFolder):
         return True
 
     def guard_receive_transition(self):
-        """Prevent the receive transition from being available if object
-        is cancelled
+        """Prevent the receive transition from being available
+        if object is cancelled
         """
         return isBasicTransitionAllowed(self)
 
@@ -2903,8 +2743,8 @@ class AnalysisRequest(BaseFolder):
         return sample.guard_sample_prep_complete_transition()
 
     def guard_schedule_sampling_transition(self):
-        """
-        Prevent the transition if:
+        """Prevent the transition if:
+
         - if the user isn't part of the sampling coordinators group
           and "sampling schedule" checkbox is set in bika_setup
         - if no date and samples have been defined
@@ -3055,8 +2895,7 @@ class AnalysisRequest(BaseFolder):
             doActionFor(analysis.getObject(), 'cancel')
 
     def workflow_script_schedule_sampling(self):
-        """
-        This function runs all the needed process for that action
+        """This function runs all the needed process for that action
         """
         workflow = getToolByName(self, 'portal_workflow')
         sample = self.getSample()
@@ -3084,4 +2923,4 @@ class AnalysisRequest(BaseFolder):
             notify_rejection(self)
 
 
-atapi.registerType(AnalysisRequest, PROJECTNAME)
+registerType(AnalysisRequest, PROJECTNAME)

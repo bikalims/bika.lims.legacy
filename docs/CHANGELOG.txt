@@ -2,6 +2,8 @@
 ------------------
 LIMS-2596: AR and Sample view fields that need to stay editable
 
+Issue-1974: Clicking on the "Arrow Button" of an empty cell in the AR Add View causes a JS Error and endless Spinner
+issue-1992: Data Duplication between Analysis Requests and Samples
 Issue-1999: Allow external Python library functions to be used in Calculation Formulas
 Issue-1971: Allow Reports in Landscape
 Issue-1967: Dashboard Link to "aggregatedanalyses" results in a 404
