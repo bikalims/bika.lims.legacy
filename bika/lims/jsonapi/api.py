@@ -93,13 +93,19 @@ def create_items(portal_type=None, uid=None, endpoint=None, **kw):
 
     results = []
     for record in records:
-        if container is None:
-            # find the container for content creation
-            container = find_target_container(portal_type, record)
 
+        # get the portal_type
         if portal_type is None:
             # try to fetch the portal type out of the request data
             portal_type = record.pop("portal_type", None)
+
+        # check if it is allowed to create the portal_type
+        if not is_creation_allowed(portal_type):
+            fail(401, "Creation of '{}' is not allowed".format(portal_type))
+
+        if container is None:
+            # find the container for content creation
+            container = find_target_container(portal_type, record)
 
         # Check if we have a container and a portal_type
         if not all([container, portal_type]):
@@ -511,11 +517,13 @@ def get_container_for(portal_type):
     :returns: Folderish container where the portal type can be created
     :rtype: AT content object
     """
-    container_paths = config["CONTAINER_PATHS_FOR_PORTAL_TYPES"]
+    container_paths = config.CONTAINER_PATHS_FOR_PORTAL_TYPES
     container_path = container_paths.get(portal_type)
+
     if container_path is None:
         return None
-    portal_path = get_path(get_portal)
+
+    portal_path = get_path(get_portal())
     return get_object_by_path("/".join([portal_path, container_path]))
 
 
@@ -527,8 +535,8 @@ def is_creation_allowed(portal_type):
     :returns: True if it is allowed to create this object
     :rtype: bool
     """
-    disallowed_portal_types = config["DISALLOWED_PORTAL_TYPES_TO_CREATE"]
-    return portal_type not in disallowed_portal_types
+    allowed_portal_types = config.ALLOWED_PORTAL_TYPES_TO_CREATE
+    return portal_type in allowed_portal_types
 
 
 def url_for(endpoint, default="bika.lims.jsonapi.v2.get", **values):
@@ -939,9 +947,6 @@ def create_object(container, portal_type, **data):
     :returns: The new created content object
     :rtype: object
     """
-
-    if not is_creation_allowed(portal_type):
-        fail(401, "You are not allowed to create this content")
 
     if "id" in data:
         # always omit the id as Bika LIMS generates a proper one
