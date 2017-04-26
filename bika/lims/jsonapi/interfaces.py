@@ -51,7 +51,7 @@ class IInfo(interface.Interface):
 
 
 class IDataManager(interface.Interface):
-    """A Data Manager is able to set/get the values of a field.
+    """A Data Manager is able to set/get the values of the content.
     """
 
     def get(name):
@@ -60,6 +60,19 @@ class IDataManager(interface.Interface):
 
     def set(name, value):
         """Set the value of the named field
+        """
+
+
+class IFieldManager(interface.Interface):
+    """A Field Manager is able to set/get the values of a single field.
+    """
+
+    def get(instance, **kwargs):
+        """Get the value of the field
+        """
+
+    def set(instance, value, **kwargs):
+        """Set the value of the field
         """
 
 

@@ -937,7 +937,6 @@ def find_target_container(portal_type, record):
     :returns: folder which contains the object
     :rtype: object
     """
-
     portal_type = portal_type or record.get("portal_type")
     container = get_container_for(portal_type)
     if container:
@@ -983,7 +982,9 @@ def create_object(container, portal_type, **data):
             data["Client"] = container
         # Standard content creation
         else:
-            obj = api.create(container, portal_type, **data)
+            # we want just a minimun viable object and set the data later
+            obj = api.create(container, portal_type)
+            # obj = api.create(container, portal_type, **data)
     except Unauthorized:
         fail(401, "You are not allowed to create this content")
 
@@ -991,6 +992,7 @@ def create_object(container, portal_type, **data):
     try:
         update_object_with_data(obj, data)
     except APIError:
+
         # Failure in creation process, delete the invalid object
         container.manage_delObjects(obj.id)
         # reraise the error

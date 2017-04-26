@@ -38,12 +38,6 @@
       factory=".dataproviders.SiteRootDataProvider"
       />
 
-  <!-- Adapter for Dexterity Content Types -->
-  <adapter
-      for="plone.dexterity.interfaces.IDexterityContent"
-      factory=".dataproviders.DexterityDataProvider"
-      />
-
 
   <!-- <Data Manager> -->
 
@@ -59,18 +53,50 @@
       factory=".datamanagers.BrainDataManager"
       />
 
-  <!-- Data adapter for Portal manipulation -->
+  <!-- Data adapter for the Portal object -->
   <adapter
       for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
       factory=".datamanagers.PortalDataManager"
       />
 
-  <!-- Data adapter for Dexterity Field manipulation -->
+
+  <!-- <Field Manager> -->
+
+  <!-- Adapter for AT Fields -->
   <adapter
-      for="plone.dexterity.interfaces.IDexterityContent"
-      factory=".datamanagers.DexterityDataManager"
+      for="Products.Archetypes.interfaces.field.IField"
+      factory=".fieldmanagers.ATFieldManager"
       />
 
+  <!-- Adapter for Text Fields -->
+  <adapter
+      for="Products.Archetypes.interfaces.field.ITextField"
+      factory=".fieldmanagers.TextFieldManager"
+      />
+
+  <!-- Adapter for DateTime Field -->
+  <adapter
+      for="Products.Archetypes.interfaces.field.IDateTimeField"
+      factory=".fieldmanagers.DateTimeFieldManager"
+      />
+
+  <!-- Adapter for File Field -->
+  <adapter
+      for="Products.Archetypes.interfaces.field.IFileField"
+      factory=".fieldmanagers.FileFieldManager"
+      />
+
+  <!-- Adapter for Bika LIMS Proxy Field -->
+  <adapter
+      for="bika.lims.interfaces.IProxyField"
+      factory=".fieldmanagers.ProxyFieldManager"
+      />
+
+  <!-- Adapter for Reference Field -->
+  <adapter
+      for="Products.Archetypes.interfaces.field.IReferenceField"
+      factory=".fieldmanagers.ReferenceFieldManager"
+      />
 
   <!-- <Batching> -->
 
