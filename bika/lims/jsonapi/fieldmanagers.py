@@ -167,7 +167,6 @@ class ReferenceFieldManager(ATFieldManager):
     def set(self, instance, value, **kw):
         """Set the value of the refernce field
         """
-
         ref = []
 
         # The value is an UID

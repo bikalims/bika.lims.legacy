@@ -116,8 +116,6 @@ class ATDataManager(object):
         to integrate constraints to other values.
         """
 
-        import pdb; pdb.set_trace()
-
         # fetch the field by name
         field = self.get_field(name)
 
