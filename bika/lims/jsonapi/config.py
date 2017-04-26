@@ -44,7 +44,7 @@ CONTAINER_PATHS_FOR_PORTAL_TYPES = {
 #    'BikaSetup': '',
     'Calculation': 'bika_setup/bika_calculations',
 #    'Calculations': '',
-#    'Client': '',
+    'Client': 'clients',
 #    'ClientFolder': '',
 #    'Collection': '',
 #    'Contact': '',
