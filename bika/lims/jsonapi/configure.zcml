@@ -23,25 +23,25 @@
   <!-- Default data provider (AT based content types) -->
   <adapter
       for="*"
-      factory=".dataprovider.ATDataProvider"
+      factory=".dataproviders.ATDataProvider"
       />
 
   <!-- Adapter for Catalog Brains -->
   <adapter
       for="Products.ZCatalog.interfaces.ICatalogBrain"
-      factory=".dataprovider.ZCDataProvider"
+      factory=".dataproviders.ZCDataProvider"
       />
 
   <!-- Adapter for the Plone Site -->
   <adapter
       for="Products.CMFCore.interfaces.ISiteRoot"
-      factory=".dataprovider.SiteRootDataProvider"
+      factory=".dataproviders.SiteRootDataProvider"
       />
 
   <!-- Adapter for Dexterity Content Types -->
   <adapter
       for="plone.dexterity.interfaces.IDexterityContent"
-      factory=".dataprovider.DexterityDataProvider"
+      factory=".dataproviders.DexterityDataProvider"
       />
 
 
@@ -50,25 +50,25 @@
   <!-- Default Data adapter (AT based content types) -->
   <adapter
       for="*"
-      factory=".datamanager.ATDataManager"
+      factory=".datamanagers.ATDataManager"
       />
 
   <!-- Data adapter for Catalog brains -->
   <adapter
       for="Products.ZCatalog.interfaces.ICatalogBrain"
-      factory=".datamanager.BrainDataManager"
+      factory=".datamanagers.BrainDataManager"
       />
 
   <!-- Data adapter for Portal manipulation -->
   <adapter
       for="Products.CMFPlone.interfaces.siteroot.IPloneSiteRoot"
-      factory=".datamanager.PortalDataManager"
+      factory=".datamanagers.PortalDataManager"
       />
 
   <!-- Data adapter for Dexterity Field manipulation -->
   <adapter
       for="plone.dexterity.interfaces.IDexterityContent"
-      factory=".datamanager.DexterityDataManager"
+      factory=".datamanagers.DexterityDataManager"
       />
 
 
