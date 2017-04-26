@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import types
-
 from zope import interface
 from zope.schema import getFields
 from zope.schema.interfaces import IObject
@@ -155,7 +153,6 @@ class ATDataManager(object):
         field = self.context.getField(name)
         return field
 
-
     def set(self, name, value, **kw):
         """Set the field to the given value.
 
@@ -188,7 +185,6 @@ class ATDataManager(object):
                 logger.warn("Value '{}' is not a valid DateTime string"
                             .format(value))
                 return False
-
 
         # Handle File Fields
         if self.is_file_field(field):
@@ -257,7 +253,6 @@ class ATDataManager(object):
                 return False
 
             value = new_reference
-
 
         # id fields take only strings
         if name == "id":
