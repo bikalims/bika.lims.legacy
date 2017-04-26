@@ -979,6 +979,9 @@ def create_object(container, portal_type, **data):
         # => return immediately w/o update
         if portal_type == "AnalysisRequest":
             obj = create_analysisrequest(container, **data)
+            # Omit values which are already set through the helper
+            data = _.omit(data, "SampleType", "Analyses")
+            # Set the container as the client, as the AR lives in it
             data["Client"] = container
         # Standard content creation
         else:
@@ -1010,7 +1013,7 @@ def create_analysisrequest(container, **data):
     container = get_object(container)
     request = req.get_request()
     # we need to resolve the SampleType to a full object
-    sample_type = data.get("SampleType")
+    sample_type = data.get("SampleType", None)
     if sample_type is None:
         fail(400, "Please provide a SampleType")
 
