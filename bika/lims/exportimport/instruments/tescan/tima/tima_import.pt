@@ -1,12 +1,12 @@
     <p></p>
 
     <!-- Input file selector -->
-    <label for='filename'>File</label>&nbsp;
+    <label i18n:translate="" for='filename'>File</label>&nbsp;
     <input type="file" name="filename" id="filename"/>
     &nbsp;&nbsp;
 
     <!-- Format file selector -->
-    <label for='format'>Format</label>&nbsp;
+    <label i18n:translate="" for='format'>Format</label>&nbsp;
     <select name="format" id="format">
         <option value='csv'>CSV</option>
     </select>
@@ -17,7 +17,7 @@
         <tr>
 
             <!-- Allowed states of the analysis requests to look for -->
-            <td style='vertical-align:top;padding-right:30px;'><label for="artoapply">Analysis Requests state</label>&nbsp;</td>
+            <td style='vertical-align:top;padding-right:30px;'><label i18n:translate="" for="artoapply">Analysis Requests state</label>&nbsp;</td>
             <td>
                 <select name="artoapply" id="artoapply">
                     <option value="received">Received</option>
@@ -28,7 +28,7 @@
         <tr>
 
             <!-- Results overriding -->
-            <td><label for="override">Results override</label></td>
+            <td><label i18n:translate="" for="override">Results override</label></td>
             <td>
                 <select name="override" id="override">
                     <option value="nooverride">Don't override results</option>
@@ -39,7 +39,7 @@
         </tr>
         <tr>
             <!-- Instrument selector. For calibration tests -->
-            <td style='vertical-align:top;padding-right:30px;'><label for="instrument">Instrument</label></td>
+            <td style='vertical-align:top;padding-right:30px;'><label i18n:translate="" for="instrument">Instrument</label></td>
             <td>
                 <p i18n:translate="" style='color: #3F3F3F;font-size: 0.87em;'>
                     If the system doesn't find any match (AnalysisRequest, Sample, Reference Analysis or Duplicate),

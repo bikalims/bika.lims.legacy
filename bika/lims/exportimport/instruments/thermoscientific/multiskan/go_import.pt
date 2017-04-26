@@ -2,7 +2,7 @@
 
 
     <!-- Analysis service to apply the results -->
-    <label for='analysis'>Analysis Service</label>
+    <label i18n:translate="" for='analysis'>Analysis Service</label>
     <select name="analysis" id="analysis" tal:define="analysislist view/getAnalysisServicesDisplayList">
         <tal:options repeat="option analysislist">
         <option tal:attributes="value python:option;"
@@ -10,10 +10,10 @@
         </tal:options>
     </select>
     <p></p>
-    <label for='data_file'>File</label>&nbsp;
+    <label i18n:translate="" for='data_file'>File</label>&nbsp;
     <input type="file" name="data_file" id="data_file"/>
     &nbsp;&nbsp;
-    <label for='format'>Format</label>&nbsp;
+    <label i18n:translate="" for='format'>Format</label>&nbsp;
     <select name="format" id="format">
         <option value='csv'>CSV</option>
     </select>
@@ -21,7 +21,7 @@
     <h3>Advanced options</h3>
     <table cellpadding="0" cellspacing="0">
         <tr>
-            <td><label for="artoapply">Analysis Requests state</label>&nbsp;</td>
+            <td><label i18n:translate="" for="artoapply">Analysis Requests state</label>&nbsp;</td>
             <td>
                 <select name="artoapply" id="artoapply">
                     <option value="received">Received</option>
@@ -30,7 +30,7 @@
             </td>
         </tr>
         <tr>
-            <td><label for="file_override">Results override</label></td>
+            <td><label i18n:translate="" for="file_override">Results override</label></td>
             <td>
                 <select name="override" id="file_override">
                     <option value="nooverride">Don't override results</option>
@@ -41,7 +41,7 @@
         </tr>
         <tr>
             <!-- Instrument selector. For calibration tests -->
-            <td style='vertical-align:top;padding-right:30px;'><label for="instrument">Instrument</label></td>
+            <td style='vertical-align:top;padding-right:30px;'><label i18n:translate="" for="instrument">Instrument</label></td>
             <td>
                 <p i18n:translate="" style='color: #3F3F3F;font-size: 0.87em;'>
                     If the system doesn't find any match (AnalysisRequest, Sample, Reference Analysis or Duplicate),

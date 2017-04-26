@@ -1,9 +1,9 @@
 <p></p>
 
-<label for='thermoscientific_arena_20XT_file'>File</label>&nbsp;
+<label i18n:translate="" for='thermoscientific_arena_20XT_file'>File</label>&nbsp;
 <input type="file" name="thermoscientific_arena_20XT_file" id="thermoscientific_arena_20XT_file"/>
 &nbsp;&nbsp;
-<label for='thermoscientific_arena_20XT_format'>Format</label>&nbsp;
+<label i18n:translate="" for='thermoscientific_arena_20XT_format'>Format</label>&nbsp;
 <select name="thermoscientific_arena_20XT_format" id="thermoscientific_arena_20XT_format">
     <option value='rpr.csv'>CSV (RPR)</option>
 </select>
@@ -11,7 +11,7 @@
 <h3>Advanced options</h3>
 <table cellpadding="0" cellspacing="0">
     <tr>
-        <td><label for="thermoscientific_arena_20XT_artoapply">Analysis Requests state</label>&nbsp;</td>
+        <td><label i18n:translate="" for="thermoscientific_arena_20XT_artoapply">Analysis Requests state</label>&nbsp;</td>
         <td>
             <select name="thermoscientific_arena_20XT_artoapply" id="thermoscientific_arena_20XT_artoapply">
                 <option value="received">Received</option>
@@ -20,7 +20,7 @@
         </td>
     </tr>
     <tr>
-        <td><label for="thermoscientific_arena_20XT_override">Results override</label></td>
+        <td><label i18n:translate="" for="thermoscientific_arena_20XT_override">Results override</label></td>
         <td>
             <select name="thermoscientific_arena_20XT_override" id="thermoscientific_arena_20XT_override">
                 <option value="nooverride">Don't override results</option>
@@ -30,7 +30,7 @@
         </td>
     </tr>
     <tr>
-        <td style='vertical-align:top;padding-right:30px;'><label for="thermoscientific_arena_20XT_instrument">Instrument</label></td>
+        <td style='vertical-align:top;padding-right:30px;'><label i18n:translate="" for="thermoscientific_arena_20XT_instrument">Instrument</label></td>
         <td>
             <select name="thermoscientific_arena_20XT_instrument" id="thermoscientific_arena_20XT_instrument"
                     tal:define="instrlist view/getInstruments">

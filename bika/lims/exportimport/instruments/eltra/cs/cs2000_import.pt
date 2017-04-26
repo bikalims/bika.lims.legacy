@@ -1,7 +1,7 @@
     <p></p>
 
     <!-- Analysis services to apply the results -->
-    <label for='analysis'>Analysis Service in the first column</label>
+    <label i18n:translate="" for='analysis'>Analysis Service in the first column</label>
     <select name="analysis1" id="analysis1" tal:define="analysislist view/getAnalysisServicesDisplayList">
         <tal:options repeat="option analysislist">
         <option tal:attributes="value python:option;"
@@ -10,7 +10,7 @@
     </select>
 
     <p></p>
-    <label for='analysis'>Analysis Service in the second column</label>
+    <label i18n:translate="" for='analysis'>Analysis Service in the second column</label>
     <select name="analysis2" id="analysis2" tal:define="analysislist view/getAnalysisServicesDisplayList">
         <tal:options repeat="option analysislist">
         <option tal:attributes="value python:option;"
@@ -22,10 +22,10 @@
     </p>
     <p></p>
 
-    <label for='data_file'>File</label>&nbsp;
+    <label i18n:translate="" for='data_file'>File</label>&nbsp;
     <input type="file" name="data_file" id="data_file"/>
     &nbsp;&nbsp;
-    <label for='format'>Format</label>&nbsp;
+    <label i18n:translate="" for='format'>Format</label>&nbsp;
     <select name="format" id="format">
         <option value='tsv'>TSV</option>
     </select>
@@ -33,7 +33,7 @@
     <h3>Advanced options</h3>
     <table cellpadding="0" cellspacing="0">
         <tr>
-            <td class="instrument-import"><label for="artoapply">Analysis Requests state</label>&nbsp;</td>
+            <td class="instrument-import"><label i18n:translate="" for="artoapply">Analysis Requests state</label>&nbsp;</td>
             <td class="instrument-import">
                 <select name="artoapply" id="artoapply">
                     <option value="received">Received</option>
@@ -42,7 +42,7 @@
             </td>
         </tr>
         <tr>
-            <td class="instrument-import"><label for="file_override">Results override</label></td>
+            <td class="instrument-import"><label i18n:translate="" for="file_override">Results override</label></td>
             <td class="instrument-import">
                 <select name="override" id="file_override">
                     <option value="nooverride">Don't override results</option>
@@ -53,18 +53,18 @@
         </tr>
         <tr>
             <td colspan=2>
-              <label for="title">Instrument Calibration Import</label>
+              <label i18n:translate="" for="title">Instrument Calibration Import</label>
             </td>
         </tr>
         <tr class="instrument-import-border-top">
             <!-- Instrument selector. For calibration tests -->
-            <td class="instrument-import-selector"><label for="instrument">Instrument</label></td>
+            <td class="instrument-import-selector"><label i18n:translate="" for="instrument">Instrument</label></td>
             <td class="instrument-import-padding-top">
                 <p i18n:translate="" class="instrument-import-paragraph">
                     If an imported result does not match Analysis Requests, Samples,
-                    Reference Analyses or Duplicates, the result's identifier is matched Reference Sample IDs.<br>
+                    Reference Analyses or Duplicates, the result's identifier is matched Reference Sample IDs.
                     When a matching Reference Sample ID is found, the system automatically creates
-                    a Reference Analysis as Calibration test, and will link it to the instrument selected below.<br>
+                    a Reference Analysis as Calibration test, and will link it to the instrument selected below.
                     If no instrument is selected, no Calibration tests will be created for orphan IDs.
                 </p>
                 <select name="instrument" id="fileinstrument"

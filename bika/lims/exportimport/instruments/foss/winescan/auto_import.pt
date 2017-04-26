@@ -1,9 +1,9 @@
     <p></p>
 
-    <label for='wsa_file'>File</label>&nbsp;
+    <label i18n:translate="" for='wsa_file'>File</label>&nbsp;
     <input type="file" name="wsa_file" id="wsa_file"/>
     &nbsp;&nbsp;
-    <label for='wsa_format'>Format</label>&nbsp;
+    <label i18n:translate="" for='wsa_format'>Format</label>&nbsp;
     <select name="wsa_format" id="wsa_format">
         <option value='csv'>CSV</option>
     </select>
@@ -12,7 +12,7 @@
     <table cellpadding="0" cellspacing="0">
  <!--
         <tr>
-            <td><label for="wsa_sample">Sample search</label></td>
+            <td><label i18n:translate="" for="wsa_sample">Sample search</label></td>
             <td>
                 <select name="wsa_sample" id="wsa_sample">
                     <option value="requestid">Analysis Request ID</option>
@@ -24,7 +24,7 @@
         </tr>
   -->
         <tr>
-            <td class="instrument-import"><label for="wsa_artoapply">Analysis Requests state</label>&nbsp;</td>
+            <td class="instrument-import"><label i18n:translate="" for="wsa_artoapply">Analysis Requests state</label>&nbsp;</td>
             <td class="instrument-import">
                 <select name="wsa_artoapply" id="wsa_artoapply">
                     <option value="received">Received</option>
@@ -33,7 +33,7 @@
             </td>
         </tr>
         <tr>
-            <td class="instrument-import"><label for="wsa_override">Results override</label></td>
+            <td class="instrument-import"><label i18n:translate="" for="wsa_override">Results override</label></td>
             <td class="instrument-import">
                 <select name="wsa_override" id="wsa_override">
                     <option value="nooverride">Don't override results</option>
@@ -44,18 +44,18 @@
         </tr>
         <tr>
             <td colspan=2>
-              <label for="title">Instrument Calibration Import</label>
+              <label i18n:translate="" for="title">Instrument Calibration Import</label>
             </td>
         </tr>
         <tr class="instrument-import-border-top">
             <!-- Instrument selector. For calibration tests -->
-            <td class="instrument-import-selector"><label for="wsa_instrument">Instrument</label></td>
+            <td class="instrument-import-selector"><label i18n:translate="" for="wsa_instrument">Instrument</label></td>
             <td class="instrument-import-padding-top">
                 <p i18n:translate="" class="instrument-import-paragraph">
                     If an imported result does not match Analysis Requests, Samples,
-                    Reference Analyses or Duplicates, the result's identifier is matched Reference Sample IDs.<br>
+                    Reference Analyses or Duplicates, the result's identifier is matched Reference Sample IDs.
                     When a matching Reference Sample ID is found, the system automatically creates
-                    a Reference Analysis as Calibration test, and will link it to the instrument selected below.<br>
+                    a Reference Analysis as Calibration test, and will link it to the instrument selected below.
                     If no instrument is selected, no Calibration tests will be created for orphan IDs.
                 </p>
                 <select name="wsa_instrument" id="wsa_instrument"
