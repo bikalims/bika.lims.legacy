@@ -147,8 +147,12 @@ class ProxyFieldManager(ATFieldManager):
     def set(self, instance, value, **kw):
         """Set the value of the (proxy) field
         """
-        self.field = self.get_proxy_field(instance)
-        return self._set(instance, value, **kw)
+        proxy_field = self.get_proxy_field(instance)
+        if proxy_field is None:
+            return None
+        # set the field with the proper field manager of the proxy field
+        fieldmanager = IFieldManager(proxy_field)
+        return fieldmanager.set(instance, value, **kw)
 
 
 class ReferenceFieldManager(ATFieldManager):
@@ -189,17 +193,32 @@ class ReferenceFieldManager(ATFieldManager):
                 # uid
                 if api.is_uid(item):
                     ref.append(api.get_object_by_uid(item))
+                    continue
+
                 # object
                 if api.is_at_content(item):
                     ref.append(api.get_object(item))
+                    continue
+
                 # path
                 if api.is_path(item):
                     ref.append(api.get_object_by_path(item))
+                    continue
+
                 # dict (catalog query)
                 if _.is_dict(item):
                     results = api.search(portal_type=self.allowed_types, **item)
                     objs = map(api.get_object, results)
                     ref.extend(objs)
+                    continue
+
+                # Plain string
+                # -> do a catalog query for title
+                if isinstance(item, basestring):
+                    results = api.search(portal_type=self.allowed_types, title=item)
+                    objs = map(api.get_object, results)
+                    ref.extend(objs)
+                    continue
 
         # The value is a physical path
         if api.is_path(value):
