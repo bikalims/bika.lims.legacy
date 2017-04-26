@@ -8,10 +8,18 @@ function BikaSetupEditView() {
     var restrict_useraccess = $('#archetypes-fieldname-RestrictWorksheetUsersAccess #RestrictWorksheetUsersAccess');
     var restrict_wsmanagement = $('#archetypes-fieldname-RestrictWorksheetManagement #RestrictWorksheetManagement');
 
+    var rounding_type = $('#archetypes-fieldname-DisplayRounding #DisplayRounding');
+    var significant_figures = $('#archetypes-fieldname-SignificantFigures');
     /**
      * Entry-point method for BikaSetupEditView
      */
     that.load = function () {
+
+        // LIMS-2371 Round using Decimal Precision or Significant Digits.
+        $(rounding_type).change(function(){
+            rounding_type_changed();
+        });
+
         // Controller to avoid introducing no accepted prefix separator.
         $('input[id^="Prefixes-separator-"]').each(function() {
             toSelectionList(this);
@@ -77,4 +85,18 @@ function BikaSetupEditView() {
             $('select#'+current_id).append(option)
         }
     }
+
+    function rounding_type_changed(){
+        var value = $(rounding_type).val();
+        if (value == "NONE") {
+          $(significant_figures).hide();
+        }
+        else if (value == "DECIMAL_PRECISION"){
+          $(significant_figures).hide();
+        }
+        else if (value == "SIGNIFICANT_FIGURES"){
+          $(significant_figures).show();
+        }
+    }
+    rounding_type_changed();
 }

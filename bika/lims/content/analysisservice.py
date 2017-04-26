@@ -12,7 +12,6 @@ from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
 from plone.indexer import indexer
 from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.ATExtensions.Extensions.utils import makeDisplayList
 from Products.ATExtensions.ateapi import RecordField, RecordsField
 from Products.Archetypes.Registry import registerField
 from Products.Archetypes.public import DisplayList, ReferenceField, \
@@ -24,14 +23,10 @@ from Products.Archetypes.public import DisplayList, ReferenceField, \
     FloatField
 from Products.Archetypes.utils import IntDisplayList
 from Products.Archetypes.references import HoldingReference
-from Products.CMFCore.permissions import View, ModifyPortalContent
 from Products.CMFCore.utils import getToolByName
-from Products.validation import validation
-from Products.validation.validators.RegexValidator import RegexValidator
-from Products.CMFCore.WorkflowCore import WorkflowException
 from bika.lims import PMF, bikaMessageFactory as _
+from bika.lims.api import get_bika_setup
 from bika.lims.utils import to_utf8 as _c
-from bika.lims.utils import to_unicode as _u
 from bika.lims.utils.analysis import get_significant_digits
 from bika.lims.browser.widgets.durationwidget import DurationWidget
 from bika.lims.browser.widgets.partitionsetupwidget import PartitionSetupWidget
@@ -42,12 +37,16 @@ from bika.lims.config import ATTACHMENT_OPTIONS, PROJECTNAME, \
     SERVICE_POINT_OF_CAPTURE
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import IAnalysisService, IHaveIdentifiers
-from magnitude import mg, MagnitudeError
-from zope import i18n
+from magnitude import mg
 from zope.interface import implements
 import transaction
-import math
 
+ROUNDING_METHODS = DisplayList((
+    ('DEFAULT', _("Default from site setup")),
+    ('NONE', _("No rounding")),
+    ('DECIMAL_PRECISION', _("Round to decimal places")),
+    ('SIGNIFICANT_FIGURES', _("Round to significant figures")),
+))
 
 def getContainers(instance,
                   minvol=None,
@@ -245,6 +244,17 @@ schema = BikaSchema.copy() + Schema((
                         "e.g. mg/l, ppm, dB, mV, etc."),
                 ),
     ),
+    StringField('DisplayRounding',
+                schemata="Analysis",
+                vocabulary = ROUNDING_METHODS,
+                widget=SelectionWidget(
+                    format='select',
+                    label=_("Display rounding"),
+                    description=_(
+                        "Type of rounding to apply to result. This value "
+                        "overrides the system default specified in site-setup"),
+                )
+    ),
     IntegerField('Precision',
                  schemata="Analysis",
                  widget=IntegerWidget(
@@ -253,6 +263,19 @@ schema = BikaSchema.copy() + Schema((
                          "Define the number of decimals to be used for this result."),
                  ),
     ),
+    IntegerField('SignificantFigures',
+                 schemata="Analysis",
+                 required=0,
+                 default=3,
+                 widget=IntegerWidget(
+                     label=_("Significant Figures in results"),
+                     description=_(
+                         "If significant figures rounding is enabled for this "
+                         "service, this is the number of significant digits "
+                         "that will be retained.  If this field is set to 0, "
+                         "the default value from site setup will be used.")
+                 )
+                 ),
     IntegerField('ExponentialFormatPrecision',
                  schemata="Analysis",
                  default = 7,
@@ -1504,6 +1527,5 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
                 pu.addPortalMessage(message, 'error')
                 transaction.get().abort()
                 raise WorkflowException
-
 
 registerType(AnalysisService, PROJECTNAME)

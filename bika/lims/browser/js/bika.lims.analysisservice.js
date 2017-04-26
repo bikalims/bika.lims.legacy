@@ -28,10 +28,19 @@ function AnalysisServiceEditView() {
     var ldman_fd   = $('#archetypes-fieldname-AllowManualDetectionLimit');
     var ldman_chk  = $('#archetypes-fieldname-AllowManualDetectionLimit #AllowManualDetectionLimit');
 
+    var rounding_type = $('#archetypes-fieldname-DisplayRounding #DisplayRounding');
+    var precision = $('#archetypes-fieldname-Precision')
+    var significant_figures = $('#archetypes-fieldname-SignificantFigures');
+
     /**
      * Entry-point method for AnalysisServiceEditView
      */
     that.load = function() {
+
+        // LIMS-2371 Round using Decimal Precision or Significant Digits.
+        $(rounding_type).change(function(){
+            rounding_type_changed();
+        });
 
         // LIMS-1775 Allow to select LDL or UDL defaults in results with readonly mode
         // https://jira.bikalabs.com/browse/LIMS-1775
@@ -814,4 +823,22 @@ function AnalysisServiceEditView() {
         $(acalc_fd).find('label').hide();
         $(calc_fd).find('label').hide();
     }
+
+    function rounding_type_changed(){
+        var value = $(rounding_type).val();
+        if (value == "NONE") {
+          $(significant_figures).hide();
+          $(precision).hide();
+        }
+        else if (value == "DECIMAL_PRECISION"){
+          $(significant_figures).hide();
+          $(precision).show();
+        }
+        else if (value == "SIGNIFICANT_FIGURES"){
+          $(precision).hide();
+          $(significant_figures).show();
+        }
+    }
+    rounding_type_changed();
+
 }
