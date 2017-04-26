@@ -9,14 +9,13 @@ import Missing
 from zope import interface
 from zope import component
 
-from plone.dexterity.interfaces import IDexterityContent
-
 from Acquisition import ImplicitAcquisitionWrapper
 from AccessControl import Unauthorized
 
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.ZCatalog.interfaces import ICatalogBrain
 from Products.ATContentTypes.interfaces import IATContentType
+from Products.Archetypes.public import FileField
 
 from bika.lims import api
 from bika.lims import logger
@@ -24,8 +23,7 @@ from bika.lims.jsonapi.api import get_url_info
 from bika.lims.jsonapi import request as req
 from bika.lims.jsonapi.interfaces import IInfo
 from bika.lims.jsonapi.interfaces import IDataManager
-from bika.lims.jsonapi.datamanager import ATDataManager
-from bika.lims.jsonapi.datamanager import DexterityDataManager
+from bika.lims.jsonapi.datamanagers import ATDataManager
 
 import pkg_resources
 try:
@@ -129,23 +127,6 @@ class ZCDataProvider(Base):
             'listCreators',
             'meta_type',
         ]
-
-
-class DexterityDataProvider(Base):
-    """ Data Provider for Dexterity based content types
-    """
-    interface.implements(IInfo)
-    component.adapts(IDexterityContent)
-
-    def __init__(self, context):
-        super(DexterityDataProvider, self).__init__(context)
-
-        # get the behavior and schema fields from the data manager
-        dm = DexterityDataManager(context)
-        schema = dm.get_schema()
-        behaviors = dm.get_behaviors()
-
-        self.keys = schema.names() + behaviors.keys()
 
 
 class ATDataProvider(Base):
@@ -331,7 +312,7 @@ def get_download_url(obj, fieldname, field=_marker, default=None):
         return default
 
     download = None
-    if is_dexterity_content(obj):
+    if api.is_dexterity_content(obj):
         # calculate the download url
         filename = getattr(field, "filename", "")
         download = "{url}/@@download/{fieldname}/{filename}".format(
@@ -419,17 +400,6 @@ def is_date(thing):
     return isinstance(thing, date_types)
 
 
-def is_dexterity_content(obj):
-    """Checks if the given object is Dexterity based
-
-    :param obj: The content object to check
-    :type thing: ATContentType/DexterityContentType
-    :returns: True if the content object is Dexterity based
-    :rtype: bool
-    """
-    return IDexterityContent.providedBy(obj)
-
-
 def is_file_field(field):
     """Checks if the field is a file field
 
@@ -438,7 +408,7 @@ def is_file_field(field):
     :returns: True if the field is a file field
     :rtype: bool
     """
-    return hasattr(field, "filename")
+    return isinstance(field, FileField)
 
 
 def is_richtext_value(thing):
