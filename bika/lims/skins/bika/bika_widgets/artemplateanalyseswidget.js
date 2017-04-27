@@ -40,7 +40,7 @@
     $(element).after(select);
     // remove hidden field
     $(element).remove();
-    expand_cat(service_uid);
+    // expand_cat(service_uid);
   }
 
   function uncheck_service(service_uid){
@@ -288,28 +288,122 @@
   }
 
   function setAnalysisProfile(){
+
     // clear existing selection
-    $("input[id^='analyses_cb_']").filter(":checked").prop("checked",false);
-    $.each($("select[name^='Partition']"), function(i,element){
+    $("input[id^='analyses_cb_']").filter(":checked").prop("checked", false);
+    $.each($("select[name^='Partition']"), function(i, element){
       $(element).after(
         "<input type='hidden' name='"+$(element).attr("name")+"' value=''/>"
       );
       $(element).remove();
     });
-    //
+    $("th.expanded").click();
+
+    // Fetch the service data from the profile
     window.bika.lims.jsonapi_read({
       catalog_name: "uid_catalog",
       UID: $("#AnalysisProfile_uid").val(),
       sort_on: 'Title'
     }, function(profile_data){
-      var service_uids = profile_data.objects[0].Service_uid;
-      for (var i = 0; i < service_uids.length; i++){
-        check_service(service_uids[i]);
-        $("input[id^='analyses_cb_"+service_uids[i]+"']").prop("checked",true);
-      }
+
+      /* Expand Ajax Categories
+         https://github.com/bikalabs/bika.lims/issues/2012
+      */
+
+      var service_data = profile_data.objects[0].service_data;
+      var services = [];
+
+      // create a set of categories to expand
+      var categories_to_expand = [];
+      $(service_data).each(function(index, service) {
+        // remember the UIDs
+        services.push(service.UID);
+        var cat_title = service.CategoryTitle;
+        if (categories_to_expand.indexOf(cat_title) < 0) {
+          categories_to_expand.push(cat_title);
+        }
+      });
+
+      // expand the categories
+      var promises = [];
+
+      $(categories_to_expand).each(function(index, cat_title) {
+        var selector = "th[cat='" + cat_title + "']";
+        var $th = $(selector);
+        var d = category_header_expand_handler($th);
+        promises.push(d);
+      });
+
+      console.info("Need to wait for " + promises.length + " categories to resolve...");
+
+      // select analyses of the profile after all categories have been loaded
+      $.when.apply($, promises).done(function() {
+        console.debug("All " + promises.lenght + " Categories loaded!");
+        $(services).each(function(index, uid) {
+          var $cb = $("#analyses_cb_" + uid);
+          $cb.prop("checked", true);
+          console.debug("Select Analysis:", $cb.prop("alt"));
+          check_service(uid);
+          // calculate automatic partitions
+          calculate_parts();
+        });
+      });
     });
-    // calculate automatic partitions
-    calculate_parts();
+  }
+
+  function category_header_expand_handler(element) {
+    // element is the category header TH.
+    // duplicated in bika.lims.analysisrequest.add_by_col.js
+    var def = $.Deferred();
+    // with form_id allow multiple ajax-categorised tables in a page
+    var form_id = $(element).parents("[form_id]").attr("form_id");
+    var cat_title = $(element).attr('cat');
+    // URL can be provided by bika_listing classes, with ajax_category_url attribute.
+    var url = $("input[name='ajax_categories_url']").length > 0
+        ? $("input[name='ajax_categories_url']").val()
+        : window.location.href.split('?')[0];
+    // We will replace this element with downloaded items:
+    var placeholder = $("tr[data-ajax_category='" + cat_title + "']");
+
+    // If it's already been expanded, ignore
+    if ($(element).hasClass("expanded")) {
+      def.resolve();
+      return def.promise();
+    }
+
+    // If ajax_categories are enabled, we need to go request items now.
+    var ajax_categories_enabled = $("input[name='ajax_categories']");
+    if (ajax_categories_enabled.length > 0 && placeholder.length > 0) {
+      var options = {};
+      options['ajax_category_expand'] = 1;
+      options['cat'] = cat_title;
+      options['form_id'] = form_id;
+      url = $("input[name='ajax_categories_url']").length > 0
+          ? $("input[name='ajax_categories_url']").val()
+          : url;
+      if ($('.review_state_selector a.selected').length > 0) {
+        // review_state must be kept the same after items are loaded
+        // (TODO does this work?)
+        options['review_state'] = $('.review_state_selector a.selected')[0].id;
+      }
+      $.ajax({url: url, data: options})
+          .done(function (data) {
+            // The same as: LIMS-1970 Analyses from AR Add form not displayed properly
+            var rows = $("<table>"+data+"</table>").find("tr");
+            $("[form_id='" + form_id + "'] tr[data-ajax_category='" + cat_title + "']")
+                .replaceWith(rows);
+            $(element).removeClass("collapsed").addClass("expanded");
+            def.resolve();
+          });
+    }
+    else {
+      // When ajax_categories are disabled, all cat items exist as TR elements:
+      $(element).parent().nextAll("tr[cat='" + $(element).attr("cat") + "']").toggle(true);
+      $(element).removeClass("collapsed").addClass("expanded");
+      def.resolve();
+    }
+    // Set expanded class on TR
+    return def.promise();
   }
 
   function click_uid_checkbox(){
