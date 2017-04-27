@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-04-08 10:07+0000\n"
+"POT-Creation-Date: 2017-04-27 09:15+0000\n"
 "PO-Revision-Date: 2017-04-08 10:02+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Afrikaans (http://www.transifex.com/bikalabs/bika-lims/language/af/)\n"
@@ -43,7 +43,7 @@ msgstr "${items} wag op ontvangs."
 msgid "${items} invalidated."
 msgstr "${item} ongeldig gemaak."
 
-#: bika/lims/controlpanel/bika_analysisservices.py:114
+#: bika/lims/controlpanel/bika_analysisservices.py:117
 msgid "${items} were successfully created."
 msgstr "${items} suksesvol geskep."
 
@@ -64,7 +64,7 @@ msgstr "${item} wag op preservering."
 msgid "${item} is waiting to be received."
 msgstr "${item} wag op preservering."
 
-#: bika/lims/controlpanel/bika_analysisservices.py:118
+#: bika/lims/controlpanel/bika_analysisservices.py:121
 msgid "${item} was successfully created."
 msgstr "${items} suksesvol geskep."
 
@@ -391,7 +391,7 @@ msgstr "Alle Ontledings van Tipe"
 msgid "Allow Lab Clerks to create and edit clients"
 msgstr "Laat Lab Klerke toe om  kliënte te skep en wysig "
 
-#: bika/lims/content/analysisservice.py:339
+#: bika/lims/content/analysisservice.py:361
 msgid "Allow Manual Detection Limit input"
 msgstr "Laat handmatige  waarneming grense invoer"
 
@@ -399,7 +399,7 @@ msgstr "Laat handmatige  waarneming grense invoer"
 msgid "Allow access to worksheets only to assigned analysts"
 msgstr "Toegang tot werkkaarte net deur toegewysde analiste"
 
-#: bika/lims/content/analysisservice.py:864
+#: bika/lims/content/analysisservice.py:953
 msgid "Allow manual uncertainty value input"
 msgstr "Laat handmatige Onsekerheidswaarde invoer toe"
 
@@ -415,11 +415,11 @@ msgstr ""
 msgid "Allow self-verification of results"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:340
+#: bika/lims/content/analysisservice.py:362
 msgid "Allow the analyst to manually replace the default Detection Limits (LDL and UDL) on results entry views"
 msgstr "Laat die analis toe om die verstek waarnemings grense handmatig aan te pas op resulltaat invoer skerms"
 
-#: bika/lims/content/analysisservice.py:865
+#: bika/lims/content/analysisservice.py:954
 msgid "Allow the analyst to manually replace the default uncertainty value."
 msgstr "Laat die analis toe om onsekerheidswaardes handmatig aan te pas"
 
@@ -427,7 +427,7 @@ msgstr "Laat die analis toe om onsekerheidswaardes handmatig aan te pas"
 msgid "Allow users to filter datas by department."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:626
+#: bika/lims/content/analysisservice.py:674
 msgid "Alternative Calculation"
 msgstr "Alternatiewe Berekening"
 
@@ -527,11 +527,11 @@ msgstr "Ontleding Aanhangsel Keuse"
 msgid "Analysis Categories"
 msgstr "Ontledingskategoriee"
 
-#: bika/lims/content/analysisservice.py:712
+#: bika/lims/content/analysisservice.py:775
 msgid "Analysis Category"
 msgstr "Ontledingskategorie"
 
-#: bika/lims/content/analysisservice.py:372
+#: bika/lims/content/analysisservice.py:400
 msgid "Analysis Keyword"
 msgstr "Ontleding Sleutelwoord"
 
@@ -617,7 +617,7 @@ msgid "Analysis Service"
 msgstr "Ontledingsdiens"
 
 #: bika/lims/config.py:44
-#: bika/lims/controlpanel/bika_analysisservices.py:144
+#: bika/lims/controlpanel/bika_analysisservices.py:147
 msgid "Analysis Services"
 msgstr "Ontledingsdienste"
 
@@ -729,7 +729,7 @@ msgid "Analyst must be specified."
 msgstr "Analis verpligtend"
 
 #: bika/lims/browser/worksheet/templates/add_analyses.pt:60
-#: bika/lims/content/analysisservice.py:76
+#: bika/lims/content/analysisservice.py:75
 msgid "Any"
 msgstr "Enige"
 
@@ -795,7 +795,7 @@ msgstr "Aanhangsel"
 msgid "Attachment Keys"
 msgstr "Aanhangsel Sleutels"
 
-#: bika/lims/content/analysisservice.py:358
+#: bika/lims/content/analysisservice.py:384
 msgid "Attachment Option"
 msgstr "Aanhangsel Keuse"
 
@@ -967,7 +967,7 @@ msgstr ""
 msgid "Bulk discount applies"
 msgstr "Volume afslag toegepas"
 
-#: bika/lims/content/analysisservice.py:731
+#: bika/lims/content/analysisservice.py:798
 msgid "Bulk price (excluding VAT)"
 msgstr "Groot volume prys (BTW uitgesluit)"
 
@@ -989,7 +989,7 @@ msgstr "CC Kontakte"
 msgid "CC Emails"
 msgstr "Kopie aan E-pos"
 
-#: bika/lims/content/analysisservice.py:839
+#: bika/lims/content/analysisservice.py:927
 msgid "Calculate Precision from Uncertainties"
 msgstr "Bereken presisie van onsekerheid"
 
@@ -1004,7 +1004,7 @@ msgid "Calculation Formula"
 msgstr "Berekening Formule"
 
 #: bika/lims/content/analysis.py:98
-#: bika/lims/content/analysisservice.py:652
+#: bika/lims/content/analysisservice.py:705
 #: bika/lims/content/calculation.py:49
 msgid "Calculation Interim Fields"
 msgstr "Berekening Interim Velde"
@@ -1125,7 +1125,7 @@ msgstr ""
 msgid "Check if the method has been accredited"
 msgstr "Kliek indien die metode ge-akkrediteer is"
 
-#: bika/lims/content/analysisservice.py:682
+#: bika/lims/content/analysisservice.py:741
 msgid "Check this box if the analysis service is included in the laboratory's schedule of accredited analyses"
 msgstr "Merk indien die ontleding in die laboratorium se akkreditasie skedule ingesluit is"
 
@@ -1145,7 +1145,7 @@ msgstr "Kies indien hierdie die verstek prioriteit is"
 msgid "Check this box if your laboratory is accredited"
 msgstr "Merk indien jou laboratorium ge-akkrediteer is"
 
-#: bika/lims/content/analysisservice.py:897
+#: bika/lims/content/analysisservice.py:994
 msgid "Check this box to ensure a separate sample container is used for this analysis service"
 msgstr "Kies hierdie blokkie om 'n afsonderlike monsterhouer te gebruik vir dierdie ontledingsdiens"
 
@@ -1302,7 +1302,7 @@ msgid "Comments or results interpretation"
 msgstr "Kommentaar of interpretasie van resultate"
 
 #: bika/lims/content/analysisprofile.py:74
-#: bika/lims/content/analysisservice.py:1000
+#: bika/lims/content/analysisservice.py:1109
 msgid "Commercial ID"
 msgstr "Komersiële ID"
 
@@ -1368,7 +1368,7 @@ msgstr "Houer"
 msgid "Container Title"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:104
+#: bika/lims/content/analysisservice.py:103
 #: bika/lims/content/container.py:32
 #: bika/lims/controlpanel/bika_containers.py:48
 msgid "Container Type"
@@ -1659,12 +1659,12 @@ msgstr "Verstek OV specifikasie"
 msgid "Default ARReport Template"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:595
+#: bika/lims/content/analysisservice.py:641
 msgid "Default Calculation"
 msgstr "Verstek formule"
 
 #: bika/lims/content/analysisrequest.py:1127
-#: bika/lims/content/analysisservice.py:930
+#: bika/lims/content/analysisservice.py:1031
 #: bika/lims/controlpanel/bika_sampletypes.py:63
 msgid "Default Container"
 msgstr "Verstekhouer"
@@ -1677,15 +1677,15 @@ msgstr "Verstek houertipe"
 msgid "Default Emails to CC all published ARs for this client"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:475
+#: bika/lims/content/analysisservice.py:511
 msgid "Default Instrument"
 msgstr "Verstek Instrument"
 
-#: bika/lims/content/analysisservice.py:554
+#: bika/lims/content/analysisservice.py:596
 msgid "Default Method"
 msgstr "Verstek Metode"
 
-#: bika/lims/content/analysisservice.py:911
+#: bika/lims/content/analysisservice.py:1010
 msgid "Default Preservation"
 msgstr "Verstekpreservering"
 
@@ -1693,7 +1693,7 @@ msgstr "Verstekpreservering"
 msgid "Default Priority?"
 msgstr "Verstek Prioriteit?"
 
-#: bika/lims/content/analysisservice.py:596
+#: bika/lims/content/analysisservice.py:642
 msgid "Default calculation to be used from the default Method selected. The Calculation for a method can be assigned in the Method edit view."
 msgstr "Verstek berekening om te gebruik vir die gekose standaard Metode. Die berekening vir 'n metode kan in die Metode gewysig word."
 
@@ -1758,11 +1758,11 @@ msgstr "Definieer 'n unieke indentifikasie kode vir die metode."
 msgid "Define interim fields such as vessel mass, dilution factors, should your calculation require them. The field title specified here will be used as column headers and field descriptors where the interim fields are displayed. If 'Apply wide' is enabled the field will be shown in a selection box on the top of the worksheet, allowing to apply a specific value to all the corresponding fields on the sheet."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:252
+#: bika/lims/content/analysisservice.py:264
 msgid "Define the number of decimals to be used for this result."
 msgstr "Spesifiseer die hoeveelheid desimale vir die resultaat"
 
-#: bika/lims/content/analysisservice.py:261
+#: bika/lims/content/analysisservice.py:275
 msgid "Define the precision when converting values to exponent notation.  The default is 7."
 msgstr "Definieer die presisie vir eksponensiele notering. Die verstek waarde is 7."
 
@@ -1857,11 +1857,11 @@ msgstr ""
 msgid "Dispatched"
 msgstr "Versend"
 
-#: bika/lims/content/analysisservice.py:877
+#: bika/lims/content/analysisservice.py:968
 msgid "Display Value"
 msgstr "Vertoonwaarde"
 
-#: bika/lims/content/analysisservice.py:321
+#: bika/lims/content/analysisservice.py:341
 msgid "Display a Detection Limit selector"
 msgstr "Vertoon 'n waarnemings grens kiesskakelaar"
 
@@ -1965,13 +1965,13 @@ msgid "Due Date"
 msgstr "Verwag op Datum"
 
 #: bika/lims/browser/accreditation.py:75
-#: bika/lims/controlpanel/bika_analysisservices.py:201
+#: bika/lims/controlpanel/bika_analysisservices.py:204
 msgid "Dup Var"
 msgstr "Dup Var"
 
 #: bika/lims/browser/worksheet/views/analyses.py:233
 #: bika/lims/config.py:52
-#: bika/lims/controlpanel/bika_analysisservices.py:246
+#: bika/lims/controlpanel/bika_analysisservices.py:249
 msgid "Duplicate"
 msgstr "Duplikaat"
 
@@ -1983,7 +1983,7 @@ msgstr "Duplikaat Of"
 msgid "Duplicate QC analyses"
 msgstr "Duplikaat KB ontledings"
 
-#: bika/lims/content/analysisservice.py:670
+#: bika/lims/content/analysisservice.py:727
 msgid "Duplicate Variation %"
 msgstr "Duplikaat Variasie %"
 
@@ -2074,7 +2074,7 @@ msgstr "Verskaf 'n epos adres. Dit is nodig ingeval die wagwoord verlore gaan. O
 msgid "Enter discount percentage value"
 msgstr "Sleutel afslag persentasie in"
 
-#: bika/lims/content/analysisservice.py:757
+#: bika/lims/content/analysisservice.py:830
 #: bika/lims/content/labproduct.py:31
 msgid "Enter percentage value eg. 14.0"
 msgstr "Sleutel 'n persentasie in, bv. 14.0"
@@ -2170,7 +2170,7 @@ msgstr "Verval"
 msgid "Expiry Date"
 msgstr "Vervaldatum"
 
-#: bika/lims/content/analysisservice.py:260
+#: bika/lims/content/analysisservice.py:274
 msgid "Exponential format precision"
 msgstr "Eksponensiële formaat presisie "
 
@@ -2260,7 +2260,7 @@ msgid "Firstname"
 msgstr "Voornaam"
 
 #: bika/lims/content/analysiscategory.py:64
-#: bika/lims/content/analysisservice.py:226
+#: bika/lims/content/analysisservice.py:232
 msgid "Float value from 0.0 - 1000.0 indicating the sort order. Duplicate values are ordered alphabetically."
 msgstr ""
 
@@ -2371,7 +2371,7 @@ msgstr ""
 msgid "Identifiers for this object"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:555
+#: bika/lims/content/analysisservice.py:597
 msgid "If 'Allow instrument entry of results' is selected, the method from the default instrument will be used. Otherwise, only the methods selected above will be displayed."
 msgstr ""
 
@@ -2379,7 +2379,7 @@ msgstr ""
 msgid "If a sample is taken periodically at this sample point, enter frequency here, e.g. weekly"
 msgstr "Indien 'n monster periodiek by hierdie posisisie geneem word, sleutel die periode hier in, bv. weekliks, daagliks"
 
-#: bika/lims/content/analysisservice.py:322
+#: bika/lims/content/analysisservice.py:342
 msgid "If checked, a selection list will be displayed next to the analysis' result field in results entry views. By using this selector, the analyst will be able to set the value as a Detection Limit (LDL or UDL) instead of a regular result"
 msgstr ""
 
@@ -2391,7 +2391,7 @@ msgstr ""
 msgid "If enabled, a free text field will be displayed close to each analysis in results entry view"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:970
+#: bika/lims/content/analysisservice.py:1076
 msgid "If enabled, a user who submitted a result for this analysis will also be able to verify it. This setting take effect for those users with a role assigned that allows them to verify results (by default, managers, labmanagers and verifiers). The option set here has priority over the option set in Bika Setup"
 msgstr ""
 
@@ -2399,11 +2399,11 @@ msgstr ""
 msgid "If enabled, a user who submitted a result will also be able to verify it. This setting only take effect for those users with a role assigned that allows them to verify results (by default, managers, labmanagers and verifiers).This setting can be overrided for a given Analysis in Analysis Service edit view. By default, disabled."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:234
+#: bika/lims/content/analysisservice.py:242
 msgid "If enabled, the name of the analysis will be written in italics."
 msgstr "Geaktiveer, word die ontleding nam skuinsdruk geskryf."
 
-#: bika/lims/content/analysisservice.py:956
+#: bika/lims/content/analysisservice.py:1061
 msgid "If enabled, this analysis and its results will not be displayed by default in reports. This setting can be overrided in Analysis Profile and/or Analysis Request"
 msgstr ""
 
@@ -2415,11 +2415,11 @@ msgstr "geen Titel verskaf, die Bondel ID word gebruik"
 msgid "If required, select a calculation for the The analysis services linked to this method. Calculations can be configured under the calculations item in the LIMS set-up"
 msgstr "Indien nodig, kies 'n berekening vir hierdie ontleding. Berekeninge kan opgestel word onder die berekenings item in die stelselopstelling"
 
-#: bika/lims/content/analysisservice.py:627
+#: bika/lims/content/analysisservice.py:675
 msgid "If required, select a calculation for the analysis here. Calculations can be configured under the calculations item in the LIMS set-up"
 msgstr "Indien nodig, kies 'n berekening formule hier vir die ontleding. Formules kan saamgestel word onder die formule hoof in die stelsel opstelling"
 
-#: bika/lims/content/analysisservice.py:215
+#: bika/lims/content/analysisservice.py:219
 msgid "If text is entered here, it is used instead of the title when the service is listed in column headings. HTML formatting is allowed."
 msgstr ""
 
@@ -2496,7 +2496,7 @@ msgstr "Verkeerde NIB nommer: %s"
 msgid "Indeterminate result"
 msgstr "Onbepaalbare resultaat"
 
-#: bika/lims/content/analysisservice.py:359
+#: bika/lims/content/analysisservice.py:385
 msgid "Indicates whether file attachments, e.g. microscope images, are required for this analysis and whether file upload function will be available for it on data capturing screens"
 msgstr "Dui aan of lêeraanhangsels bv. mikroskoopbeelde nodig is vir die ontleding en of die lêer-oplaaifunksie beskikbaar sal wees daarvoor vir data-ontvangsskerms."
 
@@ -2592,11 +2592,11 @@ msgstr "Instrument tipes"
 msgid "Instrument Validations"
 msgstr "Instrument Validasies"
 
-#: bika/lims/content/analysisservice.py:409
+#: bika/lims/content/analysisservice.py:441
 msgid "Instrument assignment is allowed"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:389
+#: bika/lims/content/analysisservice.py:419
 msgid "Instrument assignment is not required"
 msgstr ""
 
@@ -2640,7 +2640,7 @@ msgstr "Instrumenttipe"
 msgid "Instrument's calibration certificate expired:"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:436
+#: bika/lims/content/analysisservice.py:470
 #: bika/lims/content/method.py:58
 #: bika/lims/controlpanel/bika_instruments.py:35
 msgid "Instruments"
@@ -2970,7 +2970,7 @@ msgstr "Breedtegraad"
 msgid "Lot Number"
 msgstr "Lot Nommer"
 
-#: bika/lims/content/analysisservice.py:271
+#: bika/lims/content/analysisservice.py:287
 msgid "Lower Detection Limit (LDL)"
 msgstr "Laer Waarnemings Grens (LWG)"
 
@@ -3053,7 +3053,7 @@ msgid "Max"
 msgstr "Maks"
 
 #: bika/lims/browser/accreditation.py:74
-#: bika/lims/controlpanel/bika_analysisservices.py:197
+#: bika/lims/controlpanel/bika_analysisservices.py:200
 msgid "Max Time"
 msgstr "Maks Tyd"
 
@@ -3066,12 +3066,12 @@ msgid "Maximum possible size or volume of samples."
 msgstr "Maksimum moontlike volume vir monsters"
 
 #: bika/lims/content/analysis.py:116
-#: bika/lims/content/analysisservice.py:662
+#: bika/lims/content/analysisservice.py:717
 msgid "Maximum time allowed for completion of the analysis. A late analysis alert is raised when this period elapses"
 msgstr "Maksimum tydsverloop toegelaat vir die afhandeling van die ontleding. 'n Laat ontleding waarskuwing word vertoon na afloop van hierdie periode"
 
 #: bika/lims/content/analysis.py:115
-#: bika/lims/content/analysisservice.py:661
+#: bika/lims/content/analysisservice.py:716
 msgid "Maximum turn-around time"
 msgstr "Maksimum Omkeertyd"
 
@@ -3120,7 +3120,7 @@ msgstr "Metode: ${method_name}"
 msgid "Method: None"
 msgstr "Metode: Geen"
 
-#: bika/lims/content/analysisservice.py:515
+#: bika/lims/content/analysisservice.py:555
 #: bika/lims/content/instrument.py:137
 #: bika/lims/content/methods.py:34
 msgid "Methods"
@@ -3195,7 +3195,7 @@ msgstr ""
 msgid "More"
 msgstr "Meer"
 
-#: bika/lims/content/analysisservice.py:437
+#: bika/lims/content/analysisservice.py:471
 msgid "More than one instrument can be used in a test of this type of analysis. A selection list with the instruments selected here is populated in the results manage view for each test of this type of analysis. The available instruments in the selection list will change in accordance with the method selected by the user for that test in the manage results view. Although a method can have more than one instrument assigned, the selection list is only populated with the instruments that are both set here and allowed for the selected method."
 msgstr ""
 
@@ -3224,7 +3224,7 @@ msgstr "Nuut"
 
 #: bika/lims/browser/analysisservice.py:102
 #: bika/lims/browser/header_table.py:84
-#: bika/lims/content/analysisservice.py:1450
+#: bika/lims/content/analysisservice.py:1561
 msgid "No"
 msgstr "Nee"
 
@@ -3313,7 +3313,7 @@ msgstr "Geen items is gekies nie"
 msgid "No items selected"
 msgstr "Niks geselekteer"
 
-#: bika/lims/controlpanel/bika_analysisservices.py:122
+#: bika/lims/controlpanel/bika_analysisservices.py:125
 msgid "No new items were created."
 msgstr "Geen nuwe items geskep"
 
@@ -3358,7 +3358,7 @@ msgid "No valid instruments found: ${invalid_list}"
 msgstr ""
 
 #: bika/lims/browser/analyses.py:207
-#: bika/lims/content/analysisservice.py:1154
+#: bika/lims/content/analysisservice.py:1272
 #: bika/lims/content/bikasetup.py:93
 msgid "None"
 msgstr "Geen"
@@ -3443,7 +3443,7 @@ msgstr ""
 msgid "Number of requests"
 msgstr "Aantal versoeke"
 
-#: bika/lims/content/analysisservice.py:986
+#: bika/lims/content/analysisservice.py:1093
 #: bika/lims/content/bikasetup.py:421
 msgid "Number of required verifications"
 msgstr ""
@@ -3452,7 +3452,7 @@ msgstr ""
 msgid "Number of required verifications before a given result being considered as 'verified'. This setting can be overrided for any Analysis in Analysis Service edit view. By default, 1"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:987
+#: bika/lims/content/analysisservice.py:1094
 msgid "Number of required verifications from different users with enough privileges before a given result for this analysis being considered as 'verified'. The option set here has priority over the option set in Bika Setup"
 msgstr ""
 
@@ -3659,7 +3659,7 @@ msgstr "Fisiese adres"
 msgid "Please correct the indicated errors."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:885
+#: bika/lims/content/analysisservice.py:980
 msgid "Please list all options for the analysis result if you want to restrict it to specific options only, e.g. 'Positive', 'Negative' and 'Indeterminable'.  The option's result value must be a number"
 msgstr "Lys alle opsies vir die ontledingsuitslag indien u dit wil beperk tot spesifieke opsies, bv 'Positief', 'Negatief' en 'Onbepaald'. Die opsie se uitslagwaarde moet 'n syfer wees"
 
@@ -3667,7 +3667,7 @@ msgstr "Lys alle opsies vir die ontledingsuitslag indien u dit wil beperk tot sp
 msgid "Please select a User from the list"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:945
+#: bika/lims/content/analysisservice.py:1048
 msgid "Please specify preservations that differ from the analysis service's default preservation per sample type here."
 msgstr "Spesifiseer preservering wat verskil van die ontledingsdiens se verstekpreservering per monstertipe"
 
@@ -3675,7 +3675,7 @@ msgstr "Spesifiseer preservering wat verskil van die ontledingsdiens se verstekp
 msgid "Please upload the logo you are authorised to use on your website and results reports by your accreditation body. Maximum size is 175 x 175 pixels."
 msgstr "Laai asb die logo toegelaat deur die akkreditasie instelling. Maksimum grote is 175  x 175 pixels"
 
-#: bika/lims/content/analysisservice.py:694
+#: bika/lims/content/analysisservice.py:755
 msgid "Point of Capture"
 msgstr "Punt van Monstering"
 
@@ -3703,11 +3703,11 @@ msgstr "Poskode"
 msgid "Pre-preserved"
 msgstr "Vooraf gepreserveer"
 
-#: bika/lims/content/analysisservice.py:251
+#: bika/lims/content/analysisservice.py:263
 msgid "Precision as number of decimals"
 msgstr "Hoeveelheid desimale "
 
-#: bika/lims/content/analysisservice.py:840
+#: bika/lims/content/analysisservice.py:928
 msgid "Precision as the number of significant digits according to the uncertainty. The decimal position will be given by the first number different from zero in the uncertainty, at that position the system will round up the uncertainty and results. For example, with a result of 5.243 and an uncertainty of 0.22, the system will display correctly as 5.2+-0.2. If no uncertainty range is set for the result, the system will use the fixed precision set."
 msgstr ""
 
@@ -3762,7 +3762,7 @@ msgstr ""
 
 #: bika/lims/browser/sample/partitions.py:45
 #: bika/lims/browser/srtemplate/artemplates.py:68
-#: bika/lims/content/analysisservice.py:136
+#: bika/lims/content/analysisservice.py:135
 msgid "Preservation"
 msgstr "Preservering"
 
@@ -3813,7 +3813,7 @@ msgid "Price"
 msgstr "Prys"
 
 #: bika/lims/content/analysisprofile.py:95
-#: bika/lims/content/analysisservice.py:723
+#: bika/lims/content/analysisservice.py:788
 msgid "Price (excluding VAT)"
 msgstr "Prys (BTW uitg)"
 
@@ -3898,7 +3898,7 @@ msgstr "Profiele"
 msgid "Proforma (Not yet invoiced)"
 msgstr "Proforma (Nog nie Gefaktureer)"
 
-#: bika/lims/content/analysisservice.py:1009
+#: bika/lims/content/analysisservice.py:1120
 msgid "Protocol ID"
 msgstr "Protokol ID"
 
@@ -3978,11 +3978,11 @@ msgstr "Bereik kommentaar"
 msgid "Range comment"
 msgstr "Bereik kommentaar"
 
-#: bika/lims/content/analysisservice.py:806
+#: bika/lims/content/analysisservice.py:891
 msgid "Range max"
 msgstr "Bereik maks"
 
-#: bika/lims/content/analysisservice.py:805
+#: bika/lims/content/analysisservice.py:890
 msgid "Range min"
 msgstr "Bereik min"
 
@@ -4193,7 +4193,7 @@ msgid "Report Type"
 msgstr "Verslagtipe"
 
 #: bika/lims/content/analysisrequest.py:1233
-#: bika/lims/content/analysisservice.py:349
+#: bika/lims/content/analysisservice.py:373
 #: bika/lims/content/artemplate.py:94
 msgid "Report as Dry Matter"
 msgstr "Rapporteer as Droe Materiaal"
@@ -4267,7 +4267,7 @@ msgstr "Versoeke"
 msgid "Required"
 msgstr "Vereis"
 
-#: bika/lims/content/analysisservice.py:138
+#: bika/lims/content/analysisservice.py:137
 msgid "Required Volume"
 msgstr "Vereiste volume"
 
@@ -4289,11 +4289,11 @@ msgstr "Resultaat"
 msgid "Result Footer"
 msgstr "Resultaat voetskrif"
 
-#: bika/lims/content/analysisservice.py:884
+#: bika/lims/content/analysisservice.py:979
 msgid "Result Options"
 msgstr "Resultaat Keuses"
 
-#: bika/lims/content/analysisservice.py:876
+#: bika/lims/content/analysisservice.py:967
 msgid "Result Value"
 msgstr "Resultaat Value"
 
@@ -4683,7 +4683,7 @@ msgstr ""
 msgid "Scheduled task"
 msgstr "Geskeduleerde taak"
 
-#: bika/lims/content/analysisservice.py:233
+#: bika/lims/content/analysisservice.py:241
 msgid "Scientific name"
 msgstr "Wetenskaplike naam"
 
@@ -4716,7 +4716,7 @@ msgstr "Kies OV Templaat on in te sluit"
 msgid "Select a data interface"
 msgstr "Kies 'n data koppelvlak"
 
-#: bika/lims/content/analysisservice.py:912
+#: bika/lims/content/analysisservice.py:1011
 msgid "Select a default preservation for this analysis service. If the preservation depends on the sample type combination, specify a preservation per sample type in the table below"
 msgstr "Kies 'n verstek preservering vir hierdie ontleding. Indine die preservering van die monster tipe afhang, spesifiseer die preservering per monster tipe in die tabel benede"
 
@@ -4764,7 +4764,7 @@ msgstr "Spesifiseer of die ontledings uitgesluit moet word op fakture"
 msgid "Select if is an in-house calibration certificate"
 msgstr "Kies as 'n interne kalibrasie sertifikaat"
 
-#: bika/lims/content/analysisservice.py:571
+#: bika/lims/content/analysisservice.py:615
 msgid "Select if the calculation to be used is the calculation set by default in the default method. If unselected, the calculation can be selected manually"
 msgstr ""
 
@@ -4772,11 +4772,11 @@ msgstr ""
 msgid "Select if the descriptions should be included"
 msgstr "Kies die beskrywings wat ingesluit moet word"
 
-#: bika/lims/content/analysisservice.py:410
+#: bika/lims/content/analysisservice.py:442
 msgid "Select if the results for tests of this type of analysis can be set by using an instrument. If disabled, no instruments will be available for tests of this type of analysis in manage results view, even though the method selected for the test has instruments assigned."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:390
+#: bika/lims/content/analysisservice.py:420
 msgid "Select if the results for tests of this type of analysis can be set manually. If selected, the user will be able to set a result for a test of this type of analysis in manage results view without the need of selecting an instrument, even though the method selected for the test has instruments assigned."
 msgstr ""
 
@@ -4802,7 +4802,7 @@ msgstr "Kies die verstek land vir die stelsel"
 msgid "Select the currency the site will use to display prices."
 msgstr "Kies geldeenheid waarin pryse vertoon word"
 
-#: bika/lims/content/analysisservice.py:931
+#: bika/lims/content/analysisservice.py:1032
 msgid "Select the default container to be used for this analysis service. If the container to be used depends on the sample type and preservation combination, specify the container in the sample type table below"
 msgstr "Kies die verstekhouer om te gebruik vir hierdie ontledingsdiens. Spesifiseer die houer in die monstertipe tabel hieronder as die houer afhang van die monstertipe en preserveringskombinasie."
 
@@ -4862,7 +4862,7 @@ msgstr ""
 msgid "Select which sticker to print when automatic sticker printing is enabled"
 msgstr "Kies watter etiket om te druk as outomatiese druk gestel is"
 
-#: bika/lims/content/analysisservice.py:969
+#: bika/lims/content/analysisservice.py:1075
 msgid "Self-verification of results"
 msgstr ""
 
@@ -4874,7 +4874,7 @@ msgstr "Stuur epos"
 msgid "Separate"
 msgstr "Afsonderlik"
 
-#: bika/lims/content/analysisservice.py:135
+#: bika/lims/content/analysisservice.py:134
 msgid "Separate Container"
 msgstr "Afsonderlike houer"
 
@@ -4939,7 +4939,7 @@ msgstr "Rak Titel"
 msgid "Shipping address"
 msgstr "Verskepingsadres"
 
-#: bika/lims/content/analysisservice.py:214
+#: bika/lims/content/analysisservice.py:218
 msgid "Short title"
 msgstr "Kort titel"
 
@@ -5003,7 +5003,7 @@ msgid "Some analyses use out-of-date or uncalibrated instruments. Results editio
 msgstr ""
 
 #: bika/lims/content/analysiscategory.py:63
-#: bika/lims/content/analysisservice.py:225
+#: bika/lims/content/analysisservice.py:231
 #: bika/lims/content/arpriority.py:20
 msgid "Sort Key"
 msgstr "Sorteer Orde"
@@ -5020,7 +5020,7 @@ msgstr "Spesifikasies"
 msgid "Specify the size of the Worksheet, e.g. corresponding to a specific instrument's tray size. Then select an Analysis 'type' per Worksheet position. Where QC samples are selected, also select which Reference Sample should be used. If a duplicate analysis is selected, indicate which sample position it should be a duplicate of"
 msgstr "Spesifiseer die grootte van die werksblad, bv ooreenkomstig spesifieke instrumente se laaigrootte. Kies dan 'n analise-tipe per werksbladposisise. Waar KB monsters gekies is, kies ook watter verwysingsmonster gebruik behoort te word. As 'n duplikaatanalise gekies is, dui aan watter van monsterposisie dit 'n duplikaat moet wees. "
 
-#: bika/lims/content/analysisservice.py:815
+#: bika/lims/content/analysisservice.py:901
 msgid "Specify the uncertainty value for a given range, e.g. for results in a range with minimum of 0 and maximum of 10, where the uncertainty value is 0.5 - a result of 6.67 will be reported as 6.67 +- 0.5. You can also specify the uncertainty value as a percentage of the result value, by adding a '%' to the value entered in the 'Uncertainty Value' column, e.g. for results in a range with minimum of 10.01 and a maximum of 100, where the uncertainty value is 2% - a result of 100 will be reported as 100 +- 2. Please ensure successive ranges are continuous, e.g. 0.00 - 10.00 is followed by 10.01 - 20.00, 20.01 - 30 .00 etc."
 msgstr ""
 
@@ -5138,7 +5138,7 @@ msgstr ""
 msgid "System Dashboard"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1451
+#: bika/lims/content/analysisservice.py:1562
 msgid "System default"
 msgstr ""
 
@@ -5198,11 +5198,11 @@ msgstr " Die ID deur die lab toegeken aan die kliënt se monster"
 msgid "The Laboratory's web address"
 msgstr "Die laboratorium se web adres"
 
-#: bika/lims/content/analysisservice.py:272
+#: bika/lims/content/analysisservice.py:288
 msgid "The Lower Detection Limit is the lowest value to which the measured parameter can be measured using the specified testing methodology. Results entered which are less than this value will be reported as < LDL"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:288
+#: bika/lims/content/analysisservice.py:306
 msgid "The Upper Detection Limit is the highest value to which the measured parameter can be measured using the specified testing methodology. Results entered which are greater than this value will be reported as > UDL"
 msgstr ""
 
@@ -5235,7 +5235,7 @@ msgstr "Die analis verantwoordelik vir die validasie"
 msgid "The attachments linked to analysis requests and analyses"
 msgstr "Die aanhegsels verwant aan ontledingsversoek"
 
-#: bika/lims/content/analysisservice.py:713
+#: bika/lims/content/analysisservice.py:776
 msgid "The category the analysis service belongs to"
 msgstr "Die kategorie waaraan die ontleding behoort"
 
@@ -5301,7 +5301,7 @@ msgid "The lab is not accredited, or accreditation has not been configured. "
 msgstr "Die laboratorium is nie ge-akkrediteer nie, of die akkreditasie opstelling is nog nie gedoen nie."
 
 #: bika/lims/content/analysiscategory.py:51
-#: bika/lims/content/analysisservice.py:783
+#: bika/lims/content/analysisservice.py:862
 #: bika/lims/content/labcontact.py:59
 msgid "The laboratory department"
 msgstr "Die laboratorium departement"
@@ -5326,7 +5326,7 @@ msgstr "Die lys monsterpunte waarvanaf hierdie monstertipe versamel kan word. In
 msgid "The list of sample types that can be collected at this sample point.  If no sample types are selected, then all sample types are available."
 msgstr "Die lys monstertipes wat by hierdie monsterpunt versamel kan word. Indien geen monstertipes gekies is nie, is alle  monstertipes beskikbaar."
 
-#: bika/lims/content/analysisservice.py:243
+#: bika/lims/content/analysisservice.py:253
 msgid "The measurement units for this analysis service' results, e.g. mg/l, ppm, dB, mV, etc."
 msgstr "Die meet eenheid vir die ontleding resultate, bv. mg/l, ppm, mV ens."
 
@@ -5400,7 +5400,7 @@ msgstr ""
 msgid "The person at the supplier who prepared the certificate"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:732
+#: bika/lims/content/analysisservice.py:799
 msgid "The price charged per analysis for clients who qualify for bulk discounts"
 msgstr "Die prys per ontleding vir kliënte wat vir volume afslag kwalifiseer"
 
@@ -5424,7 +5424,7 @@ msgstr ""
 msgid "The results for the Analysis Services that use this method can be set manually"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:695
+#: bika/lims/content/analysisservice.py:756
 msgid "The results of field analyses are captured during sampling at the sample point, e.g. the temperature of a water sample in the river where it is sampled. Lab analyses are done in the laboratory"
 msgstr "Die veld ontleding resultate word gemeet wanneer die monster geneem word, bv. die temperatuur van 'n water monster in die rivier waar die monster geneem word. Laboratorium ontledings word in die laboratorium self gedoen"
 
@@ -5444,11 +5444,11 @@ msgstr ""
 msgid "The serial number that uniquely identifies the instrument"
 msgstr "Die instrument se unieke volgnommer (serial number)"
 
-#: bika/lims/content/analysisservice.py:1010
+#: bika/lims/content/analysisservice.py:1121
 msgid "The service's analytical protocol ID"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1001
+#: bika/lims/content/analysisservice.py:1110
 msgid "The service's commercial ID for accounting purposes"
 msgstr ""
 
@@ -5456,7 +5456,7 @@ msgstr ""
 msgid "The system wide default configuration to indicate whether file attachments are required, permitted or not per analysis request"
 msgstr "Die stelsel verstek waarde wat aandui of aanhangsels toegelaat, verplig is of nie vir ontledingsversoeke"
 
-#: bika/lims/content/analysisservice.py:516
+#: bika/lims/content/analysisservice.py:556
 msgid "The tests of this type of analysis can be performed by using more than one method with the 'Manual entry of results' option enabled. A selection list with the methods selected here is populated in the manage results view for each test of this type of analysis. Note that only methods with 'Allow manual entry' option enabled are displayed here; if you want the user to be able to assign a method that requires instrument entry, enable the 'Instrument assignment is allowed' option."
 msgstr ""
 
@@ -5480,7 +5480,7 @@ msgstr "Die Omkeertye van Ontledings"
 msgid "The turnaround times of analyses plotted over time"
 msgstr "Die omkeertye vir ontledings gestip oor tyd"
 
-#: bika/lims/content/analysisservice.py:373
+#: bika/lims/content/analysisservice.py:401
 msgid "The unique keyword used to identify the analysis service in import files of bulk AR requests and results imports from instruments. It is also used to identify dependent analysis services in user defined results calculations"
 msgstr "Die unieke sleutel woorde word gebruik om ontledings te identifiseer in invoer resultate geproduseer deur laboratorium instrumente. Dit word ook gebruik om afhanklike ontledings in formules vir berekende resulate te identifiseer"
 
@@ -5493,7 +5493,7 @@ msgid "These reasons will be displayed for its selection during the rejection pr
 msgstr ""
 
 #: bika/lims/content/analysisrequest.py:1235
-#: bika/lims/content/analysisservice.py:350
+#: bika/lims/content/analysisservice.py:374
 #: bika/lims/content/artemplate.py:95
 msgid "These results can be reported as dry matter"
 msgstr "Kan as droëstof rapporteer word"
@@ -5514,15 +5514,15 @@ msgstr ""
 msgid "This Analysis Request has been withdrawn and is shown for trace-ability purposes only. Retest: ${retest_child_id}."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1485
+#: bika/lims/content/analysisservice.py:1593
 msgid "This Analysis Service cannot be activated because it's calculation is inactive."
 msgstr "Hierdie Ontleding Service kan nie aktiveer word nie"
 
-#: bika/lims/content/analysisservice.py:1501
+#: bika/lims/content/analysisservice.py:1609
 msgid "This Analysis Service cannot be deactivated because one or more active calculations list it as a dependency"
 msgstr "Hierdie Ontleding Service kan nie deaktiveer word nie"
 
-#: bika/lims/content/analysisservice.py:476
+#: bika/lims/content/analysisservice.py:512
 msgid "This is the instrument the system will assign by default to tests from this type of analysis in manage results view. The method associated to this instrument will be assigned as the default method too.Note the instrument's method will prevail over any of the methods choosen if the 'Instrument assignment is not required' option is enabled."
 msgstr ""
 
@@ -5658,7 +5658,7 @@ msgid "Total data points"
 msgstr "Totale aantal datapunte"
 
 #: bika/lims/content/analysisprofile.py:125
-#: bika/lims/content/analysisservice.py:748
+#: bika/lims/content/analysisservice.py:819
 #: bika/lims/content/labproduct.py:50
 msgid "Total price"
 msgstr "Totale Prys"
@@ -5728,12 +5728,12 @@ msgid "Unassigned"
 msgstr "Nie toegeken"
 
 #: bika/lims/content/analysis.py:213
-#: bika/lims/content/analysisservice.py:814
+#: bika/lims/content/analysisservice.py:900
 #: bika/lims/content/referenceanalysis.py:132
 msgid "Uncertainty"
 msgstr "Onsekerheid"
 
-#: bika/lims/content/analysisservice.py:807
+#: bika/lims/content/analysisservice.py:892
 msgid "Uncertainty value"
 msgstr "Onsekerheid value"
 
@@ -5798,7 +5798,7 @@ msgstr ""
 msgid "Upload a scanned signature to be used on printed analysis results reports. Ideal size is 250 pixels wide by 150 high"
 msgstr "Laai 'n geskandeerde handtekening om op gedrukte resultaat verslae in te sluit. 'n Ideale grote is 250 by 150 'pixels'"
 
-#: bika/lims/content/analysisservice.py:287
+#: bika/lims/content/analysisservice.py:305
 msgid "Upper Detection Limit (UDL)"
 msgstr ""
 
@@ -5810,7 +5810,7 @@ msgstr ""
 msgid "Use Dashboard as default front page"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:570
+#: bika/lims/content/analysisservice.py:614
 msgid "Use default calculation"
 msgstr "Gebruik Verstek formule"
 
@@ -5857,7 +5857,7 @@ msgid "VAT"
 msgstr "BTW"
 
 #: bika/lims/content/analysisprofile.py:105
-#: bika/lims/content/analysisservice.py:756
+#: bika/lims/content/analysisservice.py:829
 #: bika/lims/content/bikasetup.py:209
 msgid "VAT %"
 msgstr "BTW %"
@@ -6026,7 +6026,7 @@ msgstr "Validasie het misluk: Sleutelwoord  '${keyword}' se kolom hoof moet '${t
 msgid "Validation failed: keyword contains invalid characters"
 msgstr "Validasie Misluk: sleutelwoord het ongeldige karakters"
 
-#: bika/lims/controlpanel/bika_analysisservices.py:105
+#: bika/lims/controlpanel/bika_analysisservices.py:108
 #: bika/lims/validators.py:237
 msgid "Validation failed: keyword is required"
 msgstr "Validasie het gefaal: Sleutelwoord kort"
@@ -6055,7 +6055,7 @@ msgstr "Validasie Misluk: Sekondes moet 0-59 wees"
 msgid "Validation failed: seconds must be numeric"
 msgstr "Validasie Misluk: Sekondes moet numeries wees"
 
-#: bika/lims/controlpanel/bika_analysisservices.py:99
+#: bika/lims/controlpanel/bika_analysisservices.py:102
 #: bika/lims/validators.py:233
 msgid "Validation failed: title is required"
 msgstr "Validasie het gefaal: Titel kort"
@@ -6083,7 +6083,7 @@ msgstr "Valideerder"
 msgid "Value"
 msgstr "Waarde"
 
-#: bika/lims/content/analysisservice.py:653
+#: bika/lims/content/analysisservice.py:706
 msgid "Values can be entered here which will override the defaults specified in the Calculation Interim Fields."
 msgstr ""
 
@@ -6129,7 +6129,7 @@ msgstr "Hoeveelheis weke voor verval datum"
 msgid "When it's set, the system uses the analysis profile's price to quote and the system's VAT is overridden by the analysis profile's specific VAT"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:671
+#: bika/lims/content/analysisservice.py:728
 msgid "When the results of duplicate analyses on worksheets, carried out on the same sample, differ with more than this percentage, an alert is raised"
 msgstr "Wanneer die resultate op 'n werkskaart van duplikaat ontledings op dieselfde monster, verskil met meer as hierdie persentasie, sal 'n alert vertoon word"
 
@@ -6177,7 +6177,7 @@ msgstr ""
 
 #: bika/lims/browser/analysisservice.py:102
 #: bika/lims/browser/header_table.py:84
-#: bika/lims/content/analysisservice.py:1450
+#: bika/lims/content/analysisservice.py:1561
 msgid "Yes"
 msgstr "Ja"
 
