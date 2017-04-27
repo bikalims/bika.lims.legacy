@@ -338,7 +338,7 @@
 
       // select analyses of the profile after all categories have been loaded
       $.when.apply($, promises).done(function() {
-        console.debug("All " + promises.lenght + " Categories loaded!");
+        console.debug("All " + promises.length + " Categories loaded!");
         $(services).each(function(index, uid) {
           var $cb = $("#analyses_cb_" + uid);
           $cb.prop("checked", true);
