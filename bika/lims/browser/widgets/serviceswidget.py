@@ -44,6 +44,7 @@ class ServicesView(BikaListingView):
 
         self.show_categories = False
         self.categories = []
+        # TODO Check if filtering by multiple UIDs should be enabled
         self.do_cats = self.context.bika_setup.getCategoriseAnalysisServices()
         if self.do_cats:
             self.show_categories = True

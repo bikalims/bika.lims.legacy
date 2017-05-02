@@ -4,7 +4,7 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Products.CMFPlone.utils import safe_unicode
-from bika.lims import bikaMessageFactory as _
+from bika.lims import bikaMessageFactory as _, logger
 from bika.lims.utils import t
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims.content.instrumentmaintenancetask import InstrumentMaintenanceTaskStatuses as mstatus
@@ -620,24 +620,37 @@ class InstrumentMultifileView(MultifileView):
         self.description = "Different interesting documents and files to be attached to the instrument"
 
 
-class ajaxGetInstrumentMethod(BrowserView):
+class ajaxGetInstrumentMethods(BrowserView):
     """ Returns the method assigned to the defined instrument.
         uid: unique identifier of the instrument
     """
+    # Modified to return multiple methods after enabling multiple method
+    # for intruments.
     def __call__(self):
-        methoddict = {}
+        out = {
+            "title": None,
+            "instrument": None,
+            "methods": [],
+        }
         try:
             plone.protect.CheckAuthenticator(self.request)
         except Forbidden:
-            return json.dumps(methoddict)
-        bsc = getToolByName(self, 'bika_setup_catalog')
-        instrument = bsc(portal_type='Instrument', UID=self.request.get("uid", '0'))
-        if instrument and len(instrument) == 1:
-            method = instrument[0].getObject().getMethod()
-            if method:
-                methoddict = {'uid': method.UID(),
-                              'title': method.Title()}
-        return json.dumps(methoddict)
+            logger.warn("Forbidden. Request authenticator missing or invalid.")
+            return json.dumps(out)
+        uc = getToolByName(self, 'uid_catalog')
+        brains = uc(UID=self.request.get("uid", '0'))
+        if brains:
+            instrument = brains[0].getObject()
+            out["title"] = instrument.Title()
+            out["instrument"] = instrument.UID()
+            # Handle multiple Methods per instrument
+            methods = instrument.getMethods()
+            for method in methods:
+                out["methods"].append({
+                    "uid": method.UID(),
+                    "title": method.Title(),
+                })
+        return json.dumps(out)
 
 
 class InstrumentQCFailuresViewlet(ViewletBase):

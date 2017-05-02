@@ -1,27 +1,29 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-"""ARs and Samples use HeaderTable to display object fields in their custom
-view and edit screens.
-"""
-from Products.CMFCore.utils import getToolByName
-
-from bika.lims.browser import BrowserView
-from bika.lims.interfaces import IHeaderTableFieldRenderer
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.CMFPlone import PloneMessageFactory as _p
-from bika.lims.utils import getHiddenAttributesForClass
-from bika.lims.workflow import doActionFor
-from bika.lims.utils import t
-from bika.lims import bikaMessageFactory as _
-from zope.component import getAdapter
-from AccessControl import getSecurityManager
 from AccessControl.Permissions import view
+from AccessControl import getSecurityManager
+
+from Products.CMFPlone import PloneMessageFactory as _p
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from zope.component import getAdapter
 from zope.component.interfaces import ComponentLookupError
 
+from bika.lims.utils import t
+from bika.lims.browser import BrowserView
+from bika.lims import bikaMessageFactory as _
+from bika.lims.interfaces import IHeaderTableFieldRenderer
+
+
 class HeaderTableView(BrowserView):
+    """ARs and Samples use HeaderTable to display object fields in their custom
+    view and edit screens.
+    """
 
     template = ViewPageTemplateFile('templates/header_table.pt')
 
@@ -79,9 +81,10 @@ class HeaderTableView(BrowserView):
         else:
             if field.getType().find("ool") > -1:
                 value = field.get(self.context)
-                ret = {'fieldName': fieldname,
-                       'mode': 'structure',
-                       'html': t(_('Yes')) if value else t(_('No'))
+                ret = {
+                    'fieldName': fieldname,
+                    'mode': 'structure',
+                    'html': t(_('Yes')) if value else t(_('No'))
                 }
             elif field.getType().find("Reference") > -1:
                 # Prioritize method retrieval over schema's field
@@ -95,7 +98,7 @@ class HeaderTableView(BrowserView):
 
                 if targets:
                     if not type(targets) == list:
-                        targets = [targets,]
+                        targets = [targets, ]
                     sm = getSecurityManager()
                     if all([sm.checkPermission(view, ta) for ta in targets]):
                         a = ["<a href='%s'>%s</a>" % (target.absolute_url(),
@@ -114,9 +117,10 @@ class HeaderTableView(BrowserView):
                            'html': ''}
             elif field.getType().lower().find('datetime') > -1:
                 value = field.get(self.context)
-                ret = {'fieldName': fieldname,
-                       'mode': 'structure',
-                       'html': self.ulocalized_time(value, long_format=True)
+                ret = {
+                    'fieldName': fieldname,
+                    'mode': 'structure',
+                    'html': self.ulocalized_time(value, long_format=True)
                 }
         return ret
 

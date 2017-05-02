@@ -11,7 +11,7 @@ from AccessControl import ClassSecurityInfo
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
-from Products.Archetypes.atapi import DisplayList
+from Products.Archetypes.atapi import DisplayList, PicklistWidget
 from Products.Archetypes.atapi import registerType
 
 from zope.interface import implements
@@ -44,15 +44,16 @@ from bika.lims.browser.widgets import DateTimeWidget
 from bika.lims.browser.widgets import RecordsWidget
 
 # bika.lims imports
+from bika.lims import api
 from bika.lims.utils import t
 from bika.lims.utils import to_utf8
 from bika.lims.config import PROJECTNAME
 from bika.lims.interfaces import IInstrument
 from bika.lims.config import QCANALYSIS_TYPES
-from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.content.bikaschema import BikaFolderSchema
-
+from bika.lims import bikaMessageFactory as _
+from bika.lims import deprecated
 
 schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
 
@@ -120,6 +121,20 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
         widget=SelectionWidget(
             format='select',
             label=_("Method"),
+            visible=False,
+        ),
+    ),
+
+    ReferenceField(
+        'Methods',
+        vocabulary='_getAvailableMethods',
+        allowed_types=('Method',),
+        relationship='InstrumentMethods',
+        required=0,
+        multiValued=1,
+        widget=PicklistWidget(
+            size=10,
+            label=_("Methods"),
         ),
     ),
 
@@ -391,6 +406,14 @@ class Instrument(ATFolder):
         items.sort(lambda x, y: cmp(x[1], y[1]))
         return DisplayList(items)
 
+    @deprecated(comment="bika.lims.content.instrument.getMethodUID is \
+                deprecated and will be removed in Bika LIMS 3.3")
+    def getMethodUIDs(self):
+        uids = []
+        if self.getMethods():
+            uids = [m.UID() for m in self.getMethods()]
+        return uids
+
     def getSuppliers(self):
         bsc = getToolByName(self, 'bika_setup_catalog')
         items = [(c.UID, c.getName)
@@ -409,7 +432,6 @@ class Instrument(ATFolder):
                  for c in bsc(portal_type='Method',
                               inactive_state='active')]
         items.sort(lambda x, y: cmp(x[1], y[1]))
-        items.insert(0, ('', t(_('None'))))
         return DisplayList(items)
 
     def getInstrumentTypes(self):
@@ -781,6 +803,29 @@ class Instrument(ATFolder):
                    review_state='to_be_verified')
         ans = [p.getObject() for p in prox]
         return [a for a in ans if a.getRawInstrument() == self.UID()]
+
+    def displayValue(self, vocab, value, widget):
+        """Overwrite the Script (Python) `displayValue.py` located at
+           `Products.Archetypes.skins.archetypes` to handle the references
+           of our Picklist Widget (Methods) gracefully.
+           This method gets called by the `picklist.pt` template like this:
+
+           display python:context.displayValue(vocab, value, widget);"
+        """
+        # Taken from the Script (Python)
+        t = self.restrictedTraverse('@@at_utils').translate
+
+        # ensure we have strings, otherwise the `getValue` method of
+        # Products.Archetypes.utils will raise a TypeError
+        def to_string(v):
+            if isinstance(v, basestring):
+                return v
+            return api.get_title(v)
+
+        if isinstance(value, (list, tuple)):
+            value = map(to_string, value)
+
+        return t(vocab, value, widget)
 
 
 schemata.finalizeATCTSchema(schema, folderish=True, moveDiscussion=False)

@@ -39,22 +39,30 @@ class ClientSamplePointsView(BikaListingView):
                       'replace_url': 'absolute_url'},
             'Description': {'title': _('Description'),
                             'index': 'description'},
+            'Sample Types': {'title': _('Sample Types'),},
+            'Composite': {'title': _('Composite'),},
+            'Sampling Frequency': {'title': _('Sampling Frequency'),},
+            'Attachments': {'title': _('Attachments'),
+                      'replace_url': 'absolute_url'},
         }
         self.review_states = [
             {'id': 'default',
              'title': _('Active'),
              'contentFilter': {'inactive_state': 'active'},
              'transitions': [{'id': 'deactivate'}, ],
-             'columns': ['title', 'Description']},
+             'columns': ['title', 'Description', 'Sample Types', 'Composite',
+                         'Sampling Frequency', 'Attachments']},
             {'id': 'inactive',
              'title': _('Dormant'),
              'contentFilter': {'inactive_state': 'inactive'},
              'transitions': [{'id': 'activate'}, ],
-             'columns': ['title', 'Description']},
+             'columns': ['title', 'Description', 'Sample Types', 'Composite',
+                         'Sampling Frequency', 'Attachments']},
             {'id': 'all',
              'title': _('All'),
              'contentFilter': {},
-             'columns': ['title', 'Description']},
+             'columns': ['title', 'Description', 'Sample Types', 'Composite',
+                         'Sampling Frequency', 'Attachments']},
         ]
 
     def __call__(self):
@@ -65,3 +73,26 @@ class ClientSamplePointsView(BikaListingView):
                 {'url': 'createObject?type_name=SamplePoint',
                  'icon': '++resource++bika.lims.images/add.png'}
         return super(ClientSamplePointsView, self).__call__()
+
+    def folderitem(self, obj, item, index):
+        item['replace']['title'] = "<a href='%s'>%s</a>" % \
+             (item['url'], item['title'])
+        item['Description'] = obj.Description()
+        titles = [st.Title() for st in obj.getSampleTypes()]
+        item['Sample Types'] = ",".join(titles)
+        if obj.aq_parent.portal_type == 'Client':
+            item['Owner'] = obj.aq_parent.Title()
+        else:
+            item['Owner'] = self.context.bika_setup.laboratory.Title()
+        item['Composite'] = 'Y' if obj.Composite else 'N'
+        sample_freq = obj.SamplingFrequency.keys()
+        sample_freq.sort()
+        sample_freq_str = ''
+        for value in sample_freq:
+            sample_freq_str += '%s %s ' % (
+                            value.title(), obj.SamplingFrequency[value])
+        item['Sampling Frequency'] = sample_freq_str
+        item['replace']['Attachments'] = \
+                        "<a href='%s/at_download/Attachment'>%s</a>" % \
+                             (item['url'], obj.AttachmentFile.filename)
+        return item

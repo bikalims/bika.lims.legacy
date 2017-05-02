@@ -53,4 +53,10 @@
     rendering="link"
     insert-after="*"/>
 
+<stylesheet
+    id="++resource++bika.lims.css/instrument_import.css"
+    media="screen"
+    rel="stylesheet"
+    rendering="link"
+    insert-before="*"/>
 </object>

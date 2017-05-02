@@ -1,9 +1,9 @@
     <p></p>
 
-    <label for='thermoscientific_gallery_9861x_file'>File</label>&nbsp;
+    <label i18n:translate="" for='thermoscientific_gallery_9861x_file'>File</label>&nbsp;
     <input type="file" name="thermoscientific_gallery_9861x_file" id="thermoscientific_gallery_9861x_file"/>
     &nbsp;&nbsp;
-    <label for='thermoscientific_gallery_9861x_format'>Format</label>&nbsp;
+    <label i18n:translate="" for='thermoscientific_gallery_9861x_format'>Format</label>&nbsp;
     <select name="thermoscientific_gallery_9861x_format" id="thermoscientific_gallery_9861x_format">
         <option value='tsv_40'>TSV/XLS v4.0</option>
     </select>
@@ -12,7 +12,7 @@
     <table cellpadding="0" cellspacing="0">
  <!--
         <tr>
-            <td><label for="thermoscientific_gallery_9861x_sample">Sample search</label></td>
+            <td><label i18n:translate="" for="thermoscientific_gallery_9861x_sample">Sample search</label></td>
             <td>
                 <select name="thermoscientific_gallery_9861x_sample" id="thermoscientific_gallery_9861x_sample">
                     <option value="requestid">Analysis Request ID</option>
@@ -24,7 +24,7 @@
         </tr>
   -->
         <tr>
-            <td><label for="thermoscientific_gallery_9861x_artoapply">Analysis Requests state</label>&nbsp;</td>
+            <td><label i18n:translate="" for="thermoscientific_gallery_9861x_artoapply">Analysis Requests state</label>&nbsp;</td>
             <td>
                 <select name="thermoscientific_gallery_9861x_artoapply" id="thermoscientific_gallery_9861x_artoapply">
                     <option value="received">Received</option>
@@ -33,7 +33,7 @@
             </td>
         </tr>
         <tr>
-            <td><label for="thermoscientific_gallery_9861x_override">Results override</label></td>
+            <td><label i18n:translate="" for="thermoscientific_gallery_9861x_override">Results override</label></td>
             <td>
                 <select name="thermoscientific_gallery_9861x_override" id="thermoscientific_gallery_9861x_override">
                     <option value="nooverride">Don't override results</option>
@@ -44,7 +44,7 @@
         </tr>
         <tr>
             <!-- Instrument selector. For calibration tests -->
-            <td style='vertical-align:top;padding-right:30px;'><label for="thermoscientific_gallery_9861x_instrument">Instrument</label></td>
+            <td style='vertical-align:top;padding-right:30px;'><label i18n:translate="" for="thermoscientific_gallery_9861x_instrument">Instrument</label></td>
             <td>
                 <p i18n:translate="" style='color: #3F3F3F;font-size: 0.87em;'>
                     If the system doesn't find any match (AnalysisRequest, Sample, Reference Analysis or Duplicate),

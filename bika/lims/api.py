@@ -9,6 +9,7 @@ from Products.CMFPlone.utils import base_hasattr
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.Archetypes.BaseObject import BaseObject
 from Products.ZCatalog.interfaces import ICatalogBrain
+from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFCore.WorkflowCore import WorkflowException
 
 from zope import globalrequest
@@ -41,7 +42,9 @@ achieve the same::
 
     >>> foos = map(get_foo, list_of_brain_objects)
 
-Please add for all of your functions a descriptive test in docs/API.rst. Thanks.
+Please add for all of your functions a descriptive test in docs/API.rst.
+
+Thanks.
 """
 
 _marker = object()
@@ -66,7 +69,7 @@ def get_bika_setup():
     return portal.get("bika_setup")
 
 
-def create(container, portal_type, title=None, **kwargs):
+def create(container, portal_type, **kwargs):
     """Creates an object in Bika LIMS
 
     :param container: container
@@ -77,9 +80,11 @@ def create(container, portal_type, title=None, **kwargs):
     :type title: string
     :returns: The new created object
     """
-    title = title is None and "New {}".format(portal_type) or title
-    _ = container.invokeFactory(portal_type, id="tmpID", title=title)
-    obj = container.get(_)
+    from bika.lims.utils import tmpID
+    if kwargs.get("title") is None:
+        kwargs["title"] = "New {}".format(portal_type)
+    obj = _createObjectByType(portal_type, container, tmpID())
+    obj.edit(**kwargs)
     obj.processForm()
     # explicit notification
     modified(obj)
@@ -302,7 +307,7 @@ def get_icon(brain_or_object, html_tag=True):
     return tag
 
 
-def get_object_by_uid(uid):
+def get_object_by_uid(uid, default=_marker):
     """Find an object by a given UID
 
     :param uid: The UID of the object to find
@@ -312,6 +317,8 @@ def get_object_by_uid(uid):
 
     # nothing to do here
     if not uid:
+        if default is not _marker:
+            return default
         fail("get_object_by_uid requires UID as first argument; got {} instead"
              .format(uid))
 
@@ -331,12 +338,14 @@ def get_object_by_uid(uid):
     # try to find the object with the portal catalog
     res = pc(UID=uid)
     if not res:
+        if default is not _marker:
+            return default
         fail("No object found for UID {}".format(uid))
 
     return get_object(res[0])
 
 
-def get_object_by_path(path):
+def get_object_by_path(path, default=_marker):
     """Find an object by a given physical path or absolute_url
 
     :param path: The physical path of the object to find
@@ -346,6 +355,8 @@ def get_object_by_path(path):
 
     # nothing to do here
     if not path:
+        if default is not _marker:
+            return default
         fail("get_object_by_path first argument must be a path; {} received"
              .format(path))
 
@@ -360,6 +371,8 @@ def get_object_by_path(path):
         path = "/".join(request.physicalPathFromURL(path))
 
     if not path.startswith(portal_path):
+        if default is not _marker:
+            return default
         fail("Not a physical path inside the portal.")
 
     if path == portal_path:
@@ -367,6 +380,8 @@ def get_object_by_path(path):
 
     res = pc(path=dict(query=path, depth=0))
     if not res:
+        if default is not _marker:
+            return default
         fail("Object at path '{}' not found".format(path))
     return get_object(res[0])
 
@@ -444,13 +459,15 @@ def get_parent(brain_or_object, catalog_search=False):
     return get_object(brain_or_object).aq_parent
 
 
-def search(query, catalog=_marker):
+def search(query, catalog=_marker, show_inactive=False):
     """Search for objects.
 
     :param query: A suitable search query.
     :type query: dict
     :param catalog: A single catalog id or a list of catalog ids
     :type catalog: str/list
+    :param show_inactive: Include inactive or dormant objects
+    :type show_inactive: Boolean
     :returns: Search results
     :rtype: List of ZCatalog brains
     """
@@ -497,7 +514,11 @@ def search(query, catalog=_marker):
 
     # With a single catalog, we don't have to care about merging the results
     if len(catalogs) == 1:
-        return catalogs[0](query)
+        brains = catalogs[0](query)
+        # Avoid inactive or dormant items
+        if not show_inactive:
+            return filter(is_active, brains)
+        return brains
 
     # Multiple catalog results need to be merged
     results = dict()
@@ -510,10 +531,21 @@ def search(query, catalog=_marker):
     # order them according to the search spec
     search_results = results.values()
 
+    # Avoid inactive or dormant items.
+    if not show_inactive:
+        search_results = filter(is_active, search_results)
+
     # Handle the `limit`, `sort_order` and the `sort_on` manually
-    limit = query.get("limit")
     sort_on = query.get("sort_on", "created")
     sort_order = query.get("sort_order", "ascending")
+
+    limit = query.get("limit")
+    try:
+        if limit:
+            limit = int(limit)
+    except ValueError:
+        logger.warn("search: limit should be int, received {}.".format(limit))
+        limit = None
 
     def _sort_on(x, y):
         x = safe_getattr(x, sort_on, x)
@@ -630,6 +662,47 @@ def get_workflow_status_of(brain_or_object):
     return ploneapi.content.get_state(obj)
 
 
+def do_transition_for(brain_or_object, transition):
+    """Performs a workflow transition for the passed in object.
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: The object where the transtion was performed
+    """
+    if not isinstance(transition, basestring):
+        fail("Transition type needs to be string, got '%s'" % type(transition))
+    obj = get_object(brain_or_object)
+    ploneapi.content.transition(obj, transition)
+    return obj
+
+
+def is_active(brain_or_object):
+    """Check if the workflow state of the object is 'inactive' or 'cancelled'.
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: False if the object is in the state 'inactive' or 'cancelled'
+    :rtype: bool
+    """
+    if is_brain(brain_or_object):
+        if base_hasattr(brain_or_object, 'inactive_state') and \
+           brain_or_object.inactive_state == 'inactive':
+            return False
+        if base_hasattr(brain_or_object, 'cancellation_state') and \
+           brain_or_object.cancellation_state == 'cancelled':
+            return False
+    obj = get_object(brain_or_object)
+    wf = get_tool('portal_workflow')
+    workflows = get_workflows_for(obj)
+    if 'bika_inactive_workflow' in workflows \
+            and wf.getInfoFor(obj, 'inactive_state') == 'inactive':
+        return False
+    if 'bika_cancellation_workflow' in workflows \
+            and wf.getInfoFor(obj, 'cancellation_state') == 'cancelled':
+        return False
+    return True
+
+
 def get_roles_for_permission(permission, brain_or_object):
     """Get a list of granted roles for the given permission on the object.
 
@@ -654,7 +727,7 @@ def is_versionable(brain_or_object, policy='at_edit_autoversion'):
     pr = get_tool("portal_repository")
     obj = get_object(brain_or_object)
     return pr.supportsPolicy(obj, 'at_edit_autoversion') \
-           and pr.isVersionable(obj)
+        and pr.isVersionable(obj)
 
 
 def get_version(brain_or_object):

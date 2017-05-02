@@ -71,7 +71,7 @@ schema = BikaFolderSchema.copy() + Schema((
         required=False,
         validators=('uniquefieldvalidator',),
         widget=StringWidget(
-            visible=False,
+            visible=True,
             label=_("Batch ID"),
         )
     ),
@@ -192,10 +192,10 @@ schema = BikaFolderSchema.copy() + Schema((
 )
 )
 
-
+schema['BatchID'].widget.description = _("If no value is entered, the Batch ID will be auto-generated.")
 schema['title'].required = False
 schema['title'].widget.visible = True
-schema['title'].widget.description = _("If no Title value is entered, the Batch ID will be used.")
+schema['title'].widget.description = _("If no value is entered, the Batch ID will be used.")
 schema['description'].required = False
 schema['description'].widget.visible = True
 
@@ -290,6 +290,10 @@ class Batch(ATFolder):
     security.declarePublic('getBatchID')
 
     def getBatchID(self):
+        if self.BatchID:
+            return self.BatchID
+        if self.checkCreationFlag():
+            return self.BatchID
         return self.getId()
 
     def BatchLabelVocabulary(self):

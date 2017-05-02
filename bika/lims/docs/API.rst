@@ -311,7 +311,7 @@ Getting an object by UID
 ------------------------
 
 This function finds an object by its uinique ID (UID).
-The portal object with the defined UId of `0` is also supported::
+The portal object with the defined UId of '0' is also supported::
 
     >>> api.get_object_by_uid('0')
     <PloneSite at /plone>
@@ -321,6 +321,15 @@ The portal object with the defined UId of `0` is also supported::
 
     >>> api.get_object_by_uid(uid_client_brain)
     <Client at /plone/clients/client-1>
+
+If a default value is provided, the function will never fail.  Any exception
+or error will result in the default value being returned::
+
+    >>> api.get_object_by_uid('invalid uid', 'default')
+    'default'
+
+    >>> api.get_object_by_uid(None, 'default')
+    'default'
 
 
 Getting an object by Path
@@ -340,6 +349,14 @@ Paths outside the portal raise an error::
     Traceback (most recent call last):
     [...]
     BikaLIMSError: Not a physical path inside the portal.
+
+Any exception returns default value::
+
+    >>> api.get_object_by_path('/invaid/path', 'default')
+    'default'
+
+    >>> api.get_object_by_path(None, 'default')
+    'default'
 
 
 Getting the Physical Path of an Object
@@ -497,6 +514,22 @@ We could also explicitly define a catalog to achieve the same::
     >>> len(results)
     1
 
+To see inactive or dormant items, we must explicitly request them.  This means
+that even if we explicitly specify the ID of an item that is inactive, it will
+not be returned by default!
+
+    >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"})
+    >>> len(results)
+    1
+    >>> analysiscategory1 = api.do_transition_for(analysiscategory1, 'deactivate')
+    >>> api.is_active(analysiscategory1)
+    False
+    >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"})
+    >>> len(results)
+    0
+    >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"}, show_inactive=True)
+    >>> len(results)
+    1
 
 Getting an Attribute of an Object
 ---------------------------------
@@ -572,6 +605,49 @@ This function returns the state of a given object::
 
     >>> api.get_workflow_status_of(client)
     'active'
+
+
+Transitioning an Object
+-----------------------
+
+This function performs a workflow transition and returns the object::
+
+    >>> client = api.do_transition_for(client, "deactivate")
+    >>> api.is_active(client)
+    False
+
+    >>> client = api.do_transition_for(client, "activate")
+    >>> api.is_active(client)
+    True
+
+
+Getting inactive/cancellation state of different workflows
+----------------------------------------------------------
+
+There are two workflows allowing an object to be set inactive.  We provide
+the is_active function to return False if an item is set inactive with either
+of these workflows.
+
+In the search() test above, the is_active function's handling of brain states
+is tested.  Here, I just want to test if object states are handled correctly.
+
+For setup types, we use bika_inctive_workflow::
+
+    >>> method1 = api.create(portal.methods, "Method", title="Test Method")
+    >>> api.is_active(method1)
+    True
+    >>> method1 = api.do_transition_for(method1, 'deactivate')
+    >>> api.is_active(method1)
+    False
+
+For transactional types, bika_cancellation_workflow is used::
+
+    >>> batch1 = api.create(portal.batches, "Batch", title="Test Batch")
+    >>> api.is_active(batch1)
+    True
+    >>> batch1 = api.do_transition_for(batch1, 'cancel')
+    >>> api.is_active(batch1)
+    False
 
 
 Getting the granted Roles for a certain Permission on an Object

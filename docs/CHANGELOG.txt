@@ -1,5 +1,17 @@
 3.2.1 (unreleased)
 ------------------
+LIMS-2596: AR and Sample view fields that need to stay editable
+Issue-2015: Copy AS functionality from the "bika_analysisservices" view raises an error
+Issue-1974: Clicking on the "Arrow Button" of an empty cell in the AR Add View causes a JS Error and endless Spinner
+issue-1992: Data Duplication between Analysis Requests and Samples
+Issue-1999: Allow external Python library functions to be used in Calculation Formulas
+Issue-1971: Allow Reports in Landscape
+Issue-1967: Dashboard Link to "aggregatedanalyses" results in a 404
+Issue-1984: Analysisrequest "Add XX ARs" context action not translated
+Issue-1997: Calculation "Formula" field description keeps untranslated
+Issue-1981: Transifex Error processing bika/lims/skins/bika/bika_widgets/referencewidget.pt
+Issue-1975: Matching the labels to the fields is not easy when the user wants to add a single AR
+LIMS-2509: Correctly save empty values for CoordinateField and DurationField
 LIMS-2600: Some improvements and fixes for Statements
 LIMS-2567: Show all ARs on worksheet when adding Duplicate analysis
 LIMS-2562: Add Client filter when applying Worksheet Template

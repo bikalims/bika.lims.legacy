@@ -1,15 +1,52 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-"""Sample represents a physical sample submitted for testing
-"""
+import sys
+
+from DateTime import DateTime
 from AccessControl import ClassSecurityInfo
+
 from Products.CMFCore.WorkflowCore import WorkflowException
-from bika.lims import bikaMessageFactory as _, logger
-from bika.lims.utils import t, getUsers
+
+# Fields
 from Products.ATExtensions.field import RecordsField
+from Products.Archetypes.atapi import StringField
+from Products.Archetypes.atapi import ReferenceField
+from Products.Archetypes.atapi import ComputedField
+from Products.Archetypes.atapi import BooleanField
+from Products.Archetypes.atapi import TextField
+from bika.lims.browser.fields import DateTimeField
+
+# Widgets
+from bika.lims.browser.widgets import ReferenceWidget
+from Products.Archetypes.atapi import StringWidget
+from Products.Archetypes.atapi import ComputedWidget
+from Products.Archetypes.atapi import BooleanWidget
+from Products.Archetypes.atapi import TextAreaWidget
+from Products.Archetypes.atapi import SelectionWidget
+from bika.lims.browser.widgets import SelectionWidget as BikaSelectionWidget
+
+
+from Products.Archetypes import atapi
+from Products.Archetypes.atapi import Schema
+from Products.Archetypes.atapi import BaseFolder
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.Archetypes.public import DisplayList
+from Products.Archetypes.references import HoldingReference
+from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
+from Products.ATContentTypes.utils import dt2DT
+from Products.ATContentTypes.utils import DT2dt
+from Products.CMFCore import permissions
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import safe_unicode
+
+from zope.interface import implements
+
+from bika.lims.utils import getUsers
 from bika.lims.browser.widgets.datetimewidget import DateTimeWidget
 from bika.lims.browser.widgets import RejectionWidget
 from bika.lims.config import PROJECTNAME
@@ -19,28 +56,19 @@ from bika.lims.permissions import SampleSample
 from bika.lims.permissions import ScheduleSampling
 from bika.lims.workflow import doActionFor, isBasicTransitionAllowed
 from bika.lims.workflow import skip
-from DateTime import DateTime
-from Products.Archetypes import atapi
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.Archetypes.public import *
-from Products.Archetypes.public import DisplayList
-from Products.Archetypes.references import HoldingReference
-from Products.ATContentTypes.lib.historyaware import HistoryAwareMixin
-from Products.ATContentTypes.utils import DT2dt, dt2DT
-from Products.CMFCore import permissions
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
-from zope.interface import implements
+from bika.lims import bikaMessageFactory as _
+from bika.lims import bikaMessageFactory as logger
 
-from bika.lims.browser.fields import DateTimeField
-from bika.lims.browser.widgets import ReferenceWidget
-from bika.lims.browser.widgets import SelectionWidget as BikaSelectionWidget
 
-import sys
 from bika.lims.utils import to_unicode
 
+"""Sample represents a physical sample submitted for testing
+"""
+
+
 schema = BikaSchema.copy() + Schema((
-    StringField('SampleID',
+    StringField(
+        'SampleID',
         required=1,
         searchable=True,
         mode="rw",
@@ -54,55 +82,60 @@ schema = BikaSchema.copy() + Schema((
             render_own_label=True,
         ),
     ),
-    StringField('ClientReference',
+    StringField(
+        'ClientReference',
         searchable=True,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
         widget=StringWidget(
             label=_("Client Reference"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             render_own_label=True,
         ),
     ),
-    StringField('ClientSampleID',
+    StringField(
+        'ClientSampleID',
         searchable=True,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
         widget=StringWidget(
             label=_("Client SID"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             render_own_label=True,
         ),
     ),
-    ReferenceField('LinkedSample',
+    ReferenceField(
+        'LinkedSample',
         vocabulary_display_path_bound=sys.maxsize,
         multiValue=1,
         allowed_types=('Sample',),
@@ -115,7 +148,8 @@ schema = BikaSchema.copy() + Schema((
             label=_("Linked Sample"),
         ),
     ),
-    ReferenceField('SampleType',
+    ReferenceField(
+        'SampleType',
         required=1,
         vocabulary_display_path_bound=sys.maxsize,
         allowed_types=('SampleType',),
@@ -131,62 +165,66 @@ schema = BikaSchema.copy() + Schema((
                      'view': 'visible',
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
                      'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
+                     'sampled': {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                     'expired': {'view': 'visible', 'edit': 'invisible'},
+                     'disposed': {'view': 'visible', 'edit': 'invisible'},
+                     'rejected': {'view': 'visible', 'edit': 'invisible'},
                      },
             catalog_name='bika_setup_catalog',
             base_query={'inactive_state': 'active'},
             showOn=True,
         ),
     ),
-    ComputedField('SampleTypeTitle',
+    ComputedField(
+        'SampleTypeTitle',
         searchable=True,
         expression="here.getSampleType() and here.getSampleType().Title() or ''",
         widget=ComputedWidget(
             visible=False,
         ),
     ),
-    ReferenceField('SamplePoint',
+    ReferenceField(
+        'SamplePoint',
         vocabulary_display_path_bound=sys.maxsize,
         allowed_types=('SamplePoint',),
-        relationship = 'SampleSamplePoint',
-        referenceClass = HoldingReference,
+        relationship='SampleSamplePoint',
+        referenceClass=HoldingReference,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
         widget=ReferenceWidget(
             label=_("Sample Point"),
             render_own_label=True,
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             catalog_name='bika_setup_catalog',
             base_query={'inactive_state': 'active'},
             showOn=True,
         ),
     ),
-    ComputedField('SamplePointTitle',
-        searchable = True,
-        expression = "here.getSamplePoint() and here.getSamplePoint().Title() or ''",
-        widget = ComputedWidget(
+    ComputedField(
+        'SamplePointTitle',
+        searchable=True,
+        expression="here.getSamplePoint() and here.getSamplePoint().Title() or ''",
+        widget=ComputedWidget(
             visible=False,
         ),
     ),
@@ -202,33 +240,36 @@ schema = BikaSchema.copy() + Schema((
             description=_("Location where sample is kept"),
             size=20,
             render_own_label=True,
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'expired':           {'view': 'visible', 'edit': 'visible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'expired': {'view': 'visible', 'edit': 'visible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             catalog_name='bika_setup_catalog',
             base_query={'inactive_state': 'active'},
             showOn=True,
         ),
     ),
-    BooleanField('SamplingWorkflowEnabled',
-                 default_method='getSamplingWorkflowEnabledDefault'
+    BooleanField(
+        'SamplingWorkflowEnabled',
+        default_method='getSamplingWorkflowEnabledDefault'
     ),
-    DateTimeField('DateSampled',
+    DateTimeField(
+        'DateSampled',
         mode="rw",
         read_permission=permissions.View,
         write_permission=SampleSample,
-        widget = DateTimeWidget(
+        widget=DateTimeWidget(
             label=_("Date Sampled"),
             show_time=True,
             size=20,
@@ -236,20 +277,21 @@ schema = BikaSchema.copy() + Schema((
                      'view': 'visible',
                      'header_table': 'visible',
                      'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                      'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
+                     'sampled': {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                     'expired': {'view': 'visible', 'edit': 'invisible'},
+                     'disposed': {'view': 'visible', 'edit': 'invisible'},
+                     'rejected': {'view': 'visible', 'edit': 'invisible'},
                      },
             render_own_label=True,
         ),
     ),
-    StringField('Sampler',
+    StringField(
+        'Sampler',
         mode="rw",
         read_permission=permissions.View,
         write_permission=SampleSample,
@@ -257,24 +299,26 @@ schema = BikaSchema.copy() + Schema((
         widget=BikaSelectionWidget(
             format='select',
             label=_("Sampler"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'visible'}
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'visible'}
+            },
             render_own_label=True,
         ),
     ),
-    StringField('ScheduledSamplingSampler',
+    StringField(
+        'ScheduledSamplingSampler',
         mode="rw",
         read_permission=permissions.View,
         write_permission=ScheduleSampling,
@@ -288,45 +332,48 @@ schema = BikaSchema.copy() + Schema((
                      'view': 'visible',
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
+                     'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
                      'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
+                     'sampled': {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                     'expired': {'view': 'visible', 'edit': 'invisible'},
+                     'disposed': {'view': 'visible', 'edit': 'invisible'},
+                     'rejected': {'view': 'visible', 'edit': 'invisible'},
                      },
             render_own_label=True,
         ),
     ),
-    DateTimeField('SamplingDate',
+    DateTimeField(
+        'SamplingDate',
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
-        widget = DateTimeWidget(
+        widget=DateTimeWidget(
             label=_("Sampling Date"),
             description=_("Define when the sampler has to take the samples"),
             show_time=True,
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             render_own_label=True,
         ),
     ),
-    StringField('PreparationWorkflow',
+    StringField(
+        'PreparationWorkflow',
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
@@ -339,72 +386,76 @@ schema = BikaSchema.copy() + Schema((
                      'view': 'visible',
                      'header_table': 'visible',
                      'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
+                     'sampled': {'view': 'visible', 'edit': 'invisible'},
+                     'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                     'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                     'expired': {'view': 'visible', 'edit': 'invisible'},
+                     'disposed': {'view': 'visible', 'edit': 'invisible'},
                      },
             render_own_label=True,
         ),
     ),
-    ReferenceField('SamplingDeviation',
-        vocabulary_display_path_bound = sys.maxsize,
-        allowed_types = ('SamplingDeviation',),
-        relationship = 'SampleSamplingDeviation',
-        referenceClass = HoldingReference,
+    ReferenceField(
+        'SamplingDeviation',
+        vocabulary_display_path_bound=sys.maxsize,
+        allowed_types=('SamplingDeviation',),
+        relationship='SampleSamplingDeviation',
+        referenceClass=HoldingReference,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
         widget=ReferenceWidget(
             label=_("Sampling Deviation"),
             render_own_label=True,
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             catalog_name='bika_setup_catalog',
             base_query={'inactive_state': 'active'},
             showOn=True,
         ),
     ),
-    ReferenceField('SampleCondition',
-        vocabulary_display_path_bound = sys.maxsize,
-        allowed_types = ('SampleCondition',),
-        relationship = 'SampleSampleCondition',
-        referenceClass = HoldingReference,
+    ReferenceField(
+        'SampleCondition',
+        vocabulary_display_path_bound=sys.maxsize,
+        allowed_types=('SampleCondition',),
+        relationship='SampleSampleCondition',
+        referenceClass=HoldingReference,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
         widget=ReferenceWidget(
             label=_("Sample Condition"),
             render_own_label=True,
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             catalog_name='bika_setup_catalog',
             base_query={'inactive_state': 'active'},
             showOn=True,
@@ -417,186 +468,203 @@ schema = BikaSchema.copy() + Schema((
         write_permission=permissions.ModifyPortalContent,
         widget=StringWidget(
             label=_("Environmental Conditions"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'add': 'edit',
-                     'header_table': 'prominent',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'attachment_due':    {'view': 'visible', 'edit': 'visible'},
-                     'to_be_verified':    {'view': 'visible', 'edit': 'visible'},
-                     'verified':          {'view': 'visible', 'edit': 'invisible'},
-                     'published':         {'view': 'visible', 'edit': 'invisible'},
-                     'invalid':           {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'add': 'edit',
+                'header_table': 'prominent',
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'attachment_due': {'view': 'visible', 'edit': 'visible'},
+                'to_be_verified': {'view': 'visible', 'edit': 'visible'},
+                'verified': {'view': 'visible', 'edit': 'invisible'},
+                'published': {'view': 'visible', 'edit': 'invisible'},
+                'invalid': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             render_own_label=True,
             size=20,
         ),
     ),
-    DateTimeField('DateReceived',
+    DateTimeField(
+        'DateReceived',
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
-        widget = DateTimeWidget(
-            label=_("Date Received"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_sampled':     {'view': 'invisible', 'edit': 'invisible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'invisible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'invisible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
-            render_own_label=True,
-        ),
-    ),
-    ComputedField('ClientUID',
-        expression = 'context.aq_parent.UID()',
-        widget = ComputedWidget(
-            visible=False,
-        ),
-    ),
-    ComputedField('SampleTypeUID',
-        expression = 'context.getSampleType().UID()',
-        widget = ComputedWidget(
-            visible=False,
-        ),
-    ),
-    ComputedField('SamplePointUID',
-        expression = 'context.getSamplePoint() and context.getSamplePoint().UID() or None',
-        widget = ComputedWidget(
-            visible=False,
-        ),
-    ),
-    BooleanField('Composite',
-        default = False,
-        mode="rw",
-        read_permission=permissions.View,
-        write_permission=permissions.ModifyPortalContent,
-        widget = BooleanWidget(
-            label=_("Composite"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
-            render_own_label=True,
-        ),
-    ),
-    DateTimeField('DateExpired',
-        mode="rw",
-        read_permission=permissions.View,
-        write_permission=permissions.ModifyPortalContent,
-        widget = DateTimeWidget(
-            label=_("Date Expired"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_sampled':     {'view': 'invisible', 'edit': 'invisible'},
-                     'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
-                     'sampled':           {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'invisible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'invisible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'invisible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'invisible', 'edit': 'invisible'},
-                     },
-            render_own_label=True,
-        ),
-    ),
-    ComputedField('DisposalDate',
-        expression = 'context.disposal_date()',
         widget=DateTimeWidget(
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'invisible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
-                     'sampled':           {'view': 'visible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'invisible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'invisible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'invisible', 'edit': 'invisible'},
-                     },
+            label=_("Date Received"),
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
+                'sample_due': {'view': 'invisible', 'edit': 'invisible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             render_own_label=True,
         ),
     ),
-    DateTimeField('DateDisposed',
+    ComputedField(
+        'ClientUID',
+        expression='context.aq_parent.UID()',
+        widget=ComputedWidget(
+            visible=False,
+        ),
+    ),
+    ComputedField(
+        'SampleTypeUID',
+        expression='context.getSampleType().UID()',
+        widget=ComputedWidget(
+            visible=False,
+        ),
+    ),
+    ComputedField(
+        'SamplePointUID',
+        expression='context.getSamplePoint() and context.getSamplePoint().UID() or None',
+        widget=ComputedWidget(
+            visible=False,
+        ),
+    ),
+    BooleanField(
+        'Composite',
+        default=False,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
-        widget = DateTimeWidget(
-            label=_("Date Disposed"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_sampled':     {'view': 'invisible', 'edit': 'invisible'},
-                     'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
-                     'sampled':           {'view': 'invisible', 'edit': 'invisible'},
-                     'to_be_preserved':   {'view': 'invisible', 'edit': 'invisible'},
-                     'sample_due':        {'view': 'invisible', 'edit': 'invisible'},
-                     'sample_received':   {'view': 'invisible', 'edit': 'invisible'},
-                     'expired':           {'view': 'invisible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'invisible', 'edit': 'invisible'},
-                     },
+        widget=BooleanWidget(
+            label=_("Composite"),
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
             render_own_label=True,
         ),
     ),
-    BooleanField('AdHoc',
+    DateTimeField(
+        'DateExpired',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=DateTimeWidget(
+            label=_("Date Expired"),
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
+                'sampled': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
+                'sample_due': {'view': 'invisible', 'edit': 'invisible'},
+                'sample_received': {'view': 'invisible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'invisible', 'edit': 'invisible'},
+            },
+            render_own_label=True,
+        ),
+    ),
+    ComputedField(
+        'DisposalDate',
+        expression='context.disposal_date()',
+        widget=DateTimeWidget(
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'invisible'},
+                'sampled': {'view': 'visible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'invisible'},
+                'sample_due': {'view': 'visible', 'edit': 'invisible'},
+                'sample_received': {'view': 'visible', 'edit': 'invisible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'invisible', 'edit': 'invisible'},
+                'rejected': {'view': 'invisible', 'edit': 'invisible'},
+            },
+            render_own_label=True,
+        ),
+    ),
+    DateTimeField(
+        'DateDisposed',
+        mode="rw",
+        read_permission=permissions.View,
+        write_permission=permissions.ModifyPortalContent,
+        widget=DateTimeWidget(
+            label=_("Date Disposed"),
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_sampled': {'view': 'invisible', 'edit': 'invisible'},
+                'scheduled_sampling': {'view': 'invisible', 'edit': 'invisible'},
+                'sampled': {'view': 'invisible', 'edit': 'invisible'},
+                'to_be_preserved': {'view': 'invisible', 'edit': 'invisible'},
+                'sample_due': {'view': 'invisible', 'edit': 'invisible'},
+                'sample_received': {'view': 'invisible', 'edit': 'invisible'},
+                'expired': {'view': 'invisible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'invisible', 'edit': 'invisible'},
+            },
+            render_own_label=True,
+        ),
+    ),
+    BooleanField(
+        'AdHoc',
         default=False,
         mode="rw",
         read_permission=permissions.View,
         write_permission=permissions.ModifyPortalContent,
         widget=BooleanWidget(
             label=_("Ad-Hoc"),
-            visible={'edit': 'visible',
-                     'view': 'visible',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'expired':           {'view': 'visible', 'edit': 'invisible'},
-                     'disposed':          {'view': 'visible', 'edit': 'invisible'},
-                     'rejected':          {'view': 'visible', 'edit': 'invisible'},
-                     },
-           render_own_label=True,
+            visible={
+                'edit': 'visible',
+                'view': 'visible',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'scheduled_sampling': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'expired': {'view': 'visible', 'edit': 'invisible'},
+                'disposed': {'view': 'visible', 'edit': 'invisible'},
+                'rejected': {'view': 'visible', 'edit': 'invisible'},
+            },
+            render_own_label=True,
         ),
     ),
-    TextField('Remarks',
+    TextField(
+        'Remarks',
         searchable=True,
         default_content_type='text/x-web-intelligent',
-        allowable_content_types = ('text/plain', ),
+        allowable_content_types=('text/plain', ),
         default_output_type="text/plain",
         mode="rw",
         read_permission=permissions.View,
@@ -607,39 +675,41 @@ schema = BikaSchema.copy() + Schema((
             append_only=True,
         ),
     ),
-    RecordsField('RejectionReasons',
-        widget = RejectionWidget(
+    RecordsField(
+        'RejectionReasons',
+        widget=RejectionWidget(
             label=_("Sample Rejection"),
-            description = _("Set the Sample Rejection workflow and the reasons"),
+            description=_("Set the Sample Rejection workflow and the reasons"),
             render_own_label=False,
-            visible={'edit': 'invisible',
-                     'view': 'visible',
-                     'add': 'edit',
-                     'secondary': 'disabled',
-                     'header_table': 'visible',
-                     'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
-                     'to_be_sampled':     {'view': 'visible', 'edit': 'visible'},
-                     'sampled':           {'view': 'visible', 'edit': 'visible'},
-                     'to_be_preserved':   {'view': 'visible', 'edit': 'visible'},
-                     'sample_due':        {'view': 'visible', 'edit': 'visible'},
-                     'sample_received':   {'view': 'visible', 'edit': 'visible'},
-                     'attachment_due':    {'view': 'visible', 'edit': 'visible'},
-                     'to_be_verified':    {'view': 'visible', 'edit': 'visible'},
-                     'verified':          {'view': 'visible', 'edit': 'visible'},
-                     'published':         {'view': 'visible', 'edit': 'visible'},
-                     'invalid':           {'view': 'visible', 'edit': 'visible'},
-                     'rejected':          {'view': 'visible', 'edit': 'visible'},
-                     },
+            visible={
+                'edit': 'invisible',
+                'view': 'visible',
+                'add': 'edit',
+                'secondary': 'disabled',
+                'header_table': 'visible',
+                'sample_registered': {'view': 'visible', 'edit': 'visible', 'add': 'edit'},
+                'to_be_sampled': {'view': 'visible', 'edit': 'visible'},
+                'sampled': {'view': 'visible', 'edit': 'visible'},
+                'to_be_preserved': {'view': 'visible', 'edit': 'visible'},
+                'sample_due': {'view': 'visible', 'edit': 'visible'},
+                'sample_received': {'view': 'visible', 'edit': 'visible'},
+                'attachment_due': {'view': 'visible', 'edit': 'visible'},
+                'to_be_verified': {'view': 'visible', 'edit': 'visible'},
+                'verified': {'view': 'visible', 'edit': 'visible'},
+                'published': {'view': 'visible', 'edit': 'visible'},
+                'invalid': {'view': 'visible', 'edit': 'visible'},
+                'rejected': {'view': 'visible', 'edit': 'visible'},
+            },
         ),
     ),
-    ###ComputedField('Priority',
-    ###    expression = 'context.getPriority() or None',
-    ###    widget = ComputedWidget(
-    ###        visible={'edit': 'visible',
-    ###                 'view': 'visible'},
-    ###        render_own_label=False,
-    ###    ),
-    ###),
+    # ComputedField('Priority',
+    #     expression = 'context.getPriority() or None',
+    #     widget = ComputedWidget(
+    #         visible={'edit': 'visible',
+    #                  'view': 'visible'},
+    #         render_own_label=False,
+    #     ),
+    # ),
 ))
 
 
@@ -831,7 +901,7 @@ class Sample(BaseFolder, HistoryAwareMixin):
             if date:
                 dates.append(date)
         if dates:
-            dis_date = dt2DT(max([DT2dt(date) for date in dates]))
+            dis_date = dt2DT(max([DT2dt(d) for d in dates]))
         else:
             dis_date = None
         return dis_date
@@ -859,7 +929,7 @@ class Sample(BaseFolder, HistoryAwareMixin):
         wf = self.portal_workflow
         ids = wf.getWorkflowIds()
         sampleprep_ids = [wid for wid in ids if wid.startswith('sampleprep')]
-        prep_workflows = [['', ''],]
+        prep_workflows = [['', ''], ]
         for workflow_id in sampleprep_ids:
             workflow = wf.getWorkflowById(workflow_id)
             prep_workflows.append([workflow_id, workflow.title])
@@ -982,7 +1052,6 @@ class Sample(BaseFolder, HistoryAwareMixin):
         """
         This function runs all the needed process for that action
         """
-        workflow = getToolByName(self, 'portal_workflow')
         # transact the related analysis requests
         ars = self.getAnalysisRequests()
         for ar in ars:
@@ -1043,8 +1112,7 @@ class Sample(BaseFolder, HistoryAwareMixin):
                         "WorkflowException %s" % e)
             return False
         except AssertionError:
-            logger.warn("'%s': cannot get 'sampleprep_review_state'" %
-                        sampleprep_wf_name)
+            logger.warn("'%s': cannot get 'sampleprep_review_state'" % sp_wf_name)
             return False
 
         # get state from workflow - error = allow transition
@@ -1062,9 +1130,10 @@ class Sample(BaseFolder, HistoryAwareMixin):
         - if no date and samples have been defined
           and "sampling schedule" checkbox is set in bika_setup
         """
-        if self.bika_setup.getScheduleSamplingEnabled() and\
-                isBasicTransitionAllowed(self):
+        if self.bika_setup.getScheduleSamplingEnabled() and \
+           isBasicTransitionAllowed(self):
             return True
         return False
+
 
 atapi.registerType(Sample, PROJECTNAME)

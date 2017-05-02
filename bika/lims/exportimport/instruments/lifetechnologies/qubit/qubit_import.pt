@@ -1,7 +1,7 @@
     <p></p>
 
     <!-- Analysis service to apply the results -->
-    <label for='analysis'>Analysis Service</label>
+    <label i18n:translate="" for='analysis'>Analysis Service</label>
     <select name="analysis" id="analysis" tal:define="analysislist view/getAnalysisServicesDisplayList">
         <tal:options repeat="option analysislist">
         <option tal:attributes="value python:option;"
@@ -11,12 +11,12 @@
     <p></p>
 
     <!-- Input file selector -->
-    <label for='filename'>File</label>&nbsp;
+    <label i18n:translate="" for='filename'>File</label>&nbsp;
     <input type="file" name="filename" id="filename"/>
     &nbsp;&nbsp;
 
     <!-- Format file selector -->
-    <label for='format'>Format</label>&nbsp;
+    <label i18n:translate="" for='format'>Format</label>&nbsp;
     <select name="format" id="format">
         <option value='csv'>CSV</option>
     </select>
@@ -25,10 +25,8 @@
     <h3 style='margin-bottom:10px;margin-top:10px;'>Advanced options</h3>
     <table cellpadding="0" cellspacing="0">
         <tr>
-
-            <!-- Allowed states of the analysis requests to look for -->
-            <td style='vertical-align:top;padding-right:30px;'><label for="artoapply">Analysis Requests state</label>&nbsp;</td>
-            <td>
+            <td class="instrument-import"><label i18n:translate="" for="artoapply">Analysis Requests state</label>&nbsp;</td>
+            <td class="instrument-import">
                 <select name="artoapply" id="artoapply">
                     <option value="received">Received</option>
                     <option value="received_tobeverified">Received and to be verified</option>
@@ -36,10 +34,8 @@
             </td>
         </tr>
         <tr>
-
-            <!-- Results overriding -->
-            <td><label for="override">Results override</label></td>
-            <td>
+            <td class="instrument-import"><label i18n:translate="" for="override">Results override</label></td>
+            <td class="instrument-import">
                 <select name="override" id="override">
                     <option value="nooverride">Don't override results</option>
                     <option value="override">Override non-empty results</option>
@@ -48,16 +44,20 @@
             </td>
         </tr>
         <tr>
-
+            <td colspan=2>
+              <label i18n:translate="" for="title">Instrument Calibration Import</label>
+            </td>
+        </tr>
+        <tr class="instrument-import-border-top">
             <!-- Instrument selector. For calibration tests -->
-            <td style='vertical-align:top;padding-right:30px;'><label for="instrument">Instrument</label></td>
-            <td>
-                <p i18n:translate="" style='color: #3F3F3F;font-size: 0.87em;'>
-                    If the system doesn't find any match (AnalysisRequest, Sample, Reference Analysis or Duplicate),
-                    it will use the record's identifier to find matches with Reference Sample IDs.
-                    If a Reference Sample ID is found, the system will automatically create a
-                    Calibration Test (Reference Analysis) and will link it to the instrument selected below.<br/>
-                    If no instrument selected, no Calibration Test will be created for orphan IDs.
+            <td class="instrument-import-selector"><label i18n:translate="" for="instrument">Instrument</label></td>
+            <td class="instrument-import-padding-top">
+                <p i18n:translate="" class="instrument-import-paragraph">
+                    If an imported result does not match Analysis Requests, Samples,
+                    Reference Analyses or Duplicates, the result's identifier is matched Reference Sample IDs.
+                    When a matching Reference Sample ID is found, the system automatically creates
+                    a Reference Analysis as Calibration test, and will link it to the instrument selected below.
+                    If no instrument is selected, no Calibration tests will be created for orphan IDs.
                 </p>
                 <select name="instrument" id="instrument"
                         tal:define="instrlist view/getInstruments">

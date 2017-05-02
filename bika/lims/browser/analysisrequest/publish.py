@@ -254,6 +254,11 @@ class AnalysisRequestPublishView(BrowserView):
         """
         return self.request.form.get('hvisible', '0').lower() in ['true', '1']
 
+    def isLandscape(self):
+        """ Returns if the layout is landscape
+        """
+        return self.request.form.get('landscape', '0').lower() in ['true', '1']
+
     def explode_data(self, data, padding=''):
         out = ''
         for k,v in data.items():
