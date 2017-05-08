@@ -38,14 +38,11 @@ from Products.DataGridField import DatetimeColumn
 from Products.DataGridField import LinesColumn
 from Products.DataGridField import SelectColumn
 from Products.DataGridField import TimeColumn
-from plone import api
 from plone.indexer import indexer
 from zope import event
 from zope.event import notify
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implements
-
-from bika.lims.browser.widgets import ReferenceWidget as bReferenceWidget
 
 import sys
 import transaction
