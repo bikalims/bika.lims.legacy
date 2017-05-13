@@ -109,6 +109,11 @@ class FileFieldManager(ATFieldManager):
     """
     interface.implements(IFieldManager)
 
+    def get_size(self, instance):
+        """Return the file size of the file
+        """
+        return self.field.get_size(instance)
+
     def get_data(self, instance):
         """Return the file data
         """

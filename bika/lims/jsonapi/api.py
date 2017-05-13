@@ -7,6 +7,7 @@ import Missing
 from DateTime import DateTime
 from AccessControl import Unauthorized
 from Products.CMFPlone.PloneBatch import Batch
+from Products.ZCatalog.Lazy import LazyMap
 from Acquisition import ImplicitAcquisitionWrapper
 
 from plone import api as ploneapi
@@ -378,6 +379,11 @@ def is_json_serializable(thing):
 def to_json_value(obj, fieldname, value=_marker, default=None):
     """Convert the value to a JSON compatible value
 
+    This is called by the dataprovider adapter
+
+    TODO: Refactor logic to DataManager or FieldManager Adapter.
+          -> Add a to_json() method or use just the std. getter
+
     :param obj: Content object
     :type obj: ATContentType/DexterityContentType
     :param fieldname: Schema name of the field
@@ -395,6 +401,10 @@ def to_json_value(obj, fieldname, value=_marker, default=None):
     # get the field
     field = get_field(obj, fieldname)
 
+    # handle reference fields
+    if is_reference_field(field):
+        return get_reference_info(obj, fieldname)
+
     # handle file fields
     if is_file_field(field):
         return get_file_info(obj, fieldname)
@@ -403,13 +413,17 @@ def to_json_value(obj, fieldname, value=_marker, default=None):
     if is_image_field(field):
         return get_file_info(obj, fieldname)
 
+    # extract the value from the object if omitted
+    if value is _marker:
+        value = IDataManager(obj).get(fieldname)
+
     # handle objects from reference fields
     if isinstance(value, ImplicitAcquisitionWrapper):
         return get_url_info(value)
 
-    # extract the value from the object if omitted
-    if value is _marker:
-        value = IDataManager(obj).get(fieldname)
+    # handle Catalog LazyMap List
+    if is_lazy_map(value):
+        value = map(get_url_info, value)
 
     # check if we have a date
     if is_date(value):
@@ -454,7 +468,6 @@ def is_file_field(field):
     :returns: True if the field is a file field
     :rtype: bool
     """
-    # TODO: Handle Dexterity
     return getattr(field, "type", None) == "file"
 
 
@@ -466,8 +479,29 @@ def is_image_field(field):
     :returns: True if the field is an image field
     :rtype: bool
     """
-    # TODO: Handle Dexterity
     return getattr(field, "type", None) == "image"
+
+
+def is_reference_field(field):
+    """Checks if the field is a reference field
+
+    :param field: The field to test
+    :type thing: field object
+    :returns: True if the field is a reference field
+    :rtype: bool
+    """
+    return getattr(field, "type", None) == "reference"
+
+
+def is_lazy_map(thing):
+    """Checks if the passed in thing is a LazyMap
+
+    :param thing: The thing to test
+    :type thing: any
+    :returns: True if the thing is a richtext value
+    :rtype: bool
+    """
+    return isinstance(thing, LazyMap)
 
 
 def is_richtext_value(thing):
@@ -1020,8 +1054,6 @@ def get_file_info(obj, fieldname, default=None):
     :type obj: ATContentType/DexterityContentType
     :param fieldname: Schema name of the field
     :type fieldname: str/unicode
-    :param field: Blob field
-    :type field: plone.app.blob.field.BlobWrapper
     :returns: File data mapping
     :rtype: dict
     """
@@ -1031,6 +1063,10 @@ def get_file_info(obj, fieldname, default=None):
 
     # get the value with the fieldmanager
     fm = IFieldManager(field)
+
+    # return None if we have no file data
+    if fm.get_size(obj) == 0:
+        return None
 
     out = {
         "content_type": fm.get_content_type(obj),
@@ -1043,6 +1079,33 @@ def get_file_info(obj, fieldname, default=None):
         data = fm.get_data(obj)
         out["data"] = data.encode("base64")
 
+    return out
+
+
+def get_reference_info(obj, fieldname, default=None):
+    """Extract data from a reference field
+
+    :param obj: Content object
+    :type obj: ATContentType/DexterityContentType
+    :param fieldname: Schema name of the field
+    :type fieldname: str/unicode
+    :returns: File data mapping
+    :rtype: dict
+    """
+
+    # extract the file field from the object if omitted
+    field = get_field(obj, fieldname)
+
+    # get the value with the fieldmanager
+    fm = IFieldManager(field)
+    value = fm.get(obj)
+
+    out = []
+    for item in _.to_list(value):
+        if isinstance(item, basestring):
+            out.append(item)
+        else:
+            out.append(get_url_info(item))
     return out
 
 
