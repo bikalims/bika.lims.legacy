@@ -132,7 +132,7 @@ def get_object(brain_or_object):
         return brain_or_object
     if is_brain(brain_or_object):
         return brain_or_object.getObject()
-    fail("{} is not supported.".format(brain_or_object))
+    fail("{} is not supported.".format(repr(brain_or_object)))
 
 
 def is_portal(brain_or_object):
