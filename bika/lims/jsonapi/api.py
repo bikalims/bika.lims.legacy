@@ -311,6 +311,9 @@ def is_dexterity_content(brain_or_object):
 def get_field(brain_or_object, name, default=None):
     """Return the named field
     """
+    # Portal has no schema
+    if is_root(brain_or_object):
+        return None
     fields = api.get_fields(brain_or_object)
     return fields.get(name, default)
 
