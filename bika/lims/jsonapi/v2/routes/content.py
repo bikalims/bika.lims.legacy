@@ -32,19 +32,19 @@ def get(context, request, resource=None, uid=None):
 #
 # /<uid>
 @add_route("/<any(" + ACTIONS + "):action>",
-           "plone.jsonapi.routes.action", methods=["POST"])
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
 #
 # /<action (create,update,delete)>/<uid>
 @add_route("/<any(" + ACTIONS + "):action>/<string(maxlength=32):uid>",
-           "plone.jsonapi.routes.action", methods=["POST"])
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
 #
 # /<resource (portal_type)>/<action (create,update,delete)>
 @add_route("/<string:resource>/<any(" + ACTIONS + "):action>",
-           "plone.jsonapi.routes.action", methods=["POST"])
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
 #
 # /<resource (portal_type)>/<action (create,update,delete)>/<uid>
 @add_route("/<string:resource>/<any(" + ACTIONS + "):action>/<string(maxlength=32):uid>",
-           "plone.jsonapi.routes.action", methods=["POST"])
+           "bika.lims.jsonapi.v2.action", methods=["POST"])
 def action(context, request, action=None, resource=None, uid=None):
     """Various HTTP POST actions
 
