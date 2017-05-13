@@ -45,6 +45,10 @@ class Catalog(object):
     def get_catalog(self, name="portal_catalog"):
         return self._catalogs[name]
 
+    def get_schema(self):
+        catalog = self.get_catalog()
+        return catalog.schema()
+
     def get_indexes(self):
         """get all indexes managed by this catalog
 
