@@ -106,8 +106,7 @@ class ATDataManager(object):
     def get_field(self, name):
         """Get the field by name
         """
-        field = self.context.getField(name)
-        return field
+        return self.context.getField(name)
 
     def set(self, name, value, **kw):
         """Set the field to the given value.
