@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import mimetypes
+
 from zope import interface
 
 from DateTime import DateTime
@@ -106,6 +108,39 @@ class FileFieldManager(ATFieldManager):
     """Adapter to get/set the value of File Fields
     """
     interface.implements(IFieldManager)
+
+    def get_data(self, instance):
+        """Return the file data
+        """
+        value = self.get(instance)
+        return getattr(value, "data", "")
+
+    def get_filename(self, instance):
+        """Get the filename
+        """
+        filename = self.field.getFilename(instance)
+        if filename:
+            return filename
+
+        fieldname = self.field.getName()
+        content_type = self.get_content_type(instance)
+        extension = mimetypes.guess_extension(content_type)
+
+        return fieldname + extension
+
+    def get_content_type(self, instance):
+        """Get the content type of the file object
+        """
+        return self.field.getContentType(instance)
+
+    def get_download_url(self, instance, default=None):
+        """Calculate the download url
+        """
+        download = default
+        # calculate the download url
+        download = "{url}/at_download/{fieldname}".format(
+            url=instance.absolute_url(), fieldname=self.field.getName())
+        return download
 
     def set(self, instance, value, **kw):
         """Decodes base64 value and set the file object
