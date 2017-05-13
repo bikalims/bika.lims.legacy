@@ -826,7 +826,10 @@ def get_object_by_path(path):
         segments = path.split("/")
         path = "/".join(segments[2:])
 
-    return portal.restrictedTraverse(str(path))
+    try:
+        return portal.restrictedTraverse(str(path))
+    except AttributeError:
+        fail(404, "No object could be found at {}".format(str(path)))
 
 
 def is_anonymous():
