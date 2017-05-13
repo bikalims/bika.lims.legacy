@@ -6,9 +6,8 @@ from bika.lims import logger
 from bika.lims.jsonapi.v2 import routes
 from bika.lims.jsonapi import add_route as add_bika_route
 
-__build__ = 0
 __version__ = 2
-__date__ = "2017-04-24"
+__date__ = "2017-05-13"
 
 BASE_URL = "/v2"
 
