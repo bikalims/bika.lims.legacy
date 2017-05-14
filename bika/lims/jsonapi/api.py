@@ -932,7 +932,7 @@ def get_endpoint(brain_or_object, default=DEFAULT_ENDPOINT):
 def get_catalog():
     """Get catalog adapter
 
-    :returns: ICatalog adapter for the Portakl
+    :returns: ICatalog adapter for the Portal
     :rtype: CatalogTool
     """
     portal = get_portal()
