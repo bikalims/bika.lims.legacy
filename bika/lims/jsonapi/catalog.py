@@ -36,6 +36,11 @@ class Catalog(object):
         """search the catalog
         """
         logger.info("Catalog query={}".format(query))
+
+        # Support to set the catalog as a request parameter
+        catalogs = _.to_list(req.get("catalog", None))
+        if catalogs:
+            return bikaapi.search(query, catalog=catalogs)
         # Delegate to the search API of Bika LIMS
         return bikaapi.search(query)
 
