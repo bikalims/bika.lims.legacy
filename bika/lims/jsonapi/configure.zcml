@@ -3,7 +3,9 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="bika">
 
-  <!-- <Catalog> -->
+  <!-- CATALOG
+       Unified interface to one or more Portal Catalog tools.
+  -->
 
   <!-- Default catalog adapter -->
   <adapter
@@ -18,7 +20,10 @@
       />
 
 
-  <!-- <Data Provider> -->
+  <!-- DATA PROVIDERS
+       Introspect the Schema/Attributes of Contents and return a JSON compatible
+       dictionary with the help of the Data Managers (see below).
+  -->
 
   <!-- Default data provider (AT based content types) -->
   <adapter
@@ -39,7 +44,10 @@
       />
 
 
-  <!-- <Data Manager> -->
+  <!-- DATA MANAGERS
+       Context level interface to get and set values (by name) and get a JSON compatible
+       structure of the value with the help of the Field Managers (see below).
+  -->
 
   <!-- Default Data adapter (AT based content types) -->
   <adapter
@@ -59,8 +67,17 @@
       factory=".datamanagers.PortalDataManager"
       />
 
+  <!-- Data manager for Dexterity field manipulation -->
+  <adapter
+      for="plone.dexterity.interfaces.IDexterityContent"
+      factory=".datamanagers.DexterityDataManager"
+      />
 
-  <!-- <Field Manager> -->
+
+  <!-- AT FIELD MANAGERS
+       Field level interface to get and set values and get a JSON compatible
+       structure of the value.
+  -->
 
   <!-- Adapter for AT Fields -->
   <adapter
@@ -86,6 +103,12 @@
       factory=".fieldmanagers.FileFieldManager"
       />
 
+  <!-- Adapter for Blob File Field -->
+  <adapter
+      for="plone.app.blob.interfaces.IBlobField"
+      factory=".fieldmanagers.FileFieldManager"
+      />
+
   <!-- Adapter for Bika LIMS Proxy Field -->
   <adapter
       for="bika.lims.interfaces.IProxyField"
@@ -98,7 +121,10 @@
       factory=".fieldmanagers.ReferenceFieldManager"
       />
 
-  <!-- <Batching> -->
+
+  <!-- BATCHING
+       Provides a unified interface to the Plone Batching Machinery.
+  -->
 
   <!-- Adapter for Plone Batching -->
   <adapter

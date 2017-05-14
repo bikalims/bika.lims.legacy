@@ -3,6 +3,8 @@
 from zope import interface
 from zope import component
 
+from plone.dexterity.interfaces import IDexterityContent
+
 from AccessControl import Unauthorized
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.ZCatalog.interfaces import ICatalogBrain
@@ -13,7 +15,6 @@ from bika.lims.jsonapi import api
 from bika.lims.jsonapi.interfaces import IInfo
 from bika.lims.jsonapi.interfaces import ICatalog
 from bika.lims.jsonapi.interfaces import IDataManager
-
 
 _marker = object
 
@@ -50,8 +51,7 @@ class Base(object):
         # 1. extract the schema fields
         data = self.extract_fields()
 
-        # 2. include custom key-value pairs listed in the "self.attributes"
-        #    mapping dictionary
+        # 2. include custom key-value pairs listed in the mapping dictionary
         for key, attr in self.attributes.iteritems():
             # key already extracted in the first step
             if data.get(key, _marker) is not _marker:
@@ -68,7 +68,7 @@ class Base(object):
         return data
 
     def extract_fields(self):
-        """Extract the given fieldnames from the objects' schema
+        """Extract the given fieldnames from the object
 
         :returns: Schema name/value mapping
         :rtype: dict
@@ -83,11 +83,10 @@ class Base(object):
         # schema mapping
         out = dict()
 
-        # extrat the data
         for fieldname in fieldnames:
             try:
-                # get the field value with the data manager adapter (IDataManager)
-                fieldvalue = dm.get(fieldname)
+                # get the field value with the data manager
+                fieldvalue = dm.json_data(fieldname)
             # https://github.com/collective/plone.jsonapi.routes/issues/52
             # -> skip restricted fields
             except Unauthorized:
@@ -113,7 +112,7 @@ class ZCDataProvider(Base):
 
     def __init__(self, context):
         super(ZCDataProvider, self).__init__(context)
-        catalog_adapter = ICatalog(self.context)
+        catalog_adapter = ICatalog(context)
         # extract the metadata
         self.keys = catalog_adapter.get_schema()
 
@@ -145,6 +144,21 @@ class ZCDataProvider(Base):
         ]
 
 
+class DexterityDataProvider(Base):
+    """ Data Provider for Dexterity based content types
+    """
+    interface.implements(IInfo)
+    component.adapts(IDexterityContent)
+
+    def __init__(self, context):
+        super(DexterityDataProvider, self).__init__(context)
+
+        # get the behavior and schema fields from the data manager
+        schema = api.get_schema(context)
+        behaviors = api.get_behaviors(context)
+        self.keys = schema.names() + behaviors.keys()
+
+
 class ATDataProvider(Base):
     """ Archetypes Adapter
     """
@@ -155,8 +169,7 @@ class ATDataProvider(Base):
         super(ATDataProvider, self).__init__(context)
 
         # get the schema fields from the data manager
-        dm = IDataManager(context)
-        schema = dm.get_schema()
+        schema = api.get_schema(context)
         self.keys = schema.keys()
 
 
