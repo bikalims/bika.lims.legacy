@@ -462,3 +462,16 @@ class ProxyFieldManager(ATFieldManager):
         # set the field with the proper field manager of the proxy field
         fieldmanager = IFieldManager(proxy_field)
         return fieldmanager.set(instance, value, **kw)
+
+
+class ARAnalysesFieldManager(ATFieldManager):
+    """Adapter to get/set the value of Bika AR Analyses Fields
+    """
+    interface.implements(IFieldManager)
+
+    def json_data(self, instance, default=[]):
+        """Get a JSON compatible value
+        """
+        value = self.get(instance)
+        out = map(api.get_url_info, value)
+        return out or default

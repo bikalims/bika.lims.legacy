@@ -740,3 +740,7 @@ class IProxyField(Interface):
     """A field that proxies transparently to the field of another object.
     Mainly needed for AnalysisRequest fields that are actually stored on the Sample.
     """
+
+class IARAnalysesField(Interface):
+    """A field that manages AR Analyses
+    """

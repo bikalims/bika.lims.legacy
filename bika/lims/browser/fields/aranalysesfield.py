@@ -15,6 +15,8 @@ from Products.Archetypes.Registry import registerField
 from Products.Archetypes.utils import shasattr
 from Products.CMFCore.utils import getToolByName
 from types import ListType, TupleType, DictType
+from zope.interface import implements
+from bika.lims.interfaces import IARAnalysesField
 
 
 class ARAnalysesField(ObjectField):
@@ -24,6 +26,7 @@ class ARAnalysesField(ObjectField):
     get() returns the list of Analyses contained inside the AnalysesRequest
     set() converts a sequence of UIDS to Analysis instances in the AR
     """
+    implements(IARAnalysesField)
 
     _properties = Field._properties.copy()
     _properties.update({

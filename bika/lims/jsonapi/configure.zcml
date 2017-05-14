@@ -115,6 +115,12 @@
       factory=".fieldmanagers.ProxyFieldManager"
       />
 
+  <!-- Adapter for Bika LIMS AR Analyses Field -->
+  <adapter
+      for="bika.lims.interfaces.IARAnalysesField"
+      factory=".fieldmanagers.ARAnalysesFieldManager"
+      />
+
   <!-- Adapter for Reference Field -->
   <adapter
       for="Products.Archetypes.interfaces.field.IReferenceField"
