@@ -9,14 +9,17 @@ from Products.CMFPlone.PloneBatch import Batch
 from Products.ZCatalog.Lazy import LazyMap
 from Acquisition import ImplicitAcquisitionWrapper
 
+from zope.schema import getFields
+
 from plone import api as ploneapi
 from plone.jsonapi.core import router
+from plone.behavior.interfaces import IBehaviorAssignable
 
 from bika.lims import api
 from bika.lims import logger
 from bika.lims.jsonapi import config
 from bika.lims.jsonapi import request as req
-from bika.lims.jsonapi import underscore as _
+from bika.lims.jsonapi import underscore as u
 from bika.lims.jsonapi.interfaces import IInfo
 from bika.lims.jsonapi.interfaces import IBatch
 from bika.lims.jsonapi.interfaces import ICatalog
@@ -26,22 +29,13 @@ from bika.lims.jsonapi.interfaces import IFieldManager
 from bika.lims.jsonapi.interfaces import ICatalogQuery
 from bika.lims.utils.analysisrequest import create_analysisrequest as create_ar
 
-import pkg_resources
-try:
-    pkg_resources.get_distribution('plone.app.textfield')
-    from plone.app.textfield.interfaces import IRichTextValue
-except (pkg_resources.DistributionNotFound, ImportError):
-    HAS_PLONE_APP_TEXTFIELD = False
-else:
-    HAS_PLONE_APP_TEXTFIELD = True
-
 _marker = object()
 
 DEFAULT_ENDPOINT = "bika.lims.jsonapi.v2.get"
 
 
 # -----------------------------------------------------------------------------
-#   JSON API (CRUD) Functions
+#   JSON API (CRUD) Functions (called by the route providers)
 # -----------------------------------------------------------------------------
 
 # GET RECORD
@@ -59,7 +53,7 @@ def get_record(uid=None):
     if complete is _marker:
         complete = True
     items = make_items_for([obj], complete=complete)
-    return _.first(items)
+    return u.first(items)
 
 
 # GET BATCHED
@@ -215,10 +209,6 @@ def delete_items(portal_type=None, uid=None, endpoint=None, **kw):
     return results
 
 
-# -----------------------------------------------------------------------------
-#   Data Functions
-# -----------------------------------------------------------------------------
-
 def make_items_for(brains_or_objects, endpoint=None, complete=False):
     """Generate API compatible data items for the given list of brains/objects
 
@@ -243,6 +233,10 @@ def make_items_for(brains_or_objects, endpoint=None, complete=False):
 
     return map(extract_data, brains_or_objects)
 
+
+# -----------------------------------------------------------------------------
+#   Info Functions (JSON compatible data representation)
+# -----------------------------------------------------------------------------
 
 def get_info(brain_or_object, endpoint=None, complete=False):
     """Extract the data from the catalog brain or object
@@ -444,23 +438,23 @@ def get_search_results(portal_type=None, uid=None, **kw):
     # If we have an UID, return the object immediately
     if uid is not None:
         logger.info("UID '%s' found, returning the object immediately" % uid)
-        return _.to_list(get_object_by_uid(uid))
+        return u.to_list(get_object_by_uid(uid))
 
     # allow to search search for the Plone Site with portal_type
     include_portal = False
-    if _.to_string(portal_type) == "Plone Site":
+    if u.to_string(portal_type) == "Plone Site":
         include_portal = True
 
     # The request may contain a list of portal_types, e.g.
     # `?portal_type=Document&portal_type=Plone Site`
-    if "Plone Site" in _.to_list(req.get("portal_type")):
+    if "Plone Site" in u.to_list(req.get("portal_type")):
         include_portal = True
 
     # Build and execute a catalog query
     results = search(portal_type=portal_type, uid=uid, **kw)
 
     if include_portal:
-        results = list(results) + _.to_list(get_portal())
+        results = list(results) + u.to_list(get_portal())
 
     return results
 
@@ -687,39 +681,6 @@ def is_date(thing):
     return isinstance(thing, date_types)
 
 
-def is_file_field(field):
-    """Checks if the field is a file field
-
-    :param field: The field to test
-    :type thing: field object
-    :returns: True if the field is a file field
-    :rtype: bool
-    """
-    return getattr(field, "type", None) == "file"
-
-
-def is_image_field(field):
-    """Checks if the field is an image field
-
-    :param field: The field to test
-    :type thing: field object
-    :returns: True if the field is an image field
-    :rtype: bool
-    """
-    return getattr(field, "type", None) == "image"
-
-
-def is_reference_field(field):
-    """Checks if the field is a reference field
-
-    :param field: The field to test
-    :type thing: field object
-    :returns: True if the field is a reference field
-    :rtype: bool
-    """
-    return getattr(field, "type", None) == "reference"
-
-
 def is_lazy_map(thing):
     """Checks if the passed in thing is a LazyMap
 
@@ -729,19 +690,6 @@ def is_lazy_map(thing):
     :rtype: bool
     """
     return isinstance(thing, LazyMap)
-
-
-def is_richtext_value(thing):
-    """Checks if the value is a richtext value
-
-    :param thing: The thing to test
-    :type thing: any
-    :returns: True if the thing is a richtext value
-    :rtype: bool
-    """
-    if HAS_PLONE_APP_TEXTFIELD:
-        return IRichTextValue.providedBy(thing)
-    return False
 
 
 def to_iso_date(date, default=None):
@@ -1098,7 +1046,7 @@ def get_user(user_or_username=None):
         return None
     if hasattr(user_or_username, "getUserId"):
         return ploneapi.user.get(user_or_username.getUserId())
-    return ploneapi.user.get(userid=_.to_string(user_or_username))
+    return ploneapi.user.get(userid=u.to_string(user_or_username))
 
 
 def get_user_properties(user_or_username):
@@ -1209,7 +1157,7 @@ def create_object(container, portal_type, **data):
         if portal_type == "AnalysisRequest":
             obj = create_analysisrequest(container, **data)
             # Omit values which are already set through the helper
-            data = _.omit(data, "SampleType", "Analyses")
+            data = u.omit(data, "SampleType", "Analyses")
             # Set the container as the client, as the AR lives in it
             data["Client"] = container
         # Standard content creation
@@ -1299,7 +1247,7 @@ def update_object_with_data(content, record):
     # Validate the entire content object
     invalid = validate_object(content, record)
     if invalid:
-        fail(400, _.to_json(invalid))
+        fail(400, u.to_json(invalid))
 
     # do a wf transition
     if record.get("transition", None):
