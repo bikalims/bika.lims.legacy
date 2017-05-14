@@ -427,7 +427,10 @@ class ReferenceFieldManager(ATFieldManager):
     def json_data(self, instance, default=None):
         """Get a JSON compatible value
         """
-        return api.get_url_info(instance)
+        value = self.get(instance)
+        if value:
+            return api.get_url_info(value)
+        return default
 
 
 class ProxyFieldManager(ATFieldManager):
