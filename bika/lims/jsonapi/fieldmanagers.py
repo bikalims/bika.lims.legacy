@@ -428,9 +428,11 @@ class ReferenceFieldManager(ATFieldManager):
         """Get a JSON compatible value
         """
         value = self.get(instance)
-        if value:
+        if value and self.is_multi_valued():
+            return map(api.get_url_info, value)
+        elif value and not self.is_multi_valued():
             return api.get_url_info(value)
-        return default
+        return value or default
 
 
 class ProxyFieldManager(ATFieldManager):
