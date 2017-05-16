@@ -60,5 +60,9 @@
       for="Products.PluggableAuthService.interfaces.events.IUserLoggedInEvent"
       handler="bika.lims.subscribers.dep_cookie.SetDepartmentCookies"
       />
-
+  <subscriber
+      for="bika.lims.interfaces.IARImport
+           zope.app.container.interfaces.IObjectAddedEvent"
+      handler="bika.lims.subscribers.blockPortletOnARImport.blockPortletsUpponARImportCreation"
+      />
 </configure>
