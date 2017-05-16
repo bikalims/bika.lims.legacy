@@ -115,6 +115,24 @@ def fail(msg=None):
     raise BikaLIMSError("{}".format(msg))
 
 
+def is_object(brain_or_object):
+    """Check if the passed in object is a supported portal content object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: Portal Object
+    :returns: True if the passed in object is a valid portal content
+    """
+    if is_portal(brain_or_object):
+        return True
+    if is_at_content(brain_or_object):
+        return True
+    if is_dexterity_content(brain_or_object):
+        return True
+    if is_brain(brain_or_object):
+        return True
+    return False
+
+
 def get_object(brain_or_object):
     """Get the full content object
 
@@ -123,16 +141,11 @@ def get_object(brain_or_object):
     /CatalogBrain
     :returns: The full object
     """
-
-    if is_portal(brain_or_object):
-        return brain_or_object
-    if is_at_content(brain_or_object):
-        return brain_or_object
-    if is_dexterity_content(brain_or_object):
-        return brain_or_object
+    if not is_object(brain_or_object):
+        fail("{} is not supported.".format(repr(brain_or_object)))
     if is_brain(brain_or_object):
         return brain_or_object.getObject()
-    fail("{} is not supported.".format(repr(brain_or_object)))
+    return brain_or_object
 
 
 def is_portal(brain_or_object):
@@ -202,6 +215,8 @@ def get_portal_type(brain_or_object):
     :returns: Portal type
     :rtype: string
     """
+    if not is_object(brain_or_object):
+        fail("{} is not supported.".format(repr(brain_or_object)))
     return brain_or_object.portal_type
 
 
@@ -487,15 +502,13 @@ def get_parent(brain_or_object, catalog_search=False):
     return get_object(brain_or_object).aq_parent
 
 
-def search(query, catalog=_marker, show_inactive=False):
+def search(query, catalog=_marker):
     """Search for objects.
 
     :param query: A suitable search query.
     :type query: dict
     :param catalog: A single catalog id or a list of catalog ids
     :type catalog: str/list
-    :param show_inactive: Include inactive or dormant objects
-    :type show_inactive: Boolean
     :returns: Search results
     :rtype: List of ZCatalog brains
     """
@@ -504,92 +517,37 @@ def search(query, catalog=_marker, show_inactive=False):
     if not isinstance(query, dict):
         fail("Catalog query needs to be a dictionary")
 
-    # The catalogs to query
+    # Portal types to query
+    portal_types = query.get("portal_type", [])
+    # We want the portal_type as a list
+    if not isinstance(portal_types, (tuple, list)):
+        portal_types = [portal_types]
+
+    # The catalogs used for the query
     catalogs = []
 
-    # The user requested one or more explicit catalog query.
-    if catalog is not _marker:
+    # The user did **not** specify a catalog
+    if catalog is _marker:
+        # Find the registered catalogs for the queried portal types
+        for portal_type in portal_types:
+            # Just get the first registered/default catalog
+            catalogs.append(get_catalogs_for(
+                portal_type, default="portal_catalog")[0])
+    else:
+        # User defined catalogs
         if isinstance(catalog, (list, tuple)):
             catalogs.extend(map(get_tool, catalog))
         else:
             catalogs.append(get_tool(catalog))
 
-    # Implicit queries require knowledge about the `portal_type` to search.
-    portal_types = query.get("portal_type", None)
+    # Cleanup: Avoid duplicate catalogs
+    catalogs = list(set(catalogs)) or [get_portal_catalog()]
 
-    # If no portal_type was found and no catalogs were specified,
-    # execute a standard catalog search
-    if not portal_types and not catalogs:
-        return get_portal_catalog()(query)
+    # We only support **single** catalog queries
+    if len(catalogs) > 1:
+        fail("Multi Catalog Queries are not supported, please specify a catalog.")
 
-    # We want the portal_type as a list
-    if not isinstance(portal_types, (tuple, list)):
-        portal_types = [portal_types]
-
-    # Use the archetypes_tool to gather the right catalogs
-    archetype_tool = get_tool("archetype_tool", None)
-    # but only if the user did not specify any catalogs explicitly
-    if archetype_tool and not catalogs:
-        for portal_type in portal_types:
-            # we just want the first of the registered catalogs
-            catalogs.extend(archetype_tool.getCatalogsByType(portal_type)[:1])
-        # avoid duplicate catalogs
-        catalogs = list(set(catalogs))
-
-    # gracefully fall-back to the `portal_catalog`
-    if not catalogs:
-        catalogs = [get_portal_catalog()]
-
-    # With a single catalog, we don't have to care about merging the results
-    if len(catalogs) == 1:
-        brains = catalogs[0](query)
-        # Avoid inactive or dormant items
-        if not show_inactive:
-            return filter(is_active, brains)
-        return brains
-
-    # Multiple catalog results need to be merged
-    results = dict()
-    for catalog in catalogs:
-        for brain in catalog(query):
-            # Avoid duplicates
-            results[brain.UID] = brain
-
-    # The search results of all catalog queries are now mixed, so we have to
-    # order them according to the search spec
-    search_results = results.values()
-
-    # Avoid inactive or dormant items.
-    if not show_inactive:
-        search_results = filter(is_active, search_results)
-
-    # Handle the `limit`, `sort_order` and the `sort_on` manually
-    sort_on = query.get("sort_on", "created")
-    sort_order = query.get("sort_order", "ascending")
-
-    limit = query.get("limit")
-    try:
-        if limit:
-            limit = int(limit)
-    except ValueError:
-        logger.warn("search: limit should be int, received {}.".format(limit))
-        limit = None
-
-    def _sort_on(x, y):
-        x = safe_getattr(x, sort_on, x)
-        y = safe_getattr(y, sort_on, y)
-        # we can only compare objects of the same type
-        if type(x) != type(y):
-            return 0
-        return cmp(x, y)
-
-    # sort according to the `sort_on` and `sort_order`
-    reverse = sort_order in ["descending", "reverse"] and True or False
-    search_results = sorted(search_results, cmp=_sort_on, reverse=reverse)
-    # check for a search limit
-    if limit:
-        return search_results[:int(limit)]
-    return search_results
+    return catalogs[0](query)
 
 
 def safe_getattr(brain_or_object, attr, default=_marker):
@@ -668,13 +626,17 @@ def get_revision_history(brain_or_object):
 def get_workflows_for(brain_or_object):
     """Get the assigned workflows for the given brain or context.
 
+    Note: This function supports also the portal_type as parameter.
+
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
     :returns: Assigned Workflows
     :rtype: tuple
     """
-    obj = get_object(brain_or_object)
     workflow = ploneapi.portal.get_tool("portal_workflow")
+    if isinstance(brain_or_object, basestring):
+        return workflow.getChainFor(brain_or_object)
+    obj = get_object(brain_or_object)
     return workflow.getChainFor(obj)
 
 
@@ -688,6 +650,34 @@ def get_workflow_status_of(brain_or_object):
     """
     obj = get_object(brain_or_object)
     return ploneapi.content.get_state(obj)
+
+
+def get_catalogs_for(brain_or_object, default="portal_catalog"):
+    """Get all registered catalogs for the given portal_type, catalog brain or
+    content object
+
+    :param brain_or_object: The portal_type, a catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: List of supported catalogs
+    :rtype: list
+    """
+    archetype_tool = get_tool("archetype_tool", None)
+    if not archetype_tool:
+        # return the default catalog
+        return [get_tool(default)]
+
+    catalogs = []
+
+    # get the registered catalogs for portal_type
+    if is_object(brain_or_object):
+        catalogs = archetype_tool.getCatalogsByType(
+            get_portal_type(brain_or_object))
+    if isinstance(brain_or_object, basestring):
+        catalogs = archetype_tool.getCatalogsByType(brain_or_object)
+
+    if not catalogs:
+        return [get_tool(default)]
+    return catalogs
 
 
 def do_transition_for(brain_or_object, transition):

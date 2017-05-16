@@ -5,6 +5,9 @@ Bika LIMS API
 The Bika LIMS API provides single functions for single purposes.
 This Test builds completely on the API without any further imports needed.
 
+Running this test from the buildout directory::
+
+    bin/test test_textual_doctests -t API
 
 API
 ===
@@ -114,6 +117,24 @@ No supported objects raise an error::
     Traceback (most recent call last):
     [...]
     BikaLIMSError: <object object at 0x...> is not supported.
+
+To check if an object is supported, e.g. is an ATCT, Dexterity, ZCatalog or
+Portal object, we can use the `is_object` function::
+
+    >>> api.is_object(client)
+    True
+
+    >>> api.is_object(brain)
+    True
+
+    >>> api.is_object(api.get_portal())
+    True
+
+    >>> api.is_object(None)
+    False
+
+  >>> api.is_object(object())
+    False
 
 
 Checking if an Object is the Portal
@@ -470,32 +491,21 @@ Now we create some objects which are located in the `bika_setup_catalog`::
     >>> map(api.get_id, results)
     ['instrument-1', 'instrument-2', 'instrument-3']
 
-If a query requires to search in **multiple catalogs**, the results get merged
-after each search and sorted afterwards::
+Queries which result in multiple catalogs will be refused, as it would require
+manual merging and sorting of the results afterwards. Thus, we fail here:
 
     >>> results = api.search({'portal_type': ['Client', 'ClientFolder', 'Instrument'], 'sort_on': 'getId'})
-    >>> len(results)
-    5
-    >>> map(api.get_id, results)
-    ['client-1', 'clients', 'instrument-1', 'instrument-2', 'instrument-3']
+    Traceback (most recent call last):
+    [...]
+    BikaLIMSError: Multi Catalog Queries are not supported, please specify a catalog.
 
-It is also possible to limit the results::
-
-    >>> results = api.search({'portal_type': ['Client', 'ClientFolder', 'Instrument'], 'sort_on': 'getId', 'limit': 2})
-    >>> len(results)
-    2
-    >>> map(api.get_id, results)
-    ['client-1', 'clients']
-
-We can also specify explicit catalogs to search::
+Catalog queries w/o any `portal_type`, default to the `portal_catalog`, which
+will not find the following items::
 
     >>> analysiscategories = bika_setup.bika_analysiscategories
     >>> analysiscategory1 = api.create(analysiscategories, "AnalysisCategory", title="AC-1")
     >>> analysiscategory2 = api.create(analysiscategories, "AnalysisCategory", title="AC-2")
     >>> analysiscategory3 = api.create(analysiscategories, "AnalysisCategory", title="AC-3")
-
-Because if we don't specify the `portal_type`, the catalog defaults to the
-`portal_catalog`, which will not find this item::
 
     >>> results = api.search({"id": "analysiscategory-1"})
     >>> len(results)
@@ -514,22 +524,36 @@ We could also explicitly define a catalog to achieve the same::
     >>> len(results)
     1
 
-To see inactive or dormant items, we must explicitly request them.  This means
-that even if we explicitly specify the ID of an item that is inactive, it will
-not be returned by default!
+To see inactive or dormant items, we must explicitly query them of filter them
+afterwars manually::
 
     >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"})
     >>> len(results)
     1
+
+Now we deactivate the item::
+
     >>> analysiscategory1 = api.do_transition_for(analysiscategory1, 'deactivate')
     >>> api.is_active(analysiscategory1)
     False
+
+The search will still find the item::
+
     >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"})
     >>> len(results)
+    1
+
+Unless we filter it out manually::
+
+    >>> len(filter(api.is_active, results))
     0
-    >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1"}, show_inactive=True)
+
+Or provide a correct query::
+
+    >>> results = api.search({"portal_type": "AnalysisCategory", "id": "analysiscategory-1", "inactive_status": "active"})
     >>> len(results)
     1
+
 
 Getting an Attribute of an Object
 ---------------------------------
@@ -597,6 +621,11 @@ This function returns all assigned workflows for a given object::
     >>> api.get_workflows_for(client)
     ('bika_one_state_workflow', 'bika_inactive_workflow')
 
+This function also supports the portal_type as parameter::
+
+    >>> api.get_workflows_for(api.get_portal_type(client))
+    ('bika_one_state_workflow', 'bika_inactive_workflow')
+
 
 Getting the Workflow Status of an Object
 ----------------------------------------
@@ -605,6 +634,21 @@ This function returns the state of a given object::
 
     >>> api.get_workflow_status_of(client)
     'active'
+
+
+Getting the registered Catalogs of an Object
+--------------------------------------------
+
+This function returns a list of all registered catalogs within the
+`archetype_tool` for a given portal_type or object::
+
+    >>> api.get_catalogs_for(client)
+    [<CatalogTool at /plone/portal_catalog>]
+
+It also supports the `portal_type` as a parameter::
+
+    >>> api.get_catalogs_for("Analysis")
+    [<BikaAnalysisCatalog at /plone/bika_analysis_catalog>]
 
 
 Transitioning an Object

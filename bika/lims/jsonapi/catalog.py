@@ -40,9 +40,9 @@ class Catalog(object):
         # Support to set the catalog as a request parameter
         catalogs = _.to_list(req.get("catalog", None))
         if catalogs:
-            return bikaapi.search(query, catalog=catalogs)
+            return bikaapi.search(query, catalog=catalogs, show_incative=True)
         # Delegate to the search API of Bika LIMS
-        return bikaapi.search(query)
+        return bikaapi.search(query, show_inactive=True)
 
     def __call__(self, query):
         return self.search(query)
