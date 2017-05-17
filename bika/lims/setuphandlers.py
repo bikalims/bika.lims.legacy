@@ -304,7 +304,7 @@ class BikaGenerator:
         # The `/bika_setup/laboratory` object follows the `bika_one_state_workflow`.
         mp = portal.bika_setup.laboratory.manage_permission
         # We set explicit permissions to access methods to be persistent with the assigned workflow
-        mp(permissions.View, ['Authenticated'], 0)
+        mp(permissions.View, ['Anonymous'], 0)
         mp(permissions.ListFolderContents, ['Authenticated'], 0)
         # Front-Page Portlets need to access some information for Anonymous.
         mp(permissions.AccessContentsInformation, ['Anonymous'], 0)
