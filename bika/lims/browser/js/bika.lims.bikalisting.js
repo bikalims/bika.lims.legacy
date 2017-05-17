@@ -41,7 +41,7 @@ function BikaListingTableView() {
 			var limit_from = parseInt($(this).attr('data-limitfrom'));
 			url = url.replace('_limit_from=','_olf=');
 			url += '&'+formid+"_limit_from="+limit_from;
-			$('#'+formid+' a.bika_listing_show_more').fadeOut();
+			// $('#'+formid+' a.bika_listing_show_more').fadeOut();
 			var tbody = $('table.bika-listing-table[form_id="'+formid+'"] tbody.item-listing-tbody');
 			// The results must be filtered?
 			var filter_options = [];
@@ -76,8 +76,8 @@ function BikaListingTableView() {
     			}).always(function() {
 					var numitems = $('table.bika-listing-table[form_id="'+formid+'"] tbody.item-listing-tbody tr').length;
 					$('#'+formid+' span.number-items').html(numitems);
-					if (numitems % pagesize == 0) {
-						$('#'+formid+' a.bika_listing_show_more').show();
+					if (numitems % pagesize != 0) {
+						$('#'+formid+' a.bika_listing_show_more').hide();
 					}
 				});
 		});
