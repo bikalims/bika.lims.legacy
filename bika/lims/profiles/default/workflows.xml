@@ -91,6 +91,11 @@
       <bound-workflow workflow_id="bika_cancellation_workflow"/>
     </type>
 
+    <!-- AR Reports -->
+    <type type_id="ARReport">
+      <bound-workflow workflow_id="bika_one_state_workflow"/>
+    </type>
+
     <!-- Analysis Services -->
     <type type_id="AnalysisServices">
       <bound-workflow workflow_id="bika_one_state_workflow"/>
