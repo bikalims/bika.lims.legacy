@@ -272,11 +272,10 @@ def get_info(brain_or_object, endpoint=None, complete=False):
         # update the data set with the complete information
         info.update(adapter.to_dict())
 
-        # # add workflow data if the user requested it
-        # # -> only possible if `?complete=yes`
-        # if req.get_workflow(False):
-        #     workflow = get_workflow_info(obj)
-        #     info.update({"workflow": workflow})
+        # update the data set with the workflow information
+        # -> only possible if `?complete=yes&workflow=yes`
+        if req.get_workflow(False):
+            info.update(get_workflow_info(obj))
 
         # # add sharing data if the user requested it
         # # -> only possible if `?complete=yes`
@@ -401,6 +400,73 @@ def get_file_info(obj, fieldname, default=None):
         out["data"] = data.encode("base64")
 
     return out
+
+
+def get_workflow_info(brain_or_object, endpoint=None):
+    """Generate workflow information of the assigned workflows
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :param endpoint: The named URL endpoint for the root of the items
+    :type endpoint: str/unicode
+    :returns: Workflows info
+    :rtype: dict
+    """
+
+    # ensure we have a full content object
+    obj = get_object(brain_or_object)
+
+    # get the portal workflow tool
+    wf_tool = get_tool("portal_workflow")
+
+    # the assigned workflows of this object
+    workflows = wf_tool.getWorkflowsFor(obj)
+
+    # no worfkflows assigned -> return
+    if not workflows:
+        return []
+
+    def to_transition_info(transition):
+        """ return the transition information
+        """
+        return {
+            "title": transition["title"],
+            "value": transition["id"],
+            "display": transition["description"],
+            "url": transition["url"],
+        }
+
+    out = []
+
+    for workflow in workflows:
+
+        # get the status info of the current state (dictionary)
+        info = wf_tool.getStatusOf(workflow.getId(), obj)
+
+        # get the current review_status
+        review_state = info.get("review_state", None)
+        inactive_state = info.get("inactive_state", None)
+        cancellation_state = info.get("cancellation_state", None)
+
+        state = review_state or inactive_state or cancellation_state
+
+        # get the wf status object
+        status_info = workflow.states[state]
+
+        # get the title of the current status
+        status = status_info.title
+
+        # get the transition informations
+        transitions = map(to_transition_info, wf_tool.getTransitionsFor(obj))
+
+        out.append({
+            "workflow": workflow.getId(),
+            "status": status,
+            "review_state": state,
+            "transitions": transitions,
+        })
+
+    return {"workflow_info": out}
 
 
 # -----------------------------------------------------------------------------
