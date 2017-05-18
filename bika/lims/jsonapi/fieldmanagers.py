@@ -415,7 +415,7 @@ class ReferenceFieldManager(ATFieldManager):
 
         # The value is a physical path
         if api.is_path(value):
-            ref = api.get_object_by_path(value)
+            ref.append(api.get_object_by_path(value))
 
         # Handle non multi valued fields
         if not self.multi_valued and len(ref) > 1:
