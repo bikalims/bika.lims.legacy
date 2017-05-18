@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="bika">
 
   <!-- CATALOG
@@ -41,6 +42,12 @@
   <adapter
       for="Products.CMFCore.interfaces.ISiteRoot"
       factory=".dataproviders.SiteRootDataProvider"
+      />
+
+  <!-- Data provider for Dexterity content types -->
+  <adapter
+      for="plone.dexterity.interfaces.IDexterityContent"
+      factory=".dataproviders.DexterityDataProvider"
       />
 
 
@@ -125,6 +132,46 @@
   <adapter
       for="Products.Archetypes.interfaces.field.IReferenceField"
       factory=".fieldmanagers.ReferenceFieldManager"
+      />
+
+
+  <!-- ZOPE SCHEMA FIELD MANAGERS
+       Field level interface to get and set values and get a JSON compatible
+       structure of the value.
+  -->
+
+  <!-- Adapter for Zope Schema Fields -->
+  <adapter
+      for="zope.schema.interfaces.IField"
+      factory=".fieldmanagers.ZopeSchemaFieldManager"
+      />
+
+  <!-- Adapter for Rich Text Fields -->
+  <configure zcml:condition="installed plone.app.textfield">
+    <adapter
+        for="plone.app.textfield.interfaces.IRichText"
+        factory=".fieldmanagers.RichTextFieldManager"
+        />
+  </configure>
+
+  <!-- Adapter for Relation Fields -->
+  <configure zcml:condition="installed z3c.relationfield">
+    <adapter
+        for="z3c.relationfield.interfaces.IRelationList"
+        factory=".fieldmanagers.RelationListFieldManager"
+        />
+  </configure>
+
+  <!-- Adapter for Named File Fields -->
+  <adapter
+      for="plone.namedfile.interfaces.INamedFileField"
+      factory=".fieldmanagers.NamedFileFieldManager"
+      />
+
+  <!-- Adapter for Named Image Fields -->
+  <adapter
+      for="plone.namedfile.interfaces.INamedImageField"
+      factory=".fieldmanagers.NamedImageFieldManager"
       />
 
 
