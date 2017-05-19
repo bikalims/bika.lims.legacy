@@ -104,6 +104,12 @@
       factory=".fieldmanagers.DateTimeFieldManager"
       />
 
+  <!-- Adapter for Computed Field -->
+  <adapter
+      for="Products.Archetypes.interfaces.field.IComputedField"
+      factory=".fieldmanagers.ComputedFieldManager"
+      />
+
   <!-- Adapter for File Field -->
   <adapter
       for="Products.Archetypes.interfaces.field.IFileField"
