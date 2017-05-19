@@ -447,8 +447,17 @@ def get_workflow_info(brain_or_object, endpoint=None):
         review_state = info.get("review_state", None)
         inactive_state = info.get("inactive_state", None)
         cancellation_state = info.get("cancellation_state", None)
+        worksheetanalysis_review_state = info.get("worksheetanalysis_review_state", None)
 
-        state = review_state or inactive_state or cancellation_state
+        state = review_state or \
+            inactive_state or \
+            cancellation_state or \
+            worksheetanalysis_review_state
+
+        if state is None:
+            logger.warn("No state variable found for {} -> {}".format(
+                repr(obj), info))
+            continue
 
         # get the wf status object
         status_info = workflow.states[state]
