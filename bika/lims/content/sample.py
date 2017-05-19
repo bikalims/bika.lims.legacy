@@ -467,9 +467,10 @@ schema = BikaSchema.copy() + Schema((
             visible=False,
         ),
     ),
-    ComputedField('SampleTypeUID',
-        expression = 'context.getSampleType().UID()',
-        widget = ComputedWidget(
+    ComputedField(
+        'SampleTypeUID',
+        expression='context.getSampleType() and context.getSampleType().UID() or None',
+        widget=ComputedWidget(
             visible=False,
         ),
     ),
