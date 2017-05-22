@@ -1,0 +1,489 @@
+<?xml version="1.0"?>
+<rolemap>
+  <roles>
+    <role name="Analyst"/>
+    <role name="Client"/>
+    <role name="LabClerk"/>
+    <role name="LabManager"/>
+    <role name="Member"/>
+    <role name="Preserver"/>
+    <role name="Publisher"/>
+    <role name="RegulatoryInspector"/>
+    <role name="Reviewer"/>
+    <role name="Sampler"/>
+    <role name="SamplingCoordinator"/>
+    <role name="Verifier"/>
+  </roles>
+  <permissions>
+
+    <!-- Bika LIMS Rolemapping -->
+    <permission name="BIKA: Access JSON API" acquire="False">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Add Analysis" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Sampler"/>
+    </permission>
+
+    <permission name="BIKA: Add AnalysisProfile" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add Analysis Request" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add AnalysisSpec" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add ARTemplate" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add Attachment" acquire="False">
+      <role name="Client"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Sampler"/>
+    </permission>
+
+    <permission name="BIKA: Add Batch" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add Client" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add ClientFolder" acquire="True">
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Add Invoice" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Add Method" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Add Multifile" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Add Pricelist" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add Sample" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Sampler"/>
+    </permission>
+
+    <permission name="BIKA: Add SampleMatrix" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add SamplePartition" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Add SamplePoint" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add StorageLocation" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add SamplingDeviation" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add SRTemplate" acquire="False">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Add Sub-group" acquire="False">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="Add portal content" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="List folder contents" acquire="True">
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="FTP access" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="Delete objects" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="Modify portal content" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="Manage users" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="CMFEditions: Apply version control" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="RegulatoryInspector"/>
+    </permission>
+
+    <permission name="CMFEditions: Save new version" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="RegulatoryInspector"/>
+    </permission>
+
+    <permission name="CMFEditions: Access previous versions" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="RegulatoryInspector"/>
+    </permission>
+
+    <permission name="BIKA: Dispatch Order" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage ARImport" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage ARPriority" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Analysis Requests" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Preserver"/>
+      <role name="RegulatoryInspector"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Manage Bika" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Clients" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Login Details" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Reference" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Reference Suppliers" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Samples" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Preserver"/>
+      <role name="RegulatoryInspector"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Manage Worksheets" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Post Invoice batch" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: Cancel and reinstate" acquire="False">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: View Retracted Analyses" acquire="False">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Schedule Sampling" acquire="False">
+      <role name="Manager"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Sample Sample" acquire="False">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Preserve Sample" acquire="False">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Preserver"/>
+    </permission>
+
+    <permission name="BIKA: Receive Sample" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Expire Sample" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Dispose Sample" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Import Analysis" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Reject Worksheet" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Verifier"/>
+    </permission>
+
+    <permission name="BIKA: Retract" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Verifier"/>
+    </permission>
+
+    <permission name="BIKA: Verify" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Verifier"/>
+    </permission>
+
+    <permission name="BIKA: Publish" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Publisher"/>
+    </permission>
+
+    <permission name="BIKA: Edit Sample" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Preserver"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Edit AR" acquire="True">
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Edit Worksheet" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Results not requested" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Manage Invoices" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+    </permission>
+
+    <permission name="BIKA: View Results" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="RegulatoryInspector"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="BIKA: Edit Results" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Edit Field Results" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Sampler"/>
+    </permission>
+
+    <permission name="BIKA: Edit Sample Partition" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabClerk"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+      <role name="Owner"/>
+      <role name="Preserver"/>
+      <role name="Sampler"/>
+      <role name="SamplingCoordinator"/>
+    </permission>
+
+    <permission name="Access contents information" acquire="True">
+      <role name="Authenticated"/>
+    </permission>
+
+    <permission name="View" acquire="True">
+      <role name="Authenticated"/>
+    </permission>
+
+    <permission name="BIKA: Import Instrument Results" acquire="True">
+      <role name="Analyst"/>
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: View Log Tab" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+    <permission name="BIKA: Edit Client" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+  </permissions>
+
+</rolemap>
