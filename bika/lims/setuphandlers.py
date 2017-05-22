@@ -247,24 +247,6 @@ class BikaGenerator:
         mp(permissions.AddPortalContent, ['Manager', 'LabManager', 'LabClerk', 'Owner'], 0)
         mp(AddAnalysisSpec, ['Manager', 'LabManager', 'Owner'], 0)
         portal.clients.reindexObject()
-
-        # Set permissions for each client in the clients folder
-        for obj in portal.clients.objectValues():
-            mp = obj.manage_permission
-
-            # Set view permissions (need to by in sync with those in subscribers.objectmodified.py)
-            mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
-            mp(permissions.AccessContentsInformation, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
-            mp(permissions.ListFolderContents, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
-
-            # Set modify permissions
-            mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner'], 0)
-            mp(AddSupplyOrder, ['Manager', 'LabManager', 'Owner', 'LabClerk'], 0)
-            obj.reindexObject()
-            for contact in portal.clients.objectValues('Contact'):
-                mp = contact.manage_permission
-                mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Owner', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
-                mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner', 'SamplingCoordinator'], 0)
         # /Clients
 
         # /worksheets folder permissions

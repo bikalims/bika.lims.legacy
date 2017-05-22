@@ -370,7 +370,7 @@ A `client` follows the `bika_one_state_workflow` and the
 `bika_inactive_workflow` and has an initial state of `active`::
 
     >>> get_workflows_for(client)
-    ('bika_one_state_workflow', 'bika_inactive_workflow')
+    ('bika_client_workflow', 'bika_inactive_workflow')
 
     >>> get_workflow_status_of(client)
     'active'
