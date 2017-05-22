@@ -1,29 +1,68 @@
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from zope.interface import alsoProvides
 
-""" Bika setup handlers. """
-
-from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory
 from Products.CMFPlone.utils import _createObjectByType
 
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, tmpID
-from bika.lims import logger
-from bika.lims.config import *
-from bika.lims.permissions import *
-from bika.lims.interfaces \
-        import IHaveNoBreadCrumbs, IARImportFolder, IARPriorities
-from zope.event import notify
-from zope.interface import alsoProvides
-from Products.CMFEditions.Permissions import ApplyVersionControl
 from Products.CMFEditions.Permissions import SaveNewVersion
+from Products.CMFEditions.Permissions import ApplyVersionControl
 from Products.CMFEditions.Permissions import AccessPreviousVersions
+
+from bika.lims import logger
+from bika.lims.utils import tmpID
+from bika.lims import bikaMessageFactory as _
+
+# Bika LIMS Constants
+from bika.lims.config import VERSIONABLE_TYPES
+# Bika LIMS Permissions
+from bika.lims.permissions import ManageClients
+from bika.lims.permissions import AddAnalysisSpec
+from bika.lims.permissions import CancelAndReinstate
+from bika.lims.permissions import ManagePricelists
+from bika.lims.permissions import ManageARImport
+# Bika LIMS Interfaces
+from bika.lims.interfaces import IARImportFolder
+from bika.lims.interfaces import IHaveNoBreadCrumbs
+
+HAS_CMF_EDITIONS = False
+try:
+    from Products.CMFEditions.setuphandlers import DEFAULT_POLICIES  # noqa
+    # we're on plone < 4.1, configure versionable types manually
+    HAS_CMF_EDITIONS = True
+except ImportError:
+    # repositorytool.xml will be used
+    pass
+
+
+def setupVarious(context):
+    """
+    Final Bika import steps.
+    """
+    if context.readDataFile('bika.lims_various.txt') is None:
+        return
+
+    site = context.getSite()
+    gen = BikaGenerator()
+    gen.setupGroupsAndRoles(site)
+    gen.setupPortalContent(site)
+    gen.setupPermissions(site)
+    gen.setupTopLevelFolders(site)
+    if HAS_CMF_EDITIONS:
+        gen.setupVersioning(site)
+    gen.setupCatalogs(site)
+
+    # Plone's jQuery gets clobbered when jsregistry is loaded.
+    setup = site.portal_setup
+    setup.runImportStepFromProfile(
+        'profile-plone.app.jquery:default', 'jsregistry')
+    # setup.runImportStepFromProfile('profile-plone.app.jquerytools:default', 'jsregistry')
+
+    create_CAS_IdentifierType(site)
 
 
 class Empty:
@@ -34,8 +73,6 @@ class BikaGenerator:
 
     def setupPortalContent(self, portal):
         """ Setup Bika site structure """
-
-        wf = getToolByName(portal, 'portal_workflow')
 
         obj = portal._getOb('front-page')
         alsoProvides(obj, IHaveNoBreadCrumbs)
@@ -116,7 +153,6 @@ class BikaGenerator:
         lab.unmarkCreationFlag()
         lab.reindexObject()
 
-
     def setupGroupsAndRoles(self, portal):
         # add roles
         for role in ('LabManager',
@@ -142,51 +178,51 @@ class BikaGenerator:
         if 'LabManagers' not in portal_groups.listGroupIds():
             try:
                 portal_groups.addGroup('LabManagers', title="Lab Managers",
-                       roles=['Member', 'LabManager', 'Site Administrator', ])
+                                       roles=['Member', 'LabManager', 'Site Administrator', ])
             except KeyError:
                 portal_groups.addGroup('LabManagers', title="Lab Managers",
-                       roles=['Member', 'LabManager', 'Manager', ])  # Plone < 4.1
+                                       roles=['Member', 'LabManager', 'Manager', ])  # Plone < 4.1
 
         if 'LabClerks' not in portal_groups.listGroupIds():
             portal_groups.addGroup('LabClerks', title="Lab Clerks",
-                roles=['Member', 'LabClerk'])
+                                   roles=['Member', 'LabClerk'])
 
         if 'Analysts' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Analysts', title="Lab Technicians",
-                roles=['Member', 'Analyst'])
+                                   roles=['Member', 'Analyst'])
 
         if 'Verifiers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Verifiers', title="Verifiers",
-                roles=['Verifier'])
+                                   roles=['Verifier'])
 
         if 'Samplers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Samplers', title="Samplers",
-                roles=['Sampler'])
+                                   roles=['Sampler'])
 
         if 'Preservers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Preservers', title="Preservers",
-                roles=['Preserver'])
+                                   roles=['Preserver'])
 
         if 'Publishers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Publishers', title="Publishers",
-                roles=['Publisher'])
+                                   roles=['Publisher'])
 
         if 'Clients' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Clients', title="Clients",
-                roles=['Member', 'Client'])
+                                   roles=['Member', 'Client'])
 
         if 'Suppliers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Suppliers', title="",
-                roles=['Member', ])
+                                   roles=['Member', ])
 
         if 'RegulatoryInspectors' not in portal_groups.listGroupIds():
             portal_groups.addGroup('RegulatoryInspectors', title="Regulatory Inspectors",
-                roles=['Member', 'RegulatoryInspector'])
+                                   roles=['Member', 'RegulatoryInspector'])
 
         if 'SamplingCoordinators' not in portal_groups.listGroupIds():
-            portal_groups.addGroup(
-                'SamplingCoordinators', title="Sampling Coordinators",
-                roles=['SamplingCoordinator'])
+            portal_groups.addGroup('SamplingCoordinators',
+                                   title="Sampling Coordinators",
+                                   roles=['SamplingCoordinator'])
 
     def setupPermissions(self, portal):
         """ Set up some suggested role to permission mappings.
@@ -374,12 +410,11 @@ class BikaGenerator:
         if portal.hasObject("arimports"):
             mp = portal.arimports.manage_permission
             mp(ManageARImport, ['Manager', ], 1)
-            mp(permissions.ListFolderContents, ['Manager', 'Member',], 1)
+            mp(permissions.ListFolderContents, ['Manager', 'Member', ], 1)
             mp(permissions.AddPortalContent, ['Manager', ], 0)
             mp(permissions.DeleteObjects, ['Manager'], 0)
             mp(permissions.View, ['Manager', 'Member'], 0)
             portal.arimports.reindexObject()
-
 
     def setupVersioning(self, portal):
         portal_repository = getToolByName(portal, 'portal_repository')
@@ -428,7 +463,7 @@ class BikaGenerator:
         # bika_analysis_catalog
 
         bac = getToolByName(portal, 'bika_analysis_catalog', None)
-        if bac == None:
+        if bac is None:
             logger.warning('Could not find the bika_analysis_catalog tool.')
             return
 
@@ -508,7 +543,7 @@ class BikaGenerator:
         # bika_catalog
 
         bc = getToolByName(portal, 'bika_catalog', None)
-        if bc == None:
+        if bc is None:
             logger.warning('Could not find the bika_catalog tool.')
             return
 
@@ -622,7 +657,7 @@ class BikaGenerator:
         # bika_setup_catalog
 
         bsc = getToolByName(portal, 'bika_setup_catalog', None)
-        if bsc == None:
+        if bsc is None:
             logger.warning('Could not find the setup catalog tool.')
             return
 
@@ -807,7 +842,7 @@ def create_CAS_IdentifierType(portal):
     setuphandlers during site initialisation.
     """
     bsc = getToolByName(portal, 'bika_catalog', None)
-    idtypes = bsc(portal_type = 'IdentifierType', title='CAS Nr')
+    idtypes = bsc(portal_type='IdentifierType', title='CAS Nr')
     if not idtypes:
         folder = portal.bika_setup.bika_identifiertypes
         idtype = _createObjectByType('IdentifierType', folder, tmpID())
@@ -815,33 +850,3 @@ def create_CAS_IdentifierType(portal):
         idtype.edit(title='CAS Nr',
                     description='Chemical Abstracts Registry number',
                     portal_types=['Analysis Service'])
-
-def setupVarious(context):
-    """
-    Final Bika import steps.
-    """
-    if context.readDataFile('bika.lims_various.txt') is None:
-        return
-
-    site = context.getSite()
-    gen = BikaGenerator()
-    gen.setupGroupsAndRoles(site)
-    gen.setupPortalContent(site)
-    gen.setupPermissions(site)
-    gen.setupTopLevelFolders(site)
-    try:
-        from Products.CMFEditions.setuphandlers import DEFAULT_POLICIES
-        # we're on plone < 4.1, configure versionable types manually
-        gen.setupVersioning(site)
-    except ImportError:
-        # repositorytool.xml will be used
-        pass
-    gen.setupCatalogs(site)
-
-    # Plone's jQuery gets clobbered when jsregistry is loaded.
-    setup = site.portal_setup
-    setup.runImportStepFromProfile(
-            'profile-plone.app.jquery:default', 'jsregistry')
-    # setup.runImportStepFromProfile('profile-plone.app.jquerytools:default', 'jsregistry')
-
-    create_CAS_IdentifierType(site)
