@@ -342,8 +342,8 @@ class BikaGenerator:
         mp(permissions.DeleteObjects, ['Manager', 'LabManager'], 0)
         portal.methods.reindexObject()
 
-        try:
-            # /supplyorders folder permissions
+        # /supplyorders folder permissions
+        if portal.hasObject("supplyfolders"):
             mp = portal.supplyorders.manage_permission
             mp(CancelAndReinstate, ['Manager', 'LabManager', 'Owner', 'LabClerk'], 0)
             mp(permissions.ListFolderContents, ['LabClerk', ''], 1)
@@ -351,8 +351,6 @@ class BikaGenerator:
             mp(permissions.DeleteObjects, ['Manager', 'LabManager', 'Owner'], 0)
             mp(permissions.View, ['Manager', 'LabManager', 'LabClerk'], 0)
             portal.supplyorders.reindexObject()
-        except:
-            pass
 
         # Analysis Services
         # Add Analysis Services View permission to Clients
@@ -373,7 +371,7 @@ class BikaGenerator:
         portal.bika_setup.bika_attachmenttypes.reindexObject()
 
         # /arimports folder permissions
-        try:
+        if portal.hasObject("arimports"):
             mp = portal.arimports.manage_permission
             mp(ManageARImport, ['Manager', ], 1)
             mp(permissions.ListFolderContents, ['Manager', 'Member',], 1)
@@ -381,8 +379,7 @@ class BikaGenerator:
             mp(permissions.DeleteObjects, ['Manager'], 0)
             mp(permissions.View, ['Manager', 'Member'], 0)
             portal.arimports.reindexObject()
-        except:
-            pass
+
 
     def setupVersioning(self, portal):
         portal_repository = getToolByName(portal, 'portal_repository')
