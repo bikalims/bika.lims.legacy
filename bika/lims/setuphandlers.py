@@ -48,7 +48,7 @@ def setupVarious(context):
 
     site = context.getSite()
     gen = BikaGenerator()
-    gen.setupGroupsAndRoles(site)
+    gen.setupGroups(site)
     gen.setupPortalContent(site)
     gen.setupPermissions(site)
     gen.setupTopLevelFolders(site)
@@ -153,25 +153,7 @@ class BikaGenerator:
         lab.unmarkCreationFlag()
         lab.reindexObject()
 
-    def setupGroupsAndRoles(self, portal):
-        # add roles
-        for role in ('LabManager',
-                     'LabClerk',
-                     'Analyst',
-                     'Verifier',
-                     'Sampler',
-                     'Preserver',
-                     'Publisher',
-                     'Member',
-                     'Reviewer',
-                     'RegulatoryInspector',
-                     'Client',
-                     'SamplingCoordinator'):
-            if role not in portal.acl_users.portal_role_manager.listRoleIds():
-                portal.acl_users.portal_role_manager.addRole(role)
-            # add roles to the portal
-            portal._addRole(role)
-
+    def setupGroups(self, portal):
         # Create groups
         portal_groups = portal.portal_groups
 
