@@ -1,5 +1,5 @@
 ### Please use this command to compile this file within this directory:
-    coffee -w -o ../ -c bika.lims.analysisrequest.add_by_col.coffe
+    coffee -w -o ../ -c bika.lims.analysisrequest.add_by_col.coffee
 ###
 
 ### Controller class for AnalysisRequestAddView - column layout.
