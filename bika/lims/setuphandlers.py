@@ -265,6 +265,16 @@ class BikaGenerator:
         mp(permissions.AddPortalContent, ['Manager', 'LabManager', 'LabClerk', 'Owner'], 0)
         mp(AddAnalysisSpec, ['Manager', 'LabManager', 'Owner'], 0)
         portal.clients.reindexObject()
+
+        # We have to manually set the permissions of Contacts according to
+        # bika.lims.subscribers.objectmodified, as these types do not contain an own workflow
+        contacts = portal.portal_catalog(portal_type="Contact")
+        for contact in contacts:
+            obj = contact.getObject()
+            mp = contact.manage_permission
+            mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Owner', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
+            mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner', 'SamplingCoordinator'], 0)
+
         # /Clients
 
         # /worksheets folder permissions
