@@ -19,14 +19,13 @@
   <permission>List folder contents</permission>
   <!-- This governs whether you are allowed to modify some content. -->
   <permission>Modify portal content</permission>
+  <!-- This governs whether you are allowed to see the Edit tab of a client. -->
+  <permission>BIKA: Edit Client</permission>
   <!-- This governs whether you are allowed to add a Supply Order. -->
   <permission>BIKA: Add SupplyOrder</permission>
 
   <!-- State: active
        N.B. All permissions need to be in sync with bika.lims.subscribers.objectmodified.py
-
-       XXX: Would it make sense to drop the secondary active/inactive workflow
-            in favor of an additional "inactive" state here?
   -->
   <state state_id="active" title="Active" i18n:attributes="title">
     <exit-transition transition_id="" />
@@ -67,8 +66,21 @@
       <permission-role>SamplingCoordinator</permission-role>
     </permission-map>
 
+    <!-- BIKA: Edit Client
+         Please see types/Client.xml
+         -> The edit tab is secured with that permission and thus, need to be
+            aligned with the `Modify portal content` permission below.
+    -->
+    <permission-map name="BIKA: Edit Client" acquired="False">
+      <permission-role>LabClerk</permission-role>
+      <permission-role>Manager</permission-role>
+      <permission-role>LabManager</permission-role>
+      <permission-role>Owner</permission-role>
+    </permission-map>
+
     <!-- Modify portal content -->
     <permission-map name="Modify portal content" acquired="False">
+      <permission-role>LabClerk</permission-role>
       <permission-role>Manager</permission-role>
       <permission-role>LabManager</permission-role>
       <permission-role>Owner</permission-role>
