@@ -23,6 +23,8 @@
   <permission>BIKA: Edit Client</permission>
   <!-- This governs whether you are allowed to add a Supply Order. -->
   <permission>BIKA: Add SupplyOrder</permission>
+  <!-- This governs whether you are allowed to see the Supply Order tab (see: types/Client.xml) -->
+  <permission>BIKA: Manage Supply Orders</permission>
 
   <!-- State: active
        N.B. All permissions need to be in sync with bika.lims.subscribers.objectmodified.py
@@ -88,6 +90,15 @@
 
     <!-- Add Supply Order -->
     <permission-map name="BIKA: Add SupplyOrder" acquired="False">
+      <permission-role>LabClerk</permission-role>
+      <permission-role>Manager</permission-role>
+      <permission-role>LabManager</permission-role>
+      <permission-role>Owner</permission-role>
+    </permission-map>
+
+    <!-- Manage Supply Orders -->
+    <permission-map name="BIKA: Manage Supply Orders" acquired="False">
+      <permission-role>LabClerk</permission-role>
       <permission-role>Manager</permission-role>
       <permission-role>LabManager</permission-role>
       <permission-role>Owner</permission-role>
