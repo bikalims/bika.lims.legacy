@@ -619,12 +619,12 @@ This function returns all assigned workflows for a given object::
     ('bika_one_state_workflow',)
 
     >>> api.get_workflows_for(client)
-    ('bika_one_state_workflow', 'bika_inactive_workflow')
+    ('bika_client_workflow', 'bika_inactive_workflow')
 
 This function also supports the portal_type as parameter::
 
     >>> api.get_workflows_for(api.get_portal_type(client))
-    ('bika_one_state_workflow', 'bika_inactive_workflow')
+    ('bika_client_workflow', 'bika_inactive_workflow')
 
 
 Getting the Workflow Status of an Object
