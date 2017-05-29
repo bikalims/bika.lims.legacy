@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-04-27 09:15+0000\n"
-"PO-Revision-Date: 2017-03-30 13:53+0000\n"
+"POT-Creation-Date: 2017-05-26 15:46+0000\n"
+"PO-Revision-Date: 2017-05-22 17:14+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: German (http://www.transifex.com/bikalabs/bika-lims/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +25,7 @@ msgstr ""
 
 #. Default: "AR Imports"
 msgid "AR Imports"
-msgstr "Analyeauftrag Importe"
+msgstr "Analyseauftrag Importe"
 
 #: bika/lims/profiles/default/types/ARPriorities.xml
 msgid "AR Priorities"

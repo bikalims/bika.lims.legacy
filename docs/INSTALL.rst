@@ -8,7 +8,7 @@ Linux Installation Steps
 
 1. Plone and Bika LIMS have some system dependencies
 
-    The following list of packages need to be installed.  
+    The following list of packages need to be installed.
 
     This package list is valid for Ubuntu 14.04.
 
@@ -17,18 +17,18 @@ Linux Installation Steps
        sudo apt-get install libexpat1-dev libxslt1.1 gnuplot libpcre3 libcairo2
        sudo apt-get install libpango1.0-0 libgdk-pixbuf2.0-0
 
-    This package list is valid for Fedora 22. Similar packagaes are available and can be installed via "yum" 
+    This package list is valid for Fedora 22. Similar packagaes are available and can be installed via "yum"
     on CentOS and older distributions of Fedora.
 
-        sudo dnf install make automake-1.15-1.fc22.noarch gcc gcc-c++-5.3.1-2.fc22.x86_64 
-        sudo dnf install kernel-devel-4.3.4-200.fc22.x86_64 gdk-pixbuf2-devel-2.31.6-1.fc22.x86_64 
+        sudo dnf install make automake-1.15-1.fc22.noarch gcc gcc-c++-5.3.1-2.fc22.x86_64
+        sudo dnf install kernel-devel-4.3.4-200.fc22.x86_64 gdk-pixbuf2-devel-2.31.6-1.fc22.x86_64
         sudo dnf install python-devel-2.7.10-8.fc22.x86_64 git-2.4.3-7.fc22.x86_64
-        sudo dnf install libffi-devel-3.1-7.fc22.x86_64 pcre-devel-8.38-1.fc22.x86_64 
-        sudo dnf install autoconf-2.69-20.fc22.noarch libtool-2.4.2-35.fc22.x86_64 
+        sudo dnf install libffi-devel-3.1-7.fc22.x86_64 pcre-devel-8.38-1.fc22.x86_64
+        sudo dnf install autoconf-2.69-20.fc22.noarch libtool-2.4.2-35.fc22.x86_64
         sudo dnf install pkgconfig-1\:0.28-8.fc22.x86_64 zlib-devel-1.2.8-7.fc22.x86_64
         sudo dnf install openssl-devel-1\:1.0.1k-13.fc22.x86_64 expat-devel-2.1.0-10.fc22.x86_64
         sudo dnf install libxslt-devel-1.1.28-8.fc22.x86_64 gnuplot-5.0.0-8.fc22.x86_64
-        sudo dnf install cairo-devel-1.14.2-1.fc22.x86_64 pango-devel-1.36.8-6.fc22.x86_64 
+        sudo dnf install cairo-devel-1.14.2-1.fc22.x86_64 pango-devel-1.36.8-6.fc22.x86_64
 
     If you use a different distribution, you may need to find the versions of these packages which are provided with your system.
 
@@ -42,7 +42,7 @@ Linux Installation Steps
     A basic command for installing a development environment in Linux::
 
         ./install.sh --target=/path/to/Plone --build-python zeo
-    
+
     If you receive an lxml error, you may need to include the --static-lxml flag in the above command.
 
 3. Add Bika LIMS to your buildout.cfg

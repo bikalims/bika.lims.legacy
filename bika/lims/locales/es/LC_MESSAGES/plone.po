@@ -16,7 +16,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-04-27 09:15+0000\n"
+"POT-Creation-Date: 2017-05-26 15:46+0000\n"
 "PO-Revision-Date: 2017-01-30 20:33+0000\n"
 "Last-Translator: Leonardo Rojas <leonardorojass@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/bikalabs/bika-lims/language/es/)\n"
