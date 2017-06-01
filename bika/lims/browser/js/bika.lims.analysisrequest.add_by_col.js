@@ -398,6 +398,8 @@ function AnalysisRequestAddByCol() {
         uids = [uid, $("#bika_setup").attr("bika_samplepoints_uid")]
         element = $("tr[fieldname=SamplePoint] td[arnum=" + arnum + "] input")[0]
         filter_combogrid(element, "getClientUID", uids)
+        element = $("tr[fieldname=Sample] td[arnum=" + arnum + "] input")[0]
+        filter_combogrid(element, "getClientUID", uids)
         uids = [uid, $("#bika_setup").attr("bika_artemplates_uid")]
         element = $("tr[fieldname=Template] td[arnum=" + arnum + "] input")[0]
         filter_combogrid(element, "getClientUID", uids)
