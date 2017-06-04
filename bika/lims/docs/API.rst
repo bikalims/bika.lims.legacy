@@ -635,6 +635,30 @@ This function returns the state of a given object::
     >>> api.get_workflow_status_of(client)
     'active'
 
+It is also capable to get the state of another state variable::
+
+    >>> api.get_workflow_status_of(client, "inactive_state")
+    'active'
+
+Deactivate the client::
+
+    >>> api.do_transition_for(client, "deactivate")
+    <Client at /plone/clients/client-1>
+
+    >>> api.get_workflow_status_of(client, "inactive_state")
+    'inactive'
+
+    >>> api.get_workflow_status_of(client)
+    'active'
+
+Reactivate the client::
+
+    >>> api.do_transition_for(client, "activate")
+    <Client at /plone/clients/client-1>
+
+    >>> api.get_workflow_status_of(client, "inactive_state")
+    'active'
+
 
 Getting the registered Catalogs of an Object
 --------------------------------------------
