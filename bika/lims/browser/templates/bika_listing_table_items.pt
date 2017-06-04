@@ -132,6 +132,7 @@
                         'choices' or field_type;
                       input_class python:'input_class' in view.bika_listing.columns[column] and
                         view.bika_listing.columns[column]['input_class'] or 'numeric';
+                      item_css_class python:item.get('item_css_class', '');
                       input_width python:'input_width' in view.bika_listing.columns[column] and
                         view.bika_listing.columns[column]['input_width'] or '5';
                       table_row_class python:'table_row_class' in view.bika_listing.columns[column] and
@@ -163,7 +164,7 @@
                   autocomplete="off"
                   tal:condition="python:allow_edit"
                   tal:attributes="selector string:${column}_${item/id};
-                                  class python:'listing_string_entry %s' % input_class;
+                                  class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
                                   tabindex tabindex/next;
                                   size input_width;
                                   uid string:${item/uid};
@@ -211,7 +212,7 @@
                   autocomplete="off"
                   tal:condition="python:allow_edit"
                   tal:attributes="selector string:${column}_${item/id};
-                                  class python:'listing_string_entry %s' % input_class;
+                                  class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
                                   tabindex tabindex/next;
                                   size input_width;
                                   uid string:${item/uid};
@@ -284,7 +285,7 @@
                 type="checkbox" style="font-size: 100%"
                 tal:condition="allow_edit"
                 tal:attributes="selector string:${column}_${item/id};
-                                class python: item.get('state_class', '') + ' '  + input_class;
+                                class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
                                 uid string:${item/uid};
                                 id python:'%s-%s' % (item['uid'], column);
                                 field python:field if field else column;
@@ -310,7 +311,7 @@
                         tal:condition="python:column in item['choices']"
                         tal:attributes="selector string:${column}_${item/id};
                                         tabindex tabindex/next;
-                                        class python:'listing_string_entry %s' % input_class;
+                                        class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
                                         field python:field if field else column;
                                         name string:${column}.${item/uid}:records;
                                         as_uid string:${item/service_uid|nothing};
