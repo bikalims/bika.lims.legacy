@@ -37,10 +37,22 @@
 
   </head>
 
-  <body
-    tal:define="currencies python:modules['zope.i18n.locales'].locales.getLocale('en').numbers.currencies;">
+  <body tal:define="currencies python:modules['zope.i18n.locales'].locales.getLocale('en').numbers.currencies;">
 
     <div class="service_popup">
+
+      <h5>
+        <img tal:attributes="src string:${portal_url}/++resource++bika.lims.images/analysisservice.png"/>
+        <span i18n:translate="">
+          Analysis Service:
+          <span>
+            <a tal:attributes="href view/an_service_url"
+               target="_blank"
+               tal:content="view/an_service_title"/>
+            (v<span tal:replace="view/an_service_version"/>)
+          </span>
+        </span>
+      </h5>
 
       <div id="serviceDescription"
            class="documentDescription"

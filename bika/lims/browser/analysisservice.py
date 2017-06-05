@@ -17,6 +17,7 @@ import plone.protect
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+from bika.lims import api
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser import BrowserView
 from bika.lims.browser.log import LogView
@@ -82,9 +83,17 @@ class ajaxServicePopup(BrowserView):
         if not service_title:
             return ''
 
+        self.an_service_title = ""
+        self.an_service_version = 0
+        self.an_service_url = ""
+
         analysis = uc(UID=self.request.get('analysis_uid', None))
         if analysis:
             analysis = analysis[0].getObject()
+            service = analysis.getService()
+            self.an_service_title = service.Title()
+            self.an_service_version = api.get_version(service)
+            self.an_service_url = service.absolute_url()
             self.request['ajax_load'] = 1
             tmp = LogView(analysis, self.request)
             self.log = tmp.folderitems()
@@ -97,7 +106,7 @@ class ajaxServicePopup(BrowserView):
         if not brains:
             return ''
 
-        self.service = brains[0].getObject()
+        self.service = api.get_object(brains[0])
 
         self.calc = self.service.getCalculation()
 
