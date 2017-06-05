@@ -179,16 +179,6 @@ class AnalysesView(BikaListingView):
             if adapter(specification=spec):
                 return True
 
-    def getAnalysisSpecsStr(self, spec):
-        specstr = ''
-        if spec['min'] and spec['max']:
-            specstr = '%s - %s' % (spec['min'], spec['max'])
-        elif spec['min']:
-            specstr = '> %s' % spec['min']
-        elif spec['max']:
-            specstr = '< %s' % spec['max']
-        return specstr
-
     def get_methods_vocabulary(self, analysis=None):
         """ Returns a vocabulary with the methods available for the
             analysis specified.
