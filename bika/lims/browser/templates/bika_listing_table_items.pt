@@ -457,8 +457,7 @@
                             st_uid string:${item/st_uid|nothing};
                             objectId string:${item/id};
                             name string:Remarks.${item/uid}:records;
-                            value python:item.get('Remarks', '');">
-          </textarea>
+                            value python:item.get('Remarks', '');"></textarea>
           <span
             autocomplete="off"
             tal:condition="python:remarksedit==False"
