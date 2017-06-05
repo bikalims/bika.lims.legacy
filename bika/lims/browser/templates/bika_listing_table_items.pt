@@ -106,9 +106,8 @@
     </tal:comment>
 
     <tal:cell tal:repeat="column view/bika_listing/review_state/columns">
-      <tal:rowcolspan
-        tal:condition="python: 'toggle' not in view.bika_listing.columns[column]
-                       or view.bika_listing.columns[column].get('toggle', True)"
+      <tal:rowcolspan tal:condition="python: 'toggle' not in view.bika_listing.columns[column]
+                                     or view.bika_listing.columns[column].get('toggle', True)"
         tal:define="dummy python: 'rowspan' in item and column in item['rowspan'] and rowspan_max.update({column: item['rowspan'][column]});
                     dummy python: column in rowspan_max or rowspan_max.update({column: 1});
                     dummy python: rowspan.update({column: 'rowspan' in item and column in item['rowspan'] and item['rowspan'][column] or rowspan.get('column', 2)-1});
@@ -116,29 +115,28 @@
                     global colspan python:  'colspan' in item and column in item['colspan'] and int(item['colspan'][column]) or (colspan - 1);
                     global colspan_max python: colspan < 1 and 1 or colspan_max;
                     global colspan python:  colspan < 1 and 1 or colspan;">
-        <td
-          tal:condition="python:rowspan[column] == rowspan_max[column] and colspan == colspan_max"
-          tal:define="allow_edit python:view.bika_listing.allow_edit
-                        and column in item['allow_edit']
-                        and item.get('edit_condition', {}).get(column, True);
-                      required python:'required' in item and column in item['required'] or False;
-                      field python: item['field'].get(column, '') if item.get('field', '') else '';
-                      before python:column in item['before'] and item['before'][column] or '';
-                      after python:column in item['after'] and item['after'][column] or '';
-                      replace python:column in item['replace'] and item['replace'][column] or '';
-                      field_type python:'type' in view.bika_listing.columns[column] and
-                        view.bika_listing.columns[column]['type'] or 'string';
-                      field_type python:'choices' in item and column in item['choices'] and
-                        'choices' or field_type;
-                      input_class python:'input_class' in view.bika_listing.columns[column] and
-                        view.bika_listing.columns[column]['input_class'] or 'numeric';
-                      item_css_class python:item.get('item_css_class', '');
-                      input_width python:'input_width' in view.bika_listing.columns[column] and
-                        view.bika_listing.columns[column]['input_width'] or '5';
-                      table_row_class python:'table_row_class' in view.bika_listing.columns[column] and
-                        view.bika_listing.columns[column]['table_row_class'] or '';
-                      klass python:column in item['class'] and
-                        item['class'][column] or '';"
+
+        <td tal:condition="python:rowspan[column] == rowspan_max[column] and colspan == colspan_max"
+            tal:define="allow_edit python:view.bika_listing.allow_edit
+                          and column in item['allow_edit']
+                          and item.get('edit_condition', {}).get(column, True);
+                        required python:'required' in item and column in item['required'] or False;
+                        field python: item['field'].get(column, '') if item.get('field', '') else '';
+                        before python:column in item['before'] and item['before'][column] or '';
+                        after python:column in item['after'] and item['after'][column] or '';
+                        replace python:column in item['replace'] and item['replace'][column] or '';
+                        field_type python:'type' in view.bika_listing.columns[column]
+                           and view.bika_listing.columns[column]['type'] or 'string';
+                        field_type python:'choices' in item and column in item['choices']
+                           and 'choices' or field_type;
+                        input_class python:'input_class' in view.bika_listing.columns[column]
+                           and view.bika_listing.columns[column]['input_class'] or 'numeric';
+                        item_css_class python:item.get('item_css_class', '');
+                        input_width python:'input_width' in view.bika_listing.columns[column]
+                           and view.bika_listing.columns[column]['input_width'] or '5';
+                        table_row_class python:'table_row_class' in view.bika_listing.columns[column]
+                           and view.bika_listing.columns[column]['table_row_class'] or '';
+                        klass python:column in item['class'] and item['class'][column] or '';"
           tal:attributes="class python:' '.join((table_row_class, klass, item['state_class'], column));
                           rowspan python:rowspan[column];
                           colspan python:colspan;">
@@ -152,44 +150,43 @@
           <span tal:omit-tag="python:True"
                 tal:condition="not:replace">
 
+            <tal:comment replace="nothing"><!-- string field --></tal:comment>
             <span tal:omit-tag="python:True"
                   tal:condition="python:field_type == 'string'">
-              <tal:comment replace="nothing"><!-- string --></tal:comment>
+
               <tal:comment replace="nothing"><!-- interim field --></tal:comment>
               <span tal:omit-tag="python:True"
                     tal:condition="python:type(item[column]) == type({})">
+
                 <tal:comment replace="nothing"><!-- edit --></tal:comment>
-                <input
-                  type="text" style="font-size: 100%"
-                  autocomplete="off"
-                  tal:condition="python:allow_edit"
-                  tal:attributes="selector string:${column}_${item/id};
-                                  class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
-                                  tabindex tabindex/next;
-                                  size input_width;
-                                  uid string:${item/uid};
-                                  as_uid string:${item/service_uid|nothing};
-                                  st_uid string:${item/st_uid|nothing};
-                                  objectId string:${item/id};
-                                  field python:field if field else column;
-                                  value python:item[column]['value'];"/>
+                <input type="text" style="font-size: 100%"
+                       autocomplete="off"
+                       tal:condition="python:allow_edit"
+                       tal:attributes="selector string:${column}_${item/id};
+                                       class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
+                                       tabindex tabindex/next;
+                                       size input_width;
+                                       uid string:${item/uid};
+                                       as_uid string:${item/service_uid|nothing};
+                                       st_uid string:${item/st_uid|nothing};
+                                       objectId string:${item/id};
+                                       field python:field if field else column;
+                                       value python:item[column]['value'];"/>
 
                 <tal:comment replace="nothing"><!-- view --></tal:comment>
 
-                <span
-                  tal:condition="python:not allow_edit"
-                  tal:content="python:item[column]['formatted_value']"
-                  tal:attributes="class item/state_class"/>
-                <input
-                  type="hidden"
-                  tal:condition="python:not allow_edit"
-                  tal:attributes="selector string:${column}_${item/id};
-                                  size input_width;
-                                  uid string:${item/uid};
-                                  as_uid string:${item/service_uid|nothing};
-                                  st_uid string:${item/st_uid|nothing};
-                                  field python:field if field else column;
-                                  value python:item[column]['value'];"/>
+                <span tal:condition="python:not allow_edit"
+                      tal:content="python:item[column]['formatted_value']"
+                      tal:attributes="class item/state_class"/>
+                <input type="hidden"
+                       tal:condition="python:not allow_edit"
+                       tal:attributes="selector string:${column}_${item/id};
+                                       size input_width;
+                                       uid string:${item/uid};
+                                       as_uid string:${item/service_uid|nothing};
+                                       st_uid string:${item/st_uid|nothing};
+                                       field python:field if field else column;
+                                       value python:item[column]['value'];"/>
 
                 <tal:comment replace="nothing"><!-- unit for interim field--></tal:comment>
 
@@ -207,32 +204,31 @@
 
                 <tal:comment replace="nothing"><!-- edit --></tal:comment>
 
-                <input
-                  type="text" style="font-size: 100%"
-                  autocomplete="off"
-                  tal:condition="python:allow_edit"
-                  tal:attributes="selector string:${column}_${item/id};
-                                  class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
-                                  tabindex tabindex/next;
-                                  size input_width;
-                                  uid string:${item/uid};
-                                  as_uid string:${item/service_uid|nothing};
-                                  st_uid string:${item/st_uid|nothing};
-                                  objectId string:${item/id};
-                                  field python:field if field else column;
-                                  name python:column == view.bika_listing.select_checkbox_name and '%s_column_value.%s:records'%(column, item['uid']) or '%s.%s:records'%(column, item['uid']);
-                                  value python:item[column] if item[column] is not None else '';"/>
+                <input type="text" style="font-size: 100%"
+                       autocomplete="off"
+                       tal:condition="python:allow_edit"
+                       tal:attributes="selector string:${column}_${item/id};
+                                       class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
+                                       tabindex tabindex/next;
+                                       size input_width;
+                                       uid string:${item/uid};
+                                       as_uid string:${item/service_uid|nothing};
+                                       st_uid string:${item/st_uid|nothing};
+                                       objectId string:${item/id};
+                                       field python:field if field else column;
+                                       name python:column == view.bika_listing.select_checkbox_name
+                                         and '%s_column_value.%s:records'%(column, item['uid']) or '%s.%s:records'%(column, item['uid']);
+                                       value python:item[column] if item[column] is not None else '';"/>
 
                 <tal:comment replace="nothing"><!-- view --></tal:comment>
 
-                <span
-                  tal:condition="python:not allow_edit and column == 'Result' and item.get('formatted_result', '')"
-                  tal:content="structure python:item['formatted_result']"
-                  tal:attributes="class item/state_class"/>
-                <span
-                  tal:condition="python:not allow_edit and column == 'Result' and not item.get('formatted_result', '')"
-                  tal:content="python:item['formatted_result']"
-                  tal:attributes="class item/state_class"/>
+                <span tal:condition="python:not allow_edit and column == 'Result' and item.get('formatted_result', '')"
+                      tal:content="structure python:item['formatted_result']"
+                      tal:attributes="class item/state_class"/>
+                <span tal:condition="python:not allow_edit and column == 'Result' and not item.get('formatted_result', '')"
+                      tal:content="python:item['formatted_result']"
+                      tal:attributes="class item/state_class"/>
+
                 <tal:regularlabel condition="python:not allow_edit and column != 'Result'">
                   <span tal:condition="python:item.get('structure',False)"
                         tal:content="structure python:item[column] if item[column] is not None else ''"
@@ -241,39 +237,37 @@
                         tal:content="python:item[column] if item[column] is not None else ''"
                         tal:attributes="class item/state_class"/>
                 </tal:regularlabel>
-                <input
-                  type="hidden"
-                  tal:condition="python:not allow_edit"
-                  tal:attributes="selector string:${column}_${item/id};
-                                  size input_width;
-                                  uid string:${item/uid};
-                                  as_uid string:${item/service_uid|nothing};
-                                  st_uid string:${item/st_uid|nothing};
-                                  objectId string:${item/id};
-                                  field python:field if field else column;
-                                  name python:column == view.bika_listing.select_checkbox_name and '%s_column_value.%s:records'%(column, item['uid']) or '%s.%s:records'%(column, item['uid']);
-                                  value python:item[column];"/>
+
+                <input type="hidden"
+                       tal:condition="python:not allow_edit"
+                       tal:attributes="selector string:${column}_${item/id};
+                                       size input_width;
+                                       uid string:${item/uid};
+                                       as_uid string:${item/service_uid|nothing};
+                                       st_uid string:${item/st_uid|nothing};
+                                       objectId string:${item/id};
+                                       field python:field if field else column;
+                                       name python:column == view.bika_listing.select_checkbox_name
+                                         and '%s_column_value.%s:records'%(column, item['uid']) or '%s.%s:records'%(column, item['uid']);
+                                       value python:item[column];"/>
               </span>
               <tal:comment replace="nothing"><!-- calculated result field. --></tal:comment>
               <span tal:omit-tag="python:True"
-                    tal:condition="python:column == 'Result' and
-                                  item['calculation']">
-                <span
-                  tal:attributes="field string:formatted_result;
-                                  uid item/uid;
-                                  objectId string:${item/id};
-                                  size input_width;"
-                  tal:content="structure python:item['formatted_result']"/>
-                <input
-                  type="hidden"
-                  tal:attributes="selector string:${column}_${item/id};
-                                  uid string:${item/uid};
-                                  as_uid string:${item/service_uid|nothing};
-                                  st_uid string:${item/st_uid|nothing};
-                                  objectId string:${item/id};
-                                  field string:Result;
-                                  name string:Result.${item/uid}:records;
-                                  value python:item['Result'];"/>
+                    tal:condition="python:column == 'Result' and item['calculation']">
+                <span tal:attributes="field string:formatted_result;
+                                      uid item/uid;
+                                      objectId string:${item/id};
+                                      size input_width;"
+                      tal:content="structure python:item['formatted_result']"/>
+                <input type="hidden"
+                       tal:attributes="selector string:${column}_${item/id};
+                                       uid string:${item/uid};
+                                       as_uid string:${item/service_uid|nothing};
+                                       st_uid string:${item/st_uid|nothing};
+                                       objectId string:${item/id};
+                                       field string:Result;
+                                       name string:Result.${item/uid}:records;
+                                       value python:item['Result'];"/>
               </span>
             </span>
 
@@ -281,25 +275,24 @@
 
             <span tal:omit-tag="python:True"
                   tal:condition="python:field_type == 'boolean'">
-              <input
-                type="checkbox" style="font-size: 100%"
-                tal:condition="allow_edit"
-                tal:attributes="selector string:${column}_${item/id};
-                                class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
-                                uid string:${item/uid};
-                                id python:'%s-%s' % (item['uid'], column);
-                                field python:field if field else column;
-                                name string:${column}.${item/uid}:record:ignore-empty;
-                                checked python:item.get(column) and 'yes' or '';"/>
+
+              <input type="checkbox" style="font-size: 100%"
+                     tal:condition="allow_edit"
+                     tal:attributes="selector string:${column}_${item/id};
+                           class python:'listing_string_entry {} {}'.format(input_class, item_css_class);
+                           uid string:${item/uid};
+                           id python:'%s-%s' % (item['uid'], column);
+                           field python:field if field else column;
+                           name string:${column}.${item/uid}:record:ignore-empty;
+                           checked python:item.get(column) and 'yes' or '';"/>
+
               <tal:comment replace="nothing"><!-- will not display if readonly and false --></tal:comment>
-              <input
-                type="checkbox"
-                tal:condition="python:not allow_edit and item.get(column)"
-                disabled="disabled"
-                tal:attributes="
-                      selector string:${column}_${item/id};
-                      class item/state_class;
-                      checked python:item.get(column) and 'yes' or '';"/>
+              <input type="checkbox"
+                     tal:condition="python:not allow_edit and item.get(column)"
+                     disabled="disabled"
+                     tal:attributes="selector string:${column}_${item/id};
+                                     class item/state_class;
+                                     checked python:item.get(column) and 'yes' or '';"/>
             </span>
 
             <tal:comment replace="nothing"><!-- choices --></tal:comment>
@@ -318,10 +311,9 @@
                                         uid item/uid;">
                   <option value="" tal:condition="not:required"></option>
                   <tal:options tal:repeat="option python:item['choices'][column]">
-                    <option
-                      tal:attributes="value python:option['ResultValue'];
-                                      selected python:item[column] == option['ResultValue']
-                                      and 'selected' or '';"
+                    <option tal:attributes="value python:option['ResultValue'];
+                                            selected python:item[column] == option['ResultValue']
+                                              and 'selected' or '';"
                       tal:content="python:option['ResultText']">
                     </option>
                   </tal:options>
@@ -330,13 +322,12 @@
               <span tal:omit-tag="python:True"
                     tal:condition="python:not allow_edit">
                 <span>
-                  <input
-                    type="hidden"
-                    tal:attributes="as_uid string:${item/service_uid|nothing};
-                                    uid string:${item/uid};
-                                    field python:field if field else column;
-                                    value python:item[column];
-                                    name string:${column}.${item/uid}:records"/>
+                  <input type="hidden"
+                         tal:attributes="as_uid string:${item/service_uid|nothing};
+                                         uid string:${item/uid};
+                                         field python:field if field else column;
+                                         value python:item[column];
+                                         name string:${column}.${item/uid}:records"/>
                 </span>
                 <span tal:condition="python:item.get('formatted_result','')"
                       tal:content="structure python:item['formatted_result']"
@@ -390,8 +381,8 @@
     <tal:rangecomments
       condition="python:view.context.portal_type=='AnalysisSpec'"
       define="column string:rangecomment;
-                 allow_edit python:view.bika_listing.allow_edit \
-                 and item.get('edit_condition', {}).get(column, True)">
+              allow_edit python:view.bika_listing.allow_edit \
+              and item.get('edit_condition', {}).get(column, True)">
       <tr tal:attributes="class item/table_row_class;
                           cat python:item.get('category', 'None');
                           id string:folder-contents-item-${item/uid};
@@ -401,26 +392,24 @@
                             class string:${item/state_class} result"
             style="padding-right:10px;padding-bottom:5px;">
           <span i18n:translate="">Range remarks:</span>&nbsp;
-          <textarea
-            style="width:100%;display:block;"
-            autocomplete="off"
-            tal:condition="allow_edit"
-            tal:attributes="
-                   selector string:${column}_${item/id};
-                   class python:'listing_remarks';
-                   uid string:${item/uid};
-                   as_uid string:${item/service_uid|nothing};
-                   st_uid string:${item/st_uid|nothing};
-                   objectId string:${item/id};
-                   field python:column;
-                   value python:item[column];
-                   originalvalue python:item[column];
-                   name string:${column}.${item/uid}:records"
-            tal:content="python:item[column]"></textarea>
-          <span
-            autocomplete="off"
-            tal:condition="python:not allow_edit"
-            tal:content="python:item[column]['value']"/>
+          <textarea style="width:100%;display:block;"
+                    autocomplete="off"
+                    tal:condition="allow_edit"
+                    tal:attributes="selector string:${column}_${item/id};
+                                    class python:'listing_remarks';
+                                    uid string:${item/uid};
+                                    as_uid string:${item/service_uid|nothing};
+                                    st_uid string:${item/st_uid|nothing};
+                                    objectId string:${item/id};
+                                    field python:column;
+                                    value python:item[column];
+                                    originalvalue python:item[column];
+                                    name string:${column}.${item/uid}:records"
+                    tal:content="python:item[column]"></textarea>
+
+          <span autocomplete="off"
+                tal:condition="python:not allow_edit"
+                tal:content="python:item[column]['value']"/>
         </td>
       </tr>
     </tal:rangecomments>
@@ -446,22 +435,20 @@
                             class string:${item/state_class} result remarks"
             style="padding-right:10px;padding-bottom:5px;">
           <span i18n:translate="">Remarks:</span>&nbsp;
-          <textarea
-            style="width:100%;display:block;"
-            autocomplete="off"
-            rows="1"
-            tal:condition="python:remarksedit==True"
-            tal:attributes="class python:'listing_remarks';
-                            uid string:${item/uid};
-                            as_uid string:${item/service_uid|nothing};
-                            st_uid string:${item/st_uid|nothing};
-                            objectId string:${item/id};
-                            name string:Remarks.${item/uid}:records;
-                            value python:item.get('Remarks', '');"></textarea>
-          <span
-            autocomplete="off"
-            tal:condition="python:remarksedit==False"
-            tal:content="python:item.get('Remarks', '')"/>
+          <textarea style="width:100%;display:block;"
+                    autocomplete="off"
+                    rows="1"
+                    tal:condition="python:remarksedit==True"
+                    tal:attributes="class python:'listing_remarks';
+                                    uid string:${item/uid};
+                                    as_uid string:${item/service_uid|nothing};
+                                    st_uid string:${item/st_uid|nothing};
+                                    objectId string:${item/id};
+                                    name string:Remarks.${item/uid}:records;
+                                    value python:item.get('Remarks', '');"></textarea>
+          <span autocomplete="off"
+                tal:condition="python:remarksedit==False"
+                tal:content="python:item.get('Remarks', '')"/>
         </td>
       </tr>
     </tal:remarks_condition>
