@@ -152,7 +152,7 @@ window.CalculationUtils = ->
         url: 'listing_string_entry'
         data:
           '_authenticator': $('input[name="_authenticator"]').val()
-          'uid': uid
+          'uid': $(this).attr('uid')
           'field': field
           'value': value
           'results': $.toJSON(results)
