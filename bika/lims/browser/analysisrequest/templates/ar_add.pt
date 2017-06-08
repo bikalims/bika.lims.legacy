@@ -55,7 +55,7 @@
               tal:define="bika_setup python: context.bika_setup;"
               tal:attributes="EnableARSpecs             python: 'true' if bika_setup.getEnableARSpecs() else '';
                               MemberDiscount            python: bika_setup.getMemberDiscount();
-                              MemberDiscountApplies     python: view.getMemberDiscountApplies();
+                              MemberDiscountApplies     python: view.getMemberDiscountApplies() and 'true' or 'false';
                               Currency                  python: bika_setup.getCurrency();
                               ShowPartitions            python: bika_setup.getShowPartitions();
                               ShowPrices                python: bika_setup.getShowPrices();
