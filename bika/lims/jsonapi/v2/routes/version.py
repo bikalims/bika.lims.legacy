@@ -4,7 +4,6 @@ from bika.lims.jsonapi import url_for
 from bika.lims.jsonapi import add_route
 
 from bika.lims.jsonapi.v2 import __version__
-from bika.lims.jsonapi.v2 import __build__
 from bika.lims.jsonapi.v2 import __date__
 
 
@@ -16,6 +15,5 @@ def version(context, request):
     return {
         "url":     url_for("bika.lims.jsonapi.v2.version"),
         "version": __version__,
-        "build":   __build__,
         "date":    __date__,
     }

@@ -36,6 +36,11 @@ class Catalog(object):
         """search the catalog
         """
         logger.info("Catalog query={}".format(query))
+
+        # Support to set the catalog as a request parameter
+        catalogs = _.to_list(req.get("catalog", None))
+        if catalogs:
+            return bikaapi.search(query, catalog=catalogs)
         # Delegate to the search API of Bika LIMS
         return bikaapi.search(query)
 
@@ -44,6 +49,10 @@ class Catalog(object):
 
     def get_catalog(self, name="portal_catalog"):
         return self._catalogs[name]
+
+    def get_schema(self):
+        catalog = self.get_catalog()
+        return catalog.schema()
 
     def get_indexes(self):
         """get all indexes managed by this catalog

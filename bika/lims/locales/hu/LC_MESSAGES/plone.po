@@ -1,13 +1,13 @@
 # --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
 # SOME DESCRIPTIVE TITLE.
 # Translators:
-# Alphons Senki <senki.alphons@gmail.com>, 2016
+# Alphons Senki <senki.alphons@gmail.com>, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-04-27 09:15+0000\n"
-"PO-Revision-Date: 2017-01-26 16:51+0000\n"
-"Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
+"POT-Creation-Date: 2017-05-26 15:46+0000\n"
+"PO-Revision-Date: 2017-05-19 11:35+0000\n"
+"Last-Translator: Alphons Senki <senki.alphons@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/bikalabs/bika-lims/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,10 +47,10 @@ msgstr "AR jelentés"
 # in the action menu of Plone.
 # Please don't remove
 msgid "Activate"
-msgstr ""
+msgstr "Aktivál"
 
 msgid "Active"
-msgstr ""
+msgstr "Működő"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Add Analyses"
@@ -130,13 +130,13 @@ msgid "Analysis Specifications"
 msgstr "Vizsgálat szolgáltatások"
 
 msgid "Assign"
-msgstr ""
+msgstr "Kioszt"
 
 msgid "Assigned"
-msgstr ""
+msgstr "Kiosztott"
 
 msgid "Attach"
-msgstr ""
+msgstr "Csatol"
 
 #: bika/lims/profiles/default/types/Attachment.xml
 msgid "Attachment"
@@ -152,7 +152,7 @@ msgid "Attachment Types"
 msgstr "Csatolmány típusok"
 
 msgid "Attachment due"
-msgstr ""
+msgstr "Csatolás esedékes"
 
 #: bika/lims/profiles/default/types/Client.xml
 msgid "Attachments"
@@ -195,14 +195,14 @@ msgstr "Számítások"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Calibration Certificates"
-msgstr ""
+msgstr "Hitelesítési bizonylat"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Calibrations"
 msgstr "Hitelesítések"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Visszavon"
 
 #: bika/lims/profiles/default/types/Client.xml
 msgid "Client"
@@ -214,15 +214,15 @@ msgid "Clients"
 msgstr "Ügyfelek"
 
 msgid "Close"
-msgstr ""
+msgstr "Bezár"
 
 msgid "Complete"
-msgstr ""
+msgstr "Befejez"
 
 #: bika/lims/profiles/default/types/Contact.xml
 #: bika/lims/profiles/default/types/SupplierContact.xml
 msgid "Contact"
-msgstr ""
+msgstr "Kapcsolat"
 
 #: bika/lims/profiles/default/types/Client.xml
 #: bika/lims/profiles/default/types/Supplier.xml
@@ -249,13 +249,13 @@ msgstr "Tárolók"
 
 #: bika/lims/profiles/default/types/AnalysisRequest.xml
 msgid "Create Invoice"
-msgstr ""
+msgstr "Számla készítés"
 
 msgid "Current"
-msgstr ""
+msgstr "Jelenlegi"
 
 msgid "Deactivate"
-msgstr ""
+msgstr "Hatástalanít"
 
 #: bika/lims/profiles/default/types/Department.xml
 msgid "Department"
@@ -266,23 +266,23 @@ msgid "Departments"
 msgstr "Osztályok"
 
 msgid "Dispatch"
-msgstr ""
+msgstr "Kézbesít"
 
 msgid "Dispatched"
-msgstr ""
+msgstr "Kézbesített"
 
 msgid "Dispose"
-msgstr ""
+msgstr "Elintéz"
 
 msgid "Disposed"
-msgstr ""
+msgstr "Elintézett"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Documents"
-msgstr ""
+msgstr "Dokumentum"
 
 msgid "Dormant"
-msgstr ""
+msgstr "Alvó"
 
 #: bika/lims/profiles/default/types/DuplicateAnalysis.xml
 msgid "Duplicate Analysis"
@@ -292,17 +292,17 @@ msgstr "Másolat vizsgálat"
 #: bika/lims/profiles/default/types/ARPriority.xml
 #: bika/lims/profiles/default/types/ARTemplate.xml
 msgid "Edit"
-msgstr ""
+msgstr "Szerkeszt"
 
 #: bika/lims/profiles/default/types/Pricelist.xml
 msgid "Email pricelist"
 msgstr "Árlista küldése Email-ben"
 
 msgid "Expire"
-msgstr ""
+msgstr "Lejár"
 
 msgid "Expired"
-msgstr ""
+msgstr "Lejárt"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Export"
@@ -310,7 +310,7 @@ msgstr "Export"
 
 #: bika/lims/profiles/default/types/InvoiceBatch.xml
 msgid "Export Batch To CSV"
-msgstr ""
+msgstr "Köteg export CSV-be"
 
 #: bika/lims/profiles/default/actions.xml
 msgid "Extracts"
@@ -318,34 +318,34 @@ msgstr "Kivonatok"
 
 #: bika/lims/profiles/default/types/ReportFolder.xml
 msgid "History"
-msgstr ""
+msgstr "Történet"
 
 #: bika/lims/profiles/default/actions.xml
 msgid "Home"
-msgstr ""
+msgstr "Kezdőlap"
 
 #: bika/lims/profiles/default/types/IdentifierType.xml
 msgid "Identifier Type"
-msgstr ""
+msgstr "Azonosító típus"
 
 #: bika/lims/profiles/default/controlpanel.xml
 #: bika/lims/profiles/default/types/IdentifierTypes.xml
 msgid "Identifier Types"
-msgstr ""
+msgstr "Azonosító típusok"
 
 #: bika/lims/profiles/default/actions.xml
 msgid "Import"
-msgstr ""
+msgstr "Import"
 
 msgid "Imported"
-msgstr ""
+msgstr "Importált"
 
 #: bika/lims/profiles/default/types/Client.xml
 msgid "Imports"
 msgstr "Importok"
 
 msgid "Inactive"
-msgstr ""
+msgstr "Nem működő"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Instrument"
@@ -353,7 +353,7 @@ msgstr "Műszer"
 
 #: bika/lims/profiles/default/controlpanel.xml
 msgid "Instrument Locations"
-msgstr ""
+msgstr "Műszer elhelyezések"
 
 #: bika/lims/profiles/default/types/InstrumentType.xml
 msgid "Instrument Type"
@@ -371,10 +371,10 @@ msgid "Instruments"
 msgstr "Műszerek"
 
 msgid "Invalid"
-msgstr ""
+msgstr "Érvénytelen"
 
 msgid "Invalidate"
-msgstr ""
+msgstr "Érvénytelenít"
 
 #: bika/lims/profiles/default/types/AnalysisRequest.xml
 #: bika/lims/profiles/default/types/Invoice.xml
@@ -426,7 +426,7 @@ msgstr "Kapcsolódási részletek"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Maintenance"
-msgstr ""
+msgstr "Karbantartás"
 
 #: bika/lims/profiles/default/types/AnalysisRequest.xml
 msgid "Manage Analyses"
@@ -456,33 +456,33 @@ msgid "Methods"
 msgstr "Módszerek"
 
 msgid "No preservation required"
-msgstr ""
+msgstr "Megőrzés nem szükséges"
 
 msgid "No sampling workflow"
-msgstr ""
+msgstr "Nincs mintavételi munkafolyamat"
 
 msgid "Not requested"
-msgstr ""
+msgstr "Nem szükséges"
 
 msgid "Open"
-msgstr ""
+msgstr "Megnyitás"
 
 #: bika/lims/profiles/default/types/Client.xml
 msgid "Orders"
 msgstr "Rendelések"
 
 msgid "Pending"
-msgstr ""
+msgstr "Függőben"
 
 msgid "Prepublish"
-msgstr ""
+msgstr "Előzetes közzététel"
 
 #: bika/lims/profiles/default/types/Preservation.xml
 msgid "Preservation"
 msgstr "Megőrzés"
 
 msgid "Preservation required"
-msgstr ""
+msgstr "Megőrzés szükséges"
 
 #: bika/lims/profiles/default/controlpanel.xml
 #: bika/lims/profiles/default/types/Preservations.xml
@@ -490,7 +490,7 @@ msgid "Preservations"
 msgstr "Megőrzések"
 
 msgid "Preserve"
-msgstr ""
+msgstr "Megőrzés"
 
 #: bika/lims/profiles/default/types/Pricelist.xml
 msgid "Pricelist"
@@ -519,10 +519,10 @@ msgid "Productivity"
 msgstr "Termelékenység"
 
 msgid "Publish"
-msgstr ""
+msgstr "Közzététel"
 
 msgid "Published"
-msgstr ""
+msgstr "% Közzétett"
 
 #: bika/lims/profiles/default/types/AnalysisRequest.xml
 msgid "Published results"
@@ -530,20 +530,20 @@ msgstr "Közzétett eredmények"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "QC Results"
-msgstr ""
+msgstr "QC eredmények"
 
 #: bika/lims/profiles/default/types/ReportFolder.xml
 msgid "Quality Control"
 msgstr "Minőség ellenőrzés"
 
 msgid "Receive"
-msgstr ""
+msgstr "Átvesz"
 
 msgid "Receive sample"
-msgstr ""
+msgstr "Minta átvétel"
 
 msgid "Received"
-msgstr ""
+msgstr "Átvett"
 
 #: bika/lims/profiles/default/types/ReferenceAnalysis.xml
 msgid "Reference Analysis"
@@ -573,23 +573,23 @@ msgid "Reference Values"
 msgstr "Referencia értékek"
 
 msgid "Registered"
-msgstr ""
+msgstr "Bejegyzett"
 
 msgid "Reinstate"
-msgstr ""
+msgstr "Visszatétel"
 
 msgid "Reject"
-msgstr ""
+msgstr "Eldob"
 
 #: bika/lims/profiles/default/types/RejectAnalysis.xml
 msgid "Reject Analysis"
 msgstr "Referencia vizsgálat"
 
 msgid "Rejected"
-msgstr ""
+msgstr "Eldobott"
 
 msgid "Remove"
-msgstr ""
+msgstr "Törlés"
 
 #: bika/lims/profiles/default/actions.xml
 #: bika/lims/profiles/default/types/Report.xml
@@ -601,17 +601,17 @@ msgid "Reports"
 msgstr "Jelentések"
 
 msgid "Republish"
-msgstr ""
+msgstr "Újra közzététel"
 
 #: bika/lims/profiles/default/types/AnalysisRequest.xml
 msgid "Results not requested"
 msgstr "Eredmény nem szükséges"
 
 msgid "Retract"
-msgstr ""
+msgstr "Visszavon"
 
 msgid "Retracted"
-msgstr ""
+msgstr "Visszavont"
 
 #: bika/lims/profiles/default/types/Sample.xml
 msgid "Sample"
@@ -662,26 +662,26 @@ msgid "Sample Types"
 msgstr "Minta típusok"
 
 msgid "Sample due"
-msgstr ""
+msgstr "Minta esedékes"
 
 msgid "Sample preparation"
-msgstr ""
+msgstr "Minta előkészítés"
 
 msgid "Sample preparation complete"
-msgstr ""
+msgstr "Minta előkészítés befejezve"
 
 msgid "Sample received"
-msgstr ""
+msgstr "Minta átvéve"
 
 msgid "Sample registered"
-msgstr ""
+msgstr "Minta bejegyzett"
 
 #: bika/lims/profiles/default/types/Client.xml
 msgid "SamplePoints"
 msgstr "Minta pontok"
 
 msgid "Sampled"
-msgstr ""
+msgstr "Mintázott"
 
 #: bika/lims/profiles/default/actions.xml
 #: bika/lims/profiles/default/types/Batch.xml
@@ -704,7 +704,7 @@ msgstr "Mintavételi eltérések"
 
 #: bika/lims/profiles/default/types/SRTemplate.xml
 msgid "Sampling Round Template"
-msgstr ""
+msgstr "Mintavételi kör sablon"
 
 #: bika/lims/profiles/default/controlpanel.xml
 #: bika/lims/profiles/default/types/Client.xml
@@ -715,24 +715,24 @@ msgstr "Mintavételi kör sablonok"
 #: bika/lims/profiles/default/controlpanel.xml
 #: bika/lims/profiles/default/types/Client.xml
 msgid "Sampling Rounds"
-msgstr ""
+msgstr "Mintavételi körök"
 
 msgid "Sampling workflow"
-msgstr ""
+msgstr "Mintavételi munkafolyamat"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Schedule"
 msgstr "Ütemezés"
 
 msgid "Schedule sampling"
-msgstr ""
+msgstr "Mintavételezés ütemezése"
 
 msgid "Scheduled sampling"
-msgstr ""
+msgstr "Ütemezett mintázás"
 
 #: bika/lims/profiles/default/actions.xml
 msgid "Sharing"
-msgstr ""
+msgstr "Megosztás"
 
 #: bika/lims/profiles/default/types/AnalysisRequest.xml
 #: bika/lims/profiles/default/types/Sample.xml
@@ -742,7 +742,7 @@ msgstr "Kis címke"
 
 #: bika/lims/profiles/default/types/InvoiceFolder.xml
 msgid "Statements"
-msgstr ""
+msgstr "Megállapítások"
 
 #: bika/lims/profiles/default/types/ReferenceSample.xml
 msgid "Sticker"
@@ -752,7 +752,7 @@ msgstr "Címke"
 #: bika/lims/profiles/default/types/Sample.xml
 #: bika/lims/profiles/default/types/SamplePartition.xml
 msgid "Stickers preview"
-msgstr ""
+msgstr "Címke előnézet"
 
 #: bika/lims/profiles/default/types/StorageLocation.xml
 msgid "Storage Location"
@@ -773,10 +773,10 @@ msgid "Sub-groups"
 msgstr "Alcsoportok"
 
 msgid "Submit"
-msgstr ""
+msgstr "Elküld"
 
 msgid "Submit for verification"
-msgstr ""
+msgstr "Elküldés ellenőrzésre"
 
 #: bika/lims/profiles/default/types/Supplier.xml
 msgid "Supplier"
@@ -797,45 +797,45 @@ msgid "Supply Orders"
 msgstr "Szállítói rendelések"
 
 msgid "To be preserved"
-msgstr ""
+msgstr "Megőrzendő"
 
 msgid "To be sampled"
-msgstr ""
+msgstr "Mintázandó"
 
 msgid "To be verified"
-msgstr ""
+msgstr "Ellenőrzendő"
 
 msgid "Unpublished"
-msgstr ""
+msgstr "Nem kibocsájtott"
 
 msgid "Unsassign"
-msgstr ""
+msgstr "Kiosztás visszavonás"
 
 msgid "Valid"
-msgstr ""
+msgstr "Érvényes"
 
 msgid "Validate"
-msgstr ""
+msgstr "Jóváhagy"
 
 #: bika/lims/profiles/default/types/Instrument.xml
 msgid "Validations"
 msgstr "Jóváhagyás"
 
 msgid "Verified"
-msgstr ""
+msgstr "Ellenőrzött"
 
 msgid "Verify"
-msgstr ""
+msgstr "Ellenőrzés"
 
 #: bika/lims/profiles/default/types/ARImport.xml
 #: bika/lims/profiles/default/types/ARPriority.xml
 #: bika/lims/profiles/default/types/ARReport.xml
 msgid "View"
-msgstr ""
+msgstr "Megtekintés"
 
 #: bika/lims/profiles/default/types/Client.xml
 msgid "WINE-40: Do not move or remove this entry."
-msgstr ""
+msgstr "WINE-40: Ezt a tételt ne mozgassa, ne törölje"
 
 #: bika/lims/profiles/default/types/Worksheet.xml
 msgid "Worksheet"

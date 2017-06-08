@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
-
 
 from Products.Archetypes.public import DisplayList
 from bika.lims import bikaMessageFactory as _
@@ -59,6 +58,11 @@ ATTACHMENT_OPTIONS = DisplayList((
     ('r', _('Required')),
     ('p', _('Permitted')),
     ('n', _('Not Permitted')),
+))
+ATTACHMENT_REPORT_OPTIONS = DisplayList((
+    ('a', _('Attach to Report')),
+    ('i', _('Ignore in Report')),
+    ('r', _('Render in Report')),
 ))
 DEFAULT_AR_SPECS = DisplayList((
     ('ar_specs', _('Analysis Request Specifications')),

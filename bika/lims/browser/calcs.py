@@ -1,26 +1,30 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser import BrowserView
-from bika.lims.interfaces import IAnalysis
-from bika.lims.interfaces import IFieldIcons
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, isnumber
-from bika.lims import logger
-from bika.lims.utils import to_utf8
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.utils import getToolByName
-from Products.PythonScripts.standard import html_quote
-from bika.lims.utils.analysis import format_numeric_result
+import json
+import math
+
 from zope.component import adapts
 from zope.component import getAdapters
 from zope.interface import implements
 
-import json
-import math
 import plone
+
+from Products.Archetypes.config import REFERENCE_CATALOG
+from Products.CMFCore.utils import getToolByName
+from Products.PythonScripts.standard import html_quote
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.interfaces import IAnalysis
+from bika.lims.interfaces import IFieldIcons
+from bika.lims.utils import isnumber
+from bika.lims.utils import t
+from bika.lims.utils.analysis import format_numeric_result
 
 
 class CalculationResultAlerts(object):
@@ -62,10 +66,9 @@ class CalculationResultAlerts(object):
 
 
 class ajaxCalculateAnalysisEntry(BrowserView):
-
-    """ This view is called by javascript when an analysis' result or interim
-        field value is entered. Returns a JSON dictionary, or None if no
-        action is required or possible.
+    """This view is called by javascript when an analysis' result or interim
+       field value is entered. Returns a JSON dictionary, or None if no action
+       is required or possible.
     """
 
     def __init__(self, context, request):
@@ -125,17 +128,19 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                 else:
                     # Retrieve the result and DLs from the analysis
                     analysisvalues = {
-                        'keyword':  dependency.getKeyword(),
-                        'result':   dependency.getResult(),
-                        'ldl':      dependency.getLowerDetectionLimit(),
-                        'udl':      dependency.getUpperDetectionLimit(),
+                        'keyword': dependency.getKeyword(),
+                        'result': dependency.getResult(),
+                        'ldl': dependency.getLowerDetectionLimit(),
+                        'udl': dependency.getUpperDetectionLimit(),
                         'belowldl': dependency.isBelowLowerDetectionLimit(),
                         'aboveudl': dependency.isAboveUpperDetectionLimit(),
                     }
-                if analysisvalues['result']=='':
+
+                if analysisvalues['result'] == '':
                     unsatisfied = True
-                    break;
-                key = analysisvalues.get('keyword',dependency.getService().getKeyword())
+                    break
+
+                key = analysisvalues.get('keyword', dependency.getService().getKeyword())
 
                 # Analysis result
                 # All result mappings must be float, or they are ignored.
@@ -269,7 +274,7 @@ class ajaxCalculateAnalysisEntry(BrowserView):
             # Get the specs directly from the analysis. The getResultsRange
             # function already takes care about which are the specs to be used:
             # AR, client or lab.
-            specs = analysis.getResultsRange()
+            specs = analysis.getResultsRange()  # noqa - where is this used??
 
         # format result
         try:
@@ -278,11 +283,13 @@ class ajaxCalculateAnalysisEntry(BrowserView):
         except ValueError:
             # non-float
             Result['formatted_result'] = Result['result']
+
         # calculate Dry Matter result
         # if parent is not an AR, it's never going to be calculable
         dm = hasattr(analysis.aq_parent, 'getReportDryMatter') and \
             analysis.aq_parent.getReportDryMatter() and \
             analysis.getService().getReportDryMatter()
+
         if dm:
             dry_service = self.context.bika_setup.getDryMatterService()
             # get the UID of the DryMatter Analysis from our parent AR
@@ -323,8 +330,8 @@ class ajaxCalculateAnalysisEntry(BrowserView):
             anvals = self.current_results[uid]
             isldl = anvals.get('isldl', False)
             isudl = anvals.get('isudl', False)
-            ldl = anvals.get('ldl',0)
-            udl = anvals.get('udl',0)
+            ldl = anvals.get('ldl', 0)
+            udl = anvals.get('udl', 0)
             ldl = float(ldl) if isnumber(ldl) else 0
             udl = float(udl) if isnumber(udl) else 10000000
             belowldl = (isldl or flres < ldl)
@@ -359,6 +366,8 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                     self.alerts[analysis.UID()] = alerts[analysis.UID()]
 
     def __call__(self):
+        """Endpoint for `listing_string_entry` view
+        """
         self.rc = getToolByName(self.context, REFERENCE_CATALOG)
         plone.protect.CheckAuthenticator(self.request)
         plone.protect.PostOnly(self.request)

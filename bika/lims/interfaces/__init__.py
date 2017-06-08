@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from zope.interface import Interface
@@ -739,4 +741,8 @@ class IAcquireFieldDefaults(Interface):
 class IProxyField(Interface):
     """A field that proxies transparently to the field of another object.
     Mainly needed for AnalysisRequest fields that are actually stored on the Sample.
+    """
+
+class IARAnalysesField(Interface):
+    """A field that manages AR Analyses
     """

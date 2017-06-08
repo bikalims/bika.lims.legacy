@@ -1,29 +1,36 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.browser import BrowserView
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from bika.lims import bikaMessageFactory as _
-from bika.lims.jsonapi.v1 import load_field_values, get_include_fields
-from bika.lims.utils import t
-from bika.lims.config import POINTS_OF_CAPTURE
-from bika.lims.browser.log import LogView
-from bika.lims.content.analysisservice import getContainers
-from bika.lims.browser.bika_listing import BikaListingView
-from bika.lims.interfaces import IAnalysisService
-from bika.lims.interfaces import IJSONReadExtender
-from Products.CMFCore.utils import getToolByName
-from magnitude import mg, MagnitudeError
+import json
+from magnitude import mg
+
 from zope.component import adapts
 from zope.interface import implements
-import json, plone
+
+import plone
 import plone.protect
-import re
+
+from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from bika.lims import api
+from bika.lims import bikaMessageFactory as _
+from bika.lims.browser import BrowserView
+from bika.lims.browser.log import LogView
+from bika.lims.config import POINTS_OF_CAPTURE
+from bika.lims.content.analysisservice import getContainers
+from bika.lims.interfaces import IAnalysisService
+from bika.lims.interfaces import IJSONReadExtender
+from bika.lims.jsonapi.v1 import get_include_fields
+from bika.lims.jsonapi.v1 import load_field_values
 from bika.lims.utils import to_unicode
 
-### AJAX methods for AnalysisService context
+# AJAX methods for AnalysisService context
+
 
 class ajaxGetContainers(BrowserView):
     """ajax Preservation/Container widget filter
@@ -35,29 +42,31 @@ class ajaxGetContainers(BrowserView):
     """
     def __call__(self):
         plone.protect.CheckAuthenticator(self.request)
-        uc = getToolByName(self, 'uid_catalog')
 
         allow_blank = self.request.get('allow_blank', False) == 'true'
         show_container_types = json.loads(self.request.get('show_container_types', 'true'))
         show_containers = json.loads(self.request.get('show_containers', 'true'))
         minvol = self.request.get("minvol", "0")
         try:
-            minvol =  minvol.split()
+            minvol = minvol.split()
             minvol = mg(float(minvol[0]), " ".join(minvol[1:]))
         except:
             minvol = mg(0)
 
         containers = getContainers(
             self.context,
-            minvol = minvol,
-            allow_blank = allow_blank,
+            minvol=minvol,
+            allow_blank=allow_blank,
             show_containers=show_containers,
             show_container_types=show_container_types,
         )
 
         return json.dumps(containers)
 
+
 class ajaxServicePopup(BrowserView):
+    """Popup view used in BikaListing
+    """
 
     template = ViewPageTemplateFile("templates/analysisservice_popup.pt")
 
@@ -74,9 +83,17 @@ class ajaxServicePopup(BrowserView):
         if not service_title:
             return ''
 
+        self.an_service_title = ""
+        self.an_service_version = 0
+        self.an_service_url = ""
+
         analysis = uc(UID=self.request.get('analysis_uid', None))
         if analysis:
             analysis = analysis[0].getObject()
+            service = analysis.getService()
+            self.an_service_title = service.Title()
+            self.an_service_version = api.get_version(service)
+            self.an_service_url = service.absolute_url()
             self.request['ajax_load'] = 1
             tmp = LogView(analysis, self.request)
             self.log = tmp.folderitems()
@@ -89,29 +106,28 @@ class ajaxServicePopup(BrowserView):
         if not brains:
             return ''
 
-        self.service = brains[0].getObject()
+        self.service = api.get_object(brains[0])
 
         self.calc = self.service.getCalculation()
 
         self.partsetup = self.service.getPartitionSetup()
 
         # convert uids to comma-separated list of display titles
-        for i,ps in enumerate(self.partsetup):
+        for i, ps in enumerate(self.partsetup):
 
-            self.partsetup[i]['separate'] = \
-                ps.has_key('separate') and _('Yes') or _('No')
+            self.partsetup[i]['separate'] = 'separate' in ps and _('Yes') or _('No')
 
             if type(ps['sampletype']) == str:
-                ps['sampletype'] = [ps['sampletype'],]
+                ps['sampletype'] = [ps['sampletype'], ]
             sampletypes = []
             for st in ps['sampletype']:
                 res = bsc(UID=st)
                 sampletypes.append(res and res[0].Title or st)
             self.partsetup[i]['sampletype'] = ", ".join(sampletypes)
 
-            if ps.has_key('container'):
+            if 'container' in ps:
                 if type(ps['container']) == str:
-                    self.partsetup[i]['container'] = [ps['container'],]
+                    self.partsetup[i]['container'] = [ps['container'], ]
                 try:
                     containers = [bsc(UID=c)[0].Title for c in ps['container']]
                 except IndexError:
@@ -120,9 +136,9 @@ class ajaxServicePopup(BrowserView):
             else:
                 self.partsetup[i]['container'] = ''
 
-            if ps.has_key('preservation'):
+            if 'preservation' in ps:
                 if type(ps['preservation']) == str:
-                    ps['preservation'] = [ps['preservation'],]
+                    ps['preservation'] = [ps['preservation'], ]
                 try:
                     preservations = [bsc(UID=c)[0].Title for c in ps['preservation']]
                 except IndexError:
@@ -135,7 +151,8 @@ class ajaxServicePopup(BrowserView):
 
 
 class ajaxGetServiceInterimFields:
-    "Tries to fall back to Calculation for defaults"
+    """Tries to fall back to Calculation for defaults
+    """
 
     def __init__(self, context, request):
         self.context = context
@@ -214,8 +231,8 @@ class JSONReadExtender(object):
             calc = self.context.getCalculation()
             if calc:
                 services = [self.service_info(service) for service
-                    in calc.getCalculationDependencies(flat=True)
-                    if service.UID() != self.context.UID()]
+                            in calc.getCalculationDependencies(flat=True)
+                            if service.UID() != self.context.UID()]
                 data["ServiceDependencies"] = services
 
         if not include_fields or "ServiceDependants" in include_fields:
@@ -224,8 +241,8 @@ class JSONReadExtender(object):
             if calcs:
                 for calc in calcs:
                     services = [self.service_info(service) for service
-                        in calc.getCalculationDependants()
-                        if service.UID() != self.context.UID()]
+                                in calc.getCalculationDependants()
+                                if service.UID() != self.context.UID()]
                     data["ServiceDependants"].extend(services)
 
         if not include_fields or "MethodInstruments" in include_fields:

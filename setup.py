@@ -1,16 +1,16 @@
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import os
 from setuptools import setup, find_packages
 
-version = '3.2.1'
+version = '3.3.0'
 
 
 def read(*rnames):
-    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read() + "\n"
 
 setup(name='bika.lims',
       version=version,
@@ -22,7 +22,8 @@ setup(name='bika.lims',
                        "Authors and maintainers\n" + \
                        "-----------------------\n" + \
                        "- Bika Lab Systems, http://bikalabs.com\n" + \
-                       "- Naralabs, http://naralabs.com",
+                       "- Naralabs, http://naralabs.com\n" + \
+                       "- RIDING BYTES, http://ridingbytes.com",
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
@@ -37,8 +38,8 @@ setup(name='bika.lims',
       keywords=['lims', 'bika', 'opensource'],
       author='Bika Laboratory Systems',
       author_email='support@bikalabs.com',
-      maintainer='Naralabs',
-      maintainer_email='info@naralabs.com',
+      maintainer='RIDING BYTES',
+      maintainer_email='hello@ridingbytes.com',
       url='http://www.bikalims.org',
       license='AGPL',
       packages=find_packages(exclude=['ez_setup']),

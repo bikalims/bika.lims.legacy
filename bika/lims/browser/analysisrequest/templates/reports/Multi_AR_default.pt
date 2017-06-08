@@ -1,8 +1,8 @@
 <tal:comment replace="nothing">
-    Print COA for a set of analysisrequests.
+  Print COA for a set of analysisrequests.
 
-    The filename starts with "multi" indicates this report is formatted
-    print multiple ARs.
+  The filename starts with "multi" indicates this report is formatted
+  print multiple ARs.
 </tal:comment>
 
 <tal:report tal:define="num_ars_per_page python:5;
@@ -12,14 +12,14 @@
 
   <!-- Address and Lab info, displayed only on first page. -->
   <div id="section-info"
-       tal:define="firstar         python:arspage[0][0];
-                   analysisrequest python:view.getAnalysisRequest(firstar);
-                   portal          analysisrequest/portal;
-                   client          python:analysisrequest['client']['obj'];
-                   contact         python:analysisrequest['contact']['obj'];
-                   lab             python:portal['obj'].bika_setup.laboratory;
-                   showqcanalyses  python:view.isQCAnalysesVisible();
-                   remarksenabled  python:view.context.bika_setup.getEnableAnalysisRemarks();">
+       tal:define="firstar python:arspage[0][0];
+           analysisrequest python:view.getAnalysisRequest(firstar);
+           portal          analysisrequest/portal;
+           client          python:analysisrequest['client']['obj'];
+           contact         python:analysisrequest['contact']['obj'];
+           lab             python:portal['obj'].bika_setup.laboratory;
+           showqcanalyses  python:view.isQCAnalysesVisible();
+           remarksenabled  python:view.context.bika_setup.getEnableAnalysisRemarks();">
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr>

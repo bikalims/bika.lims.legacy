@@ -1,15 +1,18 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 """ FOSS 'Winescan FT120'
 """
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from . import WinescanImporter, WinescanCSVParser
 import json
 import traceback
+from bika.lims import bikaMessageFactory as _
+from bika.lims.utils import t
+
+from . import WinescanCSVParser, WinescanImporter
 
 title = "FOSS - Winescan FT120"
 
@@ -88,13 +91,11 @@ def Import(context, request):
 
 
 class WinescanFT120CSVParser(WinescanCSVParser):
-
     def __init__(self, csv):
         WinescanCSVParser.__init__(self, csv)
-        self._omitrows = ['Pilot definition',
-                         'Pilot test',
-                         'Zero setting',
-                         'Zero correction']
+        self._omitrows = [
+            'Pilot definition', 'Pilot test',
+            'Zero setting', 'Zero correction']
         self._omit = False
         self._parsedresults = {}
         self._calibration = 0
@@ -132,33 +133,31 @@ class WinescanFT120CSVParser(WinescanCSVParser):
             }
         """
 
-        if 'Date' in values and 'Time' in values:
-            try:
-                dtstr = '%s %s' % (values.get('Date')['Date'], values.get('Time')['Time'])
-                # 2/11/2005 13:33 PM
-                from datetime import datetime
-                dtobj = datetime.strptime(dtstr, '%d/%m/%Y %H:%M %p')
-                dateTime = dtobj.strftime("%Y%m%d %H:%M:%S")
-            except:
-                pass
-            del values['Date']
-            del values['Time']
+        _date = values.get('Date')['Date']
+        _time = values.get('Time')['Time']
+        dtstr = '%s %s' % (_date, _time)
+        # 2/11/2005 13:33 PM
+        from datetime import datetime
+        dtobj = datetime.strptime(dtstr, '%d/%m/%Y %H:%M %p')
+        date_and_time = dtobj.strftime("%Y%m%d %H:%M:%S")
+        del values['Date']
+        del values['Time']
 
-        # Adding the date, time and calibration inside each analysis service result.
-        # I'm adding the calibration number here because it is the way we can avoid
-        # WINE-76 easly
+        # Adding the date, time and calibration inside each analysis service
+        # result. I'm adding the calibration number here because it is the
+        # way we can avoid WINE-76 easly
         for keyword in values.keys():
-            values[keyword]['DateTime'] = dateTime
+            values[keyword]['DateTime'] = date_and_time
             values[keyword]['Calibration'] = self._calibration
 
         # First, we must find if already exists a row with results for
         # the same date, in order to take into account replicas, Mean
         # and Standard Deviation
-        dtidx = values.get('Calibration',{}).get('Calibration',0)
+        dtidx = values.get('Calibration', {}).get('Calibration', 0)
         rows = self.getRawResults().get(resid, [])
         row, rows = self._extractrowbycalibration(rows, self._calibration)
-        is_std = values.get('Rep #',{}).get('Rep #','') == 'Sd'
-        is_mean = values.get('Rep #',{}).get('Rep #','') == 'Mean'
+        is_std = values.get('Rep #', {}).get('Rep #', '') == 'Sd'
+        is_mean = values.get('Rep #', {}).get('Rep #', '') == 'Mean'
         if is_std:
             # Add the results of Standard Deviation. For each acode, add
             # the Standard Result
@@ -178,12 +177,13 @@ class WinescanFT120CSVParser(WinescanCSVParser):
             WinescanCSVParser._addRawResult(self, resid, row, isfirst)
             isfirst = False
 
-    def _extractrowbycalibration(self, rows=[], calidx=0):
+    @staticmethod
+    def _extractrowbycalibration(self, rows, calidx):
         outrows = []
         target = {}
         for row in rows:
             # We are getting the rows' calibration. It was saved inside each row
-            dtrow = row[row.keys()[0]].get('Calibration',0)
+            dtrow = row[row.keys()[0]].get('Calibration', 0)
             if dtrow == calidx:
                 target = row
             else:
@@ -192,6 +192,5 @@ class WinescanFT120CSVParser(WinescanCSVParser):
 
 
 class WinescanFT120Importer(WinescanImporter):
-
     def getKeywordsToBeExcluded(self):
         return ['Product']

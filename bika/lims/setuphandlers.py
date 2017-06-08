@@ -1,29 +1,68 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-
-""" Bika setup handlers. """
-
-from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore import permissions
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory
 from Products.CMFPlone.utils import _createObjectByType
 
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t, tmpID
-from bika.lims import logger
-from bika.lims.config import *
-from bika.lims.permissions import *
-from bika.lims.interfaces \
-        import IHaveNoBreadCrumbs, IARImportFolder, IARPriorities
-from zope.event import notify
-from zope.interface import alsoProvides
-from Products.CMFEditions.Permissions import ApplyVersionControl
 from Products.CMFEditions.Permissions import SaveNewVersion
+from Products.CMFEditions.Permissions import ApplyVersionControl
 from Products.CMFEditions.Permissions import AccessPreviousVersions
+
+from bika.lims import logger
+from bika.lims.utils import tmpID
+from bika.lims import bikaMessageFactory as _
+
+# Bika LIMS Constants
+from bika.lims.config import VERSIONABLE_TYPES
+# Bika LIMS Permissions
+from bika.lims.permissions import ManageClients
+from bika.lims.permissions import AddAnalysisSpec
+from bika.lims.permissions import CancelAndReinstate
+from bika.lims.permissions import ManagePricelists
+from bika.lims.permissions import ManageARImport
+# Bika LIMS Interfaces
+from bika.lims.interfaces import IARImportFolder
+from bika.lims.interfaces import IHaveNoBreadCrumbs
+
+HAS_CMF_EDITIONS = False
+try:
+    from Products.CMFEditions.setuphandlers import DEFAULT_POLICIES  # noqa
+    # we're on plone < 4.1, configure versionable types manually
+    HAS_CMF_EDITIONS = True
+except ImportError:
+    # repositorytool.xml will be used
+    pass
+
+
+def setupVarious(context):
+    """
+    Final Bika import steps.
+    """
+    if context.readDataFile('bika.lims_various.txt') is None:
+        return
+
+    site = context.getSite()
+    gen = BikaGenerator()
+    gen.setupGroups(site)
+    gen.setupPortalContent(site)
+    gen.setupPermissions(site)
+    gen.setupTopLevelFolders(site)
+    if HAS_CMF_EDITIONS:
+        gen.setupVersioning(site)
+    gen.setupCatalogs(site)
+
+    # Plone's jQuery gets clobbered when jsregistry is loaded.
+    setup = site.portal_setup
+    setup.runImportStepFromProfile(
+        'profile-plone.app.jquery:default', 'jsregistry')
+    # setup.runImportStepFromProfile('profile-plone.app.jquerytools:default', 'jsregistry')
+
+    create_CAS_IdentifierType(site)
 
 
 class Empty:
@@ -34,8 +73,6 @@ class BikaGenerator:
 
     def setupPortalContent(self, portal):
         """ Setup Bika site structure """
-
-        wf = getToolByName(portal, 'portal_workflow')
 
         obj = portal._getOb('front-page')
         alsoProvides(obj, IHaveNoBreadCrumbs)
@@ -116,163 +153,62 @@ class BikaGenerator:
         lab.unmarkCreationFlag()
         lab.reindexObject()
 
-
-    def setupGroupsAndRoles(self, portal):
-        # add roles
-        for role in ('LabManager',
-                     'LabClerk',
-                     'Analyst',
-                     'Verifier',
-                     'Sampler',
-                     'Preserver',
-                     'Publisher',
-                     'Member',
-                     'Reviewer',
-                     'RegulatoryInspector',
-                     'Client',
-                     'SamplingCoordinator'):
-            if role not in portal.acl_users.portal_role_manager.listRoleIds():
-                portal.acl_users.portal_role_manager.addRole(role)
-            # add roles to the portal
-            portal._addRole(role)
-
+    def setupGroups(self, portal):
         # Create groups
         portal_groups = portal.portal_groups
 
         if 'LabManagers' not in portal_groups.listGroupIds():
             try:
                 portal_groups.addGroup('LabManagers', title="Lab Managers",
-                       roles=['Member', 'LabManager', 'Site Administrator', ])
+                                       roles=['Member', 'LabManager', 'Site Administrator', ])
             except KeyError:
                 portal_groups.addGroup('LabManagers', title="Lab Managers",
-                       roles=['Member', 'LabManager', 'Manager', ])  # Plone < 4.1
+                                       roles=['Member', 'LabManager', 'Manager', ])  # Plone < 4.1
 
         if 'LabClerks' not in portal_groups.listGroupIds():
             portal_groups.addGroup('LabClerks', title="Lab Clerks",
-                roles=['Member', 'LabClerk'])
+                                   roles=['Member', 'LabClerk'])
 
         if 'Analysts' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Analysts', title="Lab Technicians",
-                roles=['Member', 'Analyst'])
+                                   roles=['Member', 'Analyst'])
 
         if 'Verifiers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Verifiers', title="Verifiers",
-                roles=['Verifier'])
+                                   roles=['Verifier'])
 
         if 'Samplers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Samplers', title="Samplers",
-                roles=['Sampler'])
+                                   roles=['Sampler'])
 
         if 'Preservers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Preservers', title="Preservers",
-                roles=['Preserver'])
+                                   roles=['Preserver'])
 
         if 'Publishers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Publishers', title="Publishers",
-                roles=['Publisher'])
+                                   roles=['Publisher'])
 
         if 'Clients' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Clients', title="Clients",
-                roles=['Member', 'Client'])
+                                   roles=['Member', 'Client'])
 
         if 'Suppliers' not in portal_groups.listGroupIds():
             portal_groups.addGroup('Suppliers', title="",
-                roles=['Member', ])
+                                   roles=['Member', ])
 
         if 'RegulatoryInspectors' not in portal_groups.listGroupIds():
             portal_groups.addGroup('RegulatoryInspectors', title="Regulatory Inspectors",
-                roles=['Member', 'RegulatoryInspector'])
+                                   roles=['Member', 'RegulatoryInspector'])
 
         if 'SamplingCoordinators' not in portal_groups.listGroupIds():
-            portal_groups.addGroup(
-                'SamplingCoordinators', title="Sampling Coordinators",
-                roles=['SamplingCoordinator'])
+            portal_groups.addGroup('SamplingCoordinators',
+                                   title="Sampling Coordinators",
+                                   roles=['SamplingCoordinator'])
 
     def setupPermissions(self, portal):
         """ Set up some suggested role to permission mappings.
         """
-
-        # Root permissions
-        mp = portal.manage_permission
-
-        mp(AccessJSONAPI, ['Manager', 'LabManager'], 0)
-
-        mp(AddAnalysis, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler'], 1)
-        mp(AddAnalysisProfile, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddAnalysisRequest, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddAnalysisSpec, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddARTemplate, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddAttachment, ['Manager', 'LabManager', 'Owner' 'Analyst', 'LabClerk', 'Sampler', 'Client'], 0)
-        mp(AddBatch, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddClient, ['Manager', 'Owner', 'LabManager'], 1)
-        mp(AddClientFolder, ['Manager'], 1)
-        mp(AddInvoice, ['Manager', 'LabManager'], 1)
-        mp(AddMethod, ['Manager', 'LabManager'], 1)
-        mp(AddMultifile, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(AddPricelist, ['Manager', 'Owner', 'LabManager'], 1)
-        mp(AddSample, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler'], 1)
-        mp(AddSampleMatrix, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddSamplePartition, ['Manager', 'Owner', 'LabManager', 'LabClerk', 'Sampler', 'SamplingCoordinator'], 1)
-        mp(AddSamplePoint, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddStorageLocation, ['Manager', 'Owner', 'LabManager', ], 1)
-        mp(AddSamplingDeviation, ['Manager', 'Owner', 'LabManager', 'LabClerk'], 1)
-        mp(AddSRTemplate, ['Manager', 'Owner', 'LabManager'], 0)
-        mp(AddSubGroup, ['Manager', 'LabManager', 'LabClerk'], 0)
-
-        mp(permissions.AddPortalContent, ['Manager', 'Owner', 'LabManager'], 1)
-        mp(permissions.ListFolderContents, ['Manager', 'Owner'], 1)
-        mp(permissions.FTPAccess, ['Manager', 'LabManager', 'LabClerk', 'Analyst'], 1)
-        mp(permissions.DeleteObjects, ['Manager', 'LabManager', 'LabClerk', 'Owner'], 1)
-        mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Owner'], 1)
-        mp(permissions.ManageUsers, ['Manager', 'LabManager', ], 1)
-
-        mp(ApplyVersionControl, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Owner', 'RegulatoryInspector'], 1)
-        mp(SaveNewVersion, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Owner', 'RegulatoryInspector'], 1)
-        mp(AccessPreviousVersions, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Owner', 'RegulatoryInspector'], 1)
-
-        mp(DispatchOrder, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(ManageARImport, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(ManageARPriority, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(ManageAnalysisRequests, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'RegulatoryInspector', 'SamplingCoordinator'], 1)
-        mp(ManageBika, ['Manager', 'LabManager'], 1)
-        mp(ManageClients, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(ManageLoginDetails, ['Manager', 'LabManager'], 1)
-        mp(ManageReference, ['Manager', 'LabManager', 'LabClerk', 'Analyst'], 1)
-        mp(ManageSuppliers, ['Manager', 'LabManager', 'LabClerk', 'Analyst'], 1)
-        mp(ManageSamples, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'RegulatoryInspector', 'SamplingCoordinator'], 1)
-        mp(ManageWorksheets, ['Manager', 'LabManager'], 1)
-        mp(PostInvoiceBatch, ['Manager', 'LabManager', 'Owner'], 1)
-
-        mp(CancelAndReinstate, ['Manager', 'LabManager'], 0)
-        mp(ViewRetractedAnalyses, ['Manager', 'LabManager', 'LabClerk', 'Analyst', ], 0)
-
-        mp(ScheduleSampling, ['Manager', 'SamplingCoordinator'], 0)
-        mp(SampleSample, ['Manager', 'LabManager', 'Sampler', 'SamplingCoordinator'], 0)
-        mp(PreserveSample, ['Manager', 'LabManager', 'Preserver'], 0)
-        mp(ReceiveSample, ['Manager', 'LabManager', 'LabClerk', 'Sampler', 'SamplingCoordinator'], 1)
-        mp(ExpireSample, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(DisposeSample, ['Manager', 'LabManager', 'LabClerk'], 1)
-        mp(ImportAnalysis, ['Manager', 'LabManager', 'LabClerk', 'Analyst'], 1)
-        mp(RejectWorksheet, ['Manager', 'LabManager', 'Verifier'], 1)
-        mp(Retract, ['Manager', 'LabManager', 'Verifier'], 1)
-        mp(Verify, ['Manager', 'LabManager', 'Verifier'], 1)
-        mp(Publish, ['Manager', 'LabManager', 'Publisher'], 1)
-        mp(EditSample, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 1)
-        mp(EditAR, ['Manager', 'LabManager', 'LabClerk', 'Sampler', 'SamplingCoordinator'], 1)
-        mp(EditWorksheet, ['Manager', 'LabManager', 'Analyst'], 1)
-        mp(ResultsNotRequested, ['Manager', 'LabManager', 'LabClerk', 'Analyst'], 1)
-        mp(ManageInvoices, ['Manager', 'LabManager', 'Owner'], 1)
-        mp(ViewResults, ['Manager', 'LabManager', 'Analyst', 'Sampler', 'RegulatoryInspector', 'SamplingCoordinator'], 1)
-        mp(EditResults, ['Manager', 'LabManager', 'Analyst'], 1)
-        mp(EditFieldResults, ['Manager', 'LabManager', 'Sampler'], 1)
-        mp(EditSamplePartition, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 1)
-
-        mp('Access contents information', ['Authenticated'], 1)
-        mp(permissions.View, ['Authenticated'], 1)
-
-        mp(ImportInstrumentResults, ['Manager', 'LabManager', 'Analyst'], 1)
-
-        mp(ViewLogTab, ['Manager', 'LabManager'], 1)
 
         # Bika Setup
         # The `/bika_setup` folder follows the `bika_one_state_workflow`.
@@ -304,7 +240,7 @@ class BikaGenerator:
         # The `/bika_setup/laboratory` object follows the `bika_one_state_workflow`.
         mp = portal.bika_setup.laboratory.manage_permission
         # We set explicit permissions to access methods to be persistent with the assigned workflow
-        mp(permissions.View, ['Authenticated'], 0)
+        mp(permissions.View, ['Anonymous'], 0)
         mp(permissions.ListFolderContents, ['Authenticated'], 0)
         # Front-Page Portlets need to access some information for Anonymous.
         mp(permissions.AccessContentsInformation, ['Anonymous'], 0)
@@ -330,23 +266,15 @@ class BikaGenerator:
         mp(AddAnalysisSpec, ['Manager', 'LabManager', 'Owner'], 0)
         portal.clients.reindexObject()
 
-        # Set permissions for each client in the clients folder
-        for obj in portal.clients.objectValues():
-            mp = obj.manage_permission
+        # We have to manually set the permissions of Contacts according to
+        # bika.lims.subscribers.objectmodified, as these types do not contain an own workflow
+        contacts = portal.portal_catalog(portal_type="Contact")
+        for contact in contacts:
+            obj = contact.getObject()
+            mp = contact.manage_permission
+            mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Owner', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
+            mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner', 'SamplingCoordinator'], 0)
 
-            # Set view permissions (need to by in sync with those in subscribers.objectmodified.py)
-            mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
-            mp(permissions.AccessContentsInformation, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
-            mp(permissions.ListFolderContents, ['Manager', 'LabManager', 'LabClerk', 'Analyst', 'Sampler', 'Preserver', 'Owner', 'SamplingCoordinator'], 0)
-
-            # Set modify permissions
-            mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner'], 0)
-            mp(AddSupplyOrder, ['Manager', 'LabManager', 'Owner', 'LabClerk'], 0)
-            obj.reindexObject()
-            for contact in portal.clients.objectValues('Contact'):
-                mp = contact.manage_permission
-                mp(permissions.View, ['Manager', 'LabManager', 'LabClerk', 'Owner', 'Analyst', 'Sampler', 'Preserver', 'SamplingCoordinator'], 0)
-                mp(permissions.ModifyPortalContent, ['Manager', 'LabManager', 'Owner', 'SamplingCoordinator'], 0)
         # /Clients
 
         # /worksheets folder permissions
@@ -442,8 +370,8 @@ class BikaGenerator:
         mp(permissions.DeleteObjects, ['Manager', 'LabManager'], 0)
         portal.methods.reindexObject()
 
-        try:
-            # /supplyorders folder permissions
+        # /supplyorders folder permissions
+        if portal.hasObject("supplyfolders"):
             mp = portal.supplyorders.manage_permission
             mp(CancelAndReinstate, ['Manager', 'LabManager', 'Owner', 'LabClerk'], 0)
             mp(permissions.ListFolderContents, ['LabClerk', ''], 1)
@@ -451,8 +379,6 @@ class BikaGenerator:
             mp(permissions.DeleteObjects, ['Manager', 'LabManager', 'Owner'], 0)
             mp(permissions.View, ['Manager', 'LabManager', 'LabClerk'], 0)
             portal.supplyorders.reindexObject()
-        except:
-            pass
 
         # Analysis Services
         # Add Analysis Services View permission to Clients
@@ -473,16 +399,14 @@ class BikaGenerator:
         portal.bika_setup.bika_attachmenttypes.reindexObject()
 
         # /arimports folder permissions
-        try:
+        if portal.hasObject("arimports"):
             mp = portal.arimports.manage_permission
             mp(ManageARImport, ['Manager', ], 1)
-            mp(permissions.ListFolderContents, ['Manager', 'Member',], 1)
+            mp(permissions.ListFolderContents, ['Manager', 'Member', ], 1)
             mp(permissions.AddPortalContent, ['Manager', ], 0)
             mp(permissions.DeleteObjects, ['Manager'], 0)
             mp(permissions.View, ['Manager', 'Member'], 0)
             portal.arimports.reindexObject()
-        except:
-            pass
 
     def setupVersioning(self, portal):
         portal_repository = getToolByName(portal, 'portal_repository')
@@ -531,7 +455,7 @@ class BikaGenerator:
         # bika_analysis_catalog
 
         bac = getToolByName(portal, 'bika_analysis_catalog', None)
-        if bac == None:
+        if bac is None:
             logger.warning('Could not find the bika_analysis_catalog tool.')
             return
 
@@ -611,7 +535,7 @@ class BikaGenerator:
         # bika_catalog
 
         bc = getToolByName(portal, 'bika_catalog', None)
-        if bc == None:
+        if bc is None:
             logger.warning('Could not find the bika_catalog tool.')
             return
 
@@ -725,7 +649,7 @@ class BikaGenerator:
         # bika_setup_catalog
 
         bsc = getToolByName(portal, 'bika_setup_catalog', None)
-        if bsc == None:
+        if bsc is None:
             logger.warning('Could not find the setup catalog tool.')
             return
 
@@ -910,7 +834,7 @@ def create_CAS_IdentifierType(portal):
     setuphandlers during site initialisation.
     """
     bsc = getToolByName(portal, 'bika_catalog', None)
-    idtypes = bsc(portal_type = 'IdentifierType', title='CAS Nr')
+    idtypes = bsc(portal_type='IdentifierType', title='CAS Nr')
     if not idtypes:
         folder = portal.bika_setup.bika_identifiertypes
         idtype = _createObjectByType('IdentifierType', folder, tmpID())
@@ -918,33 +842,3 @@ def create_CAS_IdentifierType(portal):
         idtype.edit(title='CAS Nr',
                     description='Chemical Abstracts Registry number',
                     portal_types=['Analysis Service'])
-
-def setupVarious(context):
-    """
-    Final Bika import steps.
-    """
-    if context.readDataFile('bika.lims_various.txt') is None:
-        return
-
-    site = context.getSite()
-    gen = BikaGenerator()
-    gen.setupGroupsAndRoles(site)
-    gen.setupPortalContent(site)
-    gen.setupPermissions(site)
-    gen.setupTopLevelFolders(site)
-    try:
-        from Products.CMFEditions.setuphandlers import DEFAULT_POLICIES
-        # we're on plone < 4.1, configure versionable types manually
-        gen.setupVersioning(site)
-    except ImportError:
-        # repositorytool.xml will be used
-        pass
-    gen.setupCatalogs(site)
-
-    # Plone's jQuery gets clobbered when jsregistry is loaded.
-    setup = site.portal_setup
-    setup.runImportStepFromProfile(
-            'profile-plone.app.jquery:default', 'jsregistry')
-    # setup.runImportStepFromProfile('profile-plone.app.jquerytools:default', 'jsregistry')
-
-    create_CAS_IdentifierType(site)

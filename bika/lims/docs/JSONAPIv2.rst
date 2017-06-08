@@ -60,4 +60,4 @@ The version route should be visible to unauthenticated users::
 
     >>> browser.open(api_base_url + "/version")
     >>> browser.contents
-    '{"url": "http://nohost/plone/@@API/v2/version", "date": "...", "version": ..., "build": ..., "_runtime": ...}'
+    '{"url": "http://nohost/plone/@@API/v2/version", "date": "...", "version": ..., "_runtime": ...}'

@@ -1,20 +1,26 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from AccessControl import ClassSecurityInfo
-from bika.lims import bikaMessageFactory as _
-from bika.lims import logger
-from bika.lims.permissions import ViewRetractedAnalyses
-from bika.lims.utils import t, dicts_to_dict
-from bika.lims.utils.analysis import create_analysis
 from decimal import Decimal
-from Products.Archetypes.public import *
-from Products.Archetypes.Registry import registerField
-from Products.Archetypes.utils import shasattr
+
+from zope.interface import implements
+
+from AccessControl import ClassSecurityInfo
+
 from Products.CMFCore.utils import getToolByName
-from types import ListType, TupleType, DictType
+from Products.Archetypes.utils import shasattr
+from Products.Archetypes.public import ObjectField
+from Products.Archetypes.public import Field
+
+from Products.Archetypes.Registry import registerField
+
+from bika.lims.interfaces import IARAnalysesField
+from bika.lims.utils.analysis import create_analysis
+from bika.lims.permissions import ViewRetractedAnalyses
 
 
 class ARAnalysesField(ObjectField):
@@ -24,6 +30,7 @@ class ARAnalysesField(ObjectField):
     get() returns the list of Analyses contained inside the AnalysesRequest
     set() converts a sequence of UIDS to Analysis instances in the AR
     """
+    implements(IARAnalysesField)
 
     _properties = Field._properties.copy()
     _properties.update({
@@ -130,9 +137,9 @@ class ARAnalysesField(ObjectField):
             service = proxy.getObject()
             service_uid = service.UID()
             keyword = service.getKeyword()
-            price = prices[service_uid] if prices and service_uid in prices \
-                else service.getPrice()
-            vat = Decimal(service.getVAT())
+            # price = prices[service_uid] if prices and service_uid in prices \
+            #     else service.getPrice()
+            # vat = Decimal(service.getVAT())
 
             # analysis->InterimFields
             calc = service.getCalculation()
@@ -214,7 +221,9 @@ class ARAnalysesField(ObjectField):
                                 for service in bsc(portal_type='AnalysisService')]
         return self._v_services
 
-registerField(ARAnalysesField,
-              title='Analyses',
-              description=('Used for Analysis instances')
-              )
+
+registerField(
+    ARAnalysesField,
+    title='Analyses',
+    description=('Used for Analysis instances')
+)

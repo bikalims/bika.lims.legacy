@@ -15,6 +15,7 @@
       title="bika: miscellaneous import steps"
       description="Various import steps that are not handled by GS import/export handlers."
       handler="bika.lims.setuphandlers.setupVarious">
+    <depends name="rolemap" />
     <depends name="content" />
   </genericsetup:importStep>
 

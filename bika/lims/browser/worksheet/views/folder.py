@@ -1,8 +1,8 @@
-# coding=utf-8
-
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from DateTime import DateTime
@@ -432,7 +432,7 @@ class FolderView(BikaListingView):
             for x in range(len(self.review_states)):
                 if self.review_states[x]['id'] in ['default', 'mine', 'open']:
                     self.review_states[x]['custom_actions'] = [{'id': 'reassign',
-                                                                'title': _('Reassign')}, ]
+                                                                'title': _('Reassign Analyst')}, ]
 
         self.show_select_column = self.can_reassign
         self.show_workflow_action_buttons = self.can_reassign

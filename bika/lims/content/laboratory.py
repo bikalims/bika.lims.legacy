@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from DateTime import DateTime
@@ -113,11 +115,6 @@ class Laboratory(UniqueObject, Organisation):
     security = ClassSecurityInfo()
     displayContentsTab = False
     schema = schema
-
-    # needed to access the field for the front-page Portlet for Anonymous, w/o
-    # making the whole Laboratory viewable by Anonymous.
-    # Only the permission "Access contents information" is needed
-    security.declarePublic('getAccreditationBodyLogo')
 
     security.declareProtected(View, 'getSchema')
     def getSchema(self):

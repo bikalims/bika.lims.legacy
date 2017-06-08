@@ -9,6 +9,7 @@ Each role may contain one or more **permissions**.
 Test Setup
 ==========
 
+    >>> import os
     >>> import transaction
     >>> from plone import api as ploneapi
     >>> from zope.lifecycleevent import modified
@@ -176,7 +177,7 @@ Test Permissions
 Exactly these roles have should have a `View` permission::
 
     >>> get_roles_for_permission("View", laboratory)
-    ['Authenticated']
+    ['Anonymous']
 
 Exactly these roles have should have the `Access contents information` permission::
 
@@ -205,12 +206,9 @@ Ensure we are logged out::
 
     >>> logout()
 
-Anonymous should not be able to view the `laboratory` folder::
+Anonymous should be able to view the `laboratory` folder::
 
     >>> browser.open(laboratory.absolute_url() + "/base_view")
-    Traceback (most recent call last):
-    ...
-    Unauthorized: ...
 
 Anonymous should not be able to edit the `laboratory` folder::
 
@@ -218,6 +216,21 @@ Anonymous should not be able to edit the `laboratory` folder::
     Traceback (most recent call last):
     ...
     Unauthorized: ...
+
+Anonymous should be able to view the `AccreditationBodyLogo` in the portlet of
+the front-page view::
+
+    >>> logo_path = os.path.join(os.path.dirname(__file__), "logo.png")
+    >>> laboratory.setAccreditationBodyLogo(open(logo_path))
+    >>> transaction.commit()
+    >>> logo = laboratory.getAccreditationBodyLogo()
+
+    >>> logo
+    <Image at /plone/bika_setup/laboratory/AccreditationBodyLogo>
+
+    >>> browser.open(logo.absolute_url())
+    >>> logo.data == browser.contents
+    True
 
 
 Lab Contact(s)
@@ -357,7 +370,7 @@ A `client` follows the `bika_one_state_workflow` and the
 `bika_inactive_workflow` and has an initial state of `active`::
 
     >>> get_workflows_for(client)
-    ('bika_one_state_workflow', 'bika_inactive_workflow')
+    ('bika_client_workflow', 'bika_inactive_workflow')
 
     >>> get_workflow_status_of(client)
     'active'
