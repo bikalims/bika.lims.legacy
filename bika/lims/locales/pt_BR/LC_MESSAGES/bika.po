@@ -24,8 +24,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-04-27 09:15+0000\n"
-"PO-Revision-Date: 2017-04-08 10:02+0000\n"
+"POT-Creation-Date: 2017-05-26 15:46+0000\n"
+"PO-Revision-Date: 2017-05-26 15:41+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/bikalabs/bika-lims/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
@@ -651,6 +651,7 @@ msgid "Analysis State"
 msgstr "Estado da Análise"
 
 #: bika/lims/content/worksheettemplate.py:29
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:58
 msgid "Analysis Type"
 msgstr "Tipo de Análise"
 
@@ -1985,6 +1986,10 @@ msgstr "Data de Entrega"
 msgid "Dup Var"
 msgstr "Variável Duplicada"
 
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:60
+msgid "Dup of"
+msgstr ""
+
 #: bika/lims/browser/worksheet/views/analyses.py:233
 #: bika/lims/config.py:52
 #: bika/lims/controlpanel/bika_analysisservices.py:249
@@ -2826,7 +2831,7 @@ msgstr "URL do laboratório"
 msgid "Label"
 msgstr "Rótulo"
 
-#: bika/lims/content/laboratory.py:127
+#: bika/lims/content/laboratory.py:122
 #: bika/lims/setuphandlers.py:115
 msgid "Laboratory"
 msgstr "Laboratório"
@@ -3252,6 +3257,18 @@ msgstr "Nenhuma pedido de análise acompanhado sua consulta"
 msgid "No Analysis Services defined"
 msgstr "Nenhum Serviço de Análise definido"
 
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:36
+msgid "No Reference Definitions for Blanks available.<br />To add a Blank in this Worksheet Template, create a Reference Definition for a Blank sample first."
+msgstr ""
+
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:37
+msgid "No Reference Definitions for Controls available.<br />To add a Control in this Worksheet Template, create a Reference Definition for a Control sample first."
+msgstr ""
+
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:38
+msgid "No ReferenceDefinitions for Controls nor Blanks available.<br />To add a Control or Blank in this Worksheet Template, create a Reference Definition first."
+msgstr ""
+
 #: bika/lims/browser/reports/administration_usershistory.py:167
 msgid "No actions found for user ${user}"
 msgstr "Nunhuma ação encontrada para o usuário ${user}"
@@ -3419,6 +3436,10 @@ msgstr "Número de requisições de análises e análises por cliente"
 #: bika/lims/content/samplinground.py:224
 msgid "Number of Containers"
 msgstr "Número de Recipientes"
+
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:41
+msgid "Number of Positions"
+msgstr ""
 
 #: bika/lims/content/samplinground.py:217
 msgid "Number of Sample Points"
@@ -3698,6 +3719,10 @@ msgstr "Local de Captura"
 #: bika/lims/content/identifiertype.py:40
 msgid "Portal Types"
 msgstr "Tipos de portal"
+
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:57
+msgid "Pos"
+msgstr ""
 
 #: bika/lims/browser/worksheet/views/analyses.py:33
 #: bika/lims/browser/worksheet/views/analysisrequests.py:35
@@ -4290,6 +4315,10 @@ msgstr "Volume Requerido"
 #: bika/lims/browser/analysisrequest/add.py:425
 msgid "Required fields have no values: ${field_names}"
 msgstr "Campos requeridos estão sem valor: ${field_names}"
+
+#: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:46
+msgid "Reset"
+msgstr ""
 
 #: bika/lims/content/client.py:99
 msgid "Restrict categories"

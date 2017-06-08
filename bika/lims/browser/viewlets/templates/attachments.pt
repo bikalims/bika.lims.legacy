@@ -1,0 +1,214 @@
+<div class="attachments" i18n:domain="bika">
+
+  <script type="text/javascript">
+   jQuery(document).ready(function($) {
+     // JSONAPI v2 Helper
+     function jsonapi_post(url, data) {
+       return $.ajax({
+         url: url,
+         type: "POST",
+         dataType: "json",
+         data: JSON.stringify(data),
+         contentType: 'application/json; charset=UTF-8'
+       });
+     }
+
+     // Selection change Handler via JSONAPI v2
+     $(".ar_attachments_list select").on("change", function(event) {
+       var uid = $(this).data("attachment-uid");
+       if (!uid) {
+         console.warn("No Attachment UID in data");
+         return
+       }
+       var url = "@@API/v2/attachment/update/" + uid;
+       var data = {}
+       data[this.name] = this.value
+       jsonapi_post(url, data).done(function(response) {
+         console.info("Updated Attachment " + this.name);
+       });
+     });
+   });
+  </script>
+
+  <!-- Attachments Viewlet -->
+  <dl class="collapsible collapsedOnLoad">
+    <dt class="attachments collapsibleHeader">
+      <img src='++resource++bika.lims.images/attachment.png'
+           title='Attachment'
+           i18n:attributes="title"/>
+      <span i18n:translate="">Attachments</span>
+    </dt>
+
+    <dd class="collapsibleContent">
+
+      <!-- Attachments List -->
+      <div class="ar_attachments_list" tal:define="attachments view/get_attachments">
+        <table class="listing" tal:condition="attachments">
+          <tr>
+            <th tal:condition="view/user_can_delete_attachments">Delete</th>
+            <th i18n:translate=''>Name</th>
+            <th i18n:translate=''>Type</th>
+            <th i18n:translate=''>Size</th>
+            <th i18n:translate=''>Analysis</th>
+            <th i18n:translate=''>Keywords</th>
+            <th i18n:translate=''>Report Option</th>
+          </tr>
+
+          <tr tal:repeat="attachment attachments">
+            <td tal:condition="view/user_can_delete_attachments">
+              <form action="."
+                    method="post"
+                    tal:attributes="name string:delete_attachment_${attachment/UID};
+                                    onSubmit string:return confirm('Delete ${attachment/name}?')">
+                <!-- Delete Attachment (X) Button -->
+                <input class="delAttachmentButton"
+                       type="submit"
+                       name="delARAttachment:method"
+                       value=""
+                       title="Delete attachment"
+                       i18n:attributes="title"/>
+                <input type="hidden"
+                       name="Attachment"
+                       value="UID"
+                       tal:attributes="value attachment/UID"/>
+              </form>
+            </td>
+
+            <td>
+              <img tal:condition="icon"
+                   tal:define="icon attachment/Icon | nothing;"
+                   tal:attributes="src string:${here/portal_url}/$icon"/>
+              <a title="Click to download"
+                 tal:attributes="href string:${attachment/absolute_url}/at_download/AttachmentFile"
+                 tal:content="attachment/name">name</a>
+            </td>
+            <!-- Attachment Type -->
+            <td>
+              <select name="AttachmentType" tal:attributes="data-attachment-uid string:${attachment/UID}">
+                <tal:item repeat="item view/get_attachment_types">
+                  <option tal:attributes="value item/UID;
+                                          selected python:item.UID==attachment['type']"
+                          tal:content="item/Title">
+                    Attachment Type
+                  </option>
+                </tal:item>
+              </select>
+              </td>
+            <td tal:content="attachment/size">Size</td>
+            <td tal:content="attachment/analysis">Analysis</td>
+            <td tal:content="attachment/keywords">Keywords</td>
+
+            <!-- Attachment Report Option
+                 a=Attach to Report (default)
+                 i=Ignore in Report
+                 r=Render in Report
+               -->
+            <td>
+              <select name="ReportOption" tal:attributes="data-attachment-uid string:${attachment/UID}">
+                <tal:item repeat="item view/get_attachment_report_options">
+                  <option tal:attributes="value python:item[0];
+                                          selected python:item[0]==attachment['report_option']"
+                          tal:content="python: item[1]">
+                    Attachment Report Option
+                  </option>
+                </tal:item>
+              </select>
+            </td>
+
+          </tr>
+        </table>
+      </div>
+
+      <!-- Add Attachments -->
+      <div  class="ar_attachments_add">
+        <form action="." method="post" name="add_attachment" enctype="multipart/form-data">
+          <table class="grid">
+            <tr>
+              <th i18n:translate="">Add new Attachment</th>
+              <th i18n:translate="">Type</th>
+              <th i18n:translate="">Analysis</th>
+              <th i18n:translate="">Keywords</th>
+            </tr>
+            <tr>
+              <td>
+                <!-- Attachment File Upload -->
+                <input type="file" name="AttachmentFile_file"
+                       onchange="string:document.getElementById('addARButton').disabled=false"/>
+              </td>
+              <td>
+                <select name="AttachmentType">
+                  <tal:item repeat="item view/get_attachment_types">
+                    <option tal:attributes="value item/UID;"
+                            tal:content="item/Title">
+                      Attachment Type
+                    </option>
+                  </tal:item>
+                </select>
+              </td>
+              <td>
+                <tal:analyses tal:condition="view/global_analysis_attachments_allowed">
+                  <tal:variables
+                    tal:define="analyses view/get_analyses;
+                                a_analyses python:[a for a in analyses if a.portal_type == 'Analysis'];
+                                bc python:[a for a in analyses if a.portal_type == 'ReferenceAnalysis'];
+                                b_analyses python:[a for a in bc if a.aq_parent.getBlank()];
+                                c_analyses python:[a for a in bc if not a.aq_parent.getBlank()];
+                                d_analyses python:[a for a in analyses if a.portal_type == 'DuplicateAnalysis'];">
+                    <select name="Analysis" tal:condition="analyses">
+                      <!-- Empty option attaches to the AR -->
+                      <option selected="selected"
+                              disabled="disabled"
+                              tal:condition="view/global_ar_attachments_allowed"
+                              tal:attributes="value python:None">
+                        <span tal:omit-tag="python:True"
+                              i18n:translate="">Attach to Analysis Request</span>
+                      </option>
+                      <tal:a tal:repeat="item a_analyses">
+                        <option tal:attributes="value item/UID;"
+                                tal:content="item/Title"></option>
+                      </tal:a>
+                      <tal:b tal:repeat="item b_analyses">
+                        <option tal:attributes="value item/UID;">
+                          <span tal:content="item/Title"/>
+                          &nbsp;
+                          <span i18n:translate="">(Blank)</span>
+                        </option>
+                      </tal:b>
+                      <tal:c tal:repeat="item c_analyses">
+                        <option tal:attributes="value item/UID;">
+                          <span tal:content="item/Title"/>
+                          &nbsp;
+                          <span i18n:translate="">(Control)</span>
+                        </option>
+                      </tal:c>
+                      <tal:d tal:repeat="item d_analyses">
+                        <option tal:attributes="value item/UID;">
+                          <span tal:content="item/Title"/>
+                          &nbsp;
+                          <span i18n:translate="">(Duplicate)</span>
+                        </option>
+                      </tal:d>
+                    </select>
+                  </tal:variables>
+                </tal:analyses>
+              </td>
+              <td>
+                <input name="AttachmentKeys"/>
+              </td>
+            </tr>
+          </table>
+          <!-- Add Attachment Button -->
+          <input disabled
+                 class="context"
+                 id="addARButton"
+                 type="submit"
+                 name="addARAttachment:method"
+                 value="Add"
+                 i18n:attributes="value"/>
+        </form>
+      </div>
+
+    </dd> <!-- Collapsible content -->
+  </dl>
+
+</div>

@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
-
 
 import math
 import zope.event
-from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import formatDecimalMark
+
 from Products.Archetypes.event import ObjectInitializedEvent
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFCore.utils import getToolByName
+
+from bika.lims import bikaMessageFactory as _
+from bika.lims.utils import formatDecimalMark
 
 
 def create_analysis(context, service, keyword, interim_fields):
@@ -30,7 +31,7 @@ def create_analysis(context, service, keyword, interim_fields):
     zope.event.notify(ObjectInitializedEvent(analysis))
     # Perform the appropriate workflow action
     try:
-        workflow_action =  'sampling_workflow' if workflow_enabled \
+        workflow_action = 'sampling_workflow' if workflow_enabled \
             else 'no_sampling_workflow'
         context.portal_workflow.doActionFor(analysis, workflow_action)
     except WorkflowException:
@@ -68,6 +69,7 @@ def get_significant_digits(numeric_value):
     significant_digit = int(math.floor(math.log10(abs(numeric_value))))
     return 0 if significant_digit > 0 else abs(significant_digit)
 
+
 def _format_decimal_or_sci(result, precision, threshold, sciformat):
     # Current result's precision is above the threshold?
     sig_digits = get_significant_digits(result)
@@ -93,7 +95,7 @@ def _format_decimal_or_sci(result, precision, threshold, sciformat):
     if sig_digits == 0 and abs(threshold) > 0 and abs(int(float(result))) > 0:
         # Number >= 1, need to check if the number of non-decimal
         # positions is above the threshold
-        sig_digits = int(math.log(abs(float(result)),10)) if abs(float(result)) >= 10 else 0
+        sig_digits = int(math.log(abs(float(result)), 10)) if abs(float(result)) >= 10 else 0
         sci = sig_digits >= abs(threshold)
 
     formatted = ''
@@ -104,38 +106,39 @@ def _format_decimal_or_sci(result, precision, threshold, sciformat):
 
         if sign:
             # 0.0012345 -> 1.2345
-            res = float(nresult)*(10**sig_digits)
+            res = float(nresult) * (10**sig_digits)
         else:
             # Non-decimal positions
             # 123.45 -> 1.2345
-            res = float(nresult)/(10**sig_digits)
+            res = float(nresult) / (10**sig_digits)
         res = int(res) if res.is_integer() else res
 
         # Scientific notation
         if sciformat == 2:
             # ax10^b or ax10^-b
-            formatted = "%s%s%s%s" % (res,"x10^",sign,sig_digits)
+            formatted = "%s%s%s%s" % (res, "x10^", sign, sig_digits)
         elif sciformat == 3:
             # ax10<super>b</super> or ax10<super>-b</super>
-            formatted = "%s%s%s%s%s" % (res,"x10<sup>",sign,sig_digits,"</sup>")
+            formatted = "%s%s%s%s%s" % (res, "x10<sup>", sign, sig_digits, "</sup>")
         elif sciformat == 4:
             # ax10^b or ax10^-b
-            formatted = "%s%s%s%s" % (res,"·10^",sign,sig_digits)
+            formatted = "%s%s%s%s" % (res, "·10^", sign, sig_digits)
         elif sciformat == 5:
             # ax10<super>b</super> or ax10<super>-b</super>
-            formatted = "%s%s%s%s%s" % (res,"·10<sup>",sign,sig_digits,"</sup>")
+            formatted = "%s%s%s%s%s" % (res, "·10<sup>", sign, sig_digits, "</sup>")
         else:
             # Default format: aE^+b
             sig_digits = "%02d" % sig_digits
-            formatted = "%s%s%s%s" % (res,"e",sign,sig_digits)
+            formatted = "%s%s%s%s" % (res, "e", sign, sig_digits)
     else:
         # Decimal notation
         prec = precision if precision and precision > 0 else 0
         formatted = str("%%.%sf" % prec) % result
         if float(formatted) == 0 and '-' in formatted:
             # We don't want things like '-0.00'
-            formatted = formatted.replace('-','')
+            formatted = formatted.replace('-', '')
     return formatted
+
 
 def format_uncertainty(analysis, result, decimalmark='.', sciformat=1):
     """
@@ -339,7 +342,6 @@ def get_method_instrument_constraints(context, uids):
         a_dinstrum = service.getInstrument() if s_ientry else None
         s_methods = service.getAvailableMethods()
         s_dmethod = service.getMethod()
-        dmuid = s_dmethod.UID() if s_dmethod else ''
         diuid = a_dinstrum.UID() if a_dinstrum else ''
 
         # To take into account ASs with no method assigned by default or
@@ -351,7 +353,7 @@ def get_method_instrument_constraints(context, uids):
         for method in s_methods:
             # Method manual entry?
             m_mentry = method.isManualEntryOfResults() \
-                       if method else True
+                if method else True
 
             instrs = []
             if method:

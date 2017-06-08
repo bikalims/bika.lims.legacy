@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# Bika LIMS Framwork API
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from Acquisition import aq_base
 from AccessControl.PermissionRole import rolesForPermissionOn
@@ -640,16 +643,19 @@ def get_workflows_for(brain_or_object):
     return workflow.getChainFor(obj)
 
 
-def get_workflow_status_of(brain_or_object):
+def get_workflow_status_of(brain_or_object, state_var="review_state"):
     """Get the current workflow status of the given brain or context.
 
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :param state_var: The name of the state variable
+    :type state_var: string
     :returns: Status
     :rtype: str
     """
+    workflow = get_tool("portal_workflow")
     obj = get_object(brain_or_object)
-    return ploneapi.content.get_state(obj)
+    return workflow.getInfoFor(ob=obj, name=state_var)
 
 
 def get_catalogs_for(brain_or_object, default="portal_catalog"):

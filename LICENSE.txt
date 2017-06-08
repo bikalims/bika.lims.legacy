@@ -2,7 +2,7 @@ Bika LIMS, a web-based Laboratory Information Management System (LIMS)
 Add-on Product for Plone.
 
 The files contained in these directories are part of Bika LIMS.
-Copyright (C) 2000-2016 Bika Lab Systems <info@bikalabs.com>
+Copyright (C) 2000-2017 Bika Lab Systems <info@bikalabs.com>
 
 This program is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the

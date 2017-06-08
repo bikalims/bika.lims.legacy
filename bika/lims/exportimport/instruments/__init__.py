@@ -1,36 +1,39 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import sys
 import inspect
 
 #from generic import xml
+from abaxis.vetscan import vs2
 from agilent.masshunter import quantitative
+from alere.pima import beads, cd4
+from beckmancoulter.access import model2
+from biodrop.ulite import ulite
+from eltra.cs import cs2000
 from foss.fiastar import fiastar
 from foss.winescan import auto
 from foss.winescan import ft120
-from thermoscientific.gallery import Ts9861x
-from thermoscientific.arena import xt20
-from thermoscientific.multiskan import go
-from panalytical.omnia import axios_xrf
-from alere.pima import beads, cd4
-from lifetechnologies.qubit import qubit
-from biodrop.ulite import ulite
-from tescan.tima import tima
-from sysmex.xs import i500, i1000
-from beckmancoulter.access import model2
-from rochecobas.taqman import model48
-from rochecobas.taqman import model96
-from sealanalytical.aq2 import aq2
 from horiba.jobinyvon import icp
-from abaxis.vetscan import vs2
-from scilvet.abc import plus
-from eltra.cs import cs2000
-from rigaku.supermini import wxrf
+from lifetechnologies.qubit import qubit
 from myself import myinstrument
 from nuclisens import easyq
+from panalytical.omnia import axios_xrf
+from rigaku.supermini import wxrf
+from rochecobas.taqman import model48
+from rochecobas.taqman import model96
+from scilvet.abc import plus
+from sealanalytical.aq2 import aq2
+from shimadzu.gcms import tq8030
+from sysmex.xs import i500, i1000
+from tescan.tima import tima
+from thermoscientific.arena import xt20
+from thermoscientific.gallery import Ts9861x
+from thermoscientific.multiskan import go
 
 __all__ = ['abaxis.vetscan.vs2',
            'agilent.masshunter.quantitative',
@@ -44,21 +47,22 @@ __all__ = ['abaxis.vetscan.vs2',
            'foss.winescan.ft120',
            #'generic.xml',
            'horiba.jobinyvon.icp',
+           'lifetechnologies.qubit.qubit',
+           'myself.myinstrument',
+           'nuclisens.easyq',
+           'panalytical.omnia.axios_xrf',
            'rigaku.supermini.wxrf',
            'rochecobas.taqman.model48',
            'rochecobas.taqman.model96',
-           'thermoscientific.arena.xt20',
-           'thermoscientific.gallery.Ts9861x',
-           'panalytical.omnia.axios_xrf',
-           'lifetechnologies.qubit.qubit',
-           'sysmex.xs.i500',
-           'sysmex.xs.i1000',
            'scilvet.abc.plus',
            'sealanalytical.aq2.aq2',
+           'shimadzu.gcms.tq8030', 
+           'sysmex.xs.i500',
+           'sysmex.xs.i1000',
            'tescan.tima.tima',
+           'thermoscientific.arena.xt20',
+           'thermoscientific.gallery.Ts9861x',
            'thermoscientific.multiskan.go',
-           'myself.myinstrument',
-           'nuclisens.easyq',
            ]
 
 

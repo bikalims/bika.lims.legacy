@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
+#
 # This file is part of Bika LIMS
 #
-# Copyright 2011-2016 by it's authors.
+# Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from bika.lims import bikaMessageFactory as _, t
@@ -304,7 +306,10 @@ class AnalysisRequestPublishView(BrowserView):
                 'prepublish': False,
                 'child_analysisrequest': None,
                 'parent_analysisrequest': None,
-                'resultsinterpretation':ar.getResultsInterpretation()}
+                'resultsinterpretation':ar.getResultsInterpretation(),
+                'ar_attachments': self._get_ar_attachments(ar),
+                'an_attachments': self._get_an_attachments(ar),
+        }
 
         # Sub-objects
         excludearuids.append(ar.UID())
@@ -391,6 +396,51 @@ class AnalysisRequestPublishView(BrowserView):
 
         self._cache['_ar_data'][ar.UID()] = data
         return data
+
+    def _get_attachment_info(self, attachment):
+        attachment_file = attachment.getAttachmentFile()
+        attachment_size = attachment.get_size()
+        attachment_type = attachment.getAttachmentType()
+        attachment_mime = attachment_file.getContentType()
+        info = {
+            "obj": attachment,
+            "keywords": attachment.getAttachmentKeys(),
+            "type": attachment_type and attachment_type.Title() or "",
+            "file": attachment_file,
+            "filename": attachment_file.filename,
+            "filesize": attachment_size,
+            "size": "{} Kb".format(attachment_size / 1024),
+            "download": "{}/at_download/AttachmentFile".format(
+                attachment.absolute_url()),
+            "mimetype": attachment_mime,
+            "title": attachment_file.Title(),
+            "icon": attachment_file.icon,
+            "inline": "<embed src='{}' width='100%'/>".format(
+                attachment_file.absolute_url()),
+            "renderoption": attachment.getReportOption(),
+        }
+        if attachment_mime.startswith("image"):
+            info["inline"] = "<img src='{}' />".format(
+                attachment_file.absolute_url())
+        return info
+
+    def _get_ar_attachments(self, ar):
+        attachments = []
+        for attachment in ar.getAttachment():
+            # Skip attachments which have the (i)gnore flag set
+            if attachment.getReportOption() == "i":
+                continue
+            attachments.append(self._get_attachment_info(attachment))
+        return attachments
+
+    def _get_an_attachments(self, ar):
+        attachments = []
+        for analysis in ar.getAnalyses(full_objects=True):
+            for attachment in analysis.getAttachment():
+                if attachment.getReportOption() == "i":
+                    continue
+                attachments.append(self._get_attachment_info(attachment))
+        return attachments
 
     def _batch_data(self, ar):
         data = {}

@@ -524,7 +524,7 @@ schema = BikaSchema.copy() + Schema((
     ),
     ComputedField(
         'SampleTypeUID',
-        expression='context.getSampleType().UID()',
+        expression='context.getSampleType() and context.getSampleType().UID() or None',
         widget=ComputedWidget(
             visible=False,
         ),
