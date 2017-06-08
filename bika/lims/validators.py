@@ -120,7 +120,7 @@ class UniqueFieldValidator:
         else:
             # fall back to the objectValues :(
             parent_object = api.get_parent(instance)
-            parent_objects = parent_object.objectValues
+            parent_objects = parent_object.objectValues()
 
         for item in parent_objects:
             if hasattr(item, 'UID') and item.UID() != instance.UID() and \
