@@ -26,7 +26,6 @@ from bika.lims.browser import BrowserView
 class ClientFolderContentsView(BikaListingView):
     """Listing view for all Clients
     """
-
     implements(IFolderContentsView)
 
     def __init__(self, context, request):
@@ -110,13 +109,15 @@ class ClientFolderContentsView(BikaListingView):
         return super(ClientFolderContentsView, self).__call__()
 
     def getClientList(self, contentFilter):
-        # Only show clients to which we have Manage AR rights.
-        # (ritamo only sees Happy Hills).
         searchTerm = self.request.get(self.form_id + '_filter', '').lower()
         mtool = api.get_tool('portal_membership')
-        wf = api.get_tool('portal_workflow')
         state = self.request.get('%s_review_state' % self.form_id,
                                  self.default_review_state)
+        # This is used to decide how much of the objects need to be waked up
+        # for further permission checks, which might get expensive on sites
+        # with many clients
+        list_pagesize = self.request.get("list_pagesize", self.pagesize)
+
         states = {
             'default': ['active', ],
             'active': ['active', ],
@@ -124,13 +125,39 @@ class ClientFolderContentsView(BikaListingView):
             'all': ['active', 'inactive']
         }
 
-        clients = [cl for cl in self.context.objectValues("Client")
-                   if ((cl.Title().lower().find(searchTerm) > -1 or
-                        cl.getClientID().lower().find(searchTerm) > -1) and
-                       mtool.checkPermission(ManageAnalysisRequests, cl) and
-                       wf.getInfoFor(cl, 'inactive_state') in states[state])]
+        # Use the catalog to speed things up and also limit the results
+        catalog = api.get_tool("portal_catalog")
+        catalog_query = {
+            "portal_type": "Client",
+            "inactive_state": states[state],
+            "sort_on": "sortable_title",
+            "sort_order": "ascending",
+        }
+        # Inject the searchTerm to narrow the results further
+        if searchTerm:
+            catalog_query["SearchableText"] = searchTerm
+        logger.debug("getClientList::catalog_query=%s" % catalog_query)
+        brains = catalog(catalog_query)
 
-        clients.sort(lambda x, y: cmp(x.Title().lower(), y.Title().lower()))
+        clients = []
+        for brain in brains:
+            # only wake up objects if they are shown on one page
+            if len(clients) > list_pagesize:
+                # otherwise append only the brain
+                clients.append(brain)
+                continue
+
+            # wake up the object
+            client = brain.getObject()
+            # skip clients where the search term does not match
+            if searchTerm and not client_match(client, searchTerm):
+                continue
+            # Only show clients to which we have Manage AR rights.
+            # (ritamo only sees Happy Hills).
+            if not mtool.checkPermission(ManageAnalysisRequests, client):
+                continue
+            clients.append(brain)
+
         return clients
 
     def folderitems(self):
@@ -160,6 +187,19 @@ class ClientFolderContentsView(BikaListingView):
             item['MemberDiscountApplies'] = obj.getMemberDiscountApplies() and 'Y' or 'N'
 
         return items
+
+
+def client_match(client, search_term):
+    # Check if the search_term matches some common fields
+    if search_term in client.getClientID().lower():
+        return True
+    if search_term in client.Title().lower():
+        return True
+    if search_term in client.getName().lower():
+        return True
+    if search_term in client.Description().lower():
+        return True
+    return False
 
 
 class ajaxGetClients(BrowserView):
@@ -193,22 +233,10 @@ class ajaxGetClients(BrowserView):
         brains = catalog(catalog_query)
         rows = []
 
-        # Check if the searchTerm matches some common fields
-        def search_match(client):
-            if searchTerm in client.getClientID().lower():
-                return True
-            if searchTerm in client.Title().lower():
-                return True
-            if searchTerm in client.getName().lower():
-                return True
-            if searchTerm in client.Description().lower():
-                return True
-            return False
-
         for brain in brains:
             client = brain.getObject()
             # skip clients where the search term does not match
-            if searchTerm and not search_match(client):
+            if searchTerm and not client_match(client, searchTerm):
                 continue
             rows.append(
                 {
