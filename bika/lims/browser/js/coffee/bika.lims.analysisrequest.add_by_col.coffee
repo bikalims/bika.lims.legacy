@@ -1,5 +1,5 @@
 ### Please use this command to compile this file into the parent `js` directory:
-    coffee -w -o ../ -c bika.lims.analysisrequest.add_by_col.coffee
+    coffee --no-header -w -o ../ -c bika.lims.analysisrequest.add_by_col.coffee
 ###
 
 ### Controller class for AnalysisRequestAddView - column layout.
@@ -2269,11 +2269,14 @@ window.AnalysisRequestAddByCol = ->
     return
 
   recalc_prices = (arnum) ->
+    console.debug "recalc_prices::arnum=#{arnum}"
     ardiscount_amount = 0.00
     arservices_price = 0.00
     # Getting all checked analysis services
     checked = $('tr[uid] td[class*=\'ar\\.' + arnum + '\'] input[type=\'checkbox\']:checked')
     member_discount = parseFloat($('#bika_setup').attr('MemberDiscount'))
+    member_discount_applies = $.parseJSON($('#bika_setup').attr('MemberDiscountApplies'))
+
     profiles = $('div#Profiles-' + arnum + '-listing').children()
     arprofiles_price = 0.00
     arprofiles_vat_amount = 0.00
@@ -2314,8 +2317,12 @@ window.AnalysisRequestAddByCol = ->
         arservices_price += service_price
       i++
     base_price = arservices_price + arprofiles_price
-    if member_discount
+
+    # Calculate the member discount if it applies
+    if member_discount and member_discount_applies
+      console.debug "Member discount applies with #{member_discount}%"
       ardiscount_amount = base_price * member_discount / 100
+
     subtotal = base_price - ardiscount_amount
     vat_amount = arprofiles_vat_amount + arservice_vat_amount
     total = subtotal + vat_amount
