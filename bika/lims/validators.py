@@ -17,8 +17,9 @@ from Products.validation.interfaces.IValidator import IValidator
 
 from zope.interface import implements
 
-from bika.lims import bikaMessageFactory as _
+from bika.lims import api
 from bika.lims.utils import to_utf8
+from bika.lims import bikaMessageFactory as _
 
 
 class IdentifierTypeAttributesValidator:
@@ -83,15 +84,45 @@ class UniqueFieldValidator:
     name = "uniquefieldvalidator"
 
     def __call__(self, value, *args, **kwargs):
+        field = kwargs['field']
+        fieldname = field.getName()
         instance = kwargs['instance']
-        fieldname = kwargs['field'].getName()
-
         translate = getToolByName(instance, 'translation_service').translate
 
-        if value == instance.get(fieldname):
+        # return directly if nothing changed
+        if value == field.get(instance):
             return True
 
-        for item in aq_parent(instance).objectValues():
+        # We want to use the catalog to speed things up, as using `objectValues`
+        # is very expensive if the parent object contains many items
+        parent_objects = []
+
+        # 1. Get the right catalog for this object
+        catalogs = api.get_catalogs_for(instance)
+        catalog = catalogs[0]
+
+        # 2. Check if the field accessor is indexed
+        field_index = None
+        accessor = field.getAccessor(instance)
+        if accessor:
+            field_index = accessor.__name__
+
+        # 3. Check if the field index is in the indexes
+        if field_index and field_index in catalog.indexes():
+            # Field is indexed, use the catalog instead of objectValues
+            parent_path = api.get_parent_path(instance)
+            portal_type = instance.portal_type
+            catalog_query = {"portal_type": portal_type,
+                             "path": {"query": parent_path, "depth": 1}}
+            # We use the field index to reduce the results list
+            catalog_query[field_index] = value
+            parent_objects = map(api.get_object, catalog(catalog_query))
+        else:
+            # fall back to the objectValues :(
+            parent_object = api.get_parent(instance)
+            parent_objects = parent_object.objectValues
+
+        for item in parent_objects:
             if hasattr(item, 'UID') and item.UID() != instance.UID() and \
                fieldname in item.Schema() and \
                str(item.Schema()[fieldname].get(item)) == str(value):
