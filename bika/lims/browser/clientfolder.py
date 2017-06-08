@@ -5,27 +5,27 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.CMFCore.permissions import View
-from AccessControl import getSecurityManager
-from bika.lims.permissions import AddClient
-from bika.lims.permissions import ManageClients
-from Products.CMFCore.utils import getToolByName
+import json
+from operator import itemgetter
+
+from zope.interface import implements
+from zope.component import getUtility
+from plone import protect
+from plone.app.content.browser.interfaces import IFolderContentsView
+from plone.registry.interfaces import IRegistry
+
+from bika.lims import api
 from bika.lims.permissions import ManageAnalysisRequests
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims import bikaMessageFactory as _
-from bika.lims.utils import t
-from operator import itemgetter
-from bika.lims.interfaces import IClientFolder
-from plone.app.content.browser.interfaces import IFolderContentsView
+from bika.lims.permissions import AddClient
+from bika.lims.permissions import ManageClients
 from bika.lims.browser import BrowserView
-from zope.interface import implements
-from Products.CMFCore import permissions
-from zope.component import getUtility
-from plone.registry.interfaces import IRegistry
-import plone,json
 
 
 class ClientFolderContentsView(BikaListingView):
+    """Listing view for all Clients
+    """
 
     implements(IFolderContentsView)
 
@@ -52,52 +52,55 @@ class ClientFolderContentsView(BikaListingView):
             'MemberDiscountApplies': {'title': _('Member Discount')},
         }
 
-
-        self.review_states = [ # leave these titles and ids alone
-            {'id':'default',
-             'contentFilter': {'inactive_state':'active'},
-             'title': _('Active'),
-             'transitions': [{'id':'deactivate'}, ],
-             'columns':['title',
-                        'EmailAddress',
-                        'Phone',
-                        'Fax', 
-                        'ClientID',
-                        'BulkDiscount',
-                        'MemberDiscountApplies',
-                        ]
-             },
-            {'id':'inactive',
-             'title': _('Dormant'),
-             'contentFilter': {'inactive_state': 'inactive'},
-             'transitions': [{'id':'activate'}, ],
-             'columns':['title',
-                        'EmailAddress',
-                        'Phone',
-                        'Fax', 
-                        'ClientID',
-                        'BulkDiscount',
-                        'MemberDiscountApplies',
-                        ]
-             },
-            {'id':'all',
-             'title': _('All'),
-             'contentFilter':{},
-             'transitions': [],
-             'columns':['title',
-                        'EmailAddress',
-                        'Phone',
-                        'Fax', 
-                        'ClientID',
-                        'BulkDiscount',
-                        'MemberDiscountApplies',
-                        ]
-             },
+        self.review_states = [  # leave these titles and ids alone
+            {
+                'id': 'default',
+                'contentFilter': {'inactive_state': 'active'},
+                'title': _('Active'),
+                'transitions': [{'id': 'deactivate'}, ],
+                'columns': [
+                    'title',
+                    'EmailAddress',
+                    'Phone',
+                    'Fax',
+                    'ClientID',
+                    'BulkDiscount',
+                    'MemberDiscountApplies',
+                ]
+            }, {
+                'id': 'inactive',
+                'title': _('Dormant'),
+                'contentFilter': {'inactive_state': 'inactive'},
+                'transitions': [{'id': 'activate'}, ],
+                'columns': [
+                    'title',
+                    'EmailAddress',
+                    'Phone',
+                    'Fax',
+                    'ClientID',
+                    'BulkDiscount',
+                    'MemberDiscountApplies',
+                ]
+            }, {
+                'id': 'all',
+                'title': _('All'),
+                'contentFilter': {},
+                'transitions': [],
+                'columns': [
+                    'title',
+                    'EmailAddress',
+                    'Phone',
+                    'Fax',
+                    'ClientID',
+                    'BulkDiscount',
+                    'MemberDiscountApplies',
+                ]
+            },
         ]
 
     def __call__(self):
         self.context_actions = {}
-        mtool = getToolByName(self.context, 'portal_membership')
+        mtool = api.get_tool('portal_membership')
         if (mtool.checkPermission(AddClient, self.context)):
             self.context_actions[_('Add')] = \
                 {'url': 'createObject?type_name=Client',
@@ -107,22 +110,26 @@ class ClientFolderContentsView(BikaListingView):
         return super(ClientFolderContentsView, self).__call__()
 
     def getClientList(self, contentFilter):
-        ## Only show clients to which we have Manage AR rights.
-        ## (ritamo only sees Happy Hills).
-        searchTerm = self.request.get(self.form_id+'_filter', '').lower()
-        mtool = getToolByName(self.context, 'portal_membership')
-        wf = getToolByName(self.context, 'portal_workflow')
-        state = self.request.get('%s_review_state'%self.form_id,
-                             self.default_review_state)
-        states = {'default': ['active', ],
-                  'active': ['active', ],
-                  'inactive': ['inactive', ],
-                  'all': ['active', 'inactive']}
+        # Only show clients to which we have Manage AR rights.
+        # (ritamo only sees Happy Hills).
+        searchTerm = self.request.get(self.form_id + '_filter', '').lower()
+        mtool = api.get_tool('portal_membership')
+        wf = api.get_tool('portal_workflow')
+        state = self.request.get('%s_review_state' % self.form_id,
+                                 self.default_review_state)
+        states = {
+            'default': ['active', ],
+            'active': ['active', ],
+            'inactive': ['inactive', ],
+            'all': ['active', 'inactive']
+        }
+
         clients = [cl for cl in self.context.objectValues("Client")
                    if ((cl.Title().lower().find(searchTerm) > -1 or
                         cl.getClientID().lower().find(searchTerm) > -1) and
                        mtool.checkPermission(ManageAnalysisRequests, cl) and
                        wf.getInfoFor(cl, 'inactive_state') in states[state])]
+
         clients.sort(lambda x, y: cmp(x.Title().lower(), y.Title().lower()))
         return clients
 
@@ -134,48 +141,49 @@ class ClientFolderContentsView(BikaListingView):
             landing_page = registry['bika.lims.client.default_landing_page']
         else:
             landing_page = 'analysisrequests'
-        for x in range(len(items)):
-            if not items[x].has_key('obj'): continue
-            obj = items[x]['obj']
 
-            items[x]['replace']['title'] = "<a href='%s/%s'>%s</a>"%\
-                 (items[x]['url'], landing_page.encode('ascii'), items[x]['title'])
+        for item in items:
+            if "obj" not in item:
+                continue
+            obj = item['obj']
 
-            items[x]['EmailAddress'] = obj.getEmailAddress()
-            items[x]['replace']['EmailAddress'] = "<a href='%s'>%s</a>"%\
-                     ('mailto:%s' % obj.getEmailAddress(),
-                      obj.getEmailAddress())
-            items[x]['Phone'] = obj.getPhone()
-            items[x]['Fax'] = obj.getFax()
-            items[x]['ClientID'] = obj.getClientID()
-            items[x]['BulkDiscount'] = obj.getBulkDiscount() and 'Y' or 'N'
-            items[x]['MemberDiscountApplies'] = obj.getMemberDiscountApplies() and 'Y' or 'N'
+            item['replace']['title'] = "<a href='%s/%s'>%s</a>" % \
+                (item['url'], landing_page.encode('ascii'), item['title'])
+
+            item['EmailAddress'] = obj.getEmailAddress()
+            item['replace']['EmailAddress'] = "<a href='%s'>%s</a>" % \
+                ('mailto:%s' % obj.getEmailAddress(), obj.getEmailAddress())
+            item['Phone'] = obj.getPhone()
+            item['Fax'] = obj.getFax()
+            item['ClientID'] = obj.getClientID()
+            item['BulkDiscount'] = obj.getBulkDiscount() and 'Y' or 'N'
+            item['MemberDiscountApplies'] = obj.getMemberDiscountApplies() and 'Y' or 'N'
 
         return items
 
 
 class ajaxGetClients(BrowserView):
-    """ Vocabulary source for jquery combo dropdown box
+    """Vocabulary source for jquery combo dropdown box
     """
+
     def __call__(self):
-        plone.protect.CheckAuthenticator(self.request)
+        protect.CheckAuthenticator(self.request)
         searchTerm = self.request.get('searchTerm', '').lower()
         page = self.request.get('page', 1)
         nr_rows = self.request.get('rows', 20)
         sord = self.request.get('sord', 'asc')
         sidx = self.request.get('sidx', '')
-        wf = getToolByName(self.context, 'portal_workflow')
 
         clients = (x.getObject() for x in self.portal_catalog(portal_type="Client",
-                                                              inactive_state = 'active'))
+                                                              inactive_state='active'))
         rows = [{'ClientID': b.getClientID() and b.getClientID() or '',
-                 'Title': b.Title() ,
+                 'Title': b.Title(),
                  'ClientUID': b.UID()} for b in clients
-                if b.Title().lower().find(searchTerm) > -1
-                or b.getClientID().lower().find(searchTerm) > -1
-                or b.Description().lower().find(searchTerm) > -1]
+                if b.Title().lower().find(searchTerm) > -1 or
+                b.getClientID().lower().find(searchTerm) > -1 or
+                b.Description().lower().find(searchTerm) > -1]
 
-        rows = sorted(rows, cmp=lambda x,y: cmp(x.lower(), y.lower()), key=itemgetter(sidx and sidx or 'Title'))
+        rows = sorted(rows, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=itemgetter(sidx and sidx or 'Title'))
         if sord == 'desc':
             rows.reverse()
         pages = len(rows) / int(nr_rows)
