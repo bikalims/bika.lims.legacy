@@ -108,14 +108,19 @@ class UniqueFieldValidator:
             field_index = accessor.__name__
 
         # 3. Check if the field index is in the indexes
+        # Field is indexed, use the catalog instead of objectValues
+        parent_path = api.get_parent_path(instance)
+        portal_type = instance.portal_type
+        catalog_query = {"portal_type": portal_type,
+                            "path": {"query": parent_path, "depth": 1}}
+
         if field_index and field_index in catalog.indexes():
-            # Field is indexed, use the catalog instead of objectValues
-            parent_path = api.get_parent_path(instance)
-            portal_type = instance.portal_type
-            catalog_query = {"portal_type": portal_type,
-                             "path": {"query": parent_path, "depth": 1}}
             # We use the field index to reduce the results list
             catalog_query[field_index] = value
+            parent_objects = map(api.get_object, catalog(catalog_query))
+        elif fieldname in catalog.indexes():
+            # We use the fieldname as index to reduce the results list
+            catalog_query[fieldname] = value
             parent_objects = map(api.get_object, catalog(catalog_query))
         else:
             # fall back to the objectValues :(
