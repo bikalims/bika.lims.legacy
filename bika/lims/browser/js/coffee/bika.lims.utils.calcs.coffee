@@ -33,10 +33,14 @@ window.CalculationUtils = ->
       uid = $(this).attr('uid')
       field = $(this).attr('field')
       value = $(this).attr('value')
+
+      # Injected data in bika_listing_template.pt (view.bika_listing.json_interim_fields)
+      # -> see browser/analyses.py {obj.UID(): [obj.getInterimFields()]}
       item_data = $(this).parents('table').prev('input[name="item_data"]').val()
 
       # clear out the alerts for this field
       $('.alert').filter('span[uid=\'' + $(this).attr('uid') + '\']').empty()
+
       if $(this).parents('td,div').first().hasClass('interim')
         # add value to form's item_data
         item_data = $.parseJSON(item_data)
@@ -52,6 +56,7 @@ window.CalculationUtils = ->
       # collect all form results into a hash (by analysis UID)
       results = {}
       $.each $('td:not(.state-retracted) input[field=\'Result\'], td:not(.state-retracted) select[field=\'Result\']'), (i, e) ->
+
         uid = $(e).attr('uid')
         result = $(e).val().trim()
 
@@ -147,12 +152,14 @@ window.CalculationUtils = ->
           aboveudl: andls.above_udl
         results[uid] = mapping
         return
+
+      # Ajax Options
       options =
         type: 'POST'
         url: 'listing_string_entry'
         data:
           '_authenticator': $('input[name="_authenticator"]').val()
-          'uid': $(this).attr('uid')
+          'uid': $(this).attr('uid')  # The UID of the changed Analysis results field
           'field': field
           'value': value
           'results': $.toJSON(results)
@@ -204,9 +211,20 @@ window.CalculationUtils = ->
           if $('.ajax_calculate_focus').length > 0
             if $(form).attr('submit_after_calculation')
               $('#submit_transition').click()
+
+          # return of success() callback
           return
+
+      # Call $.ajax with options
+      console.debug "Result of UID #{uid} changed to value #{value}"
+      console.debug "Ajax POST to 'listing_string_entry' options=", options
       $.ajax options
+
+      # Return of $.('ajax_calculate').live 'cange'
       return
+
+    # return of load()
     return
 
+  # return of CalculationUtils()
   return

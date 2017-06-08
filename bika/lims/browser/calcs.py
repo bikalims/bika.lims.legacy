@@ -366,6 +366,8 @@ class ajaxCalculateAnalysisEntry(BrowserView):
                     self.alerts[analysis.UID()] = alerts[analysis.UID()]
 
     def __call__(self):
+        """Endpoint for `listing_string_entry` view
+        """
         self.rc = getToolByName(self.context, REFERENCE_CATALOG)
         plone.protect.CheckAuthenticator(self.request)
         plone.protect.PostOnly(self.request)

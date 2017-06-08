@@ -199,6 +199,8 @@
             }
           }
         };
+        console.debug("Result of UID " + uid + " changed to value " + value);
+        console.debug("Ajax POST to 'listing_string_entry' options=", options);
         $.ajax(options);
       });
     };
