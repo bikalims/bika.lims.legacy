@@ -578,4 +578,13 @@
          handler="bika.lims.upgrade.to320.upgrade"
          sortkey="1"
          profile="bika.lims:default"/>
+
+ <genericsetup:upgradeStep
+         title="Upgrade ID Server"
+         description="This is the upgrade step to prepare database for new ID Server."
+         source="320"
+         destination="330"
+         handler="bika.lims.upgrade.to330.upgrade"
+         sortkey="1"
+         profile="bika.lims:default"/>
 </configure>

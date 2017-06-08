@@ -58,6 +58,50 @@ class ImportView(BrowserView):
 
         request.set('disable_border', 1)
 
+    def import_form(self):
+        """This is a trick to allow non-robot tests to access the import form
+        without javascript.
+        """
+        exim = self.request.get('exim')
+        if exim:
+            exim = exim.replace(".", "/")
+            import os.path
+            instrpath = os.path.join("exportimport", "instruments")
+            templates_dir = resource_filename("bika.lims", instrpath)
+            fname = "%s/%s_import.pt" % (templates_dir, exim)
+            return ViewPageTemplateFile("instruments/%s_import.pt" % exim)(self)
+        else:
+            return ""
+
+        if "instrument" in self.request:
+            instrument_fn = instrument.replace(".", "/")
+            template_fn = resource_filename(bika.lims, join("exportimport/instruments"))
+            it = ViewPageTemplateFile("")
+            return it()
+
+    def getInstruments(self):
+        """Part of the import_form cheat above; stolen from
+        ajaxGetImportTemplate
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        items = [('', '')] + [(o.UID, o.Title) for o in
+                               bsc(portal_type = 'Instrument',
+                                   inactive_state = 'active')]
+        items.sort(lambda x, y: cmp(x[1].lower(), y[1].lower()))
+        return DisplayList(list(items))
+
+    def getAnalysisServicesDisplayList(self):
+        """Part of the import_form cheat above; stolen from
+        ajaxGetImportTemplate
+        """
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        items = [('', '')] + [(o.getObject().Keyword, o.Title) for o in
+                                bsc(portal_type = 'AnalysisService',
+                                   inactive_state = 'active')]
+        items.sort(lambda x, y: cmp(x[1].lower(), y[1].lower()))
+        return DisplayList(list(items))
+
+
     def getDataInterfaces(self):
         return getDataInterfaces(self.context)
 

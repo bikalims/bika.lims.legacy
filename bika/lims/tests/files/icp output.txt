@@ -1,0 +1,1 @@
+1-0001	CAL1	Blank	9/23/2016 11:54:59 AM		MRC	As	QUANT	193.759	1	ppb																				After Drift Correction	-0.0936625	-0.1063610	-0.1266098								-0.1088778	0.0166172	15.26

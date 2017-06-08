@@ -10,7 +10,7 @@ from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
-from bika.lims.idserver import renameAfterCreation
+from bika.lims.idserver import renameAfterCreation, generateUniqueId
 from bika.lims.interfaces import ISample, IAnalysisService, IAnalysis
 from bika.lims.utils import tmpID
 from bika.lims.utils import to_utf8
@@ -132,8 +132,10 @@ def create_analysisrequest(context, request, values, analyses=None,
             partitions = [{'services': service_uids}]
         for n, partition in enumerate(partitions):
             # Calculate partition id
-            partition_prefix = sample.getId() + "-P"
-            partition_id = '%s%s' % (partition_prefix, n + 1)
+            partition_id = generateUniqueId(sample, parent=True)
+            #Rectify generateUniqueId which is normally called after
+            #object creation
+            partition_id = partition_id[:-1] + '1'
             partition['part_id'] = partition_id
             # Point to or create sample partition
             if partition_id in sample.objectIds():

@@ -418,6 +418,12 @@ def attachPdf(mimemultipart, pdfreport, filename=None):
     Encoders.encode_base64(part)
     mimemultipart.attach(part)
 
+def attachCSV(mimemultipart,csvdata,filename):
+    part = MIMEBase('text', "csv")
+    part.add_header(
+        'Content-Disposition', 'attachment; filename="{}.csv"'.format(filename))
+    part.set_payload(csvdata)
+    mimemultipart.attach(part)
 
 def get_invoice_item_description(obj):
     if obj.portal_type == 'AnalysisRequest':

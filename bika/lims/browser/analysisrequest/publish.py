@@ -12,11 +12,13 @@ from bika.lims.config import POINTS_OF_CAPTURE
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import IResultOutOfRange
 from bika.lims.utils import isnumber
-from bika.lims.utils import to_utf8, encode_header, createPdf, attachPdf
+from bika.lims.utils import to_utf8, encode_header, createPdf, attachPdf, \
+        attachCSV
 from bika.lims.utils import to_utf8, formatDecimalMark, format_supsub
 from bika.lims.utils.analysis import format_uncertainty
 from bika.lims.vocabularies import getARReportTemplates
 from DateTime import DateTime
+from email.MIMEBase import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.Utils import formataddr
@@ -35,9 +37,12 @@ from plone.registry import field
 from plone import api
 
 import App
+import StringIO
+import csv
 import os, traceback
 import re
 import tempfile
+import time
 
 
 class AnalysisRequestPublishView(BrowserView):
@@ -80,6 +85,14 @@ class AnalysisRequestPublishView(BrowserView):
         val = api.portal.get_registry_record(key) + 1
         api.portal.set_registry_record(key, val)
         return "%05d"%int(val)
+
+    def current_certificate_number(self):
+        """Return the last written ID from the registry
+        """
+        key = 'bika.lims.current_coa_number'
+        val = api.portal.get_registry_record(key)
+        year = str(time.localtime(time.time())[0])[-2:]
+        return "COA%s-%05d"%(year, int(val))
 
     def __call__(self):
         if self.context.portal_type == 'AnalysisRequest':
@@ -885,6 +898,9 @@ class AnalysisRequestPublishView(BrowserView):
         recipients = []
         contact = ar.getContact()
         lab = ar.bika_setup.laboratory
+
+        # BIKA Cannabis hack.  Create the CSV they desire here now
+        csvdata = self.create_cannabis_csv(ars)
         if pdf_report:
             if contact:
                 recipients = [{
@@ -940,6 +956,10 @@ class AnalysisRequestPublishView(BrowserView):
                 mime_msg['To'] = ','.join(to)
                 attachPdf(mime_msg, pdf_report, ar.id)
 
+                # BIKA Cannabis hack.  Create the CSV they desire here now
+                fn = self.current_certificate_number()
+                attachCSV(mime_msg,csvdata,fn)
+
                 try:
                     host = getToolByName(ar, 'MailHost')
                     host.send(mime_msg.as_string(), immediate=True)
@@ -973,6 +993,9 @@ class AnalysisRequestPublishView(BrowserView):
             # Attach the pdf to the email if requested
             if pdf_report and 'pdf' in recip.get('pubpref'):
                 attachPdf(mime_msg, pdf_report, ar.id)
+                # BIKA Cannabis hack.  Create the CSV they desire here now
+                fn = self.current_certificate_number()
+                attachCSV(mime_msg,csvdata,fn)
 
             # For now, I will simply ignore mail send under test.
             if hasattr(self.portal, 'robotframework'):
@@ -995,6 +1018,43 @@ class AnalysisRequestPublishView(BrowserView):
                 raise WorkflowException(str(msg))
 
         return [ar]
+
+    def create_cannabis_csv(self, ars):
+        analyses = []
+        output = StringIO.StringIO()
+        for ar in ars:
+            sample = ar.getSample()
+            date_rec = ar.getDateReceived()
+            if date_rec:
+                date_rec = date_rec.strftime('%m-%d-%y')
+            sampling_date = ar.getSamplingDate()
+            if sampling_date:
+                sampling_date = sampling_date.strftime('%m-%d-%y')
+            writer = csv.writer(output)
+            writer.writerow(["Sample Type", sample.getSampleType().Title()])
+            writer.writerow(["Client's Ref", ar.getClientReference()])
+            writer.writerow(["Client's Sample ID", sample.getClientSampleID()])
+            writer.writerow(["Lab Sample ID", sample.id])
+            writer.writerow(["Date Received", date_rec])
+            writer.writerow(["Sampling Date", sampling_date])
+            writer.writerow([])
+            analyses = ar.getAnalyses(full_objects=True)
+            group_cats = {}
+            for analysis in analyses:
+                analysis_info = {'title': analysis.Title(),
+                                 'result': analysis.getFormattedResult(html=False),
+                                 'unit': analysis.getService().getUnit()}
+                if analysis.getCategoryTitle() not in group_cats.keys():
+                    group_cats[analysis.getCategoryTitle()] = []
+                group_cats[analysis.getCategoryTitle()].append(analysis_info)
+
+            for g_cat in sorted(group_cats.keys()):
+                writer.writerow([g_cat])
+                writer.writerow(["Analysis", "Result", "Unit"])
+                for a_info in group_cats[g_cat]:
+                    writer.writerow([a_info['title'], a_info['result'], a_info['unit']])
+
+        return output.getvalue()
 
     def publish(self):
         """ Publish the AR report/s. Generates a results pdf file

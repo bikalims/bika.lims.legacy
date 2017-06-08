@@ -909,9 +909,17 @@ class Sample(BaseFolder, HistoryAwareMixin):
     def getLastARNumber(self):
         ARs = self.getBackReferences("AnalysisRequestSample")
         prefix = self.getSampleType().getPrefix()
-        ar_ids = sorted([AR.id for AR in ARs if AR.id.startswith(prefix)])
+        ar_ids = []
+        for AR in ARs:
+            try:
+                ar_prefix = AR.getId().split('-')[2]
+            except:
+                continue
+            if ar_prefix == prefix:
+                ar_ids.append(AR.id)
+        ar_ids = sorted(ar_ids)
         try:
-            last_ar_number = int(ar_ids[-1].split("-R")[-1])
+            last_ar_number = int(AR.getId().split('-')[-1])
         except:
             return 0
         return last_ar_number

@@ -155,7 +155,7 @@
               <dl id="extension_ids">
                 <tal:addons tal:repeat="info extension_profiles">
                   <tal:info tal:define="selected info/selected|nothing;
-                                        infostyle python:'' if info['id'].startswith('bika.') else 'display:none';">
+                                        infostyle python:'' if info['id'].startswith('bika.') or info['id'].endswith('.lims:default') else 'display:none';">
                     <tal:normal tal:condition="python: not selected or advanced">
                       <dt tal:attributes="style infostyle">
                         <input type="checkbox" name="extension_ids:list" value=""

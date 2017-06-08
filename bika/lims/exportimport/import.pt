@@ -36,7 +36,11 @@
                         tal:content="python:importers.getValue(option)"/>
                 </tal:options>
             </select>
-            <div id="import_form"/>
+            <!-- import_form can be pre-completed for the case where zope test browser
+                 calls this screen; it can't use javascript.
+            -->
+            <div id="import_form"
+                 tal:content="structure view/import_form"/>
             <div id="intermediate" style="display:none"/>
         </fieldset>
 
@@ -50,7 +54,7 @@
                     <h2 style="margin-bottom:10px;border-bottom:1px solid #888;font-size:1.6em;">
                         <span i18n:translate="">Load from file</span>
                     </h2>
-                    <input type="file" name="file"/>
+                    <input type="file" name="import_file"/>
                     <input name="setupfile" type="submit" value="Submit" i18n:attributes="value"/>
                     <p></p>
                     <span i18n:translate="">Tip. Attached documents will not be loaded unless they are present in the instance.</span>

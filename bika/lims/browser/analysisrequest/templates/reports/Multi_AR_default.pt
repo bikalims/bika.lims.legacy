@@ -168,7 +168,7 @@
                 </a>
               </td>
               <td>
-                <img tal:condition="acc_logo" tal:attributes="src acc_logo.absolute_url()" />
+                <img tal:condition="acc_logo" tal:attributes="src python:acc_logo.absolute_url()" />
               </td>
             </tr>
           </table>
