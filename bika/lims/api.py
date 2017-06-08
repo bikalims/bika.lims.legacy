@@ -562,6 +562,32 @@ def search(query, catalog=_marker, show_inactive=False):
     return search_results
 
 
+def get_catalogs_for(brain_or_object):
+    """Returns the registered catalogs for the given brain_or_object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :param attr: Attribute name
+    :type attr: str
+    :returns: list of retgistered catalog tools
+    :rtype: list
+    """
+    catalogs = []
+
+    portal_type = brain_or_object.portal_type
+    # Use the archetypes_tool to gather the right catalogs
+    archetype_tool = get_tool("archetype_tool", None)
+    # but only if the user did not specify any catalogs explicitly
+
+    if archetype_tool:
+        # we just want the first of the registered catalogs
+        catalogs.extend(archetype_tool.getCatalogsByType(portal_type))
+
+    if not catalogs:
+        return [get_portal_catalog()]
+    return catalogs
+
+
 def safe_getattr(brain_or_object, attr, default=_marker):
     """Return the attribute value
 

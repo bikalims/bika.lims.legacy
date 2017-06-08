@@ -531,6 +531,23 @@ not be returned by default!
     >>> len(results)
     1
 
+
+Getting the registered Catalogs
+-------------------------------
+
+Bika LIMS uses multiple catalogs registered via the Archetype Tool. This
+function returns a list of registered catalogs for a brain or object::
+
+    >>> api.get_catalogs_for(client)
+    [<CatalogTool at /plone/portal_catalog>]
+
+    >>> api.get_catalogs_for(instrument1)
+    [<BikaSetupCatalog at /plone/bika_setup_catalog>, <CatalogTool at /plone/portal_catalog>]
+
+    >>> api.get_catalogs_for(analysiscategory1)
+    [<BikaSetupCatalog at /plone/bika_setup_catalog>]
+
+
 Getting an Attribute of an Object
 ---------------------------------
 
