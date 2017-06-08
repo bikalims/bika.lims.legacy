@@ -80,6 +80,9 @@ class WorksheetImporter:
         self.context = lsd.context
         self.workbook = workbook
         self.sheetname = self.__class__.__name__.replace("_", " ")
+        if self.sheetname not in workbook.sheetnames:
+            logger.error("Sheet '{0}' not found".format(self.sheetname))
+            return
         self.worksheet = workbook.get_sheet_by_name(self.sheetname)
         self.dataset_project = dataset_project
         self.dataset_name = dataset_name
@@ -1410,7 +1413,7 @@ class Analysis_Services(WorksheetImporter):
 
     def load_service_uncertainties(self):
         bsc = getToolByName(self.context, 'bika_setup_catalog')
-        sheetname = 'AnalysisService Uncertainties'
+        sheetname = 'Analysis Service Uncertainties'
         worksheet = self.workbook.get_sheet_by_name(sheetname)
         if not worksheet:
             return
