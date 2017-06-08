@@ -6,7 +6,6 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 import json
-from operator import itemgetter
 
 from zope.interface import implements
 from zope.component import getUtility
@@ -15,6 +14,7 @@ from plone.app.content.browser.interfaces import IFolderContentsView
 from plone.registry.interfaces import IRegistry
 
 from bika.lims import api
+from bika.lims import logger
 from bika.lims.permissions import ManageAnalysisRequests
 from bika.lims.browser.bika_listing import BikaListingView
 from bika.lims import bikaMessageFactory as _
@@ -171,21 +171,53 @@ class ajaxGetClients(BrowserView):
         searchTerm = self.request.get('searchTerm', '').lower()
         page = self.request.get('page', 1)
         nr_rows = self.request.get('rows', 20)
-        sord = self.request.get('sord', 'asc')
-        sidx = self.request.get('sidx', '')
+        sort_order = self.request.get('sord') or 'ascending'
+        sort_index = self.request.get('sidx') or 'sortable_title'
 
-        clients = (x.getObject() for x in self.portal_catalog(portal_type="Client",
-                                                              inactive_state='active'))
-        rows = [{'ClientID': b.getClientID() and b.getClientID() or '',
-                 'Title': b.Title(),
-                 'ClientUID': b.UID()} for b in clients
-                if b.Title().lower().find(searchTerm) > -1 or
-                b.getClientID().lower().find(searchTerm) > -1 or
-                b.Description().lower().find(searchTerm) > -1]
+        if sort_order == "desc":
+            sort_order = "descending"
 
-        rows = sorted(rows, cmp=lambda x, y: cmp(x.lower(), y.lower()), key=itemgetter(sidx and sidx or 'Title'))
-        if sord == 'desc':
-            rows.reverse()
+        # Use the catalog to speed things up and also limit the results
+        catalog = api.get_tool("portal_catalog")
+        catalog_query = {
+            "portal_type": "Client",
+            "inactive_state": "active",
+            "sort_on": sort_index,
+            "sort_order": sort_order,
+            "sort_limit": 500
+        }
+        # Inject the searchTerm to narrow the results further
+        if searchTerm:
+            catalog_query["SearchableText"] = searchTerm
+        logger.debug("ajaxGetClients::catalog_query=%s" % catalog_query)
+        brains = catalog(catalog_query)
+        rows = []
+
+        # Check if the searchTerm matches some common fields
+        def search_match(client):
+            if searchTerm in client.getClientID().lower():
+                return True
+            if searchTerm in client.Title().lower():
+                return True
+            if searchTerm in client.getName().lower():
+                return True
+            if searchTerm in client.Description().lower():
+                return True
+            return False
+
+        for brain in brains:
+            client = brain.getObject()
+            # skip clients where the search term does not match
+            if searchTerm and not search_match(client):
+                continue
+            rows.append(
+                {
+                    "ClientID": client.getClientID(),
+                    "Title": client.Title(),
+                    "ClientUID": client.UID(),
+                }
+            )
+
         pages = len(rows) / int(nr_rows)
         pages += divmod(len(rows), int(nr_rows))[1] and 1 or 0
         ret = {'page': page,
