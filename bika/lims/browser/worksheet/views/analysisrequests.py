@@ -7,9 +7,7 @@
 
 from operator import itemgetter
 
-from Products.Archetypes.config import REFERENCE_CATALOG
-from Products.CMFCore.utils import getToolByName
-
+from bika.lims import api
 from bika.lims import bikaMessageFactory as _
 from bika.lims.browser.bika_listing import BikaListingView
 
@@ -50,18 +48,18 @@ class AnalysisRequestsView(BikaListingView):
         ]
 
     def folderitems(self):
-        rc = getToolByName(self.context, REFERENCE_CATALOG)
         ars = {}
-
         for slot in self.context.getLayout():
             if slot['type'] != 'a':
                 continue
             ar = slot['container_uid']
             if ar not in ars:
                 ars[ar] = slot['position']
+
         items = []
         for ar, pos in ars.items():
-            ar = rc.lookupObject(ar)
+            pos = str(pos)
+            ar = api.get_object_by_uid(ar)
             # this folderitems doesn't subclass from the bika_listing.py
             # so we create items from scratch
             item = {
