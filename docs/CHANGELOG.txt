@@ -1,6 +1,7 @@
 3.2.1b3 (unreleased)
 --------------------
 
+- Issue-2062: Worksheet raises Error on `add_duplicate` view
 - Issue-2011: Client Folder Listing Table decreases Bika LIMS performance and is unusable for many Clients
 - Issue-2068: Member Discount is always applied on adding new ARs
 - Issue-2052: Computed Sample Field "SampleTypeUID" does not check if a SampleType is set
