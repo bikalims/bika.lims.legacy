@@ -1,6 +1,7 @@
 3.2.1b3 (unreleased)
 --------------------
 
+- Issue-2089: Bika Listing display columns uses localized column headers in Cookie
 - Issue-2063: Batch Book raises an Error if the Batch inherits from 2 ARs
 - Issue-2062: Worksheet raises Error on `add_duplicate` view
 - Issue-2011: Client Folder Listing Table decreases Bika LIMS performance and is unusable for many Clients

@@ -337,7 +337,7 @@
         i = 0;
         while (i < sorted_toggle_cols.length) {
           col = sorted_toggle_cols[i];
-          col_id = _(col['id']);
+          col_id = col['id'];
           col_title = _(col['title']);
           enabled = $('#foldercontents-' + col_id + '-column');
           if (enabled.length > 0) {
