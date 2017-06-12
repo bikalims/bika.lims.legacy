@@ -36,7 +36,7 @@ def set_container_preservation(context, container, data):
             data['prepreserved'] = prepreserved
             if prepreserved and preservation:
                 return preservation.UID()
-    return data.get('preservation_uid', '')
+    return data.get('preservation', None)
 
 
 def create_samplepartition(context, data, analyses=[]):
@@ -53,7 +53,7 @@ def create_samplepartition(context, data, analyses=[]):
     # Determine if the sampling workflow is enabled
     workflow_enabled = context.bika_setup.getSamplingWorkflowEnabled()
     # Sort containers and select smallest
-    container = data.get('container_uid', None)
+    container = data.get('container', None)
     if container:
         containers = []
         if type(container[0]) is str:
