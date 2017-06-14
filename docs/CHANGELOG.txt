@@ -1,7 +1,8 @@
 3.3.0 (unreleased)
 ------------------
 
-- LIMS-2596: AR and Sample view fields that need to stay editable
+- Issue-2098: Inline rendered Attachments not in final PDF
+- LIMS-2596:  AR and Sample view fields that need to stay editable
 - Issue-2095: Permission of getAccreditationBodyLogo
 - Issue-2065: Sort order on all landing pages are broken
 - Issue-2081: Fixed multiple partition creation from ARTemple
