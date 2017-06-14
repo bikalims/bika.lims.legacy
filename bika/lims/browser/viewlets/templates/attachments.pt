@@ -128,6 +128,7 @@
               <th i18n:translate="">Type</th>
               <th i18n:translate="">Analysis</th>
               <th i18n:translate="">Keywords</th>
+              <th i18n:translate=''>Report Option</th>
             </tr>
             <tr>
               <td>
@@ -194,6 +195,21 @@
               </td>
               <td>
                 <input name="AttachmentKeys"/>
+              </td>
+              <!-- Attachment Report Option
+                  a=Attach to Report (default)
+                  i=Ignore in Report
+                  r=Render in Report
+                -->
+              <td>
+                <select>
+                  <tal:item repeat="item view/get_attachment_report_options">
+                    <option tal:attributes="value python:item[0];"
+                            tal:content="python: item[1]">
+                      Attachment Report Option
+                    </option>
+                  </tal:item>
+                </select>
               </td>
             </tr>
           </table>
