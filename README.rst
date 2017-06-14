@@ -1,8 +1,20 @@
 Bika LIMS
 =========
 
-.. image:: https://travis-ci.org/bikalabs/bika.lims.svg?branch=master
+.. image:: https://img.shields.io/travis/bikalabs/bika.lims/master.svg
     :target: https://travis-ci.org/bikalabs/bika.lims
+
+.. image:: https://img.shields.io/pypi/v/bika.lims.svg
+    :target: https://pypi.python.org/pypi/bika.lims
+
+.. image:: https://img.shields.io/github/issues-pr/bikalabs/bika.lims.svg
+    :target: https://github.com/bikalabs/bika.lims/pulls
+
+.. image:: https://img.shields.io/github/issues/bikalabs/bika.lims.svg
+    :target: https://github.com/bikalabs/bika.lims/issues
+
+.. image:: https://img.shields.io/github/contributors/bikalabs/bika.lims.svg
+    :target: https://github.com/bikalabs/bika.lims
 
 
 The meaning of Gaob
