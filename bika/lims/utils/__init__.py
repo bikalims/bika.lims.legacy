@@ -26,7 +26,7 @@ from Products.Archetypes.public import DisplayList
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from time import time
-from weasyprint import HTML, CSS
+from weasyprint import HTML, CSS, default_url_fetcher
 from zope.component import queryUtility
 from zope.i18n import translate
 from zope.i18n.locales import locales
@@ -359,6 +359,32 @@ def isnumber(s):
         return False
 
 
+def bika_url_fetcher(url):
+    """Basically the same as the default_url_fetcher from WeasyPrint,
+    but injects the __ac cookie to make an authenticated request to the resource.
+    """
+    from weasyprint import VERSION_STRING
+    from weasyprint.compat import Request
+    from weasyprint.compat import urlopen_contenttype
+
+    request = api.get_request()
+    __ac = request.cookies.get("__ac", "")
+
+    if url.startswith(request.base):
+        result, mime_type, charset = urlopen_contenttype(
+            Request(url,
+                    headers={
+                        'Cookie': "__ac={}".format(__ac),
+                        'User-Agent': VERSION_STRING
+                    }))
+        return dict(file_obj=result,
+                    redirected_url=result.geturl(),
+                    mime_type=mime_type,
+                    encoding=charset)
+
+    return default_url_fetcher(url)
+
+
 def createPdf(htmlreport, outfile=None, css=None, images={}):
     """create a PDF from some HTML.
     htmlreport: rendered html
@@ -396,7 +422,7 @@ def createPdf(htmlreport, outfile=None, css=None, images={}):
 
     # render
     htmlreport = to_utf8(htmlreport)
-    renderer = HTML(string=htmlreport, encoding='utf-8')
+    renderer = HTML(string=htmlreport, url_fetcher=bika_url_fetcher, encoding='utf-8')
     pdf_fn = outfile if outfile else tempfile.mktemp(suffix=".pdf")
     if css:
         renderer.write_pdf(pdf_fn, stylesheets=[CSS(string=css_def)])
