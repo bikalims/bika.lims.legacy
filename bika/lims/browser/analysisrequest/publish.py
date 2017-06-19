@@ -261,6 +261,29 @@ class AnalysisRequestPublishView(BrowserView):
         """
         return self.request.form.get('landscape', '0').lower() in ['true', '1']
 
+    def getDimension(self):
+        """ Returns the dimension of the report
+        """
+        return self.request.form.get("layout", "A4")
+
+    def getDirection(self):
+        """ Return landscape or horizontal
+        """
+        return self.isLandscape() and "landscape" or "horizontal"
+
+    def getLayout(self):
+        """ Returns the layout of the report
+        """
+        mapping = {
+            "A4": (210, 297),
+            "letter": (216, 279)
+        }
+        dimension = self.getDimension()
+        layout = mapping.get(dimension, mapping.get("A4"))
+        if self.isLandscape():
+            layout = tuple(reversed(layout))
+        return layout
+
     def explode_data(self, data, padding=''):
         out = ''
         for k,v in data.items():
@@ -402,6 +425,13 @@ class AnalysisRequestPublishView(BrowserView):
         attachment_size = attachment.get_size()
         attachment_type = attachment.getAttachmentType()
         attachment_mime = attachment_file.getContentType()
+
+        def get_kb_size():
+            size = attachment_size / 1024
+            if size < 1:
+                return 1
+            return size
+
         info = {
             "obj": attachment,
             "keywords": attachment.getAttachmentKeys(),
@@ -409,19 +439,19 @@ class AnalysisRequestPublishView(BrowserView):
             "file": attachment_file,
             "filename": attachment_file.filename,
             "filesize": attachment_size,
-            "size": "{} Kb".format(attachment_size / 1024),
+            "size": "{} Kb".format(get_kb_size()),
             "download": "{}/at_download/AttachmentFile".format(
                 attachment.absolute_url()),
             "mimetype": attachment_mime,
             "title": attachment_file.Title(),
             "icon": attachment_file.icon,
-            "inline": "<embed src='{}' width='100%'/>".format(
-                attachment_file.absolute_url()),
+            "inline": "<embed src='{}'' class='inline-attachment inline-attachment-{}'/>".format(
+                attachment_file.absolute_url(), self.getDirection()),
             "renderoption": attachment.getReportOption(),
         }
         if attachment_mime.startswith("image"):
-            info["inline"] = "<img src='{}' />".format(
-                attachment_file.absolute_url())
+            info["inline"] = "<img src='{}' class='inline-attachment inline-attachment-{}'/>".format(
+                attachment_file.absolute_url(), self.getDirection())
         return info
 
     def _get_ar_attachments(self, ar):
