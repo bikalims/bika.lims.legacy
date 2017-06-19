@@ -202,7 +202,7 @@
                   r=Render in Report
                 -->
               <td>
-                <select>
+                <select name="ReportOption">
                   <tal:item repeat="item view/get_attachment_report_options">
                     <option tal:attributes="value python:item[0];"
                             tal:content="python: item[1]">
