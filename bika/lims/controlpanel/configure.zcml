@@ -285,6 +285,14 @@
       layer="bika.lims.interfaces.IBikaLIMS"
     />
 
+    <browser:page
+      for="bika.lims.controlpanel.bika_clientdepartments.IClientDepartments"
+      name="folder_view"
+      class=".bika_clientdepartments.ClientDepartmentsView"
+      permission="bika.lims.ManageBika"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
     <!-- For autocomplete dropdown -->
     <browser:page
       for="*"
