@@ -26,6 +26,7 @@ def upgrade(tool):
     """
     portal = aq_parent(aq_inner(tool))
 
+    pc = getToolByName(portal, 'portal_catalog')
     qi = portal.portal_quickinstaller
     ufrom = qi.upgradeInfo('bika.lims')['installedVersion']
     logger.info("Upgrading Bika LIMS: %s -> %s" % (ufrom, '3.2.0'))
@@ -38,8 +39,10 @@ def upgrade(tool):
     """
     setup = portal.portal_setup
     setup.runImportStepFromProfile('profile-bika.lims:default', 'typeinfo')
-    #setup.runImportStepFromProfile('profile-bika.lims:default', 'factorytool')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'controlpanel')
+    setup.runImportStepFromProfile('profile-bika.lims:default', 'catalog')
+    # Rebuild catalog for ClientDepartmentUID
+    pc.clearFindAndRebuild()
 
 
     typestool = getToolByName(portal, 'portal_types')

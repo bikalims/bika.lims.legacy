@@ -14,6 +14,8 @@
  <column value="samplingRoundSamplingDate"/>
  <index name="SamplingRoundUID" meta_type="FieldIndex"> <indexed_attr value="SamplingRoundUID"/> </index>
  <column value="SamplingRoundUID"/>
+ <index name="ClientDepartmentUID" meta_type="FieldIndex"> <indexed_attr value="ClientDepartmentUID"/> </index>
+ <column value="ClientDepartmentUID"/>
  <column value="review_state"/>
  <index name="Identifiers" meta_type="KeywordIndex"/>
  <index name="getDateValidated" meta_type="DateIndex"/>

@@ -21,7 +21,7 @@ class ClientDepartmentsView(BikaListingView):
 
     def __init__(self, context, request):
         super(ClientDepartmentsView, self).__init__(context, request)
-        self.catalog = 'bika_setup_catalog'
+        self.catalog = "portal_catalog"
         self.contentFilter = {'portal_type': 'ClientDepartment',
                               'sort_on': 'sortable_title'}
         #self.context_actions = {_('Add'):
@@ -45,22 +45,23 @@ class ClientDepartmentsView(BikaListingView):
         }
 
         self.review_states = [
-            {'id':'default',
-             'title': _('Active'),
-             'contentFilter': {'inactive_state': 'active'},
-             'transitions': [{'id':'deactivate'}, ],
-             'columns': ['Title', 'Description', ]},
-            {'id':'inactive',
-             'title': _('Dormant'),
-             'contentFilter': {'inactive_state': 'inactive'},
-             'transitions': [{'id':'activate'}, ],
-             'columns': ['Title', 'Description', ]},
             {'id':'all',
              'title': _('All'),
              'contentFilter':{},
              'columns': ['Title', 'Description', ]},
         ]
 
+    def folderitems(self):
+        items = BikaListingView.folderitems(self)
+        for x in range(len(items)):
+            if not items[x].has_key('obj'): continue
+            obj = items[x]['obj']
+            items[x]['Description'] = obj.Description()
+
+            items[x]['replace']['Title'] = "<a href='%s'>%s</a>" % \
+                 (items[x]['url'], items[x]['Title'])
+
+        return items
 
 class IClientDepartments(model.Schema):
     """ A Client Departments container.
