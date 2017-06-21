@@ -578,4 +578,13 @@
          handler="bika.lims.upgrade.to320.upgrade"
          sortkey="1"
          profile="bika.lims:default"/>
+
+ <genericsetup:upgradeStep
+         title="Disabling Right Column On ARImport's View"
+         description=""
+         source="3201"
+         destination="3201"
+         handler="bika.lims.upgrade.to3201.upgrade"
+         sortkey="1"
+         profile="bika.lims:default"/>
 </configure>

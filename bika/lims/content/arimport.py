@@ -41,6 +41,7 @@ from Products.DataGridField import LinesColumn
 from Products.DataGridField import SelectColumn
 from Products.DataGridField import TimeColumn
 from plone import api
+from plone.portlets.interfaces import ILocalPortletAssignable
 from plone.indexer import indexer
 from zope import event
 from zope.event import notify
@@ -263,7 +264,7 @@ class ARImport(BaseFolder):
     security = ClassSecurityInfo()
     schema = schema
     displayContentsTab = False
-    implements(IARImport)
+    implements(IARImport, ILocalPortletAssignable)
 
     _at_rename_after_creation = True
 
