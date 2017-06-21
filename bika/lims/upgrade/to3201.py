@@ -40,6 +40,7 @@ def upgrade(tool):
     setup = portal.portal_setup
     setup.runImportStepFromProfile('profile-bika.lims:default', 'typeinfo')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'controlpanel')
+    setup.runImportStepFromProfile('profile-bika.lims:default', 'workflow')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'catalog')
     # Rebuild catalog for ClientDepartmentUID
     pc.clearFindAndRebuild()

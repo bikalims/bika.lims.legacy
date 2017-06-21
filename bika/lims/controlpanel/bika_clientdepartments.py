@@ -24,9 +24,9 @@ class ClientDepartmentsView(BikaListingView):
         self.catalog = "portal_catalog"
         self.contentFilter = {'portal_type': 'ClientDepartment',
                               'sort_on': 'sortable_title'}
-        #self.context_actions = {_('Add'):
-        #                        {'url': 'createObject?type_name=ClientDepartment',
-        #                         'icon': '++resource++bika.lims.images/add.png'}}
+        self.context_actions = {_('Add'):
+                                {'url': '++add++ClientDepartment',
+                                 'icon': '++resource++bika.lims.images/add.png'}}
         self.title = self.context.translate(_("Client Departments"))
         self.icon = self.portal_url + "/++resource++bika.lims.images/department_big.png"
         self.description = ""
@@ -45,10 +45,26 @@ class ClientDepartmentsView(BikaListingView):
         }
 
         self.review_states = [
+            {'id':'default',
+             'title': _('Active'),
+             'contentFilter': {'inactive_state': 'active'},
+             'transitions': [{'id':'deactivate'}, ],
+             'columns': ['Title',
+                         'Description',
+                         ]},
+            {'id':'inactive',
+             'title': _('Dormant'),
+             'contentFilter': {'inactive_state': 'inactive'},
+             'transitions': [{'id':'activate'}, ],
+             'columns': ['Title',
+                         'Description',
+                         ]},
             {'id':'all',
              'title': _('All'),
              'contentFilter':{},
-             'columns': ['Title', 'Description', ]},
+             'columns': ['Title',
+                         'Description',
+                         ]},
         ]
 
     def folderitems(self):

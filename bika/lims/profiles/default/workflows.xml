@@ -516,5 +516,16 @@
       <bound-workflow workflow_id="bika_cancellation_workflow"/>
     </type>
 
+    <!-- Client Departments -->
+    <type type_id="ClientDepartments">
+      <bound-workflow workflow_id="bika_one_state_workflow"/>
+    </type>
+
+    <!-- Client Department -->
+    <type type_id="ClientDepartment">
+      <bound-workflow workflow_id="bika_one_state_workflow"/>
+      <bound-workflow workflow_id="bika_inactive_workflow"/>
+    </type>
+
   </bindings>
 </object>
