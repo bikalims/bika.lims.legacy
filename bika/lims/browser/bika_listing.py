@@ -526,10 +526,16 @@ class BikaListingView(BrowserView):
 
         # SORTING
         # Precedence is request, sort_on attribute, contentFilter sort_on value
-        self.sort_on = getattr(self, "sort_on", self.contentFilter.get("sort_on"))
+        self.sort_on = getattr(
+                self, "sort_on", self.contentFilter.get("sort_on"))
         self.sort_on = self.request.get(form_id + '_sort_on', self.sort_on)
-        self.sort_order = self.request.get(form_id + '_sort_order', 'ascending')
-        self.manual_sort_on = self.request.get(form_id + '_manual_sort_on', None)
+        # Precedence is request, sort_order attribute, contentFilter value
+        self.sort_order = getattr(
+                self, "sort_order", self.contentFilter.get("sort_order"))
+        self.sort_order = self.request.get(
+                form_id + '_sort_order', self.sort_order)
+        self.manual_sort_on = self.request.get(
+                form_id + '_manual_sort_on', None)
 
         if self.sort_on:
             if self.sort_on in self.columns.keys():

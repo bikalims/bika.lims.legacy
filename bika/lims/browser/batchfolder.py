@@ -27,7 +27,7 @@ class BatchFolderContentsView(BikaListingView):
         self.catalog = 'bika_catalog'
         self.contentFilter = {
             'portal_type': 'Batch',
-            'sort_on': 'created',
+            'sort_on': 'BatchDate',
             'sort_order': 'reverse',
             'cancellation_state': 'active'
         }
@@ -45,7 +45,7 @@ class BatchFolderContentsView(BikaListingView):
             'Title': {'title': _('Title')},
             'BatchID': {'title': _('Batch ID')},
             'Description': {'title': _('Description')},
-            'BatchDate': {'title': _('Date')},
+            'BatchDate': {'title': _('Date'), 'index': 'BatchDate'},
             'Client': {'title': _('Client')},
             'state_title': {'title': _('State'), 'sortable': False},
         }
