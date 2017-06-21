@@ -378,7 +378,7 @@ def bika_url_fetcher(url):
     request = api.get_request()
     __ac = request.cookies.get("__ac", "")
 
-    if url.startswith(request.base):
+    if request.get_header("HOST") in url:
         result, mime_type, charset = urlopen_contenttype(
             Request(url,
                     headers={
