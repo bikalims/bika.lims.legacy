@@ -580,11 +580,11 @@
          profile="bika.lims:default"/>
 
  <genericsetup:upgradeStep
-         title="Upgrade to Bika LIMS 3.2.0.1"
+         title="Upgrade to Bika LIMS 3.3.1"
          description="Adding ClientDepartments and ClientDepartment"
          source="320"
-         destination="3201"
-         handler="bika.lims.upgrade.to3201.upgrade"
+         destination="331"
+         handler="bika.lims.upgrade.to331.upgrade"
          sortkey="1"
          profile="bika.lims:default"/>
 </configure>
