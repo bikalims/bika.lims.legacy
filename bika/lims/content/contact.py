@@ -24,7 +24,7 @@ from Products.CMFPlone.utils import safe_unicode
 from plone import api
 from zope.interface import implements
 
-from bika.lims.browser.widgets import SelectionWidget
+from Products.Archetypes.Widget import SelectionWidget
 from bika.lims.utils import isActive
 from bika.lims.interfaces import IContact
 from bika.lims.content.person import Person

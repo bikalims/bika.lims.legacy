@@ -42,22 +42,23 @@ def upgrade(tool):
     setup.runImportStepFromProfile('profile-bika.lims:default', 'controlpanel')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'workflow')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'catalog')
+    setup.runImportStepFromProfile('profile-bika.lims:default', 'content')
     # Rebuild catalog for ClientDepartmentUID
     pc.clearFindAndRebuild()
 
 
-    typestool = getToolByName(portal, 'portal_types')
-    qi = portal.portal_quickinstaller
-    if not portal['bika_setup'].get('bika_clientdepartments'):
-        typestool.constructContent(type_name="ClientDepartments",
-                                   container=portal['bika_setup'],
-                                   id='bika_clientdepartments',
-                                   title='Client Departments')
-    obj = portal['bika_setup']['bika_clientdepartments']
-    obj.unmarkCreationFlag()
-    obj.reindexObject()
-    if not portal['bika_setup'].get('bika_clientdepartments'):
-        logger.info("Client Departments not created")
+    #typestool = getToolByName(portal, 'portal_types')
+    #qi = portal.portal_quickinstaller
+    #if not portal['bika_setup'].get('bika_clientdepartments'):
+    #    typestool.constructContent(type_name="ClientDepartments",
+    #                               container=portal['bika_setup'],
+    #                               id='bika_clientdepartments',
+    #                               title='Client Departments')
+    #obj = portal['bika_setup']['bika_clientdepartments']
+    #obj.unmarkCreationFlag()
+    #obj.reindexObject()
+    #if not portal['bika_setup'].get('bika_clientdepartments'):
+    #    logger.info("Client Departments not created")
 
     return True
 
