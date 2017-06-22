@@ -79,7 +79,7 @@ schema = Person.schema.copy() + atapi.Schema((
                 'add': 'edit',
                 'header_table': 'visible',
             },
-            render_own_label=False,
+            render_own_label=True,
         ),
     ),
 ))
