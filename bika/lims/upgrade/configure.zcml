@@ -589,8 +589,8 @@
          profile="bika.lims:default"/>
 
  <genericsetup:upgradeStep
-         title="Upgrade to Bika LIMS 3.4.0"
-         description="Adding ClientDepartments and ClientDepartment"
+         title="Upgrade to 3.4.0"
+         description="This is the upgrade step to from 3.3.0 to 3.4.0"
          source="330"
          destination="340"
          handler="bika.lims.upgrade.to340.upgrade"
