@@ -150,8 +150,8 @@ class ICPEMultitypeCSVParser(InstrumentCSVResultsFileParser):
                 else:
                     quantitation[colname] = token
 
-                val = re.sub(r"\W", "", splitted[1])
-                self._addRawResult(quantitation['Title0'],
+                val = re.sub(r"\W", "", splitted[6])
+                self._addRawResult(quantitation['Title2'],
                                    values={val:quantitation},
                                    override=True)
             elif token:

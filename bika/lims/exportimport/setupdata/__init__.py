@@ -80,6 +80,9 @@ class WorksheetImporter:
         self.context = lsd.context
         self.workbook = workbook
         self.sheetname = self.__class__.__name__.replace("_", " ")
+        if self.sheetname not in workbook.sheetnames:
+            logger.error("Sheet '{0}' not found".format(self.sheetname))
+            return
         self.worksheet = workbook.get_sheet_by_name(self.sheetname)
         self.dataset_project = dataset_project
         self.dataset_name = dataset_name
@@ -1410,7 +1413,7 @@ class Analysis_Services(WorksheetImporter):
 
     def load_service_uncertainties(self):
         bsc = getToolByName(self.context, 'bika_setup_catalog')
-        sheetname = 'AnalysisService Uncertainties'
+        sheetname = 'Analysis Service Uncertainties'
         worksheet = self.workbook.get_sheet_by_name(sheetname)
         if not worksheet:
             return
@@ -1965,20 +1968,23 @@ class Setup(WorksheetImporter):
 class ID_Prefixes(WorksheetImporter):
 
     def Import(self):
-        prefixes = self.context.bika_setup.getPrefixes()
+        formatting = self.context.bika_setup.getIDFormatting()
         for row in self.get_rows(3):
-            # remove existing prefix from list
-            prefixes = [p for p in prefixes
+            # remove existing prefix from list if any
+            formatting = [p for p in formatting
                         if p['portal_type'] != row['portal_type']]
-            # The spreadsheet will contain 'none' for user's visual stuff, but it means 'no separator'
-            separator = row.get('separator', '-')
-            separator = '' if separator == 'none' else separator
             # add new prefix to list
-            prefixes.append({'portal_type': row['portal_type'],
-                             'padding': row['padding'],
-                             'prefix': row['prefix'],
-                             'separator': separator})
-        self.context.bika_setup.setPrefixes(prefixes)
+            formatting.append(
+                           {'portal_type': row['portal_type'],
+                            'form': row['form'],
+                            'sequence_type': row['sequence_type'],
+                            'context': row['context'],
+                            'counter_type': row['counter_type'],
+                            'counter_reference': row['counter_reference'],
+                            'prefix': row['prefix'],
+                            'split_length': row['split_length'],
+                            })
+        self.context.bika_setup.setIDFormatting(formatting)
 
 
 class Attachment_Types(WorksheetImporter):

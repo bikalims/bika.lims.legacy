@@ -5,7 +5,9 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from bika.lims.idserver import renameAfterCreation
 from bika.lims.utils import tmpID
+from datetime import datetime
 from Products.CMFPlone.utils import _createObjectByType
 from magnitude import mg
 
@@ -48,8 +50,11 @@ def create_samplepartition(context, data, analyses=[]):
     {'part_id':xx, 'container_uid', xxxx, 'services': xxxx, 'part_id':xxx, ...}
     :analyses: A list of full object analyses
     """
-    partition = _createObjectByType('SamplePartition', context, data['part_id'])
+    dummy = str(
+             datetime.now()).replace(' ', '-').replace('.','').replace(':','')
+    partition = _createObjectByType('SamplePartition', context, dummy)
     partition.unmarkCreationFlag()
+    renameAfterCreation(partition)
     # Determine if the sampling workflow is enabled
     workflow_enabled = context.bika_setup.getSamplingWorkflowEnabled()
     # Sort containers and select smallest

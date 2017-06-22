@@ -79,5 +79,8 @@
       file="skins/bika/bika-logo-crop.png"
       name="bikaonly-logo.png"
       />
-
+  <utility
+      provides="bika.lims.interfaces.INumberGenerator"
+      factory=".numbergenerator.NumberGenerator"
+      />
 </configure>

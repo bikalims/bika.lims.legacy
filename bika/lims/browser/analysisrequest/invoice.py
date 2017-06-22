@@ -146,13 +146,14 @@ class InvoiceView(BrowserView):
                     # We want the analysis instead of the service, because we want the price for the client
                     # (for instance the bulk price)
                     panalysis = self._getAnalysisForProfileService(pservice.getKeyword(), analyses_from_profiles)
-                    pservices.append({
+                    if panalysis == 0:
+                        continue
+                    else:
+                        pservices.append({
                                      'title': pservice.Title(),
-                                     'price': panalysis.getPrice() if panalysis else pservice.getPrice(),
-                                     'priceVat': "%.2f" % panalysis.getVATAmount() if panalysis
-                                                                                   else pservice.getVATAmount(),
-                                     'priceTotal': "%.2f" % panalysis.getTotalPrice() if panalysis
-                                                                                   else pservice.getTotalPrice(),
+                                     'price': panalysis.getPrice(),
+                                     'priceVat': "%.2f" % panalysis.getVATAmount(),
+                                     'priceTotal': "%.2f" % panalysis.getTotalPrice(),
                                      })
                 profiles.append({'name': profile.title,
                                  'price': None,

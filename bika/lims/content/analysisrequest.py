@@ -2010,9 +2010,10 @@ class AnalysisRequest(BaseFolder):
         # Getting all analysis request analyses
         ar_analyses = self.getAnalyses(cancellation_state='active',
                                        full_objects=True)
+        UNBILLABLE_STATES = ('not_requested', 'retracted', 'sample_received')
         for analysis in ar_analyses:
             review_state = workflow.getInfoFor(analysis, 'review_state', '')
-            if review_state not in ('not_requested', 'retracted'):
+            if review_state not in UNBILLABLE_STATES:
                 analyses.append(analysis)
         # Getting analysis request profiles
         for profile in self.getProfiles():
@@ -2062,9 +2063,10 @@ class AnalysisRequest(BaseFolder):
         # service") objects to obtain
         # the correct price later
         profile_analyses = []
+        IGNORED_STATES = ('not_requested', 'retracted', 'sample_received')
         for analysis in self.objectValues('Analysis'):
             review_state = workflow.getInfoFor(analysis, 'review_state', '')
-            if review_state != 'not_requested':
+            if review_state not in IGNORED_STATES:
                 analyses.append(analysis)
         # Getting all profiles
         analysis_profiles = self.getProfiles() if len(

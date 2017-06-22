@@ -246,7 +246,8 @@ class GCMSTQ8030GCMSMSCSVParser(InstrumentCSVResultsFileParser):
         #\t0 \t0 \t38.94 \t38.58 \t91.00 \t0 \t0 \t38.93 \t40.02 \t0 \t0 \t0 
         #\t0 \t0 \t0 \t0 #\t0 \t0 \t0 \t0 \t0 \t0 \t0 \t0 \t75.27 \tmg \t0.00000
         splitted = [token.strip() for token in line.split('\t')]
-        quantitation = {'DefaultResult': 'Conc.'}
+        ar_id = self._header['Data File Name'].split('\\')[-1].split('.')[0]
+        quantitation = {'DefaultResult': 'Conc.', 'AR': ar_id}
         for colname in self._quantitationresultsheader:
             quantitation[colname] = ''
 
@@ -268,15 +269,19 @@ class GCMSTQ8030GCMSMSCSVParser(InstrumentCSVResultsFileParser):
                 else:
                     quantitation[colname] = token
 
-                val = re.sub(r"\W", "", splitted[1])
-                self._addRawResult(quantitation['ID#'],
-                                   values={val:quantitation},
-                                   override=True)
+                #val = re.sub(r"\W", "", splitted[1])
+                #self._addRawResult(quantitation['AR'],
+                #                   values={val:quantitation},
+                #                   override=False)
             elif token:
                 self.err("Orphan value in column ${index} (${token})",
                          mapping={"index": str(i+1),
                                   "token": token},
                          numline=self._numline, line=line)
+        val = re.sub(r"\W", "", splitted[1])
+        self._addRawResult(quantitation['AR'],
+                           values={val:quantitation},
+                           override=False)
 
 
 class GCMSTQ8030GCMSMSImporter(AnalysisResultsImporter):

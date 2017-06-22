@@ -746,3 +746,7 @@ class IProxyField(Interface):
 class IARAnalysesField(Interface):
     """A field that manages AR Analyses
     """
+
+class INumberGenerator(Interface):
+    """A utility to generates unique numbers by key
+    """

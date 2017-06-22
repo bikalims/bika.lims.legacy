@@ -746,10 +746,15 @@ class BikaListingView(BrowserView):
             'bika_listing_filter_bar', None, path='/', max_age=0)
         # Saving the filter bar values
         cookie_filter_bar = ''
-        try:
-            cookie_filter_bar = json.loads(cookie_value)
-        except ValueError, e:
-            logger.error('%s: cookie value %s' % (str(e), cookie_value))
+        if cookie_value is not None and \
+           cookie_value not in ([], '', [None]): #There maybe more
+            try:
+                cookie_filter_bar = json.loads(cookie_value)
+            except ValueError, e:
+                logger.error(
+                    'BikaListingView: cannot parse cookie value %s (%s)' % (
+                        str(e), cookie_value))
+
 
         # Creating a dict from cookie data
         cookie_data = {}
