@@ -8,6 +8,7 @@
 from AccessControl import ClassSecurityInfo
 from Products.ATExtensions.ateapi import RecordWidget
 from Products.Archetypes.public import *
+from Products.Archetypes.Widget import SelectionWidget
 from bika.lims.config import PROJECTNAME
 from Products.CMFCore import permissions as CMFCorePermissions
 from Products.CMFCore.utils import getToolByName
@@ -18,6 +19,7 @@ from plone.app.folder.folder import ATFolder
 from bika.lims.browser.fields import AddressField
 from bika.lims.browser.widgets import AddressWidget
 from bika.lims import PMF, bikaMessageFactory as _
+from plone import api
 
 schema = BikaFolderSchema.copy() + BikaSchema.copy() + ManagedSchema((
     StringField('Name',
@@ -26,6 +28,19 @@ schema = BikaFolderSchema.copy() + BikaSchema.copy() + ManagedSchema((
         validators = ('uniquefieldvalidator',),
         widget = StringWidget(
             label=_("Name"),
+        ),
+    ),
+    StringField(
+        'LaboratorySupervisor',
+        mode="rw",
+        read_permission=CMFCorePermissions.View,
+        write_permission=CMFCorePermissions.ModifyPortalContent,
+        vocabulary='getLabContacts',
+        acquire=True,
+        widget=SelectionWidget(
+            format="select",
+            label=_("Laboratory Supervisor"),
+            render_own_label=True,
         ),
     ),
     StringField('TaxNumber',
@@ -163,5 +178,14 @@ class Organisation(ATFolder):
 
 
         return address_lines
+
+    def getLabContacts(self):
+        """Return a list of Lab Contacts
+        """
+        lab_contacts = api.content.find(portal_type="LabContact")
+        contacts = [['', ''], ]
+        for contact in lab_contacts:
+            contacts.append([contact.id, contact.Title])
+        return DisplayList(contacts)
 
 registerType(Organisation, PROJECTNAME)
