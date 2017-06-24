@@ -68,3 +68,5 @@ A `client` lives in the `/clients` folder::
     >>> browser.getControl(name='form.button.save').click()
     >>> 'Changes saved' and 'Test Department' in browser.contents
     True
+    >>> browser.getControl('Test Department')
+    <ItemControl name='Department' type='select' optionValue='test-department' selected=True>
