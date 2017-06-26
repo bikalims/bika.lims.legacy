@@ -33,10 +33,7 @@ def upgrade(tool):
     setup.runImportStepFromProfile('profile-bika.lims:default', 'typeinfo')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'controlpanel')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'workflow')
-    setup.runImportStepFromProfile('profile-bika.lims:default', 'catalog')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'content')
-    # Rebuild catalog for ClientDepartmentUID
-    pc.clearFindAndRebuild()
 
     return True
 
