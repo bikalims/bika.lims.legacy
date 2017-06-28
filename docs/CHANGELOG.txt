@@ -1,6 +1,7 @@
 3.2.1 (unreleased)
 ------------------
 LIMS-2596: AR and Sample view fields that need to stay editable
+Issue-2012: AR Template Analysis don't get applied if an Analysis Profile is selected
 Issue-2015: Copy AS functionality from the "bika_analysisservices" view raises an error
 Issue-1974: Clicking on the "Arrow Button" of an empty cell in the AR Add View causes a JS Error and endless Spinner
 issue-1992: Data Duplication between Analysis Requests and Samples
