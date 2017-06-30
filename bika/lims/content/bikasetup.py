@@ -597,6 +597,15 @@ schema = BikaFolderSchema.copy() + Schema((
             description=_("Turn this on if you want to work with sample partitions")
         ),
     ),
+    BooleanField(
+        'SamplePreservationEnabled',
+        schemata="Sampling and COC",
+        default=False,
+        widget=BooleanWidget(
+            label=_("Enable Sample Preservation"),
+            description=_("")
+        ),
+    ),
     DurationField(
         'DefaultSampleLifetime',
         schemata="Sampling and COC",
