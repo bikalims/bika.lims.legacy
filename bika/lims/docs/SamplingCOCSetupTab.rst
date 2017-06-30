@@ -1,7 +1,8 @@
 SamplingCOCSetupTab
 ===================
 
-The ID Server in Bika LIMS provides IDs for content items base of the given format specification. The format string is constructed in the same way as a python format() method based predefined variables per content type. The only variable available to all type is 'seq'. Currently, seq can be constructed either using number generator or a counter of existing items. For generated IDs, one can specifypoint at which the format string will be split to create the generator key. For counter IDs, one must specify context and the type of counter which is either the number of backreferences or the number of contained objects.
+Sampling COC Setup tab is a tab on BIKA Setup and has a fields that manage
+the filters on ARs listing view.
 
 
 Running this test from the buildout directory::
