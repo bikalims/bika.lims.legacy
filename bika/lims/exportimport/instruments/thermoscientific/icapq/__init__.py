@@ -36,7 +36,7 @@ class iCAPQCSVParser(InstrumentCSVResultsFileParser):
         analysis = {}
         for idx, result in enumerate(sline[2:]):
             if result != '':
-                analysis[self._column_headers[idx]] = {
+                analysis[self._column_header_stripped[idx]] = {
                     'result': result,
                     'DefaultResult': 'result',
                 }
