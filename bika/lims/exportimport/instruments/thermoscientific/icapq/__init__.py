@@ -3,7 +3,8 @@
 from string import digits
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
-from bika.lims.exportimport.instrument.resultsimport import InstrumentCSVResultsFileParser, AnalysisResultsImporter
+from bika.lims.exportimport.instrument.resultsimport import \
+    InstrumentCSVResultsFileParser, AnalysisResultsImporter
 
 class iCAPQCSVParser(InstrumentCSVResultsFileParser):
 
