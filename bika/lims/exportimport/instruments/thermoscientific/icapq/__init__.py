@@ -12,10 +12,11 @@ class iCAPQCSVParser(InstrumentCSVResultsFileParser):
         self._column_header = []
         self._end_header = False
         column_header = None
+        self.allowed_quan_types = ['ExtCal.Average', 'IntCal.Average']
 
     def _parseline(self, line):
         sline = line.split(';')
-        if sline[2] = 'ExtCal.Average' and not self._end_header:
+        if sline[2] in self.allowed_quan_types and not self._end_header:
             return 1
         elif sline > 0 and not self._end_header:
             self._column_header = sline[2:].strip(' (KED)').translate(None, digits)
