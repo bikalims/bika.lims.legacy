@@ -57,7 +57,7 @@ def Import(context, request):
         elif sample == 'sample_clientsid':
             sam = ['getSampleID', 'getClientSampleID']
 
-        importer = RigakuSuperminiWXRFImporter(parser=parser,
+        importer = ThermoiCAPQImporter(parser=parser,
                                               context=context,
                                               idsearchcriteria=sam,
                                               allowed_ar_states=status,
