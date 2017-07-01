@@ -20,7 +20,8 @@ class iCAPQCSVParser(InstrumentCSVResultsFileParser):
         if sline[2] in self.allowed_quan_types and not self._end_header:
             return 1
         elif sline > 0 and not self._end_header:
-            self._column_header = sline[2:].strip(' (KED)').translate(None, digits)
+            self._column_header = sline[2:]
+            self._column_header_stripped = [element[:-6].translate(None, digits) for element in self._column_header]
             self._end_header = True
             return 0
         elif sline > 0 and self._end_header:
