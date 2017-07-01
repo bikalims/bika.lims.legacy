@@ -14,6 +14,7 @@ from foss.winescan import ft120
 from thermoscientific.gallery import Ts9861x
 from thermoscientific.arena import xt20
 from thermoscientific.multiskan import go
+from thermoscientific.icapq import icapq
 from panalytical.omnia import axios_xrf
 from alere.pima import beads, cd4
 from lifetechnologies.qubit import qubit
@@ -49,6 +50,7 @@ __all__ = ['abaxis.vetscan.vs2',
            'rochecobas.taqman.model96',
            'thermoscientific.arena.xt20',
            'thermoscientific.gallery.Ts9861x',
+           'thermoscientific.icapq.icapq',
            'panalytical.omnia.axios_xrf',
            'lifetechnologies.qubit.qubit',
            'sysmex.xs.i500',
