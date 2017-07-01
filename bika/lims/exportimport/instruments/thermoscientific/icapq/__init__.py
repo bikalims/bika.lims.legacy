@@ -12,7 +12,7 @@ class iCAPQCSVParser(InstrumentCSVResultsFileParser):
         InstrumentCSVResultsFileParser.__init__(self, csv)
         self._column_header = []
         self._end_header = False
-        column_header = None
+        self._column_header_stripped = None
         self.allowed_quan_types = ['ExtCal.Average', 'IntCal.Average']
 
     def _parseline(self, line):
