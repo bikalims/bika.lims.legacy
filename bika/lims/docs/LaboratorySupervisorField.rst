@@ -7,7 +7,7 @@ Lab Contact whose parent is Lab Contacts.
 
 Running this test from the buildout directory::
 
-    bin/test test_textual_doctests -t ContactDepartmentField
+    bin/test test_textual_doctests -t LaboratorySupervisorField
 
 
 Test Setup

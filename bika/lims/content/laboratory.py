@@ -10,14 +10,30 @@ from AccessControl import ClassSecurityInfo
 from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.permissions import ListFolderContents, \
     ModifyPortalContent, View
+from plone import api
 from plone.app import folder
+from Products.Archetypes.Widget import SelectionWidget
 from Products.Archetypes.public import *
+from Products.CMFCore import permissions as CMFCorePermissions
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims.content.organisation import Organisation
 from bika.lims.config import ManageBika, PROJECTNAME
 from bika.lims import PMF, bikaMessageFactory as _
 
 schema = Organisation.schema.copy() + Schema((
+    StringField(
+        'LaboratorySupervisor',
+        mode="rw",
+        read_permission=CMFCorePermissions.View,
+        write_permission=CMFCorePermissions.ModifyPortalContent,
+        vocabulary='getLabContacts',
+        acquire=True,
+        widget=SelectionWidget(
+            format="select",
+            label=_("Laboratory Supervisor"),
+            render_own_label=True,
+        ),
+    ),
     StringField('LabURL',
         schemata = 'Address',
         write_permission = ManageBika,
@@ -128,5 +144,14 @@ class Laboratory(UniqueObject, Organisation):
     def Title(self):
         title = self.getName() and self.getName() or _("Laboratory")
         return safe_unicode(title).encode('utf-8')
+
+    def getLabContacts(self):
+        """Return a list of Lab Contacts
+        """
+        lab_contacts = api.content.find(portal_type="LabContact")
+        contacts = [['', ''], ]
+        for contact in lab_contacts:
+            contacts.append([contact.id, contact.Title])
+        return DisplayList(contacts)
 
 registerType(Laboratory, PROJECTNAME)
