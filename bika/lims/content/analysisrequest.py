@@ -1221,6 +1221,7 @@ schema = BikaSchema.copy() + Schema((
         write_permission=permissions.ModifyPortalContent,
         widget=BooleanWidget(
             label=_("Composite"),
+            description=_("Was the sample put together from multiple Samples?"),
             render_own_label=True,
             visible={
                 'edit': 'visible',
@@ -1559,6 +1560,7 @@ schema = BikaSchema.copy() + Schema((
         widget=SelectionWidget(
             format="select",
             label=_("Preparation Workflow"),
+            description=_("The needed preparation workflow for the sample in this request"),
             visible={
                 'edit': 'visible',
                 'view': 'visible',
