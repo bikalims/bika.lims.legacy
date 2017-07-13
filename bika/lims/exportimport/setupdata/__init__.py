@@ -2316,6 +2316,8 @@ class Client_Departments(WorksheetImporter):
         for row in self.get_rows(3):
             if row['title']:
                 obj = api.content.create(folder, 'ClientDepartment', 
+                        title=row['title'], 
+                        description=row.get('description', ''))
 
 class Client_Types(WorksheetImporter):
 
