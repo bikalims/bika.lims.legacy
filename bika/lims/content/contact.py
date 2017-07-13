@@ -25,6 +25,7 @@ from plone import api
 from zope.interface import implements
 
 from Products.Archetypes.Widget import SelectionWidget
+from Products.CMFCore.utils import getToolByName
 from bika.lims.utils import isActive
 from bika.lims.interfaces import IContact
 from bika.lims.content.person import Person
@@ -359,7 +360,8 @@ class Contact(Person):
         """Return a list of sample preparation workflows.  These are identified
         by scanning all workflow IDs for those beginning with "sampleprep".
         """
-        client_departments = api.content.find(portal_type="ClientDepartment")
+        bsc = getToolByName(self, 'bika_setup_catalog')
+        client_departments = bsc(portal_type='ClientDepartment', sort_on = 'sortable_title')
         prep_workflows = [['', ''], ]
         for cds in client_departments:
             prep_workflows.append([cds.id, cds.Title])
