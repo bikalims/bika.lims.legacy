@@ -19,7 +19,7 @@ from zope.component import getUtility
 
 
 def upgrade(tool):
-    """Upgrade step to prepare for refactored ID Server
+    """Upgrade step to 3.4.0
     """
     portal = aq_parent(aq_inner(tool))
 
@@ -34,6 +34,8 @@ def upgrade(tool):
     setup.runImportStepFromProfile('profile-bika.lims:default', 'controlpanel')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'workflow')
     setup.runImportStepFromProfile('profile-bika.lims:default', 'content')
+    setup.runImportStepFromProfile('profile-bika.lims:default', 'rolemap')
+    setup.runImportStepFromProfile('profile-bika.lims:default', 'propertiestool')
 
     return True
 

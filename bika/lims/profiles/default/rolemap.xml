@@ -484,6 +484,12 @@
       <role name="Manager"/>
     </permission>
 
+    <permission name="BIKA: Manage ClientType" acquire="True">
+      <role name="LabManager"/>
+      <role name="Manager"/>
+    </permission>
+
+
   </permissions>
 
 </rolemap>

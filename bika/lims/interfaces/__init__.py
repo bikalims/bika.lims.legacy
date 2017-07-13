@@ -750,3 +750,12 @@ class IARAnalysesField(Interface):
 class INumberGenerator(Interface):
     """A utility to generates unique numbers by key
     """
+
+class IClientType(Interface):
+    """ A Client Type.
+    """
+
+class IClientTypes(Interface):
+    """ A Client Types container.
+    """
+

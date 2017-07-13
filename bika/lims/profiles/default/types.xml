@@ -108,4 +108,6 @@
  <object name="WorksheetFolder" meta_type="Factory-based Type Information with dynamic views"/>
  <object name="WorksheetTemplate" meta_type="Factory-based Type Information with dynamic views"/>
  <object name="WorksheetTemplates" meta_type="Factory-based Type Information with dynamic views"/>
+ <object name="ClientType" meta_type="Dexterity FTI" />
+ <object name="ClientTypes" meta_type="Dexterity FTI" />
 </object>

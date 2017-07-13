@@ -176,3 +176,7 @@ ManageARImport = 'BIKA: Manage ARImport'
 # Manage AR Priorities
 # ----------------------------------------------
 ManageARPriority = 'BIKA: Manage ARPriority'
+
+# Manage Client Types
+# ----------------------------------------------
+ManageClientType = 'BIKA: Manage ClientType'

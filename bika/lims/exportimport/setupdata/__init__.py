@@ -2307,6 +2307,7 @@ class AR_Priorities(WorksheetImporter):
                     if big_icon:
                         obj.setBigIcon(big_icon)
                 obj.unmarkCreationFlag()
+                renameAfterCreation(obj)
 
 class Client_Departments(WorksheetImporter):
 
@@ -2315,5 +2316,13 @@ class Client_Departments(WorksheetImporter):
         for row in self.get_rows(3):
             if row['title']:
                 obj = api.content.create(folder, 'ClientDepartment', 
+
+class Client_Types(WorksheetImporter):
+
+    def Import(self):
+        folder = self.context.bika_setup.bika_clienttypes
+        for row in self.get_rows(3):
+            if row['title']:
+                obj = api.content.create(folder, 'ClientType', 
                         title=row['title'], 
                         description=row.get('description', ''))
