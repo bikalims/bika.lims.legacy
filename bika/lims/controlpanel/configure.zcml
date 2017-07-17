@@ -29,6 +29,14 @@
     />
 
     <browser:page
+      for="bika.lims.controlpanel.bika_clienttypes.IClientTypes"
+      name="folder_view"
+      class=".bika_clienttypes.ClientTypesView"
+      permission="bika.lims.ManageBika"
+      layer="bika.lims.interfaces.IBikaLIMS"
+    />
+
+    <browser:page
       for="bika.lims.interfaces.IDepartments"
       name="folder_view"
       class=".bika_departments.DepartmentsView"

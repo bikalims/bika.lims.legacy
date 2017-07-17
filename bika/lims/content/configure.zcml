@@ -22,6 +22,8 @@
     <adapter name="sortable_title" factory=".analysiscategory.sortable_title_with_sort_key" />
     <adapter name="sortable_title" factory=".analysisservice.sortable_title_with_sort_key" />
     <adapter name="sortable_title" factory=".analysis.sortable_title_with_sort_key" />
+    <adapter name="title" factory=".clienttype.clienttype_title_indexer"/>
+    <adapter name="sortable_title" factory=".clienttype.clienttype_sortable_title_indexer"/>
 
     <subscriber
       for="bika.lims.interfaces.IPricelist

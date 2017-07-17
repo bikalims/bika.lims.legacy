@@ -5,6 +5,7 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from plone import api
 from bika.lims.exportimport.dataimport import SetupDataSetList as SDL
 from bika.lims.idserver import renameAfterCreation
 from bika.lims.interfaces import ISetupDataSetList
@@ -2307,3 +2308,13 @@ class AR_Priorities(WorksheetImporter):
                         obj.setBigIcon(big_icon)
                 obj.unmarkCreationFlag()
                 renameAfterCreation(obj)
+
+class Client_Types(WorksheetImporter):
+
+    def Import(self):
+        folder = self.context.bika_setup.bika_clienttypes
+        for row in self.get_rows(3):
+            if row['title']:
+                obj = api.content.create(folder, 'ClientType', 
+                        title=row['title'], 
+                        description=row.get('description', ''))
