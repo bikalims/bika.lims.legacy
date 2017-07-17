@@ -17,7 +17,6 @@ from Products.Archetypes.atapi import BaseFolder
 from Products.Archetypes.atapi import registerType
 from Products.Archetypes.atapi import ComputedField
 from Products.Archetypes.atapi import ComputedWidget
-from Products.Archetypes.atapi import FileField
 from Products.Archetypes.atapi import FileWidget
 from Products.Archetypes.atapi import ReferenceField
 from Products.Archetypes.atapi import ReferenceWidget
@@ -26,6 +25,8 @@ from Products.Archetypes.atapi import StringWidget
 from Products.Archetypes.atapi import DateTimeField
 from Products.Archetypes.atapi import SelectionWidget
 from Products.Archetypes.config import REFERENCE_CATALOG
+
+from plone.app.blob.field import FileField
 
 from bika.lims.config import PROJECTNAME
 from bika.lims.config import ATTACHMENT_REPORT_OPTIONS
