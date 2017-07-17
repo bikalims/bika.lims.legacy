@@ -522,7 +522,7 @@ class AnalysisRequestPublishView(BrowserView):
         client_address = client.getPostalAddress()
         if not client_address:
             # Data from the first contact
-            contact = self.getAnalysisRequest().getContact()
+            contact = self.getAnalysisRequestObj().getContact()
             if contact and contact.getBillingAddress():
                 client_address = contact.getBillingAddress()
             elif contact and contact.getPhysicalAddress():

@@ -1,6 +1,7 @@
 3.2.1b3 (unreleased)
 --------------------
 
+- Issue-2128: Infinite Recursion on Report Publication
 - Issue-2095: Permission of getAccreditationBodyLogo
 - Issue-2065: Sort order on all landing pages are broken
 - Issue-2081: Fixed multiple partition creation from ARTemple
