@@ -67,7 +67,32 @@ class AttachmentsView(BrowserView):
 
         return action()
 
-    def action_add_attachment(self):
+    def action_update(self):
+        """Form action to update the attachments
+        """
+        form = self.request.form
+        # order = form.get("order", [])
+
+        attachments = form.get("attachments", [])
+        for attachment in attachments:
+            # attachment is a form mapping, not a dictionary -> convert
+            values = dict(attachment)
+
+            uid = values.pop("UID")
+            obj = api.get_object_by_uid(uid)
+
+            # delete the attachment if the delete flag is true
+            if values.pop("delete", False):
+                self.delete_attachment(obj)
+                continue
+
+            # update the attachment with the given data
+            obj.update(**values)
+            obj.reindexObject()
+
+        return self.request.response.redirect(self.context.absolute_url())
+
+    def action_add(self):
         """Form action to add a new attachment
         """
         form = self.request.form
@@ -120,6 +145,27 @@ class AttachmentsView(BrowserView):
                 self.context.absolute_url()))
         else:
             self.request.response.redirect(self.context.absolute_url())
+
+    def delete_attachment(self, attachment):
+        """Delete attachment
+        """
+        uid = attachment.UID()
+
+        parent_ar = attachment.getRequest()
+        parent_an = attachment.getAnalysis()
+        parent = parent_an if parent_an else parent_ar
+        others = parent.getAttachment()
+
+        # remove references
+        attachments = []
+        for other in others:
+            if other.UID() != uid:
+                attachments.append(other.UID())
+        parent.setAttachment(attachments)
+
+        # delete the attachment finally
+        client = api.get_parent(attachment)
+        client.manage_delObjects([attachment.getId(), ])
 
     def global_attachments_allowed(self):
         """Checks Bika Setup if Attachments are allowed
