@@ -34,7 +34,7 @@ EDITABLE_STATES = [
 
 
 class AttachmentsView(BrowserView):
-    """Manage view for attachments
+    """Attachments view adapter for ARs and WSs
     """
     implements(IPublishTraverse)
 
