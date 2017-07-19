@@ -1,6 +1,7 @@
 3.3.0 (unreleased)
 ------------------
 
+- Issue-2129: Migrate Attachments to blobs
 - Issue-2098: Inline rendered Attachments not in final PDF
 - LIMS-2596:  AR and Sample view fields that need to stay editable
 - Issue-2128: Infinite Recursion on Report Publication

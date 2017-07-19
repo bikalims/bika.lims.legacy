@@ -580,8 +580,8 @@
          profile="bika.lims:default"/>
 
  <genericsetup:upgradeStep
-         title="Upgrade ID Server"
-         description="This is the upgrade step to prepare database for new ID Server."
+         title="Upgrade to Bika LIMS 3.3.0"
+         description="This is the upgrade step to drive bikaLIMS to 3.3.0 version."
          source="320"
          destination="330"
          handler="bika.lims.upgrade.to330.upgrade"
@@ -596,4 +596,5 @@
          handler="bika.lims.upgrade.to340.upgrade"
          sortkey="1"
          profile="bika.lims:default"/>
+
 </configure>
