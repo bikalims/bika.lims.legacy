@@ -34,7 +34,11 @@ EDITABLE_STATES = [
 
 
 class AttachmentsView(BrowserView):
-    """Attachments view adapter for ARs and WSs
+    """Attachments manage view
+
+    This view is used in the Attachments viewlet displayed in ARs and WSs, but
+    can be used as a general purpose multi-adapter for ARs and WSs to manage
+    attachments.
     """
     implements(IPublishTraverse)
 
@@ -56,13 +60,15 @@ class AttachmentsView(BrowserView):
 
         url = self.context.absolute_url()
 
+        # only proceed if the form was POSTed
         if not self.request.form.get("submitted", False):
             return self.request.response.redirect(url)
 
+        # only handle one additional path segment to route to a form action
         if len(self.traverse_subpath) != 1:
             return self.request.response.redirect(url)
 
-        # Use the first path segment to determine the endpoint function to call
+        # the first path segment is used to determine the endpoint
         func_name = self.traverse_subpath[0]
         action_name = "action_{}".format(func_name)
         action = getattr(self, action_name, None)
@@ -71,10 +77,11 @@ class AttachmentsView(BrowserView):
             logger.warn("AttachmentsView.__call__: Unknown action name '{}'"
                         .format(func_name))
             return self.request.response.redirect(url)
+        # call the endpoint
         return action()
 
     def action_update(self):
-        """Form action to update the attachments
+        """Form action enpoint to update the attachments
         """
 
         order = []
@@ -100,9 +107,10 @@ class AttachmentsView(BrowserView):
             obj.update(**values)
             obj.reindexObject()
 
-        # set the attachments order
+        # set the attachments order to the annotation storage
         self.set_attachments_order(order)
 
+        # redirect back to the default view
         return self.request.response.redirect(self.context.absolute_url())
 
     def action_add(self):
@@ -123,19 +131,22 @@ class AttachmentsView(BrowserView):
         attachmentid = self.context.generateUniqueId('Attachment')
         attachment = api.create(parent, "Attachment", id=attachmentid)
 
+        # update the attachment with the values from the form
         attachment.edit(
             AttachmentFile=this_file,
-            AttachmentType=self.request.form.get('AttachmentType', ''),
-            AttachmentKeys=self.request.form.get('AttachmentKeys', ''),
-            ReportOption=self.request.form.get('ReportOption', 'a'),
+            AttachmentType=form.get('AttachmentType', ''),
+            AttachmentKeys=form.get('AttachmentKeys', ''),
+            ReportOption=form.get('ReportOption', 'a'),
         )
 
+        # process and reindex
         attachment.processForm()
         attachment.reindexObject()
 
-        # append the new UID to the current order
+        # append the new UID to the end of the current order
         self.set_attachments_order(api.get_uid(attachment))
 
+        # handle analysis attachment
         analysis_uid = form.get("Analysis", None)
         if analysis_uid:
             rc = api.get_tool("reference_catalog")
@@ -206,7 +217,7 @@ class AttachmentsView(BrowserView):
         return bika_setup.getAnalysisAttachmentsPermitted()
 
     def get_attachment_size(self, attachment):
-        """Get a human readable size of the attachment
+        """Get the human readable size of the attachment
         """
         fsize = 0
         file = attachment.getAttachmentFile()
@@ -243,17 +254,19 @@ class AttachmentsView(BrowserView):
         }
 
     def get_attachments(self):
-        """Returns a list of attachments from the AR base view
+        """Returns a list of attachments info dictionaries
 
         Original code taken from bika.lims.analysisrequest.view
         """
 
         attachments = []
 
+        # process AR attachments
         for attachment in self.context.getAttachment():
             attachment_info = self.get_attachment_info(attachment)
             attachments.append(attachment_info)
 
+        # process analyses attachments
         for analysis in self.context.getAnalyses(full_objects=True):
             for attachment in analysis.getAttachment():
                 attachment_info = self.get_attachment_info(attachment)
@@ -264,7 +277,7 @@ class AttachmentsView(BrowserView):
         return attachments
 
     def get_sorted_attachments(self):
-        """Return the sorted fields
+        """Returns a sorted list of analysis info dictionaries
         """
         inf = float("inf")
         order = self.get_attachments_order()
@@ -354,7 +367,7 @@ class AttachmentsView(BrowserView):
 
     @property
     def storage(self):
-        """A storage which keeps some configuration settings for attachments
+        """A storage which keeps configuration settings for attachments
         """
         annotation = self.get_annotation()
         if annotation.get(ATTACHMENTS_STORAGE) is None:
@@ -362,6 +375,8 @@ class AttachmentsView(BrowserView):
         return annotation[ATTACHMENTS_STORAGE]
 
     def flush(self):
+        """Remove the whole storage
+        """
         annotation = self.get_annotation()
         if annotation.get(ATTACHMENTS_STORAGE) is not None:
             del annotation[ATTACHMENTS_STORAGE]
@@ -377,8 +392,12 @@ class AttachmentsView(BrowserView):
         self.storage.update({"order": order})
 
     def get_attachments_order(self):
-        order = self.storage.get("order", [])
-        return order
+        """Retunrs a list of UIDs for sorting purposes.
+
+        The order should be in the same order like the rows of the attachment
+        listing viewlet.
+        """
+        return self.storage.get("order", [])
 
 
 class ajaxAttachmentsView(AttachmentsView):

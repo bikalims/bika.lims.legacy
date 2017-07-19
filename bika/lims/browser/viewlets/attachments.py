@@ -12,13 +12,16 @@ from bika.lims import api
 
 
 class AttachmentsViewlet(ViewletBase):
-    """Viewlet to manage Attachments
+    """Viewlet to manage Attachments in ARs
+
+    Most of the heavy lifting is now delegated in the template to the
+    `attachments_view` browser view.
     """
     template = ViewPageTemplateFile("templates/attachments.pt")
 
     def get_attachments_view(self):
-        # refactored functionality into separate Browser view to be able to
-        # have it as a form action target.
+        # refactored functionality into this separate Browser view, to be able
+        # to have a form submit target.
         attachments_view = api.get_view("attachments_view",
                                         context=self.context,
                                         request=self.request)
@@ -48,6 +51,9 @@ class AttachmentsViewlet(ViewletBase):
 
 class WorksheetAttachmentsViewlet(AttachmentsViewlet):
     """Viewlet to manage Attachments on Worksheets
+
+    Most of the heavy lifting is now delegated in the template to the
+    `attachments_view` browser view.
     """
     template = ViewPageTemplateFile("templates/worksheet_attachments.pt")
 
