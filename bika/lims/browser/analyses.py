@@ -584,6 +584,9 @@ class AnalysesView(BikaListingView):
                     for attachment in obj.getAttachment():
                         af = attachment.getAttachmentFile()
                         icon = af.icon
+                        # handle blob icons
+                        if callable(icon):
+                            icon = icon()
                         attachments += "<span class='attachment' attachment_uid='%s'>" % (attachment.UID())
                         if icon:
                             attachments += "<img src='%s/%s'/>" % (self.portal_url, icon)

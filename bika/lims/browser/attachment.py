@@ -225,12 +225,16 @@ class AttachmentsView(BrowserView):
         attachment_uid = api.get_uid(attachment)
         attachment_file = attachment.getAttachmentFile()
         attachment_type = attachment.getAttachmentType()
+        attachment_icon = attachment_file.icon
+
+        if callable(attachment_icon):
+            attachment_icon = attachment_icon()
 
         return {
             'keywords': attachment.getAttachmentKeys(),
             'size': self.get_attachment_size(attachment),
             'name': attachment_file.filename,
-            'Icon': attachment_file.icon,
+            'Icon': attachment_icon,
             'type': api.get_uid(attachment_type) if attachment_type else '',
             'absolute_url': attachment.absolute_url(),
             'UID': attachment_uid,
