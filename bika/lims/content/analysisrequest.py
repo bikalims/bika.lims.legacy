@@ -83,6 +83,7 @@ from bika.lims.interfaces import IAnalysisRequest
 from bika.lims.interfaces import ISamplePrepWorkflow
 
 from bika.lims import api
+from bika.lims import deprecated
 from bika.lims.config import PROJECTNAME
 from bika.lims import bikaMessageFactory as _
 from bika.lims.content.bikaschema import BikaSchema
@@ -2233,6 +2234,9 @@ class AnalysisRequest(BaseFolder):
         invoice_url = invoice.absolute_url()
         RESPONSE.redirect('{}/invoice_print'.format(invoice_url))
 
+    @deprecated(comment="bika.lims.content.analysisrequest.addARAttachment "
+                        "is deprecated and will be removed in Bika LIMS 3.3. "
+                        "Please use the view 'attachments_view' instead.")
     def addARAttachment(self, REQUEST=None, RESPONSE=None):
         """Add the file as an attachment
         """
@@ -2280,6 +2284,9 @@ class AnalysisRequest(BaseFolder):
         else:
             RESPONSE.redirect(self.absolute_url())
 
+    @deprecated(comment="bika.lims.content.analysisrequest.delARAttachment "
+                        "is deprecated and will be removed in Bika LIMS 3.3. "
+                        "Please use the view 'attachments_view' instead.")
     def delARAttachment(self, REQUEST=None, RESPONSE=None):
         """Delete the attachment
         """
