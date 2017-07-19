@@ -623,8 +623,11 @@ class AnalysisRequestPublishView(BrowserView):
     def _client_address(self, client):
         client_address = client.getPostalAddress()
         if not client_address:
+            ar = self.getAnalysisRequestObj()
+            if not IAnalysisRequest.providedBy(ar):
+                return ""
             # Data from the first contact
-            contact = self.getAnalysisRequestObj().getContact()
+            contact = ar.getContact()
             if contact and contact.getBillingAddress():
                 client_address = contact.getBillingAddress()
             elif contact and contact.getPhysicalAddress():
