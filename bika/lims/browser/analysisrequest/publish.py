@@ -10,6 +10,7 @@ from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.config import POINTS_OF_CAPTURE
 from bika.lims.idserver import renameAfterCreation
+from bika.lims.interfaces import IAnalysisRequest
 from bika.lims.interfaces import IResultOutOfRange
 from bika.lims.utils import isnumber
 from bika.lims.utils import to_utf8, encode_header, createPdf, attachPdf
