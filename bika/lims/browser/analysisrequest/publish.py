@@ -434,6 +434,7 @@ class AnalysisRequestPublishView(BrowserView):
 
         info = {
             "obj": attachment,
+            "uid": attachment.UID(),
             "keywords": attachment.getAttachmentKeys(),
             "type": attachment_type and attachment_type.Title() or "",
             "file": attachment_file,
