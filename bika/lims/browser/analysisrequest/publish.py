@@ -445,14 +445,31 @@ class AnalysisRequestPublishView(BrowserView):
             "mimetype": attachment_mime,
             "title": attachment_file.Title(),
             "icon": attachment_file.icon,
-            "inline": "<embed src='{}'' class='inline-attachment inline-attachment-{}'/>".format(
-                attachment_file.absolute_url(), self.getDirection()),
+            "inline": "<embed src='{}/AttachmentFile' class='inline-attachment inline-attachment-{}'/>".format(
+                attachment.absolute_url(), self.getDirection()),
             "renderoption": attachment.getReportOption(),
         }
         if attachment_mime.startswith("image"):
-            info["inline"] = "<img src='{}' class='inline-attachment inline-attachment-{}'/>".format(
-                attachment_file.absolute_url(), self.getDirection())
+            info["inline"] = "<img src='{}/AttachmentFile' class='inline-attachment inline-attachment-{}'/>".format(
+                attachment.absolute_url(), self.getDirection())
         return info
+
+    def _sorted_attachments(self, attachments):
+        """Sorter to return the attachments in the same order as the user
+        defined in the attachments viewlet
+        """
+        inf = float("inf")
+        view = self.context.restrictedTraverse("attachments_view")
+        order = view.get_attachments_order()
+
+        def att_cmp(att1, att2):
+            _n1 = att1.get('uid')
+            _n2 = att2.get('uid')
+            _i1 = _n1 in order and order.index(_n1) + 1 or inf
+            _i2 = _n2 in order and order.index(_n2) + 1 or inf
+            return cmp(_i1, _i2)
+
+        return sorted(attachments, cmp=att_cmp)
 
     def _get_ar_attachments(self, ar):
         attachments = []
@@ -461,16 +478,18 @@ class AnalysisRequestPublishView(BrowserView):
             if attachment.getReportOption() == "i":
                 continue
             attachments.append(self._get_attachment_info(attachment))
-        return attachments
+
+        return self._sorted_attachments(attachments)
 
     def _get_an_attachments(self, ar):
         attachments = []
         for analysis in ar.getAnalyses(full_objects=True):
             for attachment in analysis.getAttachment():
+                # Skip attachments which have the (i)gnore flag set
                 if attachment.getReportOption() == "i":
                     continue
                 attachments.append(self._get_attachment_info(attachment))
-        return attachments
+        return self._sorted_attachments(attachments)
 
     def _batch_data(self, ar):
         data = {}
