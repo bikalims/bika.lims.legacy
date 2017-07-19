@@ -383,7 +383,8 @@ def bika_url_fetcher(url):
             Request(url,
                     headers={
                         'Cookie': "__ac={}".format(__ac),
-                        'User-Agent': VERSION_STRING
+                        'User-Agent': VERSION_STRING,
+                        'Authorization': request._auth,
                     }))
         return dict(file_obj=result,
                     redirected_url=result.geturl(),
