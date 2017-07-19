@@ -6,10 +6,12 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from zope.interface import implements
+from zope.annotation.interfaces import IAnnotations
 from zope.publisher.interfaces import IPublishTraverse
 
 from plone import protect
 
+from BTrees.OOBTree import OOBTree
 from Products.Five.browser import BrowserView
 
 from bika.lims import api
@@ -19,6 +21,8 @@ from bika.lims.decorators import returns_json
 from bika.lims.permissions import AddAttachment
 from bika.lims.permissions import EditResults
 from bika.lims.permissions import EditFieldResults
+
+ATTACHMENTS_STORAGE = "bika.lims.browser.attachment"
 
 EDITABLE_STATES = [
     'to_be_sampled',
@@ -50,12 +54,15 @@ class AttachmentsView(BrowserView):
         """
         protect.CheckAuthenticator(self.request.form)
 
+        url = self.context.absolute_url()
+
         if not self.request.form.get("submitted", False):
-            return self.request.response.redirect(self.context.absolute_url())
+            return self.request.response.redirect(url)
 
         if len(self.traverse_subpath) != 1:
-            return self.request.response.redirect(self.context.absolute_url())
+            return self.request.response.redirect(url)
 
+        # Use the first path segment to determine the endpoint function to call
         func_name = self.traverse_subpath[0]
         action_name = "action_{}".format(func_name)
         action = getattr(self, action_name, None)
@@ -63,17 +70,17 @@ class AttachmentsView(BrowserView):
         if action is None:
             logger.warn("AttachmentsView.__call__: Unknown action name '{}'"
                         .format(func_name))
-            return self.request.response.redirect(self.context.absolute_url())
-
+            return self.request.response.redirect(url)
         return action()
 
     def action_update(self):
         """Form action to update the attachments
         """
-        form = self.request.form
-        # order = form.get("order", [])
 
+        order = []
+        form = self.request.form
         attachments = form.get("attachments", [])
+
         for attachment in attachments:
             # attachment is a form mapping, not a dictionary -> convert
             values = dict(attachment)
@@ -86,14 +93,22 @@ class AttachmentsView(BrowserView):
                 self.delete_attachment(obj)
                 continue
 
+            # remember the order
+            order.append(uid)
+
             # update the attachment with the given data
             obj.update(**values)
             obj.reindexObject()
+
+        # set the attachments order
+        self.set_attachments_order(order)
 
         return self.request.response.redirect(self.context.absolute_url())
 
     def action_add(self):
         """Form action to add a new attachment
+
+        Code taken from bika.lims.content.addARAttachment.
         """
         form = self.request.form
         parent = api.get_parent(self.context)
@@ -118,6 +133,9 @@ class AttachmentsView(BrowserView):
         attachment.processForm()
         attachment.reindexObject()
 
+        # append the new UID to the current order
+        self.set_attachments_order(api.get_uid(attachment))
+
         analysis_uid = form.get("Analysis", None)
         if analysis_uid:
             rc = api.get_tool("reference_catalog")
@@ -130,7 +148,7 @@ class AttachmentsView(BrowserView):
             analysis.setAttachment(attachments)
 
             if api.get_workflow_status_of(analysis) == 'attachment_due':
-                api.do_transition_form(analysis, 'attach')
+                api.do_transition_for(analysis, 'attach')
         else:
             others = self.context.getAttachment()
             attachments = []
@@ -148,6 +166,8 @@ class AttachmentsView(BrowserView):
 
     def delete_attachment(self, attachment):
         """Delete attachment
+
+        Code taken from bika.lims.content.delARAttachment.
         """
         uid = attachment.UID()
 
@@ -185,13 +205,76 @@ class AttachmentsView(BrowserView):
         bika_setup = api.get_bika_setup()
         return bika_setup.getAnalysisAttachmentsPermitted()
 
+    def get_attachment_size(self, attachment):
+        """Get a human readable size of the attachment
+        """
+        fsize = 0
+        file = attachment.getAttachmentFile()
+        if file:
+            fsize = file.get_size()
+        if fsize < 1024:
+            fsize = '%s b' % fsize
+        else:
+            fsize = '%s Kb' % (fsize / 1024)
+        return fsize
+
+    def get_attachment_info(self, attachment):
+        """Returns a dictionary of attachment information
+        """
+
+        attachment_uid = api.get_uid(attachment)
+        attachment_file = attachment.getAttachmentFile()
+        attachment_type = attachment.getAttachmentType()
+
+        return {
+            'keywords': attachment.getAttachmentKeys(),
+            'size': self.get_attachment_size(attachment),
+            'name': attachment_file.filename,
+            'Icon': attachment_file.icon,
+            'type': api.get_uid(attachment_type) if attachment_type else '',
+            'absolute_url': attachment.absolute_url(),
+            'UID': attachment_uid,
+            'report_option': attachment.getReportOption(),
+            'analysis': '',
+        }
+
     def get_attachments(self):
         """Returns a list of attachments from the AR base view
+
+        Original code taken from bika.lims.analysisrequest.view
         """
-        context = self.context
-        request = self.request
-        view = api.get_view("base_view", context=context, request=request)
-        return view.getAttachments()
+
+        attachments = []
+
+        for attachment in self.context.getAttachment():
+            attachment_info = self.get_attachment_info(attachment)
+            attachments.append(attachment_info)
+
+        for analysis in self.context.getAnalyses(full_objects=True):
+            for attachment in analysis.getAttachment():
+                attachment_info = self.get_attachment_info(attachment)
+                attachment_info["analysis"] = analysis.Title()
+                attachment_info["analysis_uid"] = api.get_uid(analysis)
+                attachments.append(attachment_info)
+
+        return attachments
+
+    def get_sorted_attachments(self):
+        """Return the sorted fields
+        """
+        inf = float("inf")
+        order = self.get_attachments_order()
+        attachments = self.get_attachments()
+
+        def att_cmp(att1, att2):
+            _n1 = att1.get('UID')
+            _n2 = att2.get('UID')
+            _i1 = _n1 in order and order.index(_n1) + 1 or inf
+            _i2 = _n2 in order and order.index(_n2) + 1 or inf
+            return cmp(_i1, _i2)
+
+        sorted_attachments = sorted(attachments, cmp=att_cmp)
+        return sorted_attachments
 
     def get_attachment_types(self):
         """Returns a list of available attachment types
@@ -257,6 +340,41 @@ class AttachmentsView(BrowserView):
         """
         state = api.get_workflow_status_of(self.context)
         return state in EDITABLE_STATES
+
+    # ANNOTATION HANDLING
+
+    def get_annotation(self):
+        """Get the annotation adapter
+        """
+        return IAnnotations(self.context)
+
+    @property
+    def storage(self):
+        """A storage which keeps some configuration settings for attachments
+        """
+        annotation = self.get_annotation()
+        if annotation.get(ATTACHMENTS_STORAGE) is None:
+            annotation[ATTACHMENTS_STORAGE] = OOBTree()
+        return annotation[ATTACHMENTS_STORAGE]
+
+    def flush(self):
+        annotation = self.get_annotation()
+        if annotation.get(ATTACHMENTS_STORAGE) is not None:
+            del annotation[ATTACHMENTS_STORAGE]
+
+    def set_attachments_order(self, order):
+        """Remember the attachments order
+        """
+        # append single uids to the order
+        if isinstance(order, basestring):
+            new_order = self.storage.get("order", [])
+            new_order.append(order)
+            order = new_order
+        self.storage.update({"order": order})
+
+    def get_attachments_order(self):
+        order = self.storage.get("order", [])
+        return order
 
 
 class ajaxAttachmentsView(AttachmentsView):
