@@ -5,6 +5,7 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+from Acquisition import aq_base
 from plone.supermodel import model
 from plone.dexterity.content import Container, Item
 from zope.interface import implements
@@ -71,8 +72,7 @@ class ClientDepartment(Item):
                 self.notifyModified()
         for c in self._catalogs():
             if c is not None:
-                c.reindexObject(self,
-                                idxs=idxs)
+                c.reindexObject(self, idxs=idxs)
 
 @indexer(IClientDepartment, IBikaSetupCatalog)
 def clienttype_title_indexer(obj):
