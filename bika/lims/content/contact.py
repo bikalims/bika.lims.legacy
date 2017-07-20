@@ -74,6 +74,7 @@ schema = Person.schema.copy() + atapi.Schema((
         widget=SelectionWidget(
             format="select",
             label=_("Department"),
+            description=_("Which department does this contact work in?"),
             visible={
                 'edit': 'visible',
                 'view': 'visible',
