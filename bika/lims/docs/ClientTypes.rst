@@ -64,13 +64,13 @@ A `client` lives in the `/clients` folder::
     >>> transaction.commit()
     >>> client
     <Client at /plone/clients/client-1>
-    >>> client.setLicenses([{'Authority': 'AA', 'LicenseType':clienttype.UID(), 'MME_ID': 'MY ID', 'MME_Registration': 'RS451'},])
+    >>> client.setLicenses([{'Authority': 'AA', 'LicenseType':clienttype.UID(), 'LicenseID': 'MY ID', 'LicenseNumber': 'RS451'},])
     >>> transaction.commit()
     >>> client_url = client.absolute_url() + '/base_edit'
     >>> browser.open(client_url)
     >>> "edit_form" in browser.contents
     True
-    >>> browser.getControl(name='Licenses.MME_ID:records', index=0).value == 'MY ID'
+    >>> browser.getControl(name='Licenses.LicenseID:records', index=0).value == 'MY ID'
     True
     >>> browser.getControl(name='Licenses.LicenseType:records', index=0).value[0] == clienttype.UID()
     True

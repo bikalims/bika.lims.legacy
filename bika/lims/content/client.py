@@ -143,21 +143,22 @@ schema = Organisation.schema.copy() + atapi.Schema((
         allow_reorder=True,
         allow_empty_rows=False,
         columns=('LicenseType',
-                 'MME_ID',
-                 'MME_Registration',
+                 'LicenseID',
+                 'LicenseNumber',
                  'Authority'),
         default=[{'LicenseType': '',
-                  'MME_ID': '',
-                  'MME_Registration': '',
+                  'LicenseID': '',
+                  'LicenseNumber': '',
                   'Authority': ''
                   }],
         widget=DataGridWidget(
+            description=_("Details of client licenses that authorise them to operate, sometimes to be included on documentation."),
             columns={
                 'LicenseType': SelectColumn(
                     'License Type',
                     vocabulary='Vocabulary_LicenseType'),
-                'MME_ID': Column('MME ID'),
-                'MME_Registration': Column('MME Registation Number'),
+                'LicenseID': Column('License ID'),
+                'LicenseNumber': Column('Registation Number'),
                 'Authority': Column('Issuing Authority')
             }
         )
