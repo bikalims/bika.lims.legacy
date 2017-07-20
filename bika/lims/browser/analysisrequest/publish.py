@@ -605,7 +605,7 @@ class AnalysisRequestPublishView(BrowserView):
         client_address = client.getPostalAddress()
         if not client_address:
             # Data from the first contact
-            contact = self.getAnalysisRequest().getContact()
+            contact = self.getAnalysisRequestObj().getContact()
             if contact and contact.getBillingAddress():
                 client_address = contact.getBillingAddress()
             elif contact and contact.getPhysicalAddress():
@@ -1073,7 +1073,7 @@ class AnalysisRequestPublishView(BrowserView):
         """
         client = ar.aq_parent
         subject_items = client.getEmailSubject()
-        ai = co = cr = cs = False
+        ai = co = cr = cs = cn = False
         if 'ar' in subject_items:
             ai = True
         if 'co' in subject_items:
@@ -1082,10 +1082,13 @@ class AnalysisRequestPublishView(BrowserView):
             cr = True
         if 'cs' in subject_items:
             cs = True
+        if 'cn' in subject_items:
+            cn = True
         ais = []
         cos = []
         crs = []
         css = []
+        cns = []
         blanks_found = False
         if ai:
             ais.append(ar.getRequestID())
@@ -1109,6 +1112,8 @@ class AnalysisRequestPublishView(BrowserView):
                     css.append(sample.getClientSampleID())
             else:
                 blanks_found = True
+        if cn:
+            cns.append(ar.getClientTitle())
         line_items = []
         if ais:
             ais.sort()
@@ -1125,6 +1130,10 @@ class AnalysisRequestPublishView(BrowserView):
         if css:
             css.sort()
             li = t(_('Samples: ${samples}', mapping={'samples': ', '.join(css)}))
+            line_items.append(li)
+        if cns:
+            cns.sort()
+            li = t(_('Client: ${client}', mapping={'client': ', '.join(cns)}))
             line_items.append(li)
         tot_line = ' '.join(line_items)
         if tot_line:

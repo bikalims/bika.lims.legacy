@@ -6,7 +6,6 @@
 from DateTime import DateTime
 from Products.CMFPlone.utils import _createObjectByType
 from bika.lims import logger
-from bika.lims.content.analysis import Analysis
 from bika.lims.exportimport.instruments.shimadzu.nexera.LCMS8050 import Import
 from bika.lims.testing import BIKA_SIMPLE_FIXTURE
 from bika.lims.tests.base import BikaSimpleTestCase
@@ -63,10 +62,12 @@ class TestInstrumentImport(BikaSimpleTestCase):
         self.addthing(self.portal.bika_setup.bika_arpriorities, 'ARPriority',
                       title='Normal', sortKey=1)
         a = self.addthing(self.portal.bika_setup.bika_analysisservices,
-                          'AnalysisService', title='CAL1', Keyword="CAL1")
+                          'AnalysisService', title='Ecoli', Keyword="Ecoli")
+        b = self.addthing(self.portal.bika_setup.bika_analysisservices,
+                          'AnalysisService', title='Calcium', Keyword="Ca")
         self.addthing(self.portal.bika_setup.bika_analysisprofiles,
                       'AnalysisProfile', title='MicroBio',
-                      Service=[a.UID()])
+                      Service=[a.UID(), b.UID()])
 
     def tearDown(self):
         super(TestInstrumentImport, self).setUp()
@@ -130,7 +131,7 @@ Total price excl Tax,,,,,,,,,,,,,,
         transaction.commit()
         #Testing Import for Instrument
         path = os.path.dirname(__file__)
-        filename = '%s/files/nexera.csv' % path
+        filename = '%s/files/nexera' % path
         if not os.path.isfile(filename):
             self.fail("File %s not found" % filename)
         data = open(filename, 'r').read()
@@ -146,13 +147,13 @@ Total price excl Tax,,,,,,,,,,,,,,
         context = self.portal
         results = Import(context, request)
         transaction.commit()
-        text = 'Import finished successfully: 1 ARs and 1 results updated'
+        text = 'Import finished successfully: 1 ARs and 2 results updated'
         if text not in results:
             self.fail("AR Import failed")
         browser = self.getBrowser(loggedIn=True)
         browser.open(ar.getObject().absolute_url() + "/manage_results")
         content = browser.contents
-        if '0.025' not in content:
+        if '0.8' and '0.123' not in content:
             self.fail("AR Result did not get updated")
 
 def test_suite():

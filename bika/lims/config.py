@@ -79,6 +79,7 @@ EMAIL_SUBJECT_OPTIONS = DisplayList((
     ('co', _('Order ID')),
     ('cr', _('Client Reference')),
     ('cs', _('Client SID')),
+    ('cn', _('Client Name')),
 ))
 
 GENDERS = DisplayList((

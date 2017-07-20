@@ -344,36 +344,6 @@ schema = BikaFolderSchema.copy() + Schema((
     #     )
     # ),
     BooleanField(
-        'SamplingWorkflowEnabled',
-        schemata="Analyses",
-        default=False,
-        widget=BooleanWidget(
-            label=_("Enable the Sampling workflow"),
-            description=_("Select this to activate the sample collection workflow steps.")
-        ),
-    ),
-    BooleanField(
-        'ScheduleSamplingEnabled',
-        schemata="Analyses",
-        default=False,
-        widget=BooleanWidget(
-            label=_("Enable the Schedule a Sampling functionality"),
-            description=_(
-                "Select this to allow a Sampling Coordinator to" +
-                " schedule a sampling. This functionality only takes effect" +
-                " when 'Sampling workflow' is active")
-        ),
-    ),
-    BooleanField(
-        'ShowPartitions',
-        schemata="Analyses",
-        default=True,
-        widget=BooleanWidget(
-            label=_("Display individual sample partitions "),
-            description=_("Turn this on if you want to work with sample partitions")
-        ),
-    ),
-    BooleanField(
         'CategoriseAnalysisServices',
         schemata="Analyses",
         default=False,
@@ -531,19 +501,6 @@ schema = BikaFolderSchema.copy() + Schema((
                 "own configuration"),
         )
     ),
-    DurationField(
-        'DefaultSampleLifetime',
-        schemata="Analyses",
-        required=1,
-        default={"days": 30, "hours": 0, "minutes": 0},
-        widget=DurationWidget(
-            label=_("Default sample retention period"),
-            description=_(
-                "The number of days before a sample expires and cannot be analysed "
-                "any more. This setting can be overwritten per individual sample type "
-                "in the sample types setup"),
-        )
-    ),
     StringField(
         'ResultsDecimalMark',
         schemata="Analyses",
@@ -610,9 +567,97 @@ schema = BikaFolderSchema.copy() + Schema((
             base_query={'review_state': 'published'},
         ),
     ),
+    BooleanField(
+        'SamplingWorkflowEnabled',
+        schemata="Sampling and COC",
+        default=False,
+        widget=BooleanWidget(
+            label=_("Enable Sampling"),
+            description=_("Select this to activate the sample collection workflow steps.")
+        ),
+    ),
+    BooleanField(
+        'ScheduleSamplingEnabled',
+        schemata="Sampling and COC",
+        default=False,
+        widget=BooleanWidget(
+            label=_("Enable Sampling Scheduling"),
+            description=_(
+                "Select this to allow a Sampling Coordinator to" +
+                " schedule a sampling. This functionality only takes effect" +
+                " when 'Sampling workflow' is active")
+        ),
+    ),
+    BooleanField(
+        'ShowPartitions',
+        schemata="Sampling and COC",
+        default=True,
+        widget=BooleanWidget(
+            label=_("Display individual sample partitions "),
+            description=_("Turn this on if you want to work with sample partitions")
+        ),
+    ),
+    BooleanField(
+        'SamplePreservationEnabled',
+        schemata="Sampling and COC",
+        default=False,
+        widget=BooleanWidget(
+            label=_("Enable Sample Preservation"),
+            description=_("")
+        ),
+    ),
+    DurationField(
+        'DefaultSampleLifetime',
+        schemata="Sampling and COC",
+        required=1,
+        default={"days": 30, "hours": 0, "minutes": 0},
+        widget=DurationWidget(
+            label=_("Default sample retention period"),
+            description=_(
+                "The number of days before a sample expires and cannot be analysed "
+                "any more. This setting can be overwritten per individual sample type "
+                "in the sample types setup"),
+        )
+    ),
+    RecordsField(
+        'RejectionReasons',
+        schemata="Sampling and COC",
+        widget=RejectionSetupWidget(
+            label=_("Enable sampling rejection"),
+            description=_("Select this to activate the rejection workflow "
+                          "for Samples and Analysis Requests. A 'Reject' "
+                          "option will be displayed in the actions menu for "
+                          "these objects.")
+        ),
+    ),
+    BooleanField(
+        'NotifyOnRejection',
+        schemata="Sampling and COC",
+        default=False,
+        widget=BooleanWidget(
+            label=_("Sample rejection email notification"),
+            description=_("Select this to activate automatic notifications "
+                          "via email to the Client when a Sample or Analysis "
+                          "Request is rejected.")
+        ),
+    ),
+    StringField(
+        'COCAttestationStatement',
+        schemata="Sampling and COC",
+        widget=StringWidget(
+            label=_("COC Attestation Statement"),
+        )
+    ),
+    StringField(
+        'COCFooter',
+        schemata="Sampling and COC",
+        widget=StringWidget(
+            label=_("COC Footer"),
+        )
+    ),
     StringField(
         'AutoPrintStickers',
-        schemata="Stickers",
+        schemata="Sampling and COC",
         vocabulary=STICKER_AUTO_OPTIONS,
         widget=SelectionWidget(
             format='select',
@@ -625,7 +670,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'AutoStickerTemplate',
-        schemata="Stickers",
+        schemata="Sampling and COC",
         vocabulary="getStickerTemplates",
         widget=SelectionWidget(
             format='select',
@@ -635,7 +680,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'SmallStickerTemplate',
-        schemata="Stickers",
+        schemata="Sampling and COC",
         vocabulary="getStickerTemplates",
         default="Code_128_1x48mm.pt",
         widget=SelectionWidget(
@@ -646,7 +691,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'LargeStickerTemplate',
-        schemata="Stickers",
+        schemata="Sampling and COC",
         vocabulary="getStickerTemplates",
         default="Code_128_1x72mm.pt",
         widget=SelectionWidget(
@@ -717,28 +762,6 @@ Configuration Settings:
             label=_("ID Server Values"),
             cols=30,
             rows=30,
-        ),
-    ),
-    RecordsField(
-        'RejectionReasons',
-        schemata="Analyses",
-        widget=RejectionSetupWidget(
-            label=_("Enable the rejection workflow"),
-            description=_("Select this to activate the rejection workflow "
-                          "for Samples and Analysis Requests. A 'Reject' "
-                          "option will be displayed in the actions menu for "
-                          "these objects.")
-        ),
-    ),
-    BooleanField(
-        'NotifyOnRejection',
-        schemata="Analyses",
-        default=False,
-        widget=BooleanWidget(
-            label=_("Email notification on rejection"),
-            description=_("Select this to activate automatic notifications "
-                          "via email to the Client when a Sample or Analysis "
-                          "Request is rejected.")
         ),
     ),
     BooleanField(
