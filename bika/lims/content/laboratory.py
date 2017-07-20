@@ -31,6 +31,7 @@ schema = Organisation.schema.copy() + Schema((
         widget=SelectionWidget(
             format="select",
             label=_("Laboratory Supervisor"),
+            description=_("The Laboratory's supervisor will be used on the Certificate of Analysis(COA) and Chain of Custody(COC)"),
             render_own_label=True,
         ),
     ),
@@ -56,7 +57,7 @@ schema = Organisation.schema.copy() + Schema((
         write_permission = ManageBika,
         widget = BooleanWidget(
             label=_("Laboratory Accredited"),
-            description=_("Check this box if your laboratory is accredited"),
+            description=_("check this box if your laboratory is accredited"),
         ),
     ),
     StringField('AccreditationBody',
