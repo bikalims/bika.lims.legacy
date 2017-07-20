@@ -13,7 +13,6 @@ from bika.lims.idserver import generateUniqueId
 from bika.lims.numbergenerator import INumberGenerator
 from DateTime import DateTime
 from Products.ATContentTypes.utils import DT2dt
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from zope.component import getUtility
 

@@ -27,7 +27,6 @@ class IClientDepartment(model.Schema):
 
 class ClientDepartment(Item):
     implements(IClientDepartment)
-    pass
 
     # Catalog Multiplex support
     def _catalogs(self):
