@@ -32,6 +32,7 @@
 3.2.1b1 (2017-05-26)
 --------------------
 
+- LIMS-2449: Thermo Qtegra results importer
 - Issue-2024: Worksheet Template table header in Layout not translated
 - Issue-1973: Published PDF reports are visible by anonymous users
 - Issue-1976: Publication Report "bydepartment" raises an Error

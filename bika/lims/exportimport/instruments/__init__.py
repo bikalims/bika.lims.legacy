@@ -41,6 +41,7 @@ from tescan.tima import tima
 from thermoscientific.arena import xt20
 from thermoscientific.gallery import Ts9861x
 from thermoscientific.multiskan import go
+from thermoscientific.qtegra import qtegra
 
 __all__ = ['abaxis.vetscan.vs2',
            'agilent.masshunter.quantitative',
@@ -63,13 +64,14 @@ __all__ = ['abaxis.vetscan.vs2',
            'rochecobas.taqman.model96',
            'scilvet.abc.plus',
            'sealanalytical.aq2.aq2',
-           'shimadzu.gcms.tq8030', 
+           'shimadzu.gcms.tq8030',
            'sysmex.xs.i500',
            'sysmex.xs.i1000',
            'tescan.tima.tima',
            'thermoscientific.arena.xt20',
            'thermoscientific.gallery.Ts9861x',
            'thermoscientific.multiskan.go',
+           'thermoscientific.qtegra.qtegra',
            'myself.myinstrument',
            'nuclisens.easyq',
            'shimadzu.icpe.multitype',
