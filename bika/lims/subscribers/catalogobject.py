@@ -1,86 +1,83 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of Bika LIMS
+#
+# Copyright 2011-2017 by it's authors.
+# Some rights reserved. See LICENSE.txt, AUTHORS.txt.
+
+from bika.lims import api
+from bika.lims import logger
+
+"""Catalog Dexterity Objects that appear in more than one catalog
 """
-Catalog Dexterity Objects that appear in more than one catalog
-"""
-from Acquisition import aq_base
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore import permissions
-from bika.lims.permissions import ManageSupplyOrders, ManageLoginDetails
+
+
+def reindexMovedObject(obj, event):
+    """Reindex moved/renamed object
+    """
+
+    bika_catalogs = getattr(obj, "_bika_catalogs", [])
+    for name in bika_catalogs:
+        logger.debug("Reidexing moved object '{}' in catalog '{}'".format(
+            obj.getId(), name))
+        catalog = api.get_tool(name)
+
+        # check if the object was renamed
+        old_name = event.oldName
+        if old_name:
+            new_path = api.get_path(obj)
+            base_path = new_path.replace(event.newName, "")
+            old_path = "".join([base_path, old_name])
+            # uncatalog the old path
+            catalog.uncatalog_object(old_path)
+        catalog.reindexObject(obj)
 
 
 def indexObject(obj, event):
-    """ Various types need automation on edit.
+    """Additionally index the object into the bika catalogs
     """
-    if not hasattr(obj, 'portal_type'):
-        return
 
-    if obj.portal_type not in ('ClientType', 'ClientDepartment'):
-        return
-
-    if not hasattr(obj, '_catalogs'):
-        return
-
-    for c in obj._catalogs():
-        c.catalog_object(obj)
-
-def unIndexObject(obj, event):
-    ''' remove an object from all registered catalogs '''
-    if not hasattr(obj, 'portal_type'):
-        return
-
-    if obj.portal_type not in ('ClientType', 'ClientDepartment'):
-        return
-
-    if not hasattr(obj, '_catalogs'):
-        return
-
-    path = '/'.join(obj.getPhysicalPath())
-    for c in obj._catalogs():
-        c.uncatalog_object(path)
-
-def reIndexObject(obj, event, idxs=[]):
-    ''' reindex object '''
-    if not hasattr(obj, 'portal_type'):
-        return
-
-    if obj.portal_type not in ('ClientType', 'ClientDepartment'):
-        return
-
-    if not hasattr(obj, '_catalogs'):
-        return
-
-    if idxs == []:
-        # Update the modification date.
-        if hasattr(aq_base(obj), 'notifyModified'):
-            obj.notifyModified()
-    for c in obj._catalogs():
-        if c is not None:
-            c.reindexObject(obj)
+    bika_catalogs = getattr(obj, "_bika_catalogs", [])
+    for name in bika_catalogs:
+        logger.debug("Indexing object '{}' into catalog '{}'".format(
+            obj.getId(), name))
+        catalog = api.get_tool(name)
+        catalog.indexObject(obj)
 
 
-def reIndexObjectSecurity(obj, event, skip_self=False):
-    ''' reindex only security information on catalogs '''
-    if not hasattr(obj, 'portal_type'):
-        return
+def unindexObject(obj, event):
+    """Remove an object from all registered catalogs
+    """
 
-    if obj.portal_type not in ('ClientType', 'ClientDepartment'):
-        return
+    bika_catalogs = getattr(obj, "_bika_catalogs", [])
+    for name in bika_catalogs:
+        logger.debug("Unindexing object '{}' from catalog '{}'".format(
+            obj.getId(), name))
+        catalog = api.get_tool(name)
+        catalog.unindexObject(obj)
 
-    if not hasattr(obj, '_catalogs'):
-        return
 
-    path = '/'.join(obj.getPhysicalPath())
-    for c in obj._catalogs():
-        for brain in c.unrestrictedSearchResults(path=path):
-            brain_path = brain.getPath()
-            if brain_path == path and skip_self:
-                continue
-            # Get the object
-            ob = brain._unrestrictedGetObject()
+def reindexObject(obj, event):
+    """Reindex an object in all registered catalogs
+    """
 
-            # Recatalog with the same catalog uid.
-            # _cmf_security_indexes in CMFCatalogAware
-            c.reindexObject(ob,
-                            idxs=obj._cmf_security_indexes,
-                            update_metadata=0,
-                            uid=brain_path)
+    bika_catalogs = getattr(obj, "_bika_catalogs", [])
+    for name in bika_catalogs:
+        logger.debug("Unindexing object '{}' from catalog '{}'".format(
+            obj.getId(), name))
+        catalog = api.get_tool(name)
+        catalog.reindexObject(obj)
 
+
+def reindexObjectSecurity(obj, event):
+    """Reindex only security information on catalogs
+    """
+
+    bika_catalogs = getattr(obj, "_bika_catalogs", [])
+    for name in bika_catalogs:
+        logger.debug("Reindex security for object '{}' from catalog '{}'".format(
+            obj.getId(), name))
+        catalog = api.get_tool(name)
+        catalog.reindexObject(obj,
+                              idxs=obj._cmf_security_indexes,
+                              update_metadata=0)

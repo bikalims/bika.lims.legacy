@@ -50,7 +50,8 @@ A `ClientDepartment` lives in `ClientDepartments` folder::
 
     >>> clientdepartment = ploneapi.content.create(clientdepartments, "ClientDepartment", title="Test Department")
     >>> clientdepartment
-    <ClientDepartment at /plone/bika_setup/bika_clientdepartments/test-department>
+    <ClientDepartment at /plone/bika_setup/bika_clientdepartments/clientdepartment-1>
+
 
 Client
 ======
@@ -69,4 +70,4 @@ A `client` lives in the `/clients` folder::
     >>> 'Changes saved' and 'Test Department' in browser.contents
     True
     >>> browser.getControl('Test Department')
-    <ItemControl name='Department' type='select' optionValue='test-department' selected=True>
+    <ItemControl name='Department' type='select' optionValue='clientdepartment-1' selected=True>
