@@ -15,6 +15,9 @@ class IBikaLIMS(Interface):
        "bika" theme, this interface must be its layer
     """
 
+class IGenerateID(Interface):
+    """Marker Interface to generate an ID
+    """
 
 class IHaveNoBreadCrumbs(Interface):
 
@@ -758,4 +761,3 @@ class IClientType(Interface):
 class IClientTypes(Interface):
     """ A Client Types container.
     """
-
