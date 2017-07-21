@@ -459,7 +459,11 @@ class FolderView(BikaListingView):
         """ List of templates
             Used in bika_listing.pt
         """
-        return DisplayList(self.templates)
+        bsc = getToolByName(self.context, 'bika_setup_catalog')
+        return DisplayList([(c.UID, c.Title) for c in
+                bsc(portal_type = 'WorksheetTemplate',
+                   inactive_state = 'active',
+                   sort_on = 'sortable_title')])
 
     def getInstruments(self):
         """ List of instruments

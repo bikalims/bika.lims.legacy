@@ -378,7 +378,7 @@
       <tal:render condition="python:attachment['renderoption']=='r'">
         <tal:tag replace="structure attachment/inline"/>
       </tal:render>
-      <tal:attach condition="python:attachment['renderoption']=='a'">
+      <tal:attach condition="python:attachment['renderoption'] in ('a', '')">
         <span tal:content="attachment/keywords">Total Vit D2 + D3</span>
         <a title="Click to download"
           tal:attributes="href attachment/download"
@@ -396,7 +396,7 @@
       <tal:render condition="python:attachment['renderoption']=='r'">
         <tal:tag replace="structure attachment/inline"/>
       </tal:render>
-      <tal:attach condition="python:attachment['renderoption']=='a'">
+      <tal:attach condition="python:attachment['renderoption'] in ('a', '')">
         <span tal:content="attachment/keywords">Total Vit D2 + D3</span>
         <a title="Click to download"
           tal:attributes="href attachment/download"

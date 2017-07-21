@@ -150,15 +150,16 @@ class ICPEMultitypeCSVParser(InstrumentCSVResultsFileParser):
                 else:
                     quantitation[colname] = token
 
-                val = re.sub(r"\W", "", splitted[6])
-                self._addRawResult(quantitation['Title2'],
-                                   values={val:quantitation},
-                                   override=True)
             elif token:
                 self.err("Orphan value in column ${index} (${token})",
                          mapping={"index": str(i+1),
                                   "token": token},
                          numline=self._numline, line=line)
+
+        val = re.sub(r"\W", "", splitted[6])
+        self._addRawResult(quantitation['Title2'],
+                           values={val:quantitation},
+                           override=True)
 
 class ICPEMultitypeImporter(AnalysisResultsImporter):
 

@@ -28,6 +28,8 @@ DOCTESTS = [
     "../docs/Rolemap.rst",
     "../docs/ContactDepartmentField.rst",
     "../docs/ClientTypes.rst",
+    "../docs/LaboratorySupervisorField.rst",
+    "../docs/SamplingCOCSetupTab.rst",
 ]
 
 

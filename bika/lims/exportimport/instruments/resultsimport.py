@@ -546,14 +546,14 @@ class AnalysisResultsImporter(Logger):
 
         for arid, acodes in importedars.iteritems():
             acodesmsg = '. '.join(["Analysis %s" % acod for acod in acodes])
-            self.log("${request_id}: ${analysis_keywords} imported sucessfully",
+            self.log("${request_id}: ${analysis_keywords} imported successfully",
                      mapping={"request_id": arid,
                               "analysis_keywords": acodesmsg})
 
         for instid, acodes in importedinsts.iteritems():
             acodesmsg = '. '.join(["Analysis %s" % acod for acod in acodes])
             self.log(
-                "${instrument_id}: ${analysis_keywords} imported sucessfully",
+                "${instrument_id}: ${analysis_keywords} imported successfully",
                  mapping={"instrument_id": instid,
                           "analysis_keywords": acodesmsg})
 

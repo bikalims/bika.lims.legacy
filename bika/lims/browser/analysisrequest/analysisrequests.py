@@ -898,6 +898,8 @@ class AnalysisRequestsView(BikaListingView):
     def __call__(self):
         self.workflow = getToolByName(self.context, "portal_workflow")
         self.mtool = getToolByName(self.context, 'portal_membership')
+        portal = self.portal
+        bika_setup = portal.bika_setup
 
         # Only "BIKA: ManageAnalysisRequests" may see the copy to new button.
         # elsewhere it is hacked in where required.
@@ -929,7 +931,18 @@ class AnalysisRequestsView(BikaListingView):
                         state['hide_transitions'].append('preserve')
                     else:
                         state['hide_transitions'] = ['preserve', ]
-            new_states.append(state)
+            exclude_state = False
+            if state['title'] == 'To Be Sampled':
+                if bika_setup.getSamplingWorkflowEnabled():
+                    exclude_state = True
+            if state['title'] == 'Scheduled sampling':
+                if bika_setup.getScheduleSamplingEnabled():
+                    exclude_state = True
+            if state['title'] == 'To Be Preserved':
+                if bika_setup.getSamplePreservationEnabled():
+                    exclude_state = True
+            if not exclude_state:
+                new_states.append(state)
         self.review_states = new_states
 
         return super(AnalysisRequestsView, self).__call__()

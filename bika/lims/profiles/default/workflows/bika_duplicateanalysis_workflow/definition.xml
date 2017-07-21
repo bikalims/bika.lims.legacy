@@ -136,7 +136,7 @@
     </guard>
   </transition>
 
-  <transition transition_id="unassign" title="Unsassign" new_state="unassigned" trigger="USER" before_script="" after_script="" i18n:attributes="title">
+  <transition transition_id="unassign" title="Unassign" new_state="unassigned" trigger="USER" before_script="" after_script="" i18n:attributes="title">
     <action url="" category="workflow" icon="">Remove</action>
     <guard>
     </guard>

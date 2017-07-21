@@ -150,7 +150,7 @@ class TSVParser(InstrumentCSVResultsFileParser):
                          numline=self._numline, line=line)
             self._addRawResult(_results['Sample ID'],
                                values={self._currentanalysiskw:_results},
-                               override=True)
+                               override=False)
 
 class LCMS8050_Importer(AnalysisResultsImporter):
 
