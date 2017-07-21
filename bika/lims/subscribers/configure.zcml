@@ -61,4 +61,26 @@
       handler="bika.lims.subscribers.dep_cookie.SetDepartmentCookies"
       />
 
+  <!-- Multi catalog dexterity objects -->
+  <subscriber
+      for="*
+           zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      handler="bika.lims.subscribers.catalogobject.indexObject"
+      />
+  <subscriber
+      for="*
+           zope.lifecycleevent.interfaces.IObjectModifiedEvent"
+      handler="bika.lims.subscribers.catalogobject.reIndexObject"
+      />
+  <subscriber
+      for="*
+           zope.lifecycleevent.interfaces.IObjectRemovedEvent"
+      handler="bika.lims.subscribers.catalogobject.unIndexObject"
+      />
+  <subscriber
+      for="*
+           Products.DCWorkflow.interfaces.IBeforeTransitionEvent"
+      handler="bika.lims.subscribers.catalogobject.reIndexObjectSecurity"
+      />
+
 </configure>
