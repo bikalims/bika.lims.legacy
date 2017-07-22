@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- Issue-2143: Make Bika API work with DX types properly
 - Lab Supervisor field on the Laboratory(Bika Setup - Laboratory Information)
 
 
