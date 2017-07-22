@@ -2306,15 +2306,17 @@ class AR_Priorities(WorksheetImporter):
                 obj.unmarkCreationFlag()
                 renameAfterCreation(obj)
 
+
 class Client_Departments(WorksheetImporter):
 
     def Import(self):
         folder = self.context.bika_setup.bika_clientdepartments
         for row in self.get_rows(3):
             if row['title']:
-                obj = api.content.create(folder, 'ClientDepartment', 
-                        title=row['title'], 
-                        description=row.get('description', ''))
+                obj = api.create(folder, 'ClientDepartment',  # noqa
+                                 title=row['title'],
+                                 description=row.get('description', ''))
+
 
 class Client_Types(WorksheetImporter):
 
@@ -2322,6 +2324,6 @@ class Client_Types(WorksheetImporter):
         folder = self.context.bika_setup.bika_clienttypes
         for row in self.get_rows(3):
             if row['title']:
-                obj = api.content.create(folder, 'ClientType', 
-                        title=row['title'], 
-                        description=row.get('description', ''))
+                obj = api.create(folder, 'ClientType',  # noqa
+                                 title=row['title'],
+                                 description=row.get('description', ''))
