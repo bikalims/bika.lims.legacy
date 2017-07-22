@@ -3,8 +3,6 @@ Setup Data
 
 Client Contact has a new field called Department and the value of the field
 comes from the class Client Department whose parent is Client Departments.
-Please note that Client Department is a Dexterity class, hence the use of 
-ploneapi to create the the object.
 
 Running this test from the buildout directory::
 
@@ -17,19 +15,11 @@ Test Setup
 Needed Imports::
 
     >>> import transaction
-    >>> from plone import api as ploneapi
-    >>> from zope.lifecycleevent import modified
-
     >>> from bika.lims import api
-    >>> from bika.lims.utils.analysisrequest import create_analysisrequest
 
     >>> def create(container, portal_type, title=None):
-    ...     # Creates a content in a container and manually calls processForm
-    ...     title = title is None and "Test {}".format(portal_type) or title
-    ...     _ = container.invokeFactory(portal_type, id="tmpID", title=title)
-    ...     obj = container.get(_)
-    ...     obj.processForm()
-    ...     modified(obj)  # notify explicitly for the test
+    ...     obj = api.create(container, portal_type, title=title)
+    ...     # doctest fixture to make the content visible for the test browser
     ...     transaction.commit()  # somehow the created method did not appear until I added this
     ...     return obj
 
@@ -48,7 +38,7 @@ ClientDepartment
 
 A `ClientDepartment` lives in `ClientDepartments` folder::
 
-    >>> clientdepartment = ploneapi.content.create(clientdepartments, "ClientDepartment", title="Test Department")
+    >>> clientdepartment = create(clientdepartments, "ClientDepartment", title="Test Department")
     >>> clientdepartment
     <ClientDepartment at /plone/bika_setup/bika_clientdepartments/clientdepartment-1>
 
