@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- Issue-2145: Client Departments/Types structure not preserved on reinstall
 - Issue-2143: Make Bika API work with DX types properly
 - LIMS-2449: Thermo Qtegra results importer
 - Lab Supervisor field on the Laboratory(Bika Setup - Laboratory Information)

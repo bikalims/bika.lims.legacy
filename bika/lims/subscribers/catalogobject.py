@@ -17,20 +17,26 @@ def reindexMovedObject(obj, event):
     """
 
     bika_catalogs = getattr(obj, "_bika_catalogs", [])
+
     for name in bika_catalogs:
         logger.debug("Reidexing moved object '{}' in catalog '{}'".format(
             obj.getId(), name))
         catalog = api.get_tool(name)
 
-        # check if the object was renamed
+        # old and new name
         old_name = event.oldName
-        if old_name:
-            new_path = api.get_path(obj)
-            base_path = new_path.replace(event.newName, "")
-            old_path = "".join([base_path, old_name])
+        new_name = event.newName
+
+        if old_name and new_name:
+            old_parent = event.oldParent
+            old_ppath = api.get_path(old_parent)
+            old_path = "/".join([old_ppath, old_name])
+
             # uncatalog the old path
             catalog.uncatalog_object(old_path)
-        catalog.reindexObject(obj)
+
+            # reindex object
+            catalog.reindexObject(obj)
 
 
 def indexObject(obj, event):
