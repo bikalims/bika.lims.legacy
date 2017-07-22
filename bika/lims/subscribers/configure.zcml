@@ -61,6 +61,14 @@
       handler="bika.lims.subscribers.dep_cookie.SetDepartmentCookies"
       />
 
+  <!-- Behavior interface hook to rename the content after it was added -->
+
+  <subscriber
+      for="bika.lims.interfaces.IGenerateID
+           zope.lifecycleevent.interfaces.IObjectAddedEvent"
+      handler="bika.lims.subscribers.idgen.rename_after_creation"
+      />
+
   <!-- Multi catalog dexterity objects -->
 
   <subscriber
