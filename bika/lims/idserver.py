@@ -145,24 +145,18 @@ def generateUniqueId(context, parent=False):
 
 
 def renameAfterCreation(obj):
+    """Rename the content after it was created/added
+    """
+    # Check if the _bika_id was aready set
+    bika_id = getattr(object, "_bika_id", None)
+    if bika_id is not None:
+        return bika_id
     # Can't rename without a subtransaction commit when using portal_factory
     transaction.savepoint(optimistic=True)
     # The id returned should be normalized already
     new_id = generateUniqueId(obj)
+    # Remember the new id in the _bika_id attribute
+    obj._bika_id = new_id
+    # Rename the content
     obj.aq_inner.aq_parent.manage_renameObject(obj.id, new_id)
     return new_id
-
-
-class AutoGenerateID(object):
-    implements(INameChooser)
-
-    def __init__(self, context):
-        self.context = context
-
-    def chooseName(self, name, object):
-        bika_id = getattr(object, "_bika_id", None)
-        if bika_id is None:
-            new_id = generateUniqueId(object)
-            object._bika_id = new_id
-            bika_id = new_id
-        return bika_id
