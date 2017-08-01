@@ -17,8 +17,12 @@ from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFCore.WorkflowCore import WorkflowException
 
 from zope import globalrequest
-from zope.lifecycleevent import modified
+from zope.event import notify
+from zope.component import getUtility
 from zope.component import getMultiAdapter
+from zope.component.interfaces import IFactory
+from zope.lifecycleevent import modified
+from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security.interfaces import Unauthorized
 
 from plone import api as ploneapi
@@ -73,8 +77,11 @@ def get_bika_setup():
     return portal.get("bika_setup")
 
 
-def create(container, portal_type, **kwargs):
+def create(container, portal_type, *args, **kwargs):
     """Creates an object in Bika LIMS
+
+    This code uses most of the parts from the TypesTool
+    see: `Products.CMFCore.TypesTool._constructInstance`
 
     :param container: container
     :type container: ATContentType/DexterityContentType/CatalogBrain
@@ -87,9 +94,33 @@ def create(container, portal_type, **kwargs):
     from bika.lims.utils import tmpID
     if kwargs.get("title") is None:
         kwargs["title"] = "New {}".format(portal_type)
-    obj = _createObjectByType(portal_type, container, tmpID())
+
+    # generate a temporary ID
+    tmp_id = tmpID()
+
+    # get the fti
+    types_tool = get_tool("portal_types")
+    fti = types_tool.getTypeInfo(portal_type)
+
+    if fti.product:
+        obj = _createObjectByType(portal_type, container, tmp_id)
+    else:
+        # newstyle factory
+        factory = getUtility(IFactory, fti.factory)
+        obj = factory(tmp_id, *args, **kwargs)
+        if hasattr(obj, '_setPortalTypeName'):
+            obj._setPortalTypeName(fti.getId())
+        notify(ObjectCreatedEvent(obj))
+        # notifies ObjectWillBeAddedEvent, ObjectAddedEvent and ContainerModifiedEvent
+        container._setObject(tmp_id, obj)
+        # we get the object here with the current object id, as it might be renamed
+        # already by an event handler
+        obj = container._getOb(obj.getId())
+
     obj.edit(**kwargs)
-    obj.processForm()
+    # handle AT Content
+    if is_at_content(obj):
+        obj.processForm()
     # explicit notification
     modified(obj)
     return obj

@@ -641,10 +641,10 @@ schema = BikaFolderSchema.copy() + Schema((
                           "Request is rejected.")
         ),
     ),
-    StringField(
+    TextField(
         'COCAttestationStatement',
         schemata="Sampling and COC",
-        widget=StringWidget(
+        widget=TextAreaWidget(
             label=_("COC Attestation Statement"),
         )
     ),

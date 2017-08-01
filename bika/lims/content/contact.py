@@ -362,10 +362,11 @@ class Contact(Person):
         by scanning all workflow IDs for those beginning with "sampleprep".
         """
         bsc = getToolByName(self, 'bika_setup_catalog')
-        client_departments = bsc(portal_type='ClientDepartment', sort_on = 'sortable_title')
-        prep_workflows = [['', ''], ]
+        client_departments = bsc(
+                portal_type='ClientDepartment', sort_on = 'sortable_title')
+        depts = [['', ''], ]
         for cds in client_departments:
-            prep_workflows.append([cds.id, cds.Title])
-        return DisplayList(prep_workflows)
+            depts.append([cds.getId, cds.Title])
+        return DisplayList(depts)
 
 atapi.registerType(Contact, PROJECTNAME)
