@@ -11,8 +11,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-07-12 10:15+0000\n"
-"PO-Revision-Date: 2017-07-12 10:11+0000\n"
+"POT-Creation-Date: 2017-08-07 17:11+0000\n"
+"PO-Revision-Date: 2017-08-03 11:39+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Polish (http://www.transifex.com/bikalabs/bika-lims/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -121,12 +121,16 @@ msgstr "&nbsp;"
 msgid "'Classic' indicates importing analysis requests per sample and analysis service selection. With 'Profiles', analysis profile keywords are used to select multiple analysis services together"
 msgstr "'Klasyczny' oznacza konieczność odniesienia każdej próbki do kodu zlecenia i usługi analitycznej. W przypadku 'Profil', użycie słowa kluczowego analizy połączy wiele usług analitycznych dla danego zbioru próbek"
 
-#: bika/lims/browser/analysisrequest/workflow.py:702
+#: bika/lims/browser/analysisrequest/workflow.py:701
 msgid "'Sampling date' and 'Define the Sampler for the scheduled sampling' must be completed and saved in order to schedule a sampling."
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/workflow.py:688
+#: bika/lims/browser/analysisrequest/workflow.py:687
 msgid "'Sampling date' and 'Define the Sampler for the scheduled sampling' must be completed and saved in order to schedule a sampling. Element: %s"
+msgstr ""
+
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:280
+msgid "(&#9998; Manage Fields)"
 msgstr ""
 
 #: bika/lims/content/referencesample.py:192
@@ -173,6 +177,10 @@ msgstr "< Min"
 msgid "<input type=\"checkbox\" class=\"rejectionwidget-checkbox-other rejectionwidget-field\" name=\"${DYNAMIC_CONTENT}\" id=\"${DYNAMIC_CONTENT}\" /> Other"
 msgstr ""
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:509
+msgid "<max"
+msgstr ""
+
 msgid "<p>${service} requires the following services to be selected:</p><br/><p>${deps}</p><br/><p>Do you want to apply these selections now?</p>"
 msgstr ""
 
@@ -191,6 +199,10 @@ msgstr ""
 #: bika/lims/content/analysisspec.py:81
 msgid "> Max"
 msgstr "> Max"
+
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:503
+msgid ">min"
+msgstr ""
 
 #: bika/lims/content/samplinground.py:143
 msgid "A short name that describes the Round for it to be easily identified on forms and drop-down menus"
@@ -659,6 +671,7 @@ msgid "Analysis profiles apply a certain set of analyses"
 msgstr ""
 
 #: bika/lims/browser/analysisrequest/add.py:468
+#: bika/lims/browser/analysisrequest/add2.py:1734
 msgid "Analysis request ${AR} was successfully created."
 msgstr "Zestaw analiz ${AR} został pomyślnie utworzony."
 
@@ -667,6 +680,7 @@ msgid "Analysis request templates to be included in the Sampling Round Template"
 msgstr ""
 
 #: bika/lims/browser/analysisrequest/add.py:465
+#: bika/lims/browser/analysisrequest/add2.py:1731
 msgid "Analysis requests ${ARs} were successfully created."
 msgstr "Zestawy analiz ${ARs} zostały pomyślnie utworzone."
 
@@ -1208,6 +1222,10 @@ msgstr "Kliknij na Kategorie Analiz AC (zacienione tło) dla wyświetlenia wszys
 #: bika/lims/browser/templates/analysisservice_popup.pt:110
 msgid "Click to download"
 msgstr "Kliknij, aby pobrać"
+
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:402
+msgid "Click to expand this category"
+msgstr ""
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:88
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_retract_pdf.pt:78
@@ -1868,6 +1886,10 @@ msgstr ""
 msgid "Disable the filtering by date"
 msgstr ""
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:741
+msgid "Discount"
+msgstr ""
+
 #: bika/lims/content/pricelist.py:43
 msgid "Discount %"
 msgstr "Rabat %"
@@ -2229,6 +2251,11 @@ msgstr "Żeński"
 msgid "Field"
 msgstr "Teren"
 
+#: bika/lims/browser/analysisrequest/add2.py:1613
+msgid "Field '{}' is required"
+msgstr ""
+
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:393
 #: bika/lims/config.py:28
 msgid "Field Analyses"
 msgstr "Analizy w terenie"
@@ -2263,7 +2290,7 @@ msgstr "Nazwa pliku"
 msgid "Files"
 msgstr ""
 
-#: bika/lims/browser/bika_listing.py:1345
+#: bika/lims/browser/bika_listing.py:1344
 msgid "Filter"
 msgstr ""
 
@@ -2364,7 +2391,7 @@ msgstr "Godziny"
 msgid "IBN"
 msgstr "Podstawowe stałe"
 
-#: bika/lims/browser/bika_listing.py:388
+#: bika/lims/browser/bika_listing.py:387
 #: bika/lims/browser/referencesample.py:108
 #: bika/lims/browser/reports/templates/productivity_dataentrydaybook.pt:85
 msgid "ID"
@@ -2809,6 +2836,7 @@ msgstr "Słowa kluczowe"
 msgid "Lab"
 msgstr "Lab"
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:570
 #: bika/lims/config.py:29
 msgid "Lab Analyses"
 msgstr "Analizy laboratoryjne"
@@ -2859,7 +2887,7 @@ msgstr ""
 msgid "Last Login Time"
 msgstr ""
 
-#: bika/lims/browser/bika_listing.py:390
+#: bika/lims/browser/bika_listing.py:389
 msgid "Last modified"
 msgstr "Ostatnia modyfikacja"
 
@@ -3020,8 +3048,16 @@ msgstr "Typ przeglądu"
 msgid "Male"
 msgstr "Męski"
 
+#: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:42
+msgid "Manage Analysis Request Form Fields"
+msgstr ""
+
 #: bika/lims/browser/templates/login_details.pt:41
 msgid "Manage linked User"
+msgstr ""
+
+#: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:47
+msgid "Manage the order and visibility of the fields displayed in analysis request add forms."
 msgstr ""
 
 #: bika/lims/content/department.py:30
@@ -3256,6 +3292,10 @@ msgstr "Nowy"
 msgid "No"
 msgstr "Nie"
 
+#: bika/lims/browser/analysisrequest/add2.py:1728
+msgid "No Analysis Requests could be created."
+msgstr ""
+
 #: bika/lims/browser/reports/productivity_dataentrydaybook.py:46
 msgid "No Analysis Requests matched your query"
 msgstr "Nie znaleziono żadnych zestawów analiz dla zadanych warunków"
@@ -3422,6 +3462,10 @@ msgstr ""
 
 #: bika/lims/content/instrumentcertification.py:253
 msgid "Not set"
+msgstr ""
+
+#: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:51
+msgid "Note: The settings apply to all AR Add forms; Required fields can not be deselected."
 msgstr ""
 
 #: bika/lims/browser/worksheet/templates/print.pt:128
@@ -3602,6 +3646,10 @@ msgid "PDF"
 msgstr "PDF"
 
 msgid "Parent"
+msgstr ""
+
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:535
+msgid "Part"
 msgstr ""
 
 #: bika/lims/browser/analyses.py:72
@@ -4301,6 +4349,7 @@ msgid "Request ID"
 msgstr "Kod zestawu analiz"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add.pt:26
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:276
 msgid "Request new analyses"
 msgstr "Nowy zestaw analiz"
 
@@ -4327,6 +4376,7 @@ msgstr "Wymagana objętość"
 msgid "Required fields have no values: ${field_names}"
 msgstr "Wymagane pola nie mają wartości: ${field_names}"
 
+#: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:134
 #: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:46
 msgid "Reset"
 msgstr ""
@@ -4464,8 +4514,8 @@ msgid "Same as the above, but sets the default on analysis services. This settin
 msgstr "Tak jak wyżej, ale z wartościami domyślnymi w usłudze analitycznej. Ustawienia te mogą być zmienione dla każej analizy w jej konfiguracji"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:84
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:318
 #: bika/lims/browser/reports/templates/productivity_dataentrydaybook.pt:93
-#: bika/lims/browser/samplinground/analysisrequests.py:37
 msgid "Sample"
 msgstr "Próbka"
 
@@ -4720,7 +4770,7 @@ msgstr ""
 
 #: bika/lims/browser/analysisrequest/manage_analyses.py:100
 #: bika/lims/browser/analysisrequest/templates/ar_add.pt:125
-#: bika/lims/browser/sample/partitions.py:86
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:800
 msgid "Save"
 msgstr "Zapisz"
 
@@ -4944,6 +4994,10 @@ msgstr "Nr seryjny"
 msgid "Service"
 msgstr "Usługa"
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:458
+msgid "Service cannot be deselected. Please click the info button for further details"
+msgstr ""
+
 # ../browser/js/analysisrequest.js
 msgid "Service dependencies"
 msgstr ""
@@ -5158,9 +5212,9 @@ msgstr ""
 msgid "Submitting AR Import"
 msgstr ""
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:756
 #: bika/lims/browser/invoicebatch.py:47
 #: bika/lims/browser/reports/templates/productivity_analysesperdepartment.pt:122
-#: bika/lims/browser/reports/templates/productivity_analysesperformedpertotal.pt:122
 msgid "Subtotal"
 msgstr "Suma częściowa"
 
@@ -5399,11 +5453,11 @@ msgstr "Numer modelu przyrządu"
 msgid "The interval is calculated from the 'From' field and defines when the certificate expires in days. Setting this inverval overwrites the 'To' field on save."
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/workflow.py:694
+#: bika/lims/browser/analysisrequest/workflow.py:693
 msgid "The item %s can't be transitioned."
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/workflow.py:707
+#: bika/lims/browser/analysisrequest/workflow.py:706
 msgid "The item can't be transitioned."
 msgstr ""
 
@@ -5699,7 +5753,7 @@ msgstr "Wskazówka. Załączone dokumenty nie zostaną załadowane, chyba że s�
 
 #: bika/lims/browser/arimports.py:62
 #: bika/lims/browser/batchfolder.py:45
-#: bika/lims/browser/bika_listing.py:389
+#: bika/lims/browser/bika_listing.py:388
 msgid "Title"
 msgstr "Tytuł"
 
@@ -5769,9 +5823,9 @@ msgstr ""
 msgid "Too few lines in CSV file"
 msgstr ""
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:784
 #: bika/lims/browser/invoicebatch.py:51
 #: bika/lims/browser/reports/productivity_analysesattachments.py:116
-#: bika/lims/browser/reports/productivity_analysesperclient.py:141
 msgid "Total"
 msgstr "Ogółem"
 
@@ -5806,7 +5860,7 @@ msgstr "Ogółem:"
 msgid "Traceability"
 msgstr "Spójność pomiarowa"
 
-#: bika/lims/browser/analysisrequest/workflow.py:669
+#: bika/lims/browser/analysisrequest/workflow.py:668
 msgid "Transition done."
 msgstr ""
 
@@ -5822,7 +5876,7 @@ msgstr "Włącz, jeżeli zamierzasz analizować próbki wieloczęściowe"
 msgid "Turnaround time (h)"
 msgstr "Czas realizacji (h)"
 
-#: bika/lims/browser/bika_listing.py:387
+#: bika/lims/browser/bika_listing.py:386
 #: bika/lims/browser/reports/templates/administration_usershistory.pt:75
 #: bika/lims/controlpanel/bika_instruments.py:48
 msgid "Type"
@@ -5985,9 +6039,9 @@ msgstr "Historia użytkowników"
 msgid "Using too few data points does not make statistical sense. Set an acceptable minimum number of results before QC statistics will be calculated and plotted"
 msgstr "Używanie zbyt małej ilości danych nie ma statystycznego sensu. Ustaw minimalną akceptowalną liczbę wyników, zanim statystyki QC będą obliczane i wykreślane"
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:770
 #: bika/lims/browser/invoicebatch.py:49
 #: bika/lims/browser/templates/supplyorder_edit.pt:41
-#: bika/lims/browser/templates/supplyorder_view.pt:39
 msgid "VAT"
 msgstr "VAT"
 
@@ -6431,6 +6485,10 @@ msgstr ""
 msgid "deactivate"
 msgstr "ukryj"
 
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:515
+msgid "err%"
+msgstr ""
+
 #. Default: "Analysis Request Priority"
 #: bika/lims/browser/templates/arpriority_add_form.pt:15
 msgid "heading_arpriority"
@@ -6552,6 +6610,8 @@ msgid "time_format"
 msgstr ""
 
 #. Default: "Required"
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:334
+#: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:89
 #: bika/lims/browser/templates/header_table.pt:39
 msgid "title_required"
 msgstr "tytuł_wymagany"
