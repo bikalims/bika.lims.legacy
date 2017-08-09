@@ -86,10 +86,10 @@ function referencewidget_lookups(elements) {
             var listing_div = $(this).siblings("div[id$='-listing']");
             if ($(listing_div).length > 0) {
                 // Add selection to textfield value
-                var existing_value = $(uid_element).val()
-                var existing_uids = ""
+                var existing_value = $(uid_element).val();
+                var existing_uids = "";
                 if (existing_value != undefined) {
-                    existing_uids = existing_value.split(",")
+                    existing_uids = existing_value.split(",");
                 }
                 destroy(existing_uids, "");
                 destroy(existing_uids, "[]");
