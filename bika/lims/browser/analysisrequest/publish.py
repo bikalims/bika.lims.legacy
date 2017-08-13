@@ -456,12 +456,12 @@ class AnalysisRequestPublishView(BrowserView):
                 attachment.absolute_url(), self.getDirection())
         return info
 
-    def _sorted_attachments(self, attachments):
+    def _sorted_attachments(self, ar, attachments=[]):
         """Sorter to return the attachments in the same order as the user
         defined in the attachments viewlet
         """
         inf = float("inf")
-        view = self.context.restrictedTraverse("attachments_view")
+        view = ar.restrictedTraverse("attachments_view")
         order = view.get_attachments_order()
 
         def att_cmp(att1, att2):
@@ -481,7 +481,7 @@ class AnalysisRequestPublishView(BrowserView):
                 continue
             attachments.append(self._get_attachment_info(attachment))
 
-        return self._sorted_attachments(attachments)
+        return self._sorted_attachments(ar, attachments)
 
     def _get_an_attachments(self, ar):
         attachments = []
@@ -491,7 +491,7 @@ class AnalysisRequestPublishView(BrowserView):
                 if attachment.getReportOption() == "i":
                     continue
                 attachments.append(self._get_attachment_info(attachment))
-        return self._sorted_attachments(attachments)
+        return self._sorted_attachments(ar, attachments)
 
     def _batch_data(self, ar):
         data = {}
