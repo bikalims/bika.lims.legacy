@@ -1,7 +1,7 @@
 3.2.1rc1 (unreleased)
 ---------------------
 
-- no changes yet
+- Issue-1977: AR can be transitioned to verified while all AS's remain to be verified
 
 
 3.2.1b3 (2017-08-07)
