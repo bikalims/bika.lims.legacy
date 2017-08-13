@@ -21,7 +21,7 @@ from zope.component import adapts
 from zope.interface import implementer
 from zope.interface import implements
 from zope.interface import Interface
-from plone import api
+from plone import api as ploneapi
 
 def skip(instance, action, peek=False, unskip=False):
     """Returns True if the transition is to be SKIPPED
@@ -97,7 +97,7 @@ def get_workflow_actions(obj):
     def translate(i):
         return t(PMF(i + "_transition_title"))
 
-    workflow = api.portal.get_tool("portal_workflow")
+    workflow = ploneapi.portal.get_tool("portal_workflow")
     actions = [{"id": it["id"],
                 "title": translate(it["id"])}
                for it in workflow.getTransitionsFor(obj)]
@@ -113,8 +113,8 @@ def isBasicTransitionAllowed(context, permission=None):
     normally be set in the guard_permission in workflow definition.
 
     """
-    workflow = api.portal.get_tool("portal_workflow")
-    mtool = api.portal.get_tool("portal_membership")
+    workflow = ploneapi.portal.get_tool("portal_workflow")
+    mtool = ploneapi.portal.get_tool("portal_membership")
     if workflow.getInfoFor(context, "cancellation_state", "") == "cancelled" \
             or workflow.getInfoFor(context, "inactive_state", "") == "inactive" \
             or (permission and mtool.checkPermission(permission, context)):
@@ -126,11 +126,11 @@ def getCurrentState(obj, stateflowid):
     """ The current state of the object for the state flow id specified
         Return empty if there's no workflow state for the object and flow id
     """
-    workflow = api.portal.get_tool("portal_workflow")
+    workflow = ploneapi.portal.get_tool("portal_workflow")
     return workflow.getInfoFor(obj, stateflowid, '')
 
 def getTransitionDate(obj, action_id):
-    workflow = api.portal.get_tool("portal_workflow")
+    workflow = ploneapi.portal.get_tool("portal_workflow")
     try:
         # https://jira.bikalabs.com/browse/LIMS-2242:
         # Sometimes the workflow history is inexplicably missing!
@@ -153,7 +153,7 @@ def getTransitionActor(obj, action_id):
     """Returns the identifier of the user who last performed the action
     on the object.
     """
-    workflow = api.portal.get_tool("portal_workflow")
+    workflow = ploneapi.portal.get_tool("portal_workflow")
     try:
         review_history = list(workflow.getInfoFor(obj, "review_history"))
         review_history.reverse()
@@ -219,7 +219,7 @@ def SamplePrepWorkflowChain(ob, wftool):
     """
     # use catalog to retrieve review_state: getInfoFor causes recursion loop
     chain = list(ToolWorkflowChain(ob, wftool))
-    bc = api.portal.get_tool('bika_catalog')
+    bc = ploneapi.portal.get_tool('bika_catalog')
     proxies = bc(UID=ob.UID())
     if not proxies or proxies[0].review_state != 'sample_prep':
         return chain
@@ -245,7 +245,7 @@ def SamplePrepTransitionEventHandler(instance, event):
 
     if not event.new_state.getTransitions():
         # Is this the final (No exit transitions) state?
-        workflow = api.portal.get_tool("portal_workflow")
+        workflow = ploneapi.portal.get_tool("portal_workflow")
         primary_wf_name = list(ToolWorkflowChain(instance, workflow))[0]
         primary_wf = workflow.getWorkflowById(primary_wf_name)
         primary_wf_states = primary_wf.states.keys()
