@@ -57,7 +57,7 @@ def doActionFor(instance, action_id):
         try:
             api.do_transition_for(instance, action_id)
             actionperformed = True
-        except WorkflowException as e:
+        except ploneapi.exc.InvalidParameterError as e:
             message = str(e)
             logger.warn("Failed to perform transition {} on {}: {}".format(
                 action_id, instance, message))
