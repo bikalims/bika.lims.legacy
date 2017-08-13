@@ -13,6 +13,7 @@ from bika.lims.jsonapi import get_include_fields
 from bika.lims.utils import changeWorkflowState
 from bika.lims.utils import t
 from bika.lims import logger
+from bika.lims import api
 from Products.CMFCore.interfaces import IContentish
 from Products.CMFCore.WorkflowCore import WorkflowException
 from Products.CMFPlone.interfaces import IWorkflowChain
@@ -52,10 +53,9 @@ def skip(instance, action, peek=False, unskip=False):
 def doActionFor(instance, action_id):
     actionperformed = False
     message = ''
-    workflow = api.portal.get_tool("portal_workflow")
     if not skip(instance, action_id, peek=True):
         try:
-            workflow.doActionFor(instance, action_id)
+            api.do_transition_for(instance, action_id)
             actionperformed = True
         except WorkflowException as e:
             message = str(e)
