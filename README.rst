@@ -1,20 +1,20 @@
 Bika LIMS
 =========
 
-.. image:: https://img.shields.io/travis/bikalabs/bika.lims/master.svg
-    :target: https://travis-ci.org/bikalabs/bika.lims
+.. image:: https://img.shields.io/travis/bikalims/bika.lims/master.svg
+    :target: https://travis-ci.org/bikalims/bika.lims
 
 .. image:: https://img.shields.io/pypi/v/bika.lims.svg
     :target: https://pypi.python.org/pypi/bika.lims
 
-.. image:: https://img.shields.io/github/issues-pr/bikalabs/bika.lims.svg
-    :target: https://github.com/bikalabs/bika.lims/pulls
+.. image:: https://img.shields.io/github/issues-pr/bikalims/bika.lims.svg
+    :target: https://github.com/bikalims/bika.lims/pulls
 
-.. image:: https://img.shields.io/github/issues/bikalabs/bika.lims.svg
-    :target: https://github.com/bikalabs/bika.lims/issues
+.. image:: https://img.shields.io/github/issues/bikalims/bika.lims.svg
+    :target: https://github.com/bikalims/bika.lims/issues
 
-.. image:: https://img.shields.io/github/contributors/bikalabs/bika.lims.svg
-    :target: https://github.com/bikalabs/bika.lims
+.. image:: https://img.shields.io/github/contributors/bikalims/bika.lims.svg
+    :target: https://github.com/bikalims/bika.lims
 
 
 The meaning of Gaob
@@ -28,14 +28,14 @@ language of the world's first people.
 Installation
 ------------
 
-* `Installation Manual <https://github.com/bikalabs/bika.lims/wiki/Bika-LIMS-Installation>`_
+* `Installation Manual <https://github.com/bikalims/bika.lims/wiki/Bika-LIMS-Installation>`_
 
 
 Documentation
 -------------
 
 * `User Manual <http://demo.bikalabs.com/knowledge-centre/manual/bika-3-user-manual>`_
-* `GitHub Wiki <http://github.com/bikalabs/bika.lims/wiki>`_
+* `GitHub Wiki <http://github.com/bikalims/bika.lims/wiki>`_
 
 
 Feedback and support
@@ -44,7 +44,7 @@ Feedback and support
 * Bika Users List: `bika-users <http://lists.sourceforge.net/lists/listinfo/bika-users>`_
 * Bika Developers List: `bika-developers <http://lists.sourceforge.net/lists/listinfo/bika-developers>`_
 * LIMS design List: `lims-design <https://groups.google.com/forum/?hl=en#%21forum/bika-design>`_
-* GitHub Issue Tracker: `github-issues <https://github.com/bikalabs/bika.lims/issues>`
-* Jira Tracker: `https://github.com/bikalabs/bika.lims/issuescom/ <http://jira.bikalabs.com>`_
+* GitHub Issue Tracker: `github-issues <https://github.com/bikalims/bika.lims/issues>`
+* Jira Tracker: `https://github.com/bikalims/bika.lims/issuescom/ <http://jira.bikalabs.com>`_
 * IRC: `irc://freenode.net/#bika <irc://freenode.net/#bika>`_
 * Slack: `bikalims.slack.com <http://slackin.bikalims.org>`_
