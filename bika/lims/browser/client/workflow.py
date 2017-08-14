@@ -83,15 +83,23 @@ class ClientWorkflowAction(AnalysisRequestWorkflowAction):
 
                 # grab this object's Sampler and DateSampled from the form
                 # (if the columns are available and edit controls exist)
+                Sampler = ''
+                DateSampled = ''
                 if 'getSampler' in form and 'getDateSampled' in form:
-                    Sampler = ''
                     if len(form['getSampler']) > 0 \
                             and form['getSampler'][0].get(obj_uid):
                         Sampler = form['getSampler'][0][obj_uid].strip()
-                    DateSampled = ''
                     if len(form['getDateSampled']) > 0 \
                             and form['getDateSampled'][0].get(obj_uid):
                         DateSampled = form['getDateSampled'][0][obj_uid].strip()
+
+                elif 'sample' in transitions \
+                        or 'getSampler' not in form \
+                        or 'getDateSampled' not in form:
+                    message = _('''Please display both Sampler and Date Sampled
+                                 columns''')
+                    self.context.plone_utils.addPortalMessage(message, 'error')
+
                 else:
                     continue
 
