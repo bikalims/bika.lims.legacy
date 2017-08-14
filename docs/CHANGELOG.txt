@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- Sampler and Sampling Date Columns are not validated when they are not displayed
 - Issue-2162: Added renameAfterCreation to partition creation in ARImport
 - Laboratory Supervisor field on the Laboratory(Bika Setup - Laboratory Information)
 - Laboratory License ID field on the Laboratory(Bika Setup - Laboratory Information)
