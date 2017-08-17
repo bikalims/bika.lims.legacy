@@ -7,7 +7,7 @@
 
 "DuplicateAnalysis uses this as it's base.  This accounts for much confusion."
 
-from plone import api
+from plone import api as ploneapi
 from AccessControl import getSecurityManager
 from AccessControl import ClassSecurityInfo
 from DateTime import DateTime
@@ -1105,7 +1105,7 @@ class Analysis(BaseContent):
         """
         # Check if the user has "Bika: Verify" privileges
         username = member.getUserName()
-        allowed = api.user.has_permission(VerifyPermission, username=username)
+        allowed = ploneapi.user.has_permission(VerifyPermission, username=username)
         if not allowed:
             return False
 

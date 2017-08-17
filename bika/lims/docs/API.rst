@@ -629,18 +629,20 @@ The review history gives information about the objects' workflow changes::
 Getting the assigned Workflows of an Object
 -------------------------------------------
 
-This function returns all assigned workflows for a given object::
-
-    >>> api.get_workflows_for(bika_setup)
-    ('bika_one_state_workflow',)
-
-    >>> api.get_workflows_for(client)
-    ('bika_client_workflow', 'bika_inactive_workflow')
-
-This function also supports the portal_type as parameter::
-
-    >>> api.get_workflows_for(api.get_portal_type(client))
-    ('bika_client_workflow', 'bika_inactive_workflow')
+# To be added again after 3.2.1
+#
+# This function returns all assigned workflows for a given object::
+#
+#     >>> api.get_workflows_for(bika_setup)
+#     ('bika_one_state_workflow',)
+#
+#     >>> api.get_workflows_for(client)
+#     ('bika_client_workflow', 'bika_inactive_workflow')
+#
+# This function also supports the portal_type as parameter::
+#
+#     >>> api.get_workflows_for(api.get_portal_type(client))
+#     ('bika_client_workflow', 'bika_inactive_workflow')
 
 
 Getting the Workflow Status of an Object
