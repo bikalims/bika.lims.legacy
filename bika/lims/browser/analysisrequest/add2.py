@@ -7,15 +7,16 @@
 
 import json
 import magnitude
-from time import time
 from datetime import datetime
 from DateTime import DateTime
 
 from BTrees.OOBTree import OOBTree
 
 from plone import protect
-# from plone.memoize.ram import cache
 from plone.memoize import view
+from plone.memoize.volatile import cache
+from plone.memoize.volatile import DontCache
+from plone.memoize.volatile import store_on_context
 
 from zope.annotation.interfaces import IAnnotations
 from zope.publisher.interfaces import IPublishTraverse
@@ -49,13 +50,18 @@ def returns_json(func):
     return decorator
 
 
-def cache_key(func, *args, **kwargs):
-    """UID cache key, which keeps one hour the same.
-    """
-    uid = args[1]
-    ts = time() // (60 * 60)
-    key = "{}-{}".format(uid, ts)
-    return key
+def gen_key(brain_or_object):
+    obj = api.get_object(brain_or_object)
+    uid = api.get_uid(obj)
+    modified = obj.modified().ISO8601()
+    portal_type = api.get_portal_type(obj)
+    return "{}-{}-{}".format(portal_type, uid, modified)
+
+
+def cache_key(method, self, obj):
+    if obj is None:
+        raise DontCache
+    return gen_key(obj)
 
 
 def mg(value):
@@ -101,7 +107,6 @@ class AnalysisRequestAddView(BrowserView):
         logger.info("*** Prepared data for {} ARs ***".format(self.ar_count))
         return self.template()
 
-    # @cache(cache_key)
     def get_object_by_uid(self, uid):
         """Get the object by UID
         """
@@ -497,6 +502,7 @@ class AnalysisRequestAddView(BrowserView):
             analyses[category].append(brain)
         return analyses
 
+    @cache(cache_key, store_on_context)
     def get_service_uid_from(self, analysis):
         """Return the service from the analysis
         """
@@ -874,6 +880,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         objs = map(self.get_object_by_uid, uids)
         return dict(zip(uids, objs))
 
+    @cache(cache_key, store_on_context)
     def get_base_info(self, obj):
         """Returns the base info of an object
         """
@@ -890,6 +897,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
 
         return info
 
+    @cache(cache_key, store_on_context)
     def get_client_info(self, obj):
         """Returns the client info of an object
         """
@@ -949,6 +957,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
 
         return info
 
+    @cache(cache_key, store_on_context)
     def get_service_info(self, obj):
         """Returns the info for a Service
         """
@@ -976,6 +985,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         # info["dependendants"] = map(self.get_base_info, dependants)
         return info
 
+    @cache(cache_key, store_on_context)
     def get_template_info(self, obj):
         """Returns the info for a Template
         """
@@ -1021,6 +1031,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         })
         return info
 
+    @cache(cache_key, store_on_context)
     def get_profile_info(self, obj):
         """Returns the info for a Profile
         """
@@ -1028,6 +1039,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         info.update({})
         return info
 
+    @cache(cache_key, store_on_context)
     def get_method_info(self, obj):
         """Returns the info for a Method
         """
@@ -1035,6 +1047,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         info.update({})
         return info
 
+    @cache(cache_key, store_on_context)
     def get_calculation_info(self, obj):
         """Returns the info for a Calculation
         """
@@ -1042,6 +1055,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         info.update({})
         return info
 
+    @cache(cache_key, store_on_context)
     def get_sampletype_info(self, obj):
         """Returns the info for a Sample Type
         """
@@ -1088,6 +1102,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
 
         return info
 
+    @cache(cache_key, store_on_context)
     def get_sample_info(self, obj):
         """Returns the info for a Sample
         """
@@ -1142,6 +1157,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         })
         return info
 
+    @cache(cache_key, store_on_context)
     def get_specification_info(self, obj):
         """Returns the info for a Specification
         """
@@ -1181,6 +1197,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         info["service_uids"] = specifications.keys()
         return info
 
+    @cache(cache_key, store_on_context)
     def get_container_info(self, obj):
         """Returns the info for a Container
         """
@@ -1188,6 +1205,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         info.update({})
         return info
 
+    @cache(cache_key, store_on_context)
     def get_preservation_info(self, obj):
         """Returns the info for a Preservation
         """
