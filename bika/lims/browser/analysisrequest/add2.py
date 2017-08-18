@@ -1500,9 +1500,18 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
 
         return out
 
+    def show_recalculate_prices(self):
+        bika_setup = api.get_bika_setup()
+        return bika_setup.getShowPrices()
+
     def ajax_recalculate_prices(self):
         """Recalculate prices for all ARs
         """
+        # When the option "Include and display pricing information" in
+        # Bika Setup Accounting tab is not selected
+        if not self.show_recalculate_prices():
+            return {}
+
         # The sorted records from the request
         records = self.get_records()
 
