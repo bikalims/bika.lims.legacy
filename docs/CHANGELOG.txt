@@ -5,6 +5,10 @@
 - Issue-2178: Bika Listings are slow
 - Issue-1977: AR can be transitioned to verified while all AS's remain to be verified
 
+**Other Fixes**
+
+- AR Add form: Fixed reference field on omitted fields
+
 
 3.2.1b3 (2017-08-07)
 --------------------
