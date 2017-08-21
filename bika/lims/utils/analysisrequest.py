@@ -5,31 +5,31 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+import os
+import tempfile
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from plone import api
+
+from DateTime import DateTime
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from Products.CMFPlone.utils import safe_unicode
 from bika.lims import bikaMessageFactory as _
-from bika.lims import logger
-from bika.lims.idserver import renameAfterCreation, generateUniqueId
-from bika.lims.interfaces import ISample, IAnalysisService, IAnalysis
+from bika.lims.api import get_transitions_for, do_transition_for
+from bika.lims.browser.analysisrequest.reject import \
+    AnalysisRequestRejectEmailView, AnalysisRequestRejectPdfView
+from bika.lims.idserver import renameAfterCreation
+from bika.lims.interfaces import IAnalysis, IAnalysisService, ISample
+from bika.lims.utils import attachPdf
+from bika.lims.utils import createPdf
+from bika.lims.utils import encode_header
 from bika.lims.utils import tmpID
 from bika.lims.utils import to_utf8
-from bika.lims.utils import encode_header
-from bika.lims.utils import createPdf
-from bika.lims.utils import attachPdf
 from bika.lims.utils.sample import create_sample
 from bika.lims.utils.samplepartition import create_samplepartition
-from Products.CMFCore.WorkflowCore import WorkflowException
 from bika.lims.workflow import doActionFor
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 from email.Utils import formataddr
-from os.path import join
-from plone import api
-from Products.CMFPlone.utils import _createObjectByType
-from smtplib import SMTPServerDisconnected, SMTPRecipientsRefused
-import os
-import tempfile
 
 
 def create_analysisrequest(context, request, values, analyses=None,
@@ -90,6 +90,19 @@ def create_analysisrequest(context, request, values, analyses=None,
     # Set some required fields manually before processForm is called
     ar.setSample(sample)
     values['Sample'] = sample
+
+    if values.get('DateSampled', False):
+        # Inject the timezone into a selection by
+        # datewidget which is timezone naive
+        # ie. DateSampled is '2017-05-15 01:05'
+        # but should be      '2017/05/15 01:05:00 GMT+2'
+        # else processForm => reindexObject() sets it to GMT+0 which results in
+        # an incorrect date record.
+
+        tz = DateTime().timezone()
+        datesampled = DateTime(values['DateSampled'] + ' ' + tz)
+        values['DateSampled'] = datesampled
+
     ar.processForm(REQUEST=request, values=values)
     # Object has been renamed
     ar.edit(RequestID=ar.getId())
@@ -121,7 +134,13 @@ def create_analysisrequest(context, request, values, analyses=None,
     for analysis in analyses:
         revers = analysis.getService().getNumberOfRequiredVerifications()
         analysis.setNumberOfRequiredVerifications(revers)
-        doActionFor(analysis, 'sample_due')
+
+        tids = [t['id'] for t in get_transitions_for(analysis)]
+        if 'sample_due' in tids:
+            # Imports using bika2's ARImport need to be transitioned manually
+            # with this hacky transition:
+            doActionFor(analysis, 'sample_due')
+
         analysis_state = workflow.getInfoFor(analysis, 'review_state')
         if analysis_state not in skip_receive:
             doActionFor(analysis, 'receive')
@@ -169,6 +188,15 @@ def create_analysisrequest(context, request, values, analyses=None,
     reject_field = values.get('RejectionReasons', '')
     if reject_field and reject_field.get('checkbox', False):
         doActionFor(ar, 'reject')
+
+    # If the Sampling Workflow field values are valid,
+    # and the SamplingWorkflow is enabled, we will
+    # automatically kick off the "sample" transition now
+    tids = [t['id'] for t in get_transitions_for(ar)]
+    if 'sample' in tids and ar.getSampler() and ar.getDateSampled():
+        # Imports using bika2's ARImport need to be transitioned manually
+        do_transition_for(ar, 'sample')
+
     # Return the newly created Analysis Request
     return ar
 

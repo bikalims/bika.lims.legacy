@@ -584,29 +584,33 @@ def search(query, catalog=_marker):
     return catalogs[0](query)
 
 
-def get_catalogs_for(brain_or_object):
-    """Returns the registered catalogs for the given brain_or_object
+def get_catalogs_for(brain_or_object, default="portal_catalog"):
+    """Get all registered catalogs for the given portal_type, catalog brain or
+    content object
 
-    :param brain_or_object: A single catalog brain or content object
+    :param brain_or_object: The portal_type, a catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :param attr: Attribute name
-    :type attr: str
-    :returns: list of retgistered catalog tools
+    :param default: The default catalog to return, if >1 are found.
+    :type default: basestring
+    :returns: List of supported catalogs
     :rtype: list
     """
+    archetype_tool = get_tool("archetype_tool", None)
+    if not archetype_tool:
+        # return the default catalog
+        return [get_tool(default)]
+
     catalogs = []
 
-    portal_type = brain_or_object.portal_type
-    # Use the archetypes_tool to gather the right catalogs
-    archetype_tool = get_tool("archetype_tool", None)
-    # but only if the user did not specify any catalogs explicitly
-
-    if archetype_tool:
-        # we just want the first of the registered catalogs
-        catalogs.extend(archetype_tool.getCatalogsByType(portal_type))
+    # get the registered catalogs for portal_type
+    if is_object(brain_or_object):
+        catalogs = archetype_tool.getCatalogsByType(
+            get_portal_type(brain_or_object))
+    if isinstance(brain_or_object, basestring):
+        catalogs = archetype_tool.getCatalogsByType(brain_or_object)
 
     if not catalogs:
-        return [get_portal_catalog()]
+        return [get_tool(default)]
     return catalogs
 
 
@@ -715,32 +719,16 @@ def get_workflow_status_of(brain_or_object, state_var="review_state"):
     return workflow.getInfoFor(ob=obj, name=state_var)
 
 
-def get_catalogs_for(brain_or_object, default="portal_catalog"):
-    """Get all registered catalogs for the given portal_type, catalog brain or
-    content object
-
-    :param brain_or_object: The portal_type, a catalog brain or content object
-    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :returns: List of supported catalogs
-    :rtype: list
+def get_transitions_for(brain_or_object):
+    """List available workflow transitions for all workflows
     """
-    archetype_tool = get_tool("archetype_tool", None)
-    if not archetype_tool:
-        # return the default catalog
-        return [get_tool(default)]
-
-    catalogs = []
-
-    # get the registered catalogs for portal_type
-    if is_object(brain_or_object):
-        catalogs = archetype_tool.getCatalogsByType(
-            get_portal_type(brain_or_object))
-    if isinstance(brain_or_object, basestring):
-        catalogs = archetype_tool.getCatalogsByType(brain_or_object)
-
-    if not catalogs:
-        return [get_tool(default)]
-    return catalogs
+    workflow = get_tool('portal_workflow')
+    transitions = []
+    for wfid in get_workflows_for(brain_or_object):
+        wf = workflow[wfid]
+        tlist = wf.getTransitionsFor(brain_or_object)
+        transitions.extend([t for t in tlist if t not in transitions])
+    return transitions
 
 
 def do_transition_for(brain_or_object, transition):
