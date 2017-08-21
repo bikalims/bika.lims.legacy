@@ -579,7 +579,8 @@ def search(query, catalog=_marker):
 
     # We only support **single** catalog queries
     if len(catalogs) > 1:
-        fail("Multi Catalog Queries are not supported, please specify a catalog.")
+        fail("Multi Catalog Queries are not supported, "
+             "please specify a catalog.")
 
     return catalogs[0](query)
 
