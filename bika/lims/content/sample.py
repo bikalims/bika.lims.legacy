@@ -983,10 +983,12 @@ class Sample(BaseFolder, HistoryAwareMixin):
         tbs = [sp for sp in parts
                if workflow.getInfoFor(sp, 'review_state') == 'to_be_sampled']
         for sp in tbs:
-            doActionFor(sp, "sample")
+            if 'sample' in [x['id'] for x in get_workflow_actions(sp)]:
+                doActionFor(sp, "sample")
         # All associated AnalysisRequests are also transitioned
         for ar in self.getAnalysisRequests():
-            doActionFor(ar, "sample")
+            if 'sample' in [x['id'] for x in get_workflow_actions(ar)]:
+                doActionFor(ar, "sample")
             ar.reindexObject()
 
     def workflow_script_to_be_preserved(self):
