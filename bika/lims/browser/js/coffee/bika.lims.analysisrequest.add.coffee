@@ -389,6 +389,11 @@ class window.AnalysisRequestAdd
 
     me = this
     $field = $(field)
+
+    # If the field doesn't exist in the form, avoid trying to set it's values
+    if ! $field.length
+      console.debug "field #{field} does not exist, skip set_reference_field"
+      return
     $parent = field.closest("div.field")
     fieldname = field.attr "name"
 

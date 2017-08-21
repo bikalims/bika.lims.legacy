@@ -382,6 +382,10 @@
       var $field, $parent, div, existing_uids, fieldname, img, me, mvl, portal_url, src, uids, uids_field;
       me = this;
       $field = $(field);
+      if (!$field.length) {
+        console.debug("field " + field + " does not exist, skip set_reference_field");
+        return;
+      }
       $parent = field.closest("div.field");
       fieldname = field.attr("name");
       console.debug("set_reference_field:: field=" + fieldname + " uid=" + uid + " title=" + title);
