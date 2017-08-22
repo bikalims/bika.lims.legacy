@@ -722,12 +722,18 @@ def get_workflow_status_of(brain_or_object, state_var="review_state"):
 
 def get_transitions_for(brain_or_object):
     """List available workflow transitions for all workflows
+    
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: All possible available and allowed transitions
+    :rtype: list[dict]
     """
     workflow = get_tool('portal_workflow')
     transitions = []
+    instance = get_object(brain_or_object)
     for wfid in get_workflows_for(brain_or_object):
         wf = workflow[wfid]
-        tlist = wf.getTransitionsFor(brain_or_object)
+        tlist = wf.getTransitionsFor(instance)
         transitions.extend([t for t in tlist if t not in transitions])
     return transitions
 
