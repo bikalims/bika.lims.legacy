@@ -54,7 +54,8 @@ from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.interfaces import ISample, ISamplePrepWorkflow
 from bika.lims.permissions import SampleSample
 from bika.lims.permissions import ScheduleSampling
-from bika.lims.workflow import doActionFor, isBasicTransitionAllowed
+from bika.lims.workflow import doActionFor, isBasicTransitionAllowed, \
+    get_workflow_actions
 from bika.lims.workflow import skip
 from bika.lims import bikaMessageFactory as _
 from bika.lims import bikaMessageFactory as logger
