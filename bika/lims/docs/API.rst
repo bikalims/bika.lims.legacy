@@ -642,6 +642,30 @@ This function also supports the portal_type as parameter::
     >>> api.get_workflows_for(api.get_portal_type(client))
     ('bika_client_workflow', 'bika_inactive_workflow')
 
+Getting the available transitions for an object
+-----------------------------------------------
+
+This function returns all possible transitions from all workflows in the
+object's workflow chain.
+
+Let's create a Batch.  It should allow us to invoke transitions from two
+workflows; 'close' from the bika_batch_workflow, and 'cancel' from the
+bika_cancellation_workflow::
+
+    >>> batch1 = api.create(portal.batches, "Batch", title="Test Batch")
+    >>> transitions = api.get_transitions_for(batch1)
+    >>> len(transitions)
+    2
+
+The transitions are returned as a list of dictionaries.  Since we cannot
+rely on the order of dictionary keys, we will have to satisfy ourselves here
+with checking that the two expected transitions are present in the return
+value::
+
+    >>> 'Close' in [t['title'] for t in transitions]
+    True
+    >>> 'Cancel' in [t['title'] for t in transitions]
+    True
 
 Getting the Workflow Status of an Object
 ----------------------------------------
