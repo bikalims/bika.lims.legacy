@@ -269,6 +269,7 @@ schema = BikaSchema.copy() + Schema((
         'ExponentialFormatPrecision',
         schemata="Analysis",
         default=7,
+        required=True,
         widget=IntegerWidget(
             label=_("Exponential format precision"),
             description=_(
@@ -1508,19 +1509,27 @@ class AnalysisService(BaseContent, HistoryAwareMixin):
         :return: the precision
         """
         if not result or self.getPrecisionFromUncertainty() is False:
-            return self.Schema().getField('ExponentialFormatPrecision').get(self)
+            return self._getExponentialFormatPrecision()
         else:
             uncertainty = self.getUncertainty(result)
             if uncertainty is None:
-                return self.Schema().getField('ExponentialFormatPrecision').get(self)
+                return self._getExponentialFormatPrecision()
 
             try:
                 result = float(result)
             except ValueError:
                 # if analysis result is not a number, then we assume in range
-                return self.Schema().getField('ExponentialFormatPrecision').get(self)
+                return self._getExponentialFormatPrecision()
 
             return get_significant_digits(uncertainty)
+
+    def _getExponentialFormatPrecision(self):
+        value = self.Schema().getField('ExponentialFormatPrecision').get(self)
+        if value is None:
+            # https://github.com/bikalims/bika.lims/issues/2004
+            # We require the field, because None values make no sense at all.
+            value = self.Schema().getField('ExponentialFormatPrecision').getDefault(self)
+        return value
 
     security.declarePublic('getContainers')
 
