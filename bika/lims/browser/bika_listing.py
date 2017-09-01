@@ -40,19 +40,21 @@ except:
 from bika.lims import api
 from plone.memoize.volatile import cache
 from plone.memoize.volatile import store_on_context
+from plone.memoize.volatile import DontCache
 
 
-def gen_key(brain_or_object):
-    obj = api.get_object(brain_or_object)
-    uid = api.get_uid(obj)
-    modified = obj.modified().ISO8601()
-    return "{}-{}".format(uid, modified)
+def gen_key(brain):
+    portal_type = api.get_portal_type(brain)
+    uid = api.get_uid(brain)
+    state = brain.review_state
+    modified = brain.modified().ISO8601()
+    return "{}-{}-{}-{}".format(portal_type, uid, state, modified)
 
 
-def gen_ar_cache_key(ar):
-    ar = api.get_object(ar)
+def gen_ar_cache_key(brain):
+    ar = api.get_object(brain)
     keys = []
-    keys.append(gen_key(ar))
+    keys.append(gen_key(brain))
     for att in ar.getAttachment():
         keys.append(gen_key(att))
     for an in ar.getAnalyses():
@@ -60,11 +62,15 @@ def gen_ar_cache_key(ar):
     return "-".join(keys)
 
 
-def cache_key(method, self, obj):
-    portal_type = api.get_portal_type(obj)
+def cache_key(method, self, brain):
+    if not api.is_brain(brain):
+        logger.warn("Bika-listing cache_key expected a ZCatalog brain, but got {}"
+                    .format(repr(brain)))
+        raise DontCache
+    portal_type = api.get_portal_type(brain)
     if portal_type == "AnalysisRequest":
-        return gen_ar_cache_key(obj)
-    return gen_key(obj)
+        return gen_ar_cache_key(brain)
+    return gen_key(brain)
 
 
 class WorkflowAction:
@@ -898,12 +904,12 @@ class BikaListingView(BrowserView):
         return fti.Title()
 
     @cache(cache_key, store_on_context)
-    def make_listing_item(self, obj):
+    def make_listing_item(self, brain):
         """Returns an object dictionary suitable for the listing view
         """
 
         # ensure we have an object
-        obj = api.get_object(obj)
+        obj = api.get_object(brain)
 
         # prepare some data
         id = api.get_id(obj)
@@ -1080,7 +1086,7 @@ class BikaListingView(BrowserView):
         self.show_more = False
 
         brains = brains[self.limit_from:]
-        for i, obj in enumerate(brains):
+        for i, brain in enumerate(brains):
 
             # avoid creating unnecessary info for items outside the current
             # batch;  only the path is needed for the "select all" case...
@@ -1091,7 +1097,7 @@ class BikaListingView(BrowserView):
                 break
 
             # This item must be rendered, we need the object instead of a brain
-            obj = obj.getObject() if hasattr(obj, 'getObject') else obj
+            obj = api.get_object(brain)
 
             # check if the item must be rendered or not (prevents from
             # doing it later in folderitems) and dealing with paging
@@ -1099,7 +1105,7 @@ class BikaListingView(BrowserView):
                 continue
 
             # create a listing item
-            results_dict = self.make_listing_item(obj)
+            results_dict = self.make_listing_item(brain)
 
             # Search for values for all columns in obj
             for key in self.columns.keys():
