@@ -44,10 +44,11 @@ from plone.memoize.volatile import DontCache
 
 
 def gen_key(brain):
+    obj = api.get_object(brain)
     portal_type = api.get_portal_type(brain)
     uid = api.get_uid(brain)
     state = brain.review_state
-    modified = brain.modified().ISO8601()
+    modified = obj.modified().ISO8601()
     return "{}-{}-{}-{}".format(portal_type, uid, state, modified)
 
 
