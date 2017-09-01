@@ -44,11 +44,10 @@ from plone.memoize.volatile import DontCache
 
 
 def gen_key(brain):
-    obj = api.get_object(brain)
     portal_type = api.get_portal_type(brain)
     uid = api.get_uid(brain)
     state = brain.review_state
-    modified = obj.modified().ISO8601()
+    modified = brain.modified().ISO8601()
     return "{}-{}-{}-{}".format(portal_type, uid, state, modified)
 
 
@@ -57,7 +56,9 @@ def gen_ar_cache_key(brain):
     keys = []
     keys.append(gen_key(brain))
     for att in ar.getAttachment():
-        keys.append(gen_key(att))
+        keys.append("{}-{}".format(
+            api.get_uid(att),
+            att.modified().ISO8601()))
     for an in ar.getAnalyses():
         keys.append(gen_key(an))
     return "-".join(keys)
