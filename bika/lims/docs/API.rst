@@ -676,6 +676,45 @@ Reactivate the client::
     'active'
 
 
+Getting the creation date of an object
+--------------------------------------
+
+This function returns the creation date of a given object::
+
+    >>> created = api.get_creation_date(client)
+    >>> created
+    DateTime('...')
+
+
+Getting the modification date of an object
+------------------------------------------
+
+This function returns the modification date of a given object::
+
+    >>> modified = api.get_modification_date(client)
+    >>> modified
+    DateTime('...')
+
+
+Getting the review state of an object
+-------------------------------------
+
+This function returns the review state of a given object::
+
+    >>> review_state = api.get_review_status(client)
+    >>> review_state
+    'active'
+
+It should also work for catalog brains::
+
+    >>> portal_catalog = api.get_tool("portal_catalog")
+    >>> results = portal_catalog({"portal_type": "Client", "UID": api.get_uid(client)})
+    >>> len(results)
+    1
+    >>> api.get_review_status(results[0]) == review_state
+    True
+
+
 Getting the registered Catalogs of an Object
 --------------------------------------------
 
@@ -890,3 +929,47 @@ Getting the current logged in user::
 
     >>> api.get_current_user()
     <MemberData at /plone/portal_memberdata/test_user_1_ used for /plone/acl_users>
+
+
+Creating a Cache Key
+--------------------
+
+This function creates a good cache key for a single object::
+
+    >>> key1 = api.make_cache_key_for(client)
+    >>> key1
+    'Client-client-1-...'
+
+This can be also done for a catalog result brain::
+
+    >>> portal_catalog = api.get_tool("portal_catalog")
+    >>> brains = portal_catalog({"portal_type": "Client", "UID": api.get_uid(client)})
+    >>> key2 = api.make_cache_key_for(brains[0])
+    >>> key2
+    'Client-client-1-...'
+
+The two keys should be equal::
+
+    >>> key1 == key2
+    True
+
+The key should change when the object get modified::
+
+    >>> from zope.lifecycleevent import modified
+    >>> client.setClientID("TESTCLIENT")
+    >>> modified(client)
+    >>> key3 = api.make_cache_key_for(client)
+    >>> key3 != key1
+    True
+
+.. important:: Workflow changes do not change the modification date!
+               A custom event subscriber will update it therefore.
+
+A workflow transition should also change the cache key::
+
+    >>> _ = api.do_transition_for(client, transition="deactivate")
+    >>> api.get_inactive_status(client)
+    'inactive'
+    >>> key4 = api.make_cache_key_for(client)
+    >>> key4 != key3
+    True
