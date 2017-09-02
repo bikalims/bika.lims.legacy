@@ -43,7 +43,7 @@ from plone.memoize.volatile import store_on_context
 
 
 def gen_ar_cache_key(brain_or_object):
-    ar = api.get_object(brain)
+    ar = api.get_object(brain_or_object)
     keys = []
     keys.append(api.make_cache_key_for(ar))
     for att in ar.getAttachment():
