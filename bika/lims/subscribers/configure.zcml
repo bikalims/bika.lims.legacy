@@ -11,6 +11,13 @@
       handler="bika.lims.subscribers.after_transition_log.AfterTransitionEventHandler"
       />
 
+  <!-- Transition event handler -->
+  <subscriber
+      for="*
+           Products.DCWorkflow.interfaces.IAfterTransitionEvent"
+      handler="bika.lims.subscribers.on_transition.after_transition_handler"
+      />
+
   <!-- Newly created analyses -->
   <subscriber
       for="*
