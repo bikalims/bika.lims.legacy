@@ -57,10 +57,9 @@ def doActionFor(instance, action_id):
         try:
             api.do_transition_for(instance, action_id)
             actionperformed = True
-        except ploneapi.exc.InvalidParameterError as e:
+        except api.BikaLIMSError as e:
             message = str(e)
-            logger.warn("Failed to perform transition {} on {}: {}".format(
-                action_id, instance, message))
+            logger.warn(message)
     return actionperformed, message
 
 
