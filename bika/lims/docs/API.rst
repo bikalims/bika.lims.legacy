@@ -959,9 +959,9 @@ Getting the current logged in user::
 Creating a Cache Key
 --------------------
 
-This function creates a good cache key for a single object::
+This function creates a good cache key for a generic object or brain::
 
-    >>> key1 = api.make_cache_key_for(client)
+    >>> key1 = api.get_cache_key(client)
     >>> key1
     'Client-client-1-...'
 
@@ -969,7 +969,7 @@ This can be also done for a catalog result brain::
 
     >>> portal_catalog = api.get_tool("portal_catalog")
     >>> brains = portal_catalog({"portal_type": "Client", "UID": api.get_uid(client)})
-    >>> key2 = api.make_cache_key_for(brains[0])
+    >>> key2 = api.get_cache_key(brains[0])
     >>> key2
     'Client-client-1-...'
 
@@ -983,7 +983,7 @@ The key should change when the object get modified::
     >>> from zope.lifecycleevent import modified
     >>> client.setClientID("TESTCLIENT")
     >>> modified(client)
-    >>> key3 = api.make_cache_key_for(client)
+    >>> key3 = api.get_cache_key(client)
     >>> key3 != key1
     True
 
@@ -995,6 +995,58 @@ A workflow transition should also change the cache key::
     >>> _ = api.do_transition_for(client, transition="deactivate")
     >>> api.get_inactive_status(client)
     'inactive'
-    >>> key4 = api.make_cache_key_for(client)
+    >>> key4 = api.get_cache_key(client)
     >>> key4 != key3
     True
+
+
+Creating a AR Cache Key
+-----------------------
+
+This function creates a cache key for AnalysisRequests only and generates a more
+sophisticated cache key for this content type::
+
+    >>> # TODO: api.get_ar_cache_key(ar)
+
+If the passed in object is not an AnalysisRequest, this function raises `DontCache`::
+
+    >>> api.get_ar_cache_key(client)
+    Traceback (most recent call last):
+    ...
+    DontCache
+
+
+Bika Cache Key decorator
+------------------------
+
+This decorator can be used for `plone.memoize` cache decorators in classes.
+The decorator expects that the first argument is the class instance (`self`) and
+the second argument a brain or object::
+
+    >>> from plone.memoize.volatile import cache
+
+    >>> class BikaClass(object):
+    ...     @cache(api.bika_cache_key_decorator)
+    ...     def get_very_expensive_calculation(self, obj):
+    ...         print "get_id was called"
+    ...         return api.get_id(obj)
+
+    >>> instance = BikaClass()
+
+Calling the (expensive) method of the class does the calculation just once::
+
+    >>> instance.get_very_expensive_calculation(client)
+    get_id was called
+    'client-1'
+
+    >>> instance.get_very_expensive_calculation(client)
+    'client-1'
+
+The decorator can also handle brains::
+
+    >>> instance.get_very_expensive_calculation(brain)
+    get_id was called
+    'client-1'
+
+    >>> instance.get_very_expensive_calculation(brain)
+    'client-1'

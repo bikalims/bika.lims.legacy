@@ -29,6 +29,7 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security.interfaces import Unauthorized
 
 from plone import api as ploneapi
+from plone.memoize.volatile import DontCache
 from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
@@ -1055,8 +1056,8 @@ def get_current_user():
     return ploneapi.user.get_current()
 
 
-def make_cache_key_for(brain_or_object):
-    """Generate a good cache key for the given brain or object
+def get_cache_key(brain_or_object):
+    """Generate a cache key for a common brain or object
 
     :param brain_or_object: A single catalog brain or content object
     :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
@@ -1071,3 +1072,38 @@ def make_cache_key_for(brain_or_object):
         get_modification_date(brain_or_object).micros(),
     ]
     return "-".join(map(lambda x: str(x), key))
+
+
+def get_ar_cache_key(brain_or_object):
+    """Generate a cache key for an AnalysisRequest brain or object
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: Cache Key
+    :rtype: str
+    """
+    # bail out if the content is not a AnalysisRequest
+    if get_portal_type(brain_or_object) != "AnalysisRequest":
+        raise DontCache
+    ar = get_object(brain_or_object)
+    keys = []
+    keys.append(get_cache_key(ar))
+    for att in ar.getAttachment():
+        keys.append(get_cache_key(att))
+    for an in ar.getAnalyses():
+        keys.append(get_cache_key(an))
+    return "-".join(keys)
+
+
+def bika_cache_key_decorator(method, self, brain_or_object):
+    """Bika cache key decorator usable for
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: Cache Key
+    :rtype: str
+    """
+    portal_type = get_portal_type(brain_or_object)
+    if portal_type == "AnalysisRequest":
+        return get_ar_cache_key(brain_or_object)
+    return get_cache_key(brain_or_object)

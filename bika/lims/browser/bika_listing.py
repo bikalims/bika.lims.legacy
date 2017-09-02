@@ -42,24 +42,6 @@ from plone.memoize.volatile import cache
 from plone.memoize.volatile import store_on_context
 
 
-def gen_ar_cache_key(brain_or_object):
-    ar = api.get_object(brain_or_object)
-    keys = []
-    keys.append(api.make_cache_key_for(ar))
-    for att in ar.getAttachment():
-        keys.append(api.make_cache_key_for(att))
-    for an in ar.getAnalyses():
-        keys.append(api.make_cache_key_for(an))
-    return "-".join(keys)
-
-
-def cache_key(method, self, brain_or_object):
-    portal_type = api.get_portal_type(brain_or_object)
-    if portal_type == "AnalysisRequest":
-        return gen_ar_cache_key(brain_or_object)
-    return api.make_cache_key_for(brain_or_object)
-
-
 class WorkflowAction:
     """ Workflow actions taken in any Bika contextAnalysisRequest context
 
@@ -890,7 +872,7 @@ class BikaListingView(BrowserView):
             return api.get_portal_type(obj)
         return fti.Title()
 
-    @cache(cache_key, store_on_context)
+    @cache(api.bika_cache_key_decorator, store_on_context)
     def make_listing_item(self, brain):
         """Returns an object dictionary suitable for the listing view
         """
