@@ -40,39 +40,24 @@ except:
 from bika.lims import api
 from plone.memoize.volatile import cache
 from plone.memoize.volatile import store_on_context
-from plone.memoize.volatile import DontCache
 
 
-def gen_key(brain):
-    portal_type = api.get_portal_type(brain)
-    uid = api.get_uid(brain)
-    state = brain.review_state
-    modified = brain.modified().ISO8601()
-    return "{}-{}-{}-{}".format(portal_type, uid, state, modified)
-
-
-def gen_ar_cache_key(brain):
+def gen_ar_cache_key(brain_or_object):
     ar = api.get_object(brain)
     keys = []
-    keys.append(gen_key(brain))
+    keys.append(api.make_cache_key_for(ar))
     for att in ar.getAttachment():
-        keys.append("{}-{}".format(
-            api.get_uid(att),
-            att.modified().ISO8601()))
+        keys.append(api.make_cache_key_for(att))
     for an in ar.getAnalyses():
-        keys.append(gen_key(an))
+        keys.append(api.make_cache_key_for(an))
     return "-".join(keys)
 
 
-def cache_key(method, self, brain):
-    if not api.is_brain(brain):
-        logger.warn("Bika-listing cache_key expected a ZCatalog brain, but got {}"
-                    .format(repr(brain)))
-        raise DontCache
-    portal_type = api.get_portal_type(brain)
+def cache_key(method, self, brain_or_object):
+    portal_type = api.get_portal_type(brain_or_object)
     if portal_type == "AnalysisRequest":
-        return gen_ar_cache_key(brain)
-    return gen_key(brain)
+        return gen_ar_cache_key(brain_or_object)
+    return api.make_cache_key_for(brain_or_object)
 
 
 class WorkflowAction:
