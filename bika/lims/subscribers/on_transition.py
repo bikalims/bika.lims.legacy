@@ -7,11 +7,7 @@
 
 import DateTime
 
-def after_transition_handler(instance, event):
 
-    # creation doesn't have a 'transition'
-    if event.transition is None:
-        return
-
+def before_transition_handler(instance, event):
     now = DateTime.DateTime()
     instance.setModificationDate(now)
