@@ -1028,7 +1028,7 @@ the second argument a brain or object::
     >>> class BikaClass(object):
     ...     @cache(api.bika_cache_key_decorator)
     ...     def get_very_expensive_calculation(self, obj):
-    ...         print "get_id was called"
+    ...         print "very expensive calculation"
     ...         return api.get_id(obj)
 
     >>> instance = BikaClass()
@@ -1036,7 +1036,7 @@ the second argument a brain or object::
 Calling the (expensive) method of the class does the calculation just once::
 
     >>> instance.get_very_expensive_calculation(client)
-    get_id was called
+    very expensive calculation
     'client-1'
 
     >>> instance.get_very_expensive_calculation(client)
@@ -1045,7 +1045,7 @@ Calling the (expensive) method of the class does the calculation just once::
 The decorator can also handle brains::
 
     >>> instance.get_very_expensive_calculation(brain)
-    get_id was called
+    very expensive calculation
     'client-1'
 
     >>> instance.get_very_expensive_calculation(brain)
