@@ -1000,22 +1000,6 @@ A workflow transition should also change the cache key::
     True
 
 
-Creating a AR Cache Key
------------------------
-
-This function creates a cache key for AnalysisRequests only and generates a more
-sophisticated cache key for this content type::
-
-    >>> # TODO: api.get_ar_cache_key(ar)
-
-If the passed in object is not an AnalysisRequest, this function raises `DontCache`::
-
-    >>> api.get_ar_cache_key(client)
-    Traceback (most recent call last):
-    ...
-    DontCache
-
-
 Bika Cache Key decorator
 ------------------------
 

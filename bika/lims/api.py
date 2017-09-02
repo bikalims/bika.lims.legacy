@@ -29,7 +29,6 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security.interfaces import Unauthorized
 
 from plone import api as ploneapi
-from plone.memoize.volatile import DontCache
 from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
@@ -625,32 +624,6 @@ def search(query, catalog=_marker):
     return catalogs[0](query)
 
 
-def get_catalogs_for(brain_or_object):
-    """Returns the registered catalogs for the given brain_or_object
-
-    :param brain_or_object: A single catalog brain or content object
-    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :param attr: Attribute name
-    :type attr: str
-    :returns: list of retgistered catalog tools
-    :rtype: list
-    """
-    catalogs = []
-
-    portal_type = brain_or_object.portal_type
-    # Use the archetypes_tool to gather the right catalogs
-    archetype_tool = get_tool("archetype_tool", None)
-    # but only if the user did not specify any catalogs explicitly
-
-    if archetype_tool:
-        # we just want the first of the registered catalogs
-        catalogs.extend(archetype_tool.getCatalogsByType(portal_type))
-
-    if not catalogs:
-        return [get_portal_catalog()]
-    return catalogs
-
-
 def safe_getattr(brain_or_object, attr, default=_marker):
     """Return the attribute value
 
@@ -1074,27 +1047,6 @@ def get_cache_key(brain_or_object):
     return "-".join(map(lambda x: str(x), key))
 
 
-def get_ar_cache_key(brain_or_object):
-    """Generate a cache key for an AnalysisRequest brain or object
-
-    :param brain_or_object: A single catalog brain or content object
-    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
-    :returns: Cache Key
-    :rtype: str
-    """
-    # bail out if the content is not a AnalysisRequest
-    if get_portal_type(brain_or_object) != "AnalysisRequest":
-        raise DontCache
-    ar = get_object(brain_or_object)
-    keys = []
-    keys.append(get_cache_key(ar))
-    for att in ar.getAttachment():
-        keys.append(get_cache_key(att))
-    for an in ar.getAnalyses():
-        keys.append(get_cache_key(an))
-    return "-".join(keys)
-
-
 def bika_cache_key_decorator(method, self, brain_or_object):
     """Bika cache key decorator usable for
 
@@ -1103,7 +1055,4 @@ def bika_cache_key_decorator(method, self, brain_or_object):
     :returns: Cache Key
     :rtype: str
     """
-    portal_type = get_portal_type(brain_or_object)
-    if portal_type == "AnalysisRequest":
-        return get_ar_cache_key(brain_or_object)
     return get_cache_key(brain_or_object)
