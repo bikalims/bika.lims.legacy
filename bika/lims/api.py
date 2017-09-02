@@ -837,6 +837,24 @@ def get_catalogs_for(brain_or_object, default="portal_catalog"):
     return catalogs
 
 
+def get_transitions_for(brain_or_object):
+    """List available workflow transitions for all workflows
+
+    :param brain_or_object: A single catalog brain or content object
+    :type brain_or_object: ATContentType/DexterityContentType/CatalogBrain
+    :returns: All possible available and allowed transitions
+    :rtype: list[dict]
+    """
+    workflow = get_tool('portal_workflow')
+    transitions = []
+    instance = get_object(brain_or_object)
+    for wfid in get_workflows_for(brain_or_object):
+        wf = workflow[wfid]
+        tlist = wf.getTransitionsFor(instance)
+        transitions.extend([t for t in tlist if t not in transitions])
+    return transitions
+
+
 def do_transition_for(brain_or_object, transition):
     """Performs a workflow transition for the passed in object.
 
@@ -847,7 +865,11 @@ def do_transition_for(brain_or_object, transition):
     if not isinstance(transition, basestring):
         fail("Transition type needs to be string, got '%s'" % type(transition))
     obj = get_object(brain_or_object)
-    ploneapi.content.transition(obj, transition)
+    try:
+        ploneapi.content.transition(obj, transition)
+    except ploneapi.exc.InvalidParameterError as e:
+        fail("Failed to perform transition '{}' on {}: {}".format(
+             transition, obj, str(e)))
     return obj
 
 
