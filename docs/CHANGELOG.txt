@@ -1,38 +1,7 @@
-3.4.0 (unreleased)
-------------------
-
-- Issue-2198: Bika listing cache key does not invalidate after WF transitions
-- Issue-2183: Don't recalculate prices when option "Include and display pricing information" in Bika Setup Accounting is not selected
-- Sampler and Sampling Date Columns are not validated when they are not displayed
-- Issue-2162: Added renameAfterCreation to partition creation in ARImport
-- Laboratory Supervisor field on the Laboratory(Bika Setup - Laboratory Information)
-- Laboratory License ID field on the Laboratory(Bika Setup - Laboratory Information)
-- Add instrument Agilent-Masshunter
-- Issue-2145: Client Departments/Types structure not preserved on reinstall
-- Issue-2143: Make Bika API work with DX types properly
-- LIMS-2449: Thermo Qtegra results importer
-- Lab Supervisor field on the Laboratory(Bika Setup - Laboratory Information)
-- BC-99: Added Print Stickers button to AR listings
-- Issue-2152: Fixed AR sticker autoprint to work regardless of AR number format
-
-
-3.3.0 (unreleased)
-------------------
-
-- Issue-2173: Publishing multiple ARs fails
-- Issue-2132: Reorderable Attachments for Reports
-- Issue-2129: Migrate Attachments to blobs
-- Issue-2098: Inline rendered Attachments not in final PDF
-- LIMS-2596:  AR and Sample view fields that need to stay editable
-
-**Other Changes**
-
-- Bika LIMS JSON API v2
-
-
 3.2.1rc1 (unreleased)
 ---------------------
 
+- Issue-2198: Bika listing cache key does not invalidate after WF transitions
 - Issue-2004: Traceback for AR when an Analysis is used w/o 'Exponential format precision' set
 - Issue-2184: AR Add 2 takes long to clone existing ARs on instances with many ASs
 - Issue-2178: Bika Listings are slow
