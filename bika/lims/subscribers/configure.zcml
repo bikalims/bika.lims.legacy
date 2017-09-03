@@ -11,6 +11,14 @@
       handler="bika.lims.subscribers.after_transition_log.AfterTransitionEventHandler"
       />
 
+  <!-- BikaBeforeTransitionEvent handler -->
+  <subscriber
+      for="*
+           bika.lims.api.IBikaBeforeTransitionEvent"
+      handler="bika.lims.subscribers.on_transition.before_transition_handler"
+      />
+
+
   <!-- Newly created analyses -->
   <subscriber
       for="*

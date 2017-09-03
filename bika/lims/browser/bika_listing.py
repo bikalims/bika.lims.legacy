@@ -42,31 +42,6 @@ from plone.memoize.volatile import cache
 from plone.memoize.volatile import store_on_context
 
 
-def gen_key(brain_or_object):
-    obj = api.get_object(brain_or_object)
-    uid = api.get_uid(obj)
-    modified = obj.modified().ISO8601()
-    return "{}-{}".format(uid, modified)
-
-
-def gen_ar_cache_key(ar):
-    ar = api.get_object(ar)
-    keys = []
-    keys.append(gen_key(ar))
-    for att in ar.getAttachment():
-        keys.append(gen_key(att))
-    for an in ar.getAnalyses():
-        keys.append(gen_key(an))
-    return "-".join(keys)
-
-
-def cache_key(method, self, obj):
-    portal_type = api.get_portal_type(obj)
-    if portal_type == "AnalysisRequest":
-        return gen_ar_cache_key(obj)
-    return gen_key(obj)
-
-
 class WorkflowAction:
     """ Workflow actions taken in any Bika contextAnalysisRequest context
 
@@ -875,13 +850,13 @@ class BikaListingView(BrowserView):
             return api.get_portal_type(obj)
         return fti.Title()
 
-    @cache(cache_key, store_on_context)
-    def make_listing_item(self, obj):
+    @cache(api.bika_cache_key_decorator, store_on_context)
+    def make_listing_item(self, brain):
         """Returns an object dictionary suitable for the listing view
         """
 
         # ensure we have an object
-        obj = api.get_object(obj)
+        obj = api.get_object(brain)
 
         # prepare some data
         id = api.get_id(obj)
@@ -1058,7 +1033,7 @@ class BikaListingView(BrowserView):
         self.show_more = False
 
         brains = brains[self.limit_from:]
-        for i, obj in enumerate(brains):
+        for i, brain in enumerate(brains):
 
             # avoid creating unnecessary info for items outside the current
             # batch;  only the path is needed for the "select all" case...
@@ -1069,7 +1044,7 @@ class BikaListingView(BrowserView):
                 break
 
             # This item must be rendered, we need the object instead of a brain
-            obj = obj.getObject() if hasattr(obj, 'getObject') else obj
+            obj = api.get_object(brain)
 
             # check if the item must be rendered or not (prevents from
             # doing it later in folderitems) and dealing with paging
@@ -1077,7 +1052,7 @@ class BikaListingView(BrowserView):
                 continue
 
             # create a listing item
-            results_dict = self.make_listing_item(obj)
+            results_dict = self.make_listing_item(brain)
 
             # Search for values for all columns in obj
             for key in self.columns.keys():
