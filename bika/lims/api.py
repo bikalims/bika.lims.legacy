@@ -1041,6 +1041,8 @@ def get_cache_key(brain_or_object):
         get_portal_type(brain_or_object),
         get_id(brain_or_object),
         get_uid(brain_or_object),
+        # handle different domains gracefully
+        get_url(brain_or_object),
         # Return the microsecond since the epoch in GMT
         get_modification_date(brain_or_object).micros(),
     ]
