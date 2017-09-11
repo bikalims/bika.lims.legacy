@@ -82,7 +82,7 @@ function referencewidget_lookups(elements) {
       event.preventDefault();
       var fieldName = $(this).attr("name");
       var skip;
-      var uid_element = $(this).siblings("input[$='_uid']");
+      var uid_element = $(this).siblings("input[id$='_uid']");
       var listing_div = $(this).siblings("div[id$='-listing']");
       if ($(listing_div).length > 0) {
         // Add selection to textfield value
