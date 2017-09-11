@@ -1,6 +1,7 @@
 3.3.0 (unreleased)
 ------------------
 
+- Issue-2204: Notification Emails on AR retract
 - Issue-2173: Publishing multiple ARs fails
 - Issue-2132: Reorderable Attachments for Reports
 - Issue-2129: Migrate Attachments to blobs
