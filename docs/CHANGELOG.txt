@@ -1,6 +1,7 @@
 3.2.1rc1 (unreleased)
 ---------------------
 
+- Issue-2207: Invalid jQuery selector in Referencewidget
 - Issue-2200: Bika Listing Cachekey ignores different virtual host configurations
 - Issue-2198: Bika listing cache key does not invalidate after WF transitions
 - Issue-2004: Traceback for AR when an Analysis is used w/o 'Exponential format precision' set
