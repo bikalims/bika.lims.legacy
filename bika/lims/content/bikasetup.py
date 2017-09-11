@@ -425,13 +425,14 @@ schema = BikaFolderSchema.copy() + Schema((
                 "any Analysis in Analysis Service edit view. By default, 1"),
         ),
     ),
-    StringField('TypeOfmultiVerification',
-        schemata = "Analyses",
-        default = 'self_multi_enabled',
-        vocabulary = MULTI_VERIFICATION_TYPE,
-        widget = SelectionWidget(
+    StringField(
+        'TypeOfmultiVerification',
+        schemata="Analyses",
+        default='self_multi_enabled',
+        vocabulary=MULTI_VERIFICATION_TYPE,
+        widget=SelectionWidget(
             label=_("Multi Verification type"),
-            description = _(
+            description=_(
                 "Choose type of multiple verification for the same user."
                 "This setting can enable/disable verifying/consecutively verifying"
                 "more than once for the same user."),
@@ -849,5 +850,6 @@ class BikaSetup(folder.ATFolder):
         """
         items = [(1, '1'), (2, '2'), (3, '3'), (4, '4')]
         return IntDisplayList(list(items))
+
 
 registerType(BikaSetup, PROJECTNAME)
