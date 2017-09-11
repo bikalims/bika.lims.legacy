@@ -324,8 +324,8 @@
                   <span i18n:translate="">Manage Form Fields</span>
                 </a>
               </div>
-            </td><td>
             </td>
+            <td></td>
             <tal:columns tal:repeat="arnum python:range(view.ar_count)">
               <td class="ar-column-header">
                 <span i18n:translate="">Sample</span>
