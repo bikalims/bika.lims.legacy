@@ -13,6 +13,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
 from Products.Archetypes.atapi import DisplayList, PicklistWidget
 from Products.Archetypes.atapi import registerType
+from bika.lims.api import bika_cache_key_decorator
+from plone.memoize.volatile import store_on_context, cache
 
 from zope.interface import implements
 from plone.app.folder.folder import ATFolder
@@ -54,6 +56,14 @@ from bika.lims.content.bikaschema import BikaSchema
 from bika.lims.content.bikaschema import BikaFolderSchema
 from bika.lims import bikaMessageFactory as _
 from bika.lims import deprecated
+
+def cache_key(method, self):
+    creation_flag = self.checkCreationFlag()
+    if creation_flag:
+        raise DontCache
+    uid = api.get_uid(self)
+    modified = self.modified().ISO8601()
+    return "{}-{}".format(uid, modified)
 
 schema = BikaFolderSchema.copy() + BikaSchema.copy() + Schema((
 
@@ -481,6 +491,7 @@ class Instrument(ATFolder):
                 certs.append(c)
         return certs
 
+    @cache(cache_key)
     def isValid(self):
         """ Returns if the current instrument is not out for verification, calibration,
         out-of-date regards to its certificates and if the latest QC succeed
@@ -491,6 +502,7 @@ class Instrument(ATFolder):
             and self.isValidationInProgress() is False \
             and self.isCalibrationInProgress() is False
 
+    @cache(cache_key)
     def getLatestReferenceAnalyses(self):
         """ Returns a list with the latest Reference analyses performed
             for this instrument and Analysis Service.
@@ -529,6 +541,7 @@ class Instrument(ATFolder):
             self.getField('_LatestReferenceAnalyses').set(self, refs)
         return refs
 
+    @cache(cache_key)
     def isQCValid(self):
         """ Returns True if the instrument succeed for all the latest
             Analysis QCs performed (for diferent types of AS)
@@ -680,6 +693,7 @@ class Instrument(ATFolder):
 #        return [p.getObject() for p in pc(portal_type='InstrumentScheduleTask',
 #                                          getInstrumentUID=uid)]
 
+    @cache(cache_key)
     def getReferenceAnalyses(self):
         """ Returns an array with the subset of Controls and Blanks
             analysis objects, performed using this instrument.

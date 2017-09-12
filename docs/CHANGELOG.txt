@@ -2,6 +2,8 @@
 ------------------
 
 - 2215: Added extra param portal_type on the function generateUniqueId so that it's not used for objects only
+- LIMS-2695: Improve performance of worksheet results (manage_analyses) view
+- Saving '-----' and negetive values as 0(Only for Shimadzu instruments)
 - Issue-2183: Don't recalculate prices when option "Include and display pricing information" in Bika Setup Accounting is not selected
 - Sampler and Sampling Date Columns are not validated when they are not displayed
 - Issue-2162: Added renameAfterCreation to partition creation in ARImport

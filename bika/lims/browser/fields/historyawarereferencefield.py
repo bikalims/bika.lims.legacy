@@ -19,9 +19,20 @@ from Products.CMFEditions.Permissions import SaveNewVersion
 from Products.CMFEditions.Permissions import AccessPreviousVersions
 from Products.Archetypes.config import REFERENCE_CATALOG
 from bika.lims import bikaMessageFactory as _
+from bika.lims.api import bika_cache_key_decorator, get_uid
 from bika.lims.utils import t
 from bika.lims import logger
 from bika.lims.utils import to_utf8
+from plone.memoize.volatile import store_on_context, cache, DontCache
+
+
+def cache_key(method, field, instance, **kwargs):
+    creation_flag = instance.checkCreationFlag()
+    if creation_flag:
+        raise DontCache
+    uid = get_uid(instance)
+    versions = ''.join(instance.get('reference_versions', {}).values())
+    return "{}-{}".format(uid, versions)
 
 
 class HistoryAwareReferenceField(ReferenceField):
@@ -127,6 +138,7 @@ class HistoryAwareReferenceField(ReferenceField):
 
     security.declarePrivate('get')
 
+    @cache(cache_key)
     def get(self, instance, aslist=False, **kwargs):
         """get() returns the list of objects referenced under the relationship.
         """
