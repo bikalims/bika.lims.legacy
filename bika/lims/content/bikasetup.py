@@ -201,7 +201,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     BooleanField(
         'ShowNewReleasesInfo',
-        schemata="Security",
+        schemata="Notifications",
         default=True,
         widget=BooleanWidget(
             label=_("Display an alert on new releases of Bika LIMS"),
@@ -335,26 +335,6 @@ schema = BikaFolderSchema.copy() + Schema((
             append_only=False,
         ),
     ),
-    # IntegerField('BatchFax',
-    #     schemata = "Results Reports",
-    #     required = 1,
-    #     default = 4,
-    #     widget = IntegerWidget(
-    #         label=_("Maximum columns per results fax"),
-    #         description = "Too many AR columns per fax will see the font size minimised and could "
-    #                         "render faxes illegible. 4 ARs maximum per page is recommended",
-    #     )
-    # ),
-    # StringField('SMSGatewayAddress',
-    #     schemata = "Results Reports",
-    #     required = 0,
-    #     widget = StringWidget(
-    #         label=_("SMS Gateway Email Address"),
-    #         description = "The email to SMS gateway address. Either a complete email address, "
-    #                         "or just the domain, e.g. '@2way.co.za', the contact's mobile phone "
-    #                         "number will be prepended to",
-    #     )
-    # ),
     BooleanField(
         'CategoriseAnalysisServices',
         schemata="Analyses",
@@ -538,7 +518,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'WorksheetLayout',
-        schemata="Analyses",
+        schemata="Appearance",
         default='1',
         vocabulary=WORKSHEET_LAYOUT_OPTIONS,
         widget=SelectionWidget(
@@ -554,7 +534,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     BooleanField(
         'DashboardByDefault',
-        schemata="Analyses",
+        schemata="Appearance",
         default=True,
         widget=BooleanWidget(
             label=_("Use Dashboard as default front page"),
@@ -563,7 +543,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     ReferenceField(
         'LandingPage',
-        schemata="Analyses",
+        schemata="Appearance",
         multiValued=0,
         allowed_types=('Document', ),
         relationship='SetupLandingPage',
@@ -645,7 +625,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     BooleanField(
         'NotifyOnRejection',
-        schemata="Sampling and COC",
+        schemata="Notifications",
         default=False,
         widget=BooleanWidget(
             label=_("Sample rejection email notification"),
@@ -656,7 +636,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     BooleanField(
         'NotifyOnARRetract',
-        schemata="Sampling and COC",
+        schemata="Notifications",
         default=True,
         widget=BooleanWidget(
             label=_("Email notification on AR retract"),
