@@ -642,6 +642,17 @@ schema = BikaFolderSchema.copy() + Schema((
                           "Request is rejected.")
         ),
     ),
+    BooleanField(
+        'NotifyOnARRetract',
+        schemata="Sampling and COC",
+        default=True,
+        widget=BooleanWidget(
+            label=_("Email notification on AR retract"),
+            description=_("Select this to activate automatic notifications "
+                          "via email to the Client and Lab Managers when an Analysis "
+                          "Request is retracted.")
+        ),
+    ),
     TextField(
         'COCAttestationStatement',
         schemata="Sampling and COC",
@@ -763,37 +774,6 @@ Configuration Settings:
             label=_("ID Server Values"),
             cols=30,
             rows=30,
-    RecordsField(
-        'RejectionReasons',
-        schemata="Analyses",
-        widget=RejectionSetupWidget(
-            label=_("Enable the rejection workflow"),
-            description=_("Select this to activate the rejection workflow "
-                          "for Samples and Analysis Requests. A 'Reject' "
-                          "option will be displayed in the actions menu for "
-                          "these objects.")
-        ),
-    ),
-    BooleanField(
-        'NotifyOnRejection',
-        schemata="Notifications",
-        default=False,
-        widget=BooleanWidget(
-            label=_("Email notification on rejection"),
-            description=_("Select this to activate automatic notifications "
-                          "via email to the Client when a Sample or Analysis "
-                          "Request is rejected.")
-        ),
-    ),
-    BooleanField(
-        'NotifyOnARRetract',
-        schemata="Notifications",
-        default=True,
-        widget=BooleanWidget(
-            label=_("Email notification on AR retract"),
-            description=_("Select this to activate automatic notifications "
-                          "via email to the Client and Lab Managers when an Analysis "
-                          "Request is retracted.")
         ),
     ),
     BooleanField(
