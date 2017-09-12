@@ -1,6 +1,7 @@
 3.2.1rc1 (unreleased)
 ---------------------
 
+- Issue-2211: Allow to change the Number of ARs in the AR Add form
 - Issue-2207: Invalid jQuery selector in Referencewidget
 - Issue-2200: Bika Listing Cachekey ignores different virtual host configurations
 - Issue-2198: Bika listing cache key does not invalidate after WF transitions

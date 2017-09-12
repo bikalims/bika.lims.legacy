@@ -107,6 +107,16 @@ class AnalysisRequestAddView(BrowserView):
         logger.info("*** Prepared data for {} ARs ***".format(self.ar_count))
         return self.template()
 
+    def get_view_url(self):
+        """Return the current view url including request parameters
+        """
+        request = self.request
+        url = request.getURL()
+        qs = request.getHeader("query_string")
+        if not qs:
+            return url
+        return "{}?{}".format(url, qs)
+
     def get_object_by_uid(self, uid):
         """Get the object by UID
         """
