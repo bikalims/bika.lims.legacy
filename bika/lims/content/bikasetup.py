@@ -661,7 +661,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'AutoPrintStickers',
-        schemata="Sampling and COC",
+        schemata="Sticker",
         vocabulary=STICKER_AUTO_OPTIONS,
         widget=SelectionWidget(
             format='select',
@@ -674,7 +674,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'AutoStickerTemplate',
-        schemata="Sampling and COC",
+        schemata="Sticker",
         vocabulary="getStickerTemplates",
         widget=SelectionWidget(
             format='select',
@@ -684,7 +684,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'SmallStickerTemplate',
-        schemata="Sampling and COC",
+        schemata="Sticker",
         vocabulary="getStickerTemplates",
         default="Code_128_1x48mm.pt",
         widget=SelectionWidget(
@@ -695,7 +695,7 @@ schema = BikaFolderSchema.copy() + Schema((
     ),
     StringField(
         'LargeStickerTemplate',
-        schemata="Sampling and COC",
+        schemata="Sticker",
         vocabulary="getStickerTemplates",
         default="Code_128_1x72mm.pt",
         widget=SelectionWidget(
