@@ -16,7 +16,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.ATExtensions.ateapi import RecordsField
 
 from Products.Archetypes.atapi import Schema
-from Products.Archetypes.atapi import ComputedField
 from Products.Archetypes.atapi import registerType
 from Products.Archetypes.atapi import BooleanField
 from Products.Archetypes.atapi import BooleanWidget
@@ -24,7 +23,6 @@ from Products.Archetypes.atapi import DecimalWidget
 from Products.Archetypes.atapi import FixedPointField
 from Products.Archetypes.atapi import IntegerField
 from Products.Archetypes.atapi import IntegerWidget
-from Products.Archetypes.atapi import LabelWidget
 from Products.Archetypes.atapi import LinesField
 from Products.Archetypes.atapi import MultiSelectionWidget
 from Products.Archetypes.atapi import ReferenceField
@@ -70,39 +68,51 @@ class IDFormattingField(RecordsField):
     _properties = RecordsField._properties.copy()
     _properties.update({
         'type': 'prefixes',
-        'subfields': ('portal_type', 'form', 'sequence_type', 'context', 'counter_type', 'counter_reference', 'prefix', 'split_length'),
-        'subfield_labels': {'portal_type': 'Portal Type',
-                            'form': 'Format',
-                            'sequence_type': 'Seq Type',
-                            'context': 'Context',
-                            'counter_type': 'Counter Type',
-                            'counter_reference': 'Counter Ref',
-                            'prefix': 'Prefix',
-                            'split_length': 'Split Length',
-                            },
-        'subfield_readonly': {'portal_type': False,
-                              'form': False,
-                              'sequence_type': False,
-                              'context': False,
-                              'counter_type': False,
-                              'counter_reference': False,
-                              'prefix': False,
-                              'split_length': False,
-                              },
-        'subfield_sizes': {'portal_type': 20,
-                           'form': 30,
-                           'sequence_type': 1,
-                           'context': 12,
-                           'counter_type': 1,
-                           'counter_reference': 12,
-                           'prefix': 12,
-                           'split_length': 5,
-                           },
+        'subfields': (
+            'portal_type',
+            'form',
+            'sequence_type',
+            'context',
+            'counter_type',
+            'counter_reference',
+            'prefix',
+            'split_length'
+        ),
+        'subfield_labels': {
+            'portal_type': 'Portal Type',
+            'form': 'Format',
+            'sequence_type': 'Seq Type',
+            'context': 'Context',
+            'counter_type': 'Counter Type',
+            'counter_reference': 'Counter Ref',
+            'prefix': 'Prefix',
+            'split_length': 'Split Length',
+        },
+        'subfield_readonly': {
+            'portal_type': False,
+            'form': False,
+            'sequence_type': False,
+            'context': False,
+            'counter_type': False,
+            'counter_reference': False,
+            'prefix': False,
+            'split_length': False,
+        },
+        'subfield_sizes': {
+            'portal_type': 20,
+            'form': 30,
+            'sequence_type': 1,
+            'context': 12,
+            'counter_type': 1,
+            'counter_reference': 12,
+            'prefix': 12,
+            'split_length': 5,
+        },
         'subfield_types': {
             'sequence_type': 'selection',
             'counter_type': 'selection',
             'split_length': 'int',
-            },
+        },
         'subfield_vocabularies': {
             'sequence_type': 'getSequenceTypes',
             'counter_type': 'getCounterTypes',
@@ -115,16 +125,18 @@ class IDFormattingField(RecordsField):
     security = ClassSecurityInfo()
 
     def getSequenceTypes(self, instance=None):
-        return DisplayList(
-            [('', ''), 
-             ('counter','Counter'),
-             ('generated', 'Generated')])
+        return DisplayList([
+            ('', ''),
+            ('counter', 'Counter'),
+            ('generated', 'Generated')
+        ])
 
     def getCounterTypes(self, instance=None):
-        return DisplayList(
-            [('', ''), 
-             ('backreference','Backreference'),
-             ('contained', 'Contained')])
+        return DisplayList([
+            ('', ''),
+            ('backreference', 'Backreference'),
+            ('contained', 'Contained')
+        ])
 
 
 STICKER_AUTO_OPTIONS = DisplayList((
@@ -716,21 +728,81 @@ schema = BikaFolderSchema.copy() + Schema((
         'IDFormatting',
         schemata="ID Server",
         default=[
-             {'form': 'AI-{seq:03d}', 'portal_type': 'ARImport', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': 'B-{seq:03d}', 'portal_type': 'Batch', 'prefix': 'batch', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': 'D-{seq:03d}', 'portal_type': 'DuplicateAnalysis', 'prefix': 'duplicate', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': 'I-{seq:03d}', 'portal_type': 'Invoice', 'prefix': 'invoice', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': 'QC-{seq:03d}', 'portal_type': 'ReferenceSample', 'prefix': 'refsample', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': 'SA-{seq:03d}', 'portal_type': 'ReferenceAnalysis', 'prefix': 'refanalysis', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': 'WS-{seq:03d}', 'portal_type': 'Worksheet', 'prefix': 'worksheet', 'sequence_type': 'generated', 'split_length': 1},
-             {'form': '{sampleType}-{seq:04d}', 'portal_type': 'Sample', 'prefix': 'sample', 'sequence_type': 'generated', 'split_length': 1},
-             {'context': 'sample', 'counter_reference': 'AnalysisRequestSample', 'counter_type': 'backreference', 'form': '{sampleId}-R{seq:02d}', 'portal_type': 'AnalysisRequest', 'sequence_type': 'counter'},
-             {'context': 'sample', 'counter_reference': 'SamplePartition', 'counter_type': 'contained', 'form': '{sampleId}-P{seq:d}', 'portal_type': 'SamplePartition', 'sequence_type': 'counter'}],
+            {
+                'form': 'AI-{seq:03d}',
+                'portal_type': 'ARImport',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': 'B-{seq:03d}',
+                'portal_type': 'Batch',
+                'prefix': 'batch',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': 'D-{seq:03d}',
+                'portal_type': 'DuplicateAnalysis',
+                'prefix': 'duplicate',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': 'I-{seq:03d}',
+                'portal_type': 'Invoice',
+                'prefix': 'invoice',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': 'QC-{seq:03d}',
+                'portal_type': 'ReferenceSample',
+                'prefix': 'refsample',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': 'SA-{seq:03d}',
+                'portal_type': 'ReferenceAnalysis',
+                'prefix': 'refanalysis',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': 'WS-{seq:03d}',
+                'portal_type': 'Worksheet',
+                'prefix': 'worksheet',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'form': '{sampleType}-{seq:04d}',
+                'portal_type': 'Sample',
+                'prefix': 'sample',
+                'sequence_type': 'generated',
+                'split_length': 1
+            }, {
+                'context': 'sample',
+                'counter_reference': 'AnalysisRequestSample',
+                'counter_type': 'backreference',
+                'form': '{sampleId}-R{seq:02d}',
+                'portal_type': 'AnalysisRequest',
+                'sequence_type': 'counter'
+            }, {
+                'context': 'sample',
+                'counter_reference': 'SamplePartition',
+                'counter_type': 'contained',
+                'form': '{sampleId}-P{seq:d}',
+                'portal_type': 'SamplePartition',
+                'sequence_type': 'counter'
+            }
+        ],
         widget=RecordsWidget(
             label=_("Formatting Configuration"),
             allowDelete=True,
-            description=_("""
-The ID Server in Bika LIMS provides IDs for content items base of the given format specification. The format string is constructed in the same way as a python format() method based predefined variables per content type. The only variable available to all type is 'seq'. Currently, seq can be constructed either using number generator or a counter of existing items. For generated IDs, one can specifypoint at which the format string will be split to create the generator key. For counter IDs, one must specify context and the type of counter which is either the number of backreferences or the number of contained objects.
+            description=_("""The ID Server in Bika LIMS provides IDs for content items base of the given format specification.
+
+The format string is constructed in the same way as a python format() method
+based predefined variables per content type. The only variable available to all
+type is 'seq'. Currently, 'seq' can be constructed either using number generator
+or a counter of existing items. For generated IDs, one can specify the point at
+which the format string will be split to create the generator key. For counter
+IDs, one must specify the context and the type of counter which is either the
+number of backreferences or the number of contained objects.
 
 Configuration Settings:
 * format:
@@ -742,8 +814,7 @@ Configuration Settings:
 * counter reference: a parameter to the counting function
 * prefix: default prefix if none provided in format string
 * split length: the number of parts to be included in the prefix
-"""
-                )
+""")
         )
     ),
     BooleanField(
@@ -891,5 +962,6 @@ class BikaSetup(folder.ATFolder):
         for i in range(len(keys)):
             results.append('%s: %s' % (keys[i], values[i]))
         return "\n".join(results)
+
 
 registerType(BikaSetup, PROJECTNAME)
