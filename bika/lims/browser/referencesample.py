@@ -384,6 +384,18 @@ class ReferenceSamplesView(BikaListingView):
                          'DateReceived',
                          'DateOpened',
                          'ExpiryDate']},
+            {'id':'inactive',
+             'title': _('Dormant'),
+             'contentFilter': {'inactive_state': 'inactive'},
+             'columns': ['ID',
+                         'Title',
+                         'Supplier',
+                         'Manufacturer',
+                         'Definition',
+                         'DateSampled',
+                         'DateReceived',
+                         'DateOpened',
+                         'ExpiryDate']},
             {'id':'all',
              'title': _('All'),
              'contentFilter':{},
@@ -401,7 +413,10 @@ class ReferenceSamplesView(BikaListingView):
 
     def folderitem(self, obj, item, index):
         workflow = getToolByName(obj, 'portal_workflow')
-        if item.get('review_state', 'current') == 'current':
+        review_state = item.get('review_state', 'current')
+        content_filter = self.contentFilter.get('review_state', False)
+
+        if review_state == 'current':
             # Check expiry date
             exdate = obj.getExpiryDate()
             if exdate:
@@ -412,9 +427,8 @@ class ReferenceSamplesView(BikaListingView):
                     item['review_state'] = 'expired'
                     item['obj'] = obj
 
-        if self.contentFilter.get('review_state', '') \
-           and item.get('review_state', '') == 'expired':
-            # This item must be omitted from the list
+        if self.review_state['id'] != 'expired' \
+                and review_state == "expired" and content_filter:
             return None
 
         item['ID'] = obj.id
