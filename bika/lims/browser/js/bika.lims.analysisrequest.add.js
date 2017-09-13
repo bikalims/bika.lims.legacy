@@ -16,7 +16,6 @@
       this.on_ajax_start = bind(this.on_ajax_start, this);
       this.ajax_post_form = bind(this.ajax_post_form, this);
       this.on_copy_button_click = bind(this.on_copy_button_click, this);
-      this.on_ar_count_change = bind(this.on_ar_count_change, this);
       this.on_service_category_click = bind(this.on_service_category_click, this);
       this.on_service_listing_header_click = bind(this.on_service_listing_header_click, this);
       this.on_reportdrymatter_click = bind(this.on_reportdrymatter_click, this);
@@ -99,7 +98,6 @@
       $("tr[fieldname=Profiles] input[type='text']").on("selected", this.on_analysis_profile_selected);
       $("tr[fieldname=Profiles] img.deletebtn").live("click", this.on_analysis_profile_removed);
       $("img.copybutton").on("click", this.on_copy_button_click);
-      $("#ar-count-control input[name=ar_count]").on("change", this.on_ar_count_change);
 
       /* internal events */
       $(this).on("form:changed", this.recalculate_records);
@@ -1087,24 +1085,6 @@
         services.addClass("visible");
         return services.addClass("expanded");
       }
-    };
-
-    AnalysisRequestAdd.prototype.on_ar_count_change = function(event) {
-
-      /*
-       * Eventhandler for ar_count number field
-       */
-      var $el, ar_count, el, href, link, new_href;
-      el = event.target;
-      $el = $(el);
-      ar_count = $el.val();
-      href = location.href;
-      if (href.search("ar_count") < 0) {
-        href += href.split('?')[1] ? '&ar_count=1' : '?ar_count=1';
-      }
-      new_href = href.replace(/ar_count=[0-9]+/, "ar_count=" + ar_count);
-      link = $("#ar_count_change", $el.parent());
-      return link.attr("href", new_href);
     };
 
     AnalysisRequestAdd.prototype.on_copy_button_click = function(event) {

@@ -1,7 +1,7 @@
 3.2.1rc2 (unreleased)
 ---------------------
 
-- No changes yet
+- Issue-2214: AR Add Controls need to be styled correctly
 
 
 3.2.1rc1 (2017-09-12)

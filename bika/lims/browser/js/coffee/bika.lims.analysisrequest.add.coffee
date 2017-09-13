@@ -85,8 +85,6 @@ class window.AnalysisRequestAdd
     $("tr[fieldname=Profiles] img.deletebtn").live "click", @on_analysis_profile_removed
     # Copy button clicked
     $("img.copybutton").on "click", @on_copy_button_click
-    # AR Controls
-    $("#ar-count-control input[name=ar_count]").on "change", @on_ar_count_change
 
     ### internal events ###
 
@@ -1212,23 +1210,6 @@ class window.AnalysisRequestAdd
       $el.addClass "expanded"
       services.addClass "visible"
       services.addClass "expanded"
-
-
-  on_ar_count_change: (event) =>
-    ###
-     * Eventhandler for ar_count number field
-    ###
-    el = event.target
-    $el = $(el)
-    ar_count = $el.val()
-    href = location.href
-    # append ar_count to the url if it is missing
-    if href.search("ar_count") < 0
-      href += if href.split('?')[1] then '&ar_count=1' else '?ar_count=1'
-    new_href = href.replace(/ar_count=[0-9]+/, "ar_count=#{ar_count}")
-    link = $("#ar_count_change", $el.parent())
-    # set the new link
-    link.attr("href", new_href)
 
 
   on_copy_button_click: (event) =>

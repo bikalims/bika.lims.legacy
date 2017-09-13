@@ -274,20 +274,23 @@
       <h1 id="ar-header">
         <img tal:condition="view/icon | nothing" tal:attributes="src view/icon"/>
         <span i18n:translate="">Request new analyses</span>
-        <span id="ar-count-control" class="form-inline">
-          <input type="number"
-                 name="ar_count"
-                 min="1"
-                 class="form-control"
-                 style="width:4em"
-                 tal:attributes="value view/ar_count"/>
-          <a href=""
-             id="ar_count_change"
-             tal:attributes="href string:${view/get_view_url}"
-             class="btn btn-default btn-sm">
-            <span i18n:translate="">Reload Form</span>
-          </a>
-        </span>
+        <div style="display:inline-block;padding-left:0.5em;">
+          <form method="GET" class="form-inline">
+            <input type="hidden"
+                   name="copy_from" tal:attributes="value request/copy_from"/>
+            <input type="number"
+                   name="ar_count"
+                   min="1"
+                   class="form-control context_action_link"
+                   style="width:4em;border-radius:0;border:1px solid #ddd;padding:2px;"
+                   tal:attributes="value view/ar_count"/>
+            <button type="submit"
+                    class="btn btn-link context_action_link">
+              <img src="#"
+                   tal:attributes="src string:${context/absolute_url}/++resource++bika.lims.images/add.png"/>
+            </button>
+          </form>
+        </div>
       </h1>
     </metal:title>
     <metal:description fill-slot="content-description">
