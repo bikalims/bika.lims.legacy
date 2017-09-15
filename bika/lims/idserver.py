@@ -106,13 +106,14 @@ def generateUniqueId(context, parent=False, portal_type=''):
         }
     elif portal_type == "Sample":
         sampleDate = None
+        sampleType = context.getSampleType().getPrefix()
         if context.getSamplingDate():
             sampleDate = DT2dt(context.getSamplingDate())
 
         variables_map = {
             'clientId': context.aq_parent.getClientID(),
             'sampleDate': sampleDate,
-            'sampleType': context.getSampleType().getPrefix(),
+            'sampleType': api.normalize_filename(sampleType),
             'year': DateTime().strftime("%Y")[2:],
         }
     else:
