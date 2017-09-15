@@ -7,6 +7,7 @@
 
 import json
 import copy
+import collections
 
 from DateTime import DateTime
 
@@ -96,9 +97,10 @@ class WorkflowAction:
         """
         form = self.request.form
         uc = getToolByName(self.context, 'uid_catalog')
+        uids = form.get("uids", [])
 
-        selected_items = {}
-        for uid in form.get('uids', []):
+        selected_items = collections.OrderedDict()
+        for uid in uids:
             try:
                 item = uc(UID=uid)[0].getObject()
             except:
@@ -146,7 +148,7 @@ class WorkflowAction:
 
         url = self.context.absolute_url() + "/ar_add" + \
             "?ar_count={0}".format(len(objects)) + \
-            "&copy_from={0}".format(",".join(objects.keys()))
+            "&copy_from={0}".format(",".join(reversed(objects.keys())))
         self.request.response.redirect(url)
         return
 
