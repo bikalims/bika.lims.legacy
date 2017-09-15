@@ -16,13 +16,13 @@ from bika.lims import bikaMessageFactory as _
 
 
 class ClientTypesView(BikaListingView):
-    """Displays all system's sampling rounds
+    """Displays all system's client types
     """
     implements(IFolderContentsView, IViewView)
 
     def __init__(self, context, request):
         super(ClientTypesView, self).__init__(context, request)
-        self.catalog = "portal_catalog"
+        self.catalog = "bika_setup_catalog"
         self.contentFilter = {'portal_type': 'ClientType',
                               'sort_on': 'sortable_title'}
         self.context_actions = {_('Add'):

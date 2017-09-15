@@ -228,6 +228,9 @@ class FolderView(BikaListingView):
                         'CreationDate',
                         'state_title']},
         ]
+        self.display_columns = [
+                'state_title', 'Title', 'Template',
+                'CreationDate', 'Analyst', 'Priority']
 
     def __call__(self):
         self.wf = getToolByName(self, 'portal_workflow')
@@ -342,25 +345,26 @@ class FolderView(BikaListingView):
         item['replace']['Title'] = "<a href='%s/%s'>%s</a>" % \
             (item['url'], turl, item['Title'])
 
-        # Set services
-        ws_services = {}
-        for slot in [s for s in layout if s['type'] == 'a']:
-            analysis = self.rc.lookupObject(slot['analysis_uid'])
-            if not analysis:
-                error = "Analysis with uid '%s' NOT FOUND in Reference Catalog.\n Worksheet: '%s'. Layout: '%s'" % \
-                        (slot['analysis_uid'], obj, layout)
-                logging.info(error)
-                continue
-            service = analysis.getService()
-            title = service.Title()
-            if title not in ws_services:
-                ws_services[title] = "<a href='%s'>%s</a>" % \
-                    (service.absolute_url(), title)
-        keys = list(ws_services.keys())
-        keys.sort()
-        services = [ws_services[k] for k in keys]
-        item['Services'] = ""
-        item['replace']['Services'] = ", ".join(services)
+        if 'Services' in self.display_columns:
+            # Set services
+            ws_services = {}
+            for slot in [s for s in layout if s['type'] == 'a']:
+                analysis = self.rc.lookupObject(slot['analysis_uid'])
+                if not analysis:
+                    error = "Analysis with uid '%s' NOT FOUND in Reference Catalog.\n Worksheet: '%s'. Layout: '%s'" % \
+                            (slot['analysis_uid'], obj, layout)
+                    logging.info(error)
+                    continue
+                service = analysis.getService()
+                title = service.Title()
+                if title not in ws_services:
+                    ws_services[title] = "<a href='%s'>%s</a>" % \
+                        (service.absolute_url(), title)
+            keys = list(ws_services.keys())
+            keys.sort()
+            services = [ws_services[k] for k in keys]
+            item['Services'] = ""
+            item['replace']['Services'] = ", ".join(services)
 
         pos_parent = {}
         for slot in layout:
@@ -373,45 +377,49 @@ class FolderView(BikaListingView):
                 continue
             pos_parent[slot['position']] = self.rc.lookupObject(slot['container_uid'])
 
-        # Set Sample Types and QC Samples
-        sampletypes = []
-        qcsamples = []
-        for container in pos_parent.values():
-            if container.portal_type == 'AnalysisRequest':
-                sampletype = "<a href='%s'>%s</a>" % \
-                           (container.getSample().getSampleType().absolute_url(),
-                            container.getSample().getSampleType().Title())
-                sampletypes.append(sampletype)
-            if container.portal_type == 'ReferenceSample':
-                qcsample = "<a href='%s'>%s</a>" % \
-                        (container.absolute_url(),
-                         container.Title())
-                qcsamples.append(qcsample)
+        if 'SampleTypes' in self.display_columns or \
+           'QC' in self.display_columns:
+            # Set Sample Types and QC Samples
+            sampletypes = []
+            qcsamples = []
+            for container in pos_parent.values():
+                if container.portal_type == 'AnalysisRequest':
+                    sampletype = "<a href='%s'>%s</a>" % \
+                               (container.getSample().getSampleType().absolute_url(),
+                                container.getSample().getSampleType().Title())
+                    sampletypes.append(sampletype)
+                if container.portal_type == 'ReferenceSample':
+                    qcsample = "<a href='%s'>%s</a>" % \
+                            (container.absolute_url(),
+                             container.Title())
+                    qcsamples.append(qcsample)
 
-        sampletypes = list(set(sampletypes))
-        sampletypes.sort()
-        item['SampleTypes'] = ""
-        item['replace']['SampleTypes'] = ", ".join(sampletypes)
-        qcsamples = list(set(qcsamples))
-        qcsamples.sort()
-        item['QC'] = ""
-        item['replace']['QC'] = ", ".join(qcsamples)
-        item['QCTotals'] = ''
+            sampletypes = list(set(sampletypes))
+            sampletypes.sort()
+            item['SampleTypes'] = ""
+            item['replace']['SampleTypes'] = ", ".join(sampletypes)
+            qcsamples = list(set(qcsamples))
+            qcsamples.sort()
+            item['QC'] = ""
+            item['replace']['QC'] = ", ".join(qcsamples)
+            item['QCTotals'] = ''
 
-        # Total QC Samples (Total Routine Analyses)
-        analyses = obj.getAnalyses()
-        totalQCAnalyses = [a for a in analyses
-                               if a.portal_type == 'ReferenceAnalysis'
-                               or a.portal_type == 'DuplicateAnalysis']
-        totalQCSamples = [a.getSample().UID() for a in totalQCAnalyses]
-        totalQCSamples = list(set(totalQCSamples))
-        item['QCTotals'] = str(len(totalQCSamples)) + ' (' + str(len(totalQCAnalyses)) + ')'
+        if 'QCTotals' in self.display_columns or \
+           'RoutineTotals' in self.display_columns:
+            # Total QC Samples (Total Routine Analyses)
+            analyses = obj.getAnalyses()
+            totalQCAnalyses = [a for a in analyses
+                                   if a.portal_type == 'ReferenceAnalysis'
+                                   or a.portal_type == 'DuplicateAnalysis']
+            totalQCSamples = [a.getSample().UID() for a in totalQCAnalyses]
+            totalQCSamples = list(set(totalQCSamples))
+            item['QCTotals'] = str(len(totalQCSamples)) + ' (' + str(len(totalQCAnalyses)) + ')'
 
-        # Total Routine Samples (Total Routine Analyses)
-        totalRoutineAnalyses = [a for a in analyses if a not in totalQCAnalyses]
-        totalRoutineSamples = [a.getSample().UID() for a in totalRoutineAnalyses]
-        totalRoutineSamples = list(set(totalRoutineSamples))
-        item['RoutineTotals'] = str(len(totalRoutineSamples)) + ' (' + str(len(totalRoutineAnalyses)) + ')'
+            # Total Routine Samples (Total Routine Analyses)
+            totalRoutineAnalyses = [a for a in analyses if a not in totalQCAnalyses]
+            totalRoutineSamples = [a.getSample().UID() for a in totalRoutineAnalyses]
+            totalRoutineSamples = list(set(totalRoutineSamples))
+            item['RoutineTotals'] = str(len(totalRoutineSamples)) + ' (' + str(len(totalRoutineAnalyses)) + ')'
 
         if item['review_state'] == 'open' \
             and self.allow_edit \
@@ -425,6 +433,13 @@ class FolderView(BikaListingView):
         return item
 
     def folderitems(self):
+        toggle_cols = self.request.cookies.get('toggle_cols')
+        display_columns = None
+        if toggle_cols:
+            display_columns = json.loads(toggle_cols)
+            if 'WorksheetFolderlist' in display_columns.keys():
+                self.display_columns = display_columns['WorksheetFolderlist']
+
         items = BikaListingView.folderitems(self)
 
         # can_reassigned value is assigned in folderitem(obj,item,index) function

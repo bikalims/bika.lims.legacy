@@ -32,6 +32,8 @@ from plone import api as ploneapi
 from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
+from plone.i18n.normalizer.interfaces import IFileNameNormalizer
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 
 from bika.lims import logger
 
@@ -1058,3 +1060,33 @@ def bika_cache_key_decorator(method, self, brain_or_object):
     :rtype: str
     """
     return get_cache_key(brain_or_object)
+
+
+def normalize_id(string):
+    """Normalize the id
+
+    :param string: A string to normalize
+    :type string: str
+    :returns: Normalized ID
+    :rtype: str
+    """
+    if not isinstance(string, basestring):
+        fail("Type of argument must be string, found '{}'".format(type(string)))
+    # get the id nomalizer utility
+    normalizer = getUtility(IIDNormalizer).normalize
+    return normalizer(string)
+
+
+def normalize_filename(string):
+    """Normalize the filename
+
+    :param string: A string to normalize
+    :type string: str
+    :returns: Normalized ID
+    :rtype: str
+    """
+    if not isinstance(string, basestring):
+        fail("Type of argument must be string, found '{}'".format(type(string)))
+    # get the file nomalizer utility
+    normalizer = getUtility(IFileNameNormalizer).normalize
+    return normalizer(string)

@@ -7,39 +7,39 @@
 
 import json
 import copy
+import collections
 
-import plone
-from Acquisition import aq_inner
 from DateTime import DateTime
+
 from Products.AdvancedQuery import And, Or, MatchRegexp, Between, Generic, Eq
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+
+from zope.component import getAdapters
+
+import plone
+from plone import api as ploneapi
+from plone.app.content.browser import tableview
+from plone.memoize.volatile import cache
+from plone.memoize.volatile import store_on_context
+try:
+    from plone.batching import Batch
+except:
+    # Plone < 4.3
+    from plone.app.content.batching import Batch  # noqa
+
 from bika.lims import PMF
+from bika.lims import api
 from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
 from bika.lims.browser import BrowserView
 from bika.lims.interfaces import IFieldIcons
 from bika.lims.subscribers import doActionFor
 from bika.lims.subscribers import skip
+from bika.lims.utils import getFromString
 from bika.lims.utils import isActive, getHiddenAttributesForClass
 from bika.lims.utils import t
 from bika.lims.utils import to_utf8
-from bika.lims.utils import getFromString
-from plone.app.content.browser import tableview
-from plone import api as ploneapi
-from zope.component import getAdapters
-from zope.component._api import getMultiAdapter
-
-try:
-    from plone.batching import Batch
-except:
-    # Plone < 4.3
-    from plone.app.content.batching import Batch
-
-
-from bika.lims import api
-from plone.memoize.volatile import cache
-from plone.memoize.volatile import store_on_context
 
 
 class WorkflowAction:
@@ -97,9 +97,10 @@ class WorkflowAction:
         """
         form = self.request.form
         uc = getToolByName(self.context, 'uid_catalog')
+        uids = form.get("uids", [])
 
-        selected_items = {}
-        for uid in form.get('uids', []):
+        selected_items = collections.OrderedDict()
+        for uid in uids:
             try:
                 item = uc(UID=uid)[0].getObject()
             except:
@@ -141,14 +142,14 @@ class WorkflowAction:
             message = self.context.translate(
                 _("No analyses have been selected"))
             self.context.plone_utils.addPortalMessage(message, 'info')
-            self.destination_url = self.context.absolute_url() + \
-                                   "/batchbook"
+            self.destination_url = self.context.absolute_url() + "/batchbook"
             self.request.response.redirect(self.destination_url)
             return
 
         url = self.context.absolute_url() + "/ar_add" + \
-              "?ar_count={0}".format(len(objects)) + \
-              "&copy_from={0}".format(",".join(objects.keys()))
+            "?ar_count={0}".format(len(objects)) + \
+            "&copy_from={0}".format(",".join(reversed(objects.keys())))
+
         self.request.response.redirect(url)
         return
 
@@ -169,8 +170,7 @@ class WorkflowAction:
         for key in objects.keys():
             ids.append(objects[key].Title())
         url = self.context.absolute_url() + "/sticker?autoprint=1&template=%s&items=%s" % (
-                self.portal.bika_setup.getAutoStickerTemplate(),
-                ','.join(ids))
+            self.portal.bika_setup.getAutoStickerTemplate(), ','.join(ids))
         self.request.response.redirect(url)
         return
 
@@ -241,8 +241,8 @@ class WorkflowAction:
                     # of verifications done for the analysis is, at least,
                     # the number of verifications performed previously+1
                     if (action == 'verify' and
-                        hasattr(item, 'getNumberOfVerifications') and
-                        hasattr(item, 'getNumberOfRequiredVerifications')):
+                            hasattr(item, 'getNumberOfVerifications') and
+                            hasattr(item, 'getNumberOfRequiredVerifications')):
 
                         success = True
                         revers = item.getNumberOfRequiredVerifications()
@@ -262,8 +262,7 @@ class WorkflowAction:
                         self.context.plone_utils.addPortalMessage(message, 'error')
 
         # automatic label printing
-        if transitioned and action == 'receive' \
-            and 'receive' in self.portal.bika_setup.getAutoPrintStickers():
+        if transitioned and action == 'receive' and 'receive' in self.portal.bika_setup.getAutoPrintStickers():
             q = "/sticker?template=%s&items=" % (self.portal.bika_setup.getAutoStickerTemplate())
             # selected_items is a list of UIDs (stickers for AR_add use IDs)
             q += ",".join(transitioned)
@@ -540,7 +539,7 @@ class BikaListingView(BrowserView):
         # this way, a single table among many can request a redraw,
         # and only it's content will be rendered.
         if form_id not in self.request.get('table_only', form_id) \
-            or form_id not in self.request.get('rows_only', form_id):
+           or form_id not in self.request.get('rows_only', form_id):
             return ''
 
         self.rows_only = self.request.get('rows_only', '') == form_id
@@ -643,7 +642,7 @@ class BikaListingView(BrowserView):
             if not idx:
                 logger.debug("index named '%s' not found in %s.  "
                              "(Perhaps the index is still empty)." %
-                            (index, self.catalog))
+                             (index, self.catalog))
                 continue
             request_key = "%s_%s" % (form_id, index)
             value = self.request.get(request_key, '')
@@ -773,14 +772,13 @@ class BikaListingView(BrowserView):
         # Saving the filter bar values
         cookie_filter_bar = ''
         if cookie_value is not None and \
-           cookie_value not in ([], '', [None]): #There maybe more
+           cookie_value not in ([], '', [None]):  # There maybe more
             try:
                 cookie_filter_bar = json.loads(cookie_value)
             except ValueError, e:
                 logger.error(
                     'BikaListingView: cannot parse cookie value %s (%s)' % (
                         str(e), cookie_value))
-
 
         # Creating a dict from cookie data
         cookie_data = {}
@@ -796,7 +794,7 @@ class BikaListingView(BrowserView):
             return self.rendered_items()
 
         if self.request.get('table_only', '') == self.form_id \
-            or self.request.get('rows_only', '') == self.form_id:
+           or self.request.get('rows_only', '') == self.form_id:
             return self.contents_table(table_only=self.form_id)
         else:
             return self.template()
@@ -815,8 +813,8 @@ class BikaListingView(BrowserView):
         for item in items:
             cat = item.get('category', 'None')
             if item.get('selected', False) \
-                or self.expand_all_categories \
-                or not self.show_categories:
+               or self.expand_all_categories \
+               or not self.show_categories:
                 if cat not in cats:
                     cats.append(cat)
         return cats
@@ -919,12 +917,12 @@ class BikaListingView(BrowserView):
             review_state = "active"
             state_title = _("Active")
 
-        #for state_var, state in states.items():
-        #    if not state_title:
-        #        state_title = workflow.getTitleForStateOnType(state, portal_type)
-        #    item.update({
-        #        state_var: state
-        #    })
+        # for state_var, state in states.items():
+        #     if not state_title:
+        #         state_title = workflow.getTitleForStateOnType(state, portal_type)
+        #     item.update({
+        #         state_var: state
+        #     })
 
         # allow field icons to alert in a listing row
         for name, adapter in getAdapters((obj, ), IFieldIcons):
@@ -985,7 +983,6 @@ class BikaListingView(BrowserView):
             "replace": {},
         }
 
-
     def folderitems(self, full_objects=False):
         """
         >>> portal = layer['portal']
@@ -1006,9 +1003,6 @@ class BikaListingView(BrowserView):
         # self.contentsMethod = self.context.getFolderContents
         if not hasattr(self, 'contentsMethod'):
             self.contentsMethod = getToolByName(self.context, self.catalog)
-
-        context = aq_inner(self.context)
-        workflow = getToolByName(context, 'portal_workflow')
 
         if self.request.get('show_all', '').lower() == 'true' \
                 or self.show_all is True \
@@ -1043,8 +1037,7 @@ class BikaListingView(BrowserView):
                 # otherwise, self.contentsMethod must handle contentFilter
                 brains = self.contentsMethod(contentFilterTemp)
         else:
-            logger.debug(
-                    "Bika Listing Table Query={}".format(contentFilterTemp))
+            logger.debug("Bika Listing Table Query={}".format(contentFilterTemp))
             brains = self.contentsMethod(contentFilterTemp)
 
         # idx increases one unit each time an object is added to the 'items'
@@ -1108,7 +1101,6 @@ class BikaListingView(BrowserView):
                 results.append(item)
                 idx += 1
 
-
         # Need manual_sort?
         # Note that the order has already been set in contentFilter, so
         # there is no need to reverse
@@ -1116,10 +1108,7 @@ class BikaListingView(BrowserView):
             results.sort(lambda x, y: cmp(x.get(self.manual_sort_on, ''),
                                           y.get(self.manual_sort_on, '')))
 
-
         return results
-
-
 
     def contents_table(self, table_only=False):
         """ If you set table_only to true, then nothing outside of the

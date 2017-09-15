@@ -29,7 +29,7 @@
     />
 
     <browser:page
-      for="bika.lims.controlpanel.bika_clienttypes.IClientTypes"
+      for="bika.lims.interfaces.IClientTypes"
       name="folder_view"
       class=".bika_clienttypes.ClientTypesView"
       permission="bika.lims.ManageBika"
