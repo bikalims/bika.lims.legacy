@@ -1070,7 +1070,6 @@ def normalize_id(string):
     :returns: Normalized ID
     :rtype: str
     """
-
     if not isinstance(string, basestring):
         fail("Type of argument must be string, found '{}'".format(type(string)))
     # get the id nomalizer utility
