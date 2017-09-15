@@ -1,6 +1,7 @@
 3.2.1rc2 (unreleased)
 ---------------------
 
+- Issue-2234: Use the object to create the cached listing item
 - Issue-2219: Copied ARs are created in random order
 - Issue-2214: AR Add Controls need to be styled correctly
 
