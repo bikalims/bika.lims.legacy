@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- Issue-2230: IDServer fails to rename Samples with a non-id-compliant SampleType
 - 2215: Added extra param portal_type on the function generateUniqueId so that it's not used for objects only
 - Issue-2183: Don't recalculate prices when option "Include and display pricing information" in Bika Setup Accounting is not selected
 - Sampler and Sampling Date Columns are not validated when they are not displayed
