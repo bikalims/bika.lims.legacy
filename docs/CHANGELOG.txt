@@ -1,4 +1,4 @@
-3.2.1rc2 (unreleased)
+3.2.1rc2 (2017-09-15)
 ---------------------
 
 - Issue-2234: Use the object to create the cached listing item
