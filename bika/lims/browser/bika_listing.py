@@ -849,12 +849,12 @@ class BikaListingView(BrowserView):
         return fti.Title()
 
     @cache(api.bika_cache_key_decorator, store_on_context)
-    def make_listing_item(self, brain):
+    def make_listing_item(self, obj):
         """Returns an object dictionary suitable for the listing view
         """
 
         # ensure we have an object
-        obj = api.get_object(brain)
+        obj = api.get_object(obj)
 
         # prepare some data
         id = api.get_id(obj)
@@ -1045,7 +1045,7 @@ class BikaListingView(BrowserView):
                 continue
 
             # create a listing item
-            results_dict = self.make_listing_item(brain)
+            results_dict = self.make_listing_item(obj)
 
             # Search for values for all columns in obj
             for key in self.columns.keys():
