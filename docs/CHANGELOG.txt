@@ -1,6 +1,7 @@
 3.3.0 (unreleased)
 ------------------
 
+- Issue-2245: AR View: Asyncronous update of proxy fields fails
 - Issue-2218: Cache Key does not invalidate if proxied Sample values of ARs change
 - Issue-2204: Notification Emails on AR retract
 - Issue-2173: Publishing multiple ARs fails

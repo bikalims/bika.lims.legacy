@@ -149,23 +149,46 @@ def set_fields_from_request(obj, request):
     is returned.
     """
     schema = obj.Schema()
+
     # fields contains all schema-valid field values from the request.
     fields = {}
+
+    def resolve_uids(fieldname, value):
+        brains = []
+        if value:
+            brains = resolve_request_lookup(obj, request, fieldname)
+            if not brains:
+                raise BadRequest("Can't resolve reference: %s" % fieldname)
+        if schema[fieldname].multiValued:
+            value = [b.UID for b in brains] if brains else []
+        else:
+            value = brains[0].UID if brains else None
+        return value
+
     for fieldname, value in request.items():
         if fieldname not in schema:
             continue
-        if schema[fieldname].type in ('reference'):
-            brains = []
-            if value:
-                brains = resolve_request_lookup(obj, request, fieldname)
-                if not brains:
-                    raise BadRequest("Can't resolve reference: %s" % fieldname)
-            if schema[fieldname].multiValued:
-                value = [b.UID for b in brains] if brains else []
-            else:
-                value = brains[0].UID if brains else None
+
+        # get the field
+        field = schema[fieldname]
+
+        # handle proxy fields
+        if field.type in ('proxy'):
+            proxy = field.get_proxy(obj)
+            proxy_field = proxy.Schema()[fieldname]
+            # check if the proxied field is a reference field
+            # https://github.com/bikalims/bika.lims/issues/2245
+            if proxy_field.type in ("reference"):
+                value = resolve_uids(fieldname, value)
+
+        # handle reference fields
+        if field.type in ('reference'):
+            value = resolve_uids(fieldname, value)
+
+        # remember the value (resolved) value of the field
         fields[fieldname] = value
-    # Write fields.
+
+    # Write fields
     for fieldname, value in fields.items():
         field = schema[fieldname]
         fieldtype = field.getType()
