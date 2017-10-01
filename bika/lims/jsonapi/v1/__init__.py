@@ -3,13 +3,16 @@
 # Copyright 2011-2016 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from Products.Archetypes.config import TOOL_NAME
-from Products.CMFCore.utils import getToolByName
-from zExceptions import BadRequest
-from bika.lims.utils import safe_unicode
+import sys
 import json
 import Missing
-import sys, traceback
+import traceback
+from zExceptions import BadRequest
+
+from Products.Archetypes.config import TOOL_NAME
+from Products.CMFCore.utils import getToolByName
+
+from bika.lims.utils import safe_unicode
 
 
 def handle_errors(f):
@@ -47,7 +50,7 @@ def load_brain_metadata(proxy, include_fields):
     """
     ret = {}
     for index in proxy.indexes():
-        if not index in proxy:
+        if index not in proxy:
             continue
         if include_fields and index not in include_fields:
             continue
