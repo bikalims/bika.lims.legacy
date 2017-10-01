@@ -5,14 +5,18 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
-from bika.lims.jsonapi.v1 import set_fields_from_request
+import json
+
+import transaction
+from zExceptions import BadRequest
 from Products.CMFCore.utils import getToolByName
+
+from zope import interface
+
 from plone.jsonapi.core import router
 from plone.jsonapi.core.interfaces import IRouteProvider
-from zExceptions import BadRequest
-from zope import interface
-import json
-import transaction
+
+from bika.lims.jsonapi.v1 import set_fields_from_request
 
 
 class Update(object):
@@ -148,7 +152,6 @@ class Update(object):
 
         return ret
 
-
     def require(self, fieldname, allow_blank=False):
         """fieldname is required"""
         if self.request.form and fieldname not in self.request.form.keys():
@@ -156,12 +159,10 @@ class Update(object):
         if self.request.form and (not self.request.form[fieldname] or allow_blank):
             raise Exception("Required field %s may not have blank value")
 
-
     def used(self, fieldname):
         """fieldname is used, remove from list of unused fields"""
         if fieldname in self.unused:
             self.unused.remove(fieldname)
-
 
     def update_many(self, context, request):
         """/@@API/update_many: Update existing object values
