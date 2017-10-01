@@ -12,6 +12,7 @@ from zExceptions import BadRequest
 from Products.Archetypes.config import TOOL_NAME
 from Products.CMFCore.utils import getToolByName
 
+from bika.lims import api
 from bika.lims.utils import safe_unicode
 
 
@@ -151,7 +152,7 @@ def set_fields_from_request(obj, request):
     The list of fields for which schema mutators were found
     is returned.
     """
-    schema = obj.Schema()
+    schema = api.get_schema(obj)
 
     # fields contains all schema-valid field values from the request.
     fields = {}
