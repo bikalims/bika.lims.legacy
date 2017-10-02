@@ -21,6 +21,11 @@ class DefaultReferenceWidgetVocabulary(object):
         self.context = context
         self.request = request
 
+    def to_utf8(self, s):
+        if not isinstance(s, basestring):
+            return s
+        return _c(s)
+
     def __call__(self, result=None, specification=None, **kwargs):
         searchTerm = _c(self.request.get('searchTerm', '')).lower()
         force_all = self.request.get('force_all', 'true')
@@ -32,9 +37,10 @@ class DefaultReferenceWidgetVocabulary(object):
         catalog = getToolByName(self.context, catalog_name)
         base_query = json.loads(_c(self.request['base_query']))
         search_query = json.loads(_c(self.request.get('search_query', "{}")))
+
         # first with all queries
-        contentFilter = dict((k, v) for k, v in base_query.items())
-        contentFilter.update(search_query)
+        contentFilter = dict((k, self.to_utf8(v)) for k, v in base_query.items())
+        contentFilter.update(dict((k, self.to_utf8(v)) for k, v in search_query.items()))
         try:
             brains = catalog(contentFilter)
         except:

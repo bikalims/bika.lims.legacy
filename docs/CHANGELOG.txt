@@ -1,6 +1,7 @@
 3.2.1rc3 (unreleased)
 ---------------------
 
+- Issue-2241: New AR Add Form: Server Error when the Sample Type contains German Umlauts (unicode characters)
 - Issue-2244: New AR Add Form: Sample field does not filter by Client
 - Issue-2242: New AR Add Form: Local Samplepoints with the same Sampletype from other clients get displayed
 
