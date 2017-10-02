@@ -455,6 +455,9 @@
       this.set_reference_field_query(field, query);
       field = $("#SamplingRound-" + arnum);
       query = client.filter_queries.samplinground;
+      this.set_reference_field_query(field, query);
+      field = $("#Sample-" + arnum);
+      query = client.filter_queries.sample;
       return this.set_reference_field_query(field, query);
     };
 

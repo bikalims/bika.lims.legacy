@@ -488,6 +488,11 @@ class window.AnalysisRequestAdd
     query = client.filter_queries.samplinground
     @set_reference_field_query field, query
 
+    # filter Sample
+    field = $("#Sample-#{arnum}")
+    query = client.filter_queries.sample
+    @set_reference_field_query field, query
+
 
   set_sample: (arnum, sample) =>
     ###

@@ -952,7 +952,10 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
                 "getClientUID": [uid, bika_analysisspecs_uid],
             },
             "samplinground": {
-                "getParentUID": [uid]
+                "getParentUID": [uid],
+            },
+            "sample": {
+                "getClientUID": [uid],
             },
         }
         info["filter_queries"] = filter_queries
