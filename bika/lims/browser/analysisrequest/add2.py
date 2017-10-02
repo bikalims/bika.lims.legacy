@@ -1063,6 +1063,21 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         """
         info = self.get_base_info(obj)
 
+        # Bika Setup folder
+        bika_setup = api.get_bika_setup()
+
+        # bika samplepoints
+        bika_samplepoints = bika_setup.bika_samplepoints
+        bika_samplepoints_uid = api.get_uid(bika_samplepoints)
+
+        # bika analysisspecs
+        bika_analysisspecs = bika_setup.bika_analysisspecs
+        bika_analysisspecs_uid = api.get_uid(bika_analysisspecs)
+
+        # client
+        client = self.get_client()
+        client_uid = api.get_uid(client)
+
         # sample matrix
         sample_matrix = obj.getSampleMatrix()
         sample_matrix_uid = sample_matrix and sample_matrix.UID() or ""
@@ -1094,10 +1109,12 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         # catalog queries for UI field filtering
         filter_queries = {
             "samplepoint": {
-                "getSampleTypeTitle": obj.Title()
+                "getSampleTypeTitle": obj.Title(),
+                "getClientUID": [client_uid, bika_samplepoints_uid],
             },
             "specification": {
-                "getSampleTypeTitle": obj.Title()
+                "getSampleTypeTitle": obj.Title(),
+                "getClientUID": [client_uid, bika_analysisspecs_uid],
             }
         }
         info["filter_queries"] = filter_queries
