@@ -49,6 +49,7 @@
       this.update_form = bind(this.update_form, this);
       this.recalculate_prices = bind(this.recalculate_prices, this);
       this.recalculate_records = bind(this.recalculate_records, this);
+      this.get_global_settings = bind(this.get_global_settings, this);
       this.render_template = bind(this.render_template, this);
       this.template_dialog = bind(this.template_dialog, this);
       this.bind_eventhandler = bind(this.bind_eventhandler, this);
@@ -60,11 +61,13 @@
       jarn.i18n.loadCatalog('bika');
       this._ = window.jarn.i18n.MessageFactory('bika');
       $('input[type=text]').prop('autocomplete', 'off');
+      this.global_settings = {};
       this.records_snapshot = {};
       this.applied_templates = {};
       $(".blurrable").removeClass("blurrable");
       this.bind_eventhandler();
       this.init_file_fields();
+      this.get_global_settings();
       return this.recalculate_records();
     };
 
@@ -154,6 +157,18 @@
       return content;
     };
 
+    AnalysisRequestAdd.prototype.get_global_settings = function() {
+
+      /*
+       * Submit all form values to the server to recalculate the records
+       */
+      return this.ajax_post_form("get_global_settings").done(function(settings) {
+        console.debug("Global Settings:", settings);
+        this.global_settings = settings;
+        return $(this).trigger("settings:updated", settings);
+      });
+    };
+
     AnalysisRequestAdd.prototype.recalculate_records = function() {
 
       /*
@@ -171,6 +186,10 @@
       /*
        * Submit all form values to the server to recalculate the prices of all columns
        */
+      if (this.global_settings.show_prices === false) {
+        console.debug("*** Skipping Price calculation ***");
+        return;
+      }
       return this.ajax_post_form("recalculate_prices").done(function(data) {
         var arnum, prices;
         console.debug("Recalculate Prices Data=", data);

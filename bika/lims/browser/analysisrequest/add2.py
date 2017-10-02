@@ -1281,6 +1281,15 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
 
         return partitions
 
+    def ajax_get_global_settings(self):
+        """Returns the global Bika settings
+        """
+        bika_setup = api.get_bika_setup()
+        settings = {
+            "show_prices": bika_setup.getShowPrices(),
+        }
+        return settings
+
     def ajax_get_service(self):
         """Returns the services information
         """

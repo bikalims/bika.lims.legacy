@@ -15,6 +15,9 @@ class window.AnalysisRequestAdd
     # disable browser autocomplete
     $('input[type=text]').prop 'autocomplete', 'off'
 
+    # storage for global Bika settings
+    @global_settings = {}
+
     # services data snapshot from recalculate_records
     # returns a mapping of arnum -> services data
     @records_snapshot = {}
@@ -33,6 +36,9 @@ class window.AnalysisRequestAdd
     # - All uploaded files are extracted and added as attachments to the new created AR
     # - The file field itself (Plone) will stay empty therefore
     @init_file_fields()
+
+    # get the global settings on load
+    @get_global_settings()
 
     # recalculate records on load (needed for AR copies)
     @recalculate_records()
@@ -149,6 +155,18 @@ class window.AnalysisRequestAdd
     return content
 
 
+  get_global_settings: =>
+    ###
+     * Submit all form values to the server to recalculate the records
+    ###
+    @ajax_post_form("get_global_settings").done (settings) ->
+      console.debug "Global Settings:", settings
+      # remember the global settings
+      @global_settings = settings
+      # trigger event for whom it might concern
+      $(@).trigger "settings:updated", settings
+
+
   recalculate_records: =>
     ###
      * Submit all form values to the server to recalculate the records
@@ -165,6 +183,11 @@ class window.AnalysisRequestAdd
     ###
      * Submit all form values to the server to recalculate the prices of all columns
     ###
+
+    if @global_settings.show_prices is false
+      console.debug "*** Skipping Price calculation ***"
+      return
+
     @ajax_post_form("recalculate_prices").done (data) ->
       console.debug "Recalculate Prices Data=", data
       for own arnum, prices of data
