@@ -29,6 +29,7 @@ from zope.lifecycleevent import ObjectCreatedEvent
 from zope.security.interfaces import Unauthorized
 
 from plone import api as ploneapi
+from plone.memoize.volatile import DontCache
 from plone.api.exc import InvalidParameterError
 from plone.dexterity.interfaces import IDexterityContent
 from plone.app.layout.viewlets.content import ContentHistoryView
@@ -1057,4 +1058,6 @@ def bika_cache_key_decorator(method, self, brain_or_object):
     :returns: Cache Key
     :rtype: str
     """
+    if brain_or_object is None:
+        raise DontCache
     return get_cache_key(brain_or_object)
