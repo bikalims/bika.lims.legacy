@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-08-07 17:11+0000\n"
-"PO-Revision-Date: 2017-08-03 11:39+0000\n"
+"POT-Creation-Date: 2017-10-02 17:42+0000\n"
+"PO-Revision-Date: 2017-09-22 21:21+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/bikalabs/bika-lims/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -124,10 +124,6 @@ msgstr ""
 msgid "'Sampling date' and 'Define the Sampler for the scheduled sampling' must be completed and saved in order to schedule a sampling. Element: %s"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:280
-msgid "(&#9998; Manage Fields)"
-msgstr ""
-
 #: bika/lims/content/referencesample.py:192
 #: bika/lims/skins/bika/attachments.pt:205
 msgid "(Blank)"
@@ -172,7 +168,7 @@ msgstr "<小於"
 msgid "<input type=\"checkbox\" class=\"rejectionwidget-checkbox-other rejectionwidget-field\" name=\"${DYNAMIC_CONTENT}\" id=\"${DYNAMIC_CONTENT}\" /> Other"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:509
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:527
 msgid "<max"
 msgstr ""
 
@@ -195,7 +191,7 @@ msgstr ""
 msgid "> Max"
 msgstr ">大於"
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:503
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:521
 msgid ">min"
 msgstr ""
 
@@ -307,8 +303,8 @@ msgid "Activate"
 msgstr ""
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:154
+#: bika/lims/browser/bika_listing.py:896
 #: bika/lims/browser/client/views/analysisprofiles.py:51
-#: bika/lims/browser/client/views/analysisspecs.py:57
 msgid "Active"
 msgstr "活躍的"
 
@@ -409,7 +405,7 @@ msgstr "所有分析類型"
 msgid "Allow Lab Clerks to create and edit clients"
 msgstr "容許實驗室書記去開設和修改客戶"
 
-#: bika/lims/content/analysisservice.py:360
+#: bika/lims/content/analysisservice.py:361
 msgid "Allow Manual Detection Limit input"
 msgstr "容許輸入手動偵查限制/極限"
 
@@ -417,7 +413,7 @@ msgstr "容許輸入手動偵查限制/極限"
 msgid "Allow access to worksheets only to assigned analysts"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:952
+#: bika/lims/content/analysisservice.py:953
 msgid "Allow manual uncertainty value input"
 msgstr "容許手動輸入不確定的結果"
 
@@ -433,11 +429,11 @@ msgstr ""
 msgid "Allow self-verification of results"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:361
+#: bika/lims/content/analysisservice.py:362
 msgid "Allow the analyst to manually replace the default Detection Limits (LDL and UDL) on results entry views"
 msgstr "允許分析師在頁面手動更改預設/默認檢出限（ LDL和UDL）的結果"
 
-#: bika/lims/content/analysisservice.py:953
+#: bika/lims/content/analysisservice.py:954
 msgid "Allow the analyst to manually replace the default uncertainty value."
 msgstr "允許分析師手動更改預設/默認不確定的數值"
 
@@ -445,7 +441,7 @@ msgstr "允許分析師手動更改預設/默認不確定的數值"
 msgid "Allow users to filter datas by department."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:673
+#: bika/lims/content/analysisservice.py:674
 msgid "Alternative Calculation"
 msgstr "另一計算方法"
 
@@ -545,11 +541,11 @@ msgstr "分析附件選項"
 msgid "Analysis Categories"
 msgstr "分析多個類别"
 
-#: bika/lims/content/analysisservice.py:774
+#: bika/lims/content/analysisservice.py:775
 msgid "Analysis Category"
 msgstr "分析單個類别"
 
-#: bika/lims/content/analysisservice.py:399
+#: bika/lims/content/analysisservice.py:400
 msgid "Analysis Keyword"
 msgstr "分析關鍵詞"
 
@@ -666,7 +662,7 @@ msgid "Analysis profiles apply a certain set of analyses"
 msgstr ""
 
 #: bika/lims/browser/analysisrequest/add.py:468
-#: bika/lims/browser/analysisrequest/add2.py:1734
+#: bika/lims/browser/analysisrequest/add2.py:1783
 msgid "Analysis request ${AR} was successfully created."
 msgstr "分析請求 ${AR} 已成功建立"
 
@@ -675,7 +671,7 @@ msgid "Analysis request templates to be included in the Sampling Round Template"
 msgstr ""
 
 #: bika/lims/browser/analysisrequest/add.py:465
-#: bika/lims/browser/analysisrequest/add2.py:1731
+#: bika/lims/browser/analysisrequest/add2.py:1780
 msgid "Analysis requests ${ARs} were successfully created."
 msgstr "分析請求 ${ARs} 已成功建立"
 
@@ -820,7 +816,7 @@ msgstr "附件"
 msgid "Attachment Keys"
 msgstr "附件關鍵詞"
 
-#: bika/lims/content/analysisservice.py:383
+#: bika/lims/content/analysisservice.py:384
 msgid "Attachment Option"
 msgstr "附件選項"
 
@@ -996,7 +992,7 @@ msgstr ""
 msgid "Bulk discount applies"
 msgstr "已使用大宗折扣"
 
-#: bika/lims/content/analysisservice.py:797
+#: bika/lims/content/analysisservice.py:798
 msgid "Bulk price (excluding VAT)"
 msgstr "批發價(不含增值税)"
 
@@ -1018,7 +1014,7 @@ msgstr "抄送多個聯絡"
 msgid "CC Emails"
 msgstr "抄送多個電郵"
 
-#: bika/lims/content/analysisservice.py:926
+#: bika/lims/content/analysisservice.py:927
 msgid "Calculate Precision from Uncertainties"
 msgstr "從不確定的進行精密計算"
 
@@ -1032,8 +1028,8 @@ msgstr "計算"
 msgid "Calculation Formula"
 msgstr "計算公式"
 
-#: bika/lims/content/analysis.py:97
-#: bika/lims/content/analysisservice.py:704
+#: bika/lims/content/analysis.py:111
+#: bika/lims/content/analysisservice.py:705
 #: bika/lims/content/calculation.py:49
 msgid "Calculation Interim Fields"
 msgstr "計算臨時場"
@@ -1154,7 +1150,7 @@ msgstr ""
 msgid "Check if the method has been accredited"
 msgstr "檢查方法是否已被認可"
 
-#: bika/lims/content/analysisservice.py:740
+#: bika/lims/content/analysisservice.py:741
 msgid "Check this box if the analysis service is included in the laboratory's schedule of accredited analyses"
 msgstr "如果分析服務包含在認證分析實驗室的時間表, 勾選此複選框"
 
@@ -1174,7 +1170,7 @@ msgstr "勾選此選項，如這是默認優先"
 msgid "Check this box if your laboratory is accredited"
 msgstr "勾選此選項，如您的實驗室認可是"
 
-#: bika/lims/content/analysisservice.py:993
+#: bika/lims/content/analysisservice.py:994
 msgid "Check this box to ensure a separate sample container is used for this analysis service"
 msgstr "勾選此選項，以確保一個獨立的樣品容器用於此分析服務"
 
@@ -1218,7 +1214,7 @@ msgstr "點擊分析分類（對陰影的背景，看看分析服務在每個類
 msgid "Click to download"
 msgstr "點擊下載"
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:402
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:420
 msgid "Click to expand this category"
 msgstr ""
 
@@ -1335,7 +1331,7 @@ msgid "Comments or results interpretation"
 msgstr "評論或解釋結果"
 
 #: bika/lims/content/analysisprofile.py:76
-#: bika/lims/content/analysisservice.py:1108
+#: bika/lims/content/analysisservice.py:1109
 msgid "Commercial ID"
 msgstr "商業ID"
 
@@ -1588,7 +1584,7 @@ msgid "Date Preserved"
 msgstr "醃製/處理時間"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:136
-#: bika/lims/content/analysis.py:121
+#: bika/lims/content/analysis.py:135
 #: bika/lims/content/analysisrequest.py:1399
 msgid "Date Published"
 msgstr "發佈日期"
@@ -1692,12 +1688,12 @@ msgstr "默認AR規格"
 msgid "Default ARReport Template"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:640
+#: bika/lims/content/analysisservice.py:641
 msgid "Default Calculation"
 msgstr "默認計算"
 
 #: bika/lims/content/analysisrequest.py:1148
-#: bika/lims/content/analysisservice.py:1030
+#: bika/lims/content/analysisservice.py:1031
 #: bika/lims/controlpanel/bika_sampletypes.py:65
 msgid "Default Container"
 msgstr "默認容器"
@@ -1710,15 +1706,15 @@ msgstr "默認容器類型"
 msgid "Default Emails to CC all published ARs for this client"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:510
+#: bika/lims/content/analysisservice.py:511
 msgid "Default Instrument"
 msgstr "默認儀器"
 
-#: bika/lims/content/analysisservice.py:595
+#: bika/lims/content/analysisservice.py:596
 msgid "Default Method"
 msgstr "默認方法"
 
-#: bika/lims/content/analysisservice.py:1009
+#: bika/lims/content/analysisservice.py:1010
 msgid "Default Preservation"
 msgstr "默認保存"
 
@@ -1726,7 +1722,7 @@ msgstr "默認保存"
 msgid "Default Priority?"
 msgstr "默認優先"
 
-#: bika/lims/content/analysisservice.py:641
+#: bika/lims/content/analysisservice.py:642
 msgid "Default calculation to be used from the default Method selected. The Calculation for a method can be assigned in the Method edit view."
 msgstr "默認計算是從選定的默認方法使用。計算方法可從編輯視圖進行分配。"
 
@@ -1795,7 +1791,7 @@ msgstr ""
 msgid "Define the number of decimals to be used for this result."
 msgstr "定義小數的數要用於該結果。"
 
-#: bika/lims/content/analysisservice.py:274
+#: bika/lims/content/analysisservice.py:275
 msgid "Define the precision when converting values to exponent notation.  The default is 7."
 msgstr "當轉換數值(values)去指數值(exponent notation)時, 要定義精碓度。默認值是7"
 
@@ -1881,7 +1877,7 @@ msgstr ""
 msgid "Disable the filtering by date"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:741
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:759
 msgid "Discount"
 msgstr ""
 
@@ -1898,11 +1894,11 @@ msgstr ""
 msgid "Dispatched"
 msgstr "已發送"
 
-#: bika/lims/content/analysisservice.py:967
+#: bika/lims/content/analysisservice.py:968
 msgid "Display Value"
 msgstr "顯示值"
 
-#: bika/lims/content/analysisservice.py:340
+#: bika/lims/content/analysisservice.py:341
 msgid "Display a Detection Limit selector"
 msgstr "顯示檢測限選擇"
 
@@ -2028,7 +2024,7 @@ msgstr "複本"
 msgid "Duplicate QC analyses"
 msgstr "重複的質量控制分析"
 
-#: bika/lims/content/analysisservice.py:726
+#: bika/lims/content/analysisservice.py:727
 msgid "Duplicate Variation %"
 msgstr "複製變異％"
 
@@ -2040,7 +2036,7 @@ msgstr "重複分析質量控制"
 msgid "Duplicate analysis quality control graphs"
 msgstr "重复分析质量控制图"
 
-#: bika/lims/content/analysis.py:131
+#: bika/lims/content/analysis.py:145
 msgid "Duration"
 msgstr "為期"
 
@@ -2048,7 +2044,7 @@ msgstr "為期"
 msgid "E.g. SANAS, APLAC, etc."
 msgstr "如 SANAS, APLAC 等"
 
-#: bika/lims/content/analysis.py:136
+#: bika/lims/content/analysis.py:150
 msgid "Earliness"
 msgstr "提前"
 
@@ -2119,7 +2115,7 @@ msgstr "輸入電子郵件地址。萬一密碼丟失，這是必要的。我們
 msgid "Enter discount percentage value"
 msgstr "輸入折扣百分比值"
 
-#: bika/lims/content/analysisservice.py:829
+#: bika/lims/content/analysisservice.py:830
 #: bika/lims/content/labproduct.py:33
 msgid "Enter percentage value eg. 14.0"
 msgstr "輸入百分比值，如。 14.0"
@@ -2215,7 +2211,7 @@ msgstr "已過期"
 msgid "Expiry Date"
 msgstr "到期日"
 
-#: bika/lims/content/analysisservice.py:273
+#: bika/lims/content/analysisservice.py:274
 msgid "Exponential format precision"
 msgstr "指數格式的精度"
 
@@ -2246,11 +2242,11 @@ msgstr "女"
 msgid "Field"
 msgstr "領域/場地"
 
-#: bika/lims/browser/analysisrequest/add2.py:1613
+#: bika/lims/browser/analysisrequest/add2.py:1662
 msgid "Field '{}' is required"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:393
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:411
 #: bika/lims/config.py:28
 msgid "Field Analyses"
 msgstr "實地分析"
@@ -2285,7 +2281,7 @@ msgstr "文件名"
 msgid "Files"
 msgstr ""
 
-#: bika/lims/browser/bika_listing.py:1344
+#: bika/lims/browser/bika_listing.py:1373
 msgid "Filter"
 msgstr ""
 
@@ -2386,7 +2382,7 @@ msgstr "小時"
 msgid "IBN"
 msgstr ""
 
-#: bika/lims/browser/bika_listing.py:387
+#: bika/lims/browser/bika_listing.py:391
 #: bika/lims/browser/referencesample.py:108
 #: bika/lims/browser/reports/templates/productivity_dataentrydaybook.pt:85
 msgid "ID"
@@ -2421,7 +2417,7 @@ msgstr ""
 msgid "Identifiers for this object"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:596
+#: bika/lims/content/analysisservice.py:597
 msgid "If 'Allow instrument entry of results' is selected, the method from the default instrument will be used. Otherwise, only the methods selected above will be displayed."
 msgstr "如果“允許結果的儀器條目'被選擇時，將使用從默認的儀器的方法。否則，將只顯示上述選擇的方法。"
 
@@ -2429,7 +2425,7 @@ msgstr "如果“允許結果的儀器條目'被選擇時，將使用從默認�
 msgid "If a sample is taken periodically at this sample point, enter frequency here, e.g. weekly"
 msgstr "如果樣品在此樣本點定期進行，在這裡輸入頻率，例如每週"
 
-#: bika/lims/content/analysisservice.py:341
+#: bika/lims/content/analysisservice.py:342
 msgid "If checked, a selection list will be displayed next to the analysis' result field in results entry views. By using this selector, the analyst will be able to set the value as a Detection Limit (LDL or UDL) instead of a regular result"
 msgstr "如選此項，選擇列表將顯示在錄入觀點分析結果字段旁邊。通過使用這種選擇，分析師將能夠設定值作為檢測限（LDL或UDL）而不是常規的結果"
 
@@ -2441,7 +2437,7 @@ msgstr "如果選中，直至進行下一個有效校準時, 儀器將不可用�
 msgid "If enabled, a free text field will be displayed close to each analysis in results entry view"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1075
+#: bika/lims/content/analysisservice.py:1076
 msgid "If enabled, a user who submitted a result for this analysis will also be able to verify it. This setting take effect for those users with a role assigned that allows them to verify results (by default, managers, labmanagers and verifiers). The option set here has priority over the option set in Bika Setup"
 msgstr ""
 
@@ -2453,7 +2449,7 @@ msgstr ""
 msgid "If enabled, the name of the analysis will be written in italics."
 msgstr "如果啟用，分析的名稱將用斜體。"
 
-#: bika/lims/content/analysisservice.py:1060
+#: bika/lims/content/analysisservice.py:1061
 msgid "If enabled, this analysis and its results will not be displayed by default in reports. This setting can be overrided in Analysis Profile and/or Analysis Request"
 msgstr "如果啟用，此分析及其結果將不被默認顯示在報告中。此設置可以在分析資料和/或分析請求被撤銷"
 
@@ -2465,7 +2461,7 @@ msgstr "如果沒有輸入標題值，將使用批次ID 。"
 msgid "If required, select a calculation for the The analysis services linked to this method. Calculations can be configured under the calculations item in the LIMS set-up"
 msgstr "如需要，幫分析服務計算方法, 而且會鏈接到該方法的計算。計算可以配置到計算項目下LIMS建立"
 
-#: bika/lims/content/analysisservice.py:674
+#: bika/lims/content/analysisservice.py:675
 msgid "If required, select a calculation for the analysis here. Calculations can be configured under the calculations item in the LIMS set-up"
 msgstr "如果已请求,在此选择分析的计算方法.计算方法可以在实验室信息管理系统设置中的计算项目下面配置"
 
@@ -2534,11 +2530,11 @@ msgstr "包含描述"
 msgid "Include year in ID prefix"
 msgstr "在ID前缀中包含年份"
 
-#: bika/lims/validators.py:1038
+#: bika/lims/validators.py:1040
 msgid "Incorrect IBAN number: %s"
 msgstr "不正確的IBAN號碼: %s"
 
-#: bika/lims/validators.py:997
+#: bika/lims/validators.py:999
 msgid "Incorrect NIB number: %s"
 msgstr "不正確的NIB號碼: %s"
 
@@ -2546,7 +2542,7 @@ msgstr "不正確的NIB號碼: %s"
 msgid "Indeterminate result"
 msgstr "不確定結果"
 
-#: bika/lims/content/analysisservice.py:384
+#: bika/lims/content/analysisservice.py:385
 msgid "Indicates whether file attachments, e.g. microscope images, are required for this analysis and whether file upload function will be available for it on data capturing screens"
 msgstr "指示文件附件是否需要用於此分析和文件上傳功能是否將可用於它的數據捕獲屏幕，例如顯微鏡圖像"
 
@@ -2642,11 +2638,11 @@ msgstr "儀器類型"
 msgid "Instrument Validations"
 msgstr "儀器驗證"
 
-#: bika/lims/content/analysisservice.py:440
+#: bika/lims/content/analysisservice.py:441
 msgid "Instrument assignment is allowed"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:418
+#: bika/lims/content/analysisservice.py:419
 msgid "Instrument assignment is not required"
 msgstr ""
 
@@ -2690,7 +2686,7 @@ msgstr "儀器類型"
 msgid "Instrument's calibration certificate expired:"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:469
+#: bika/lims/content/analysisservice.py:470
 #: bika/lims/content/method.py:60
 #: bika/lims/controlpanel/bika_instruments.py:37
 msgid "Instruments"
@@ -2749,7 +2745,7 @@ msgstr ""
 msgid "Invalid instruments are not shown: ${invalid_list}"
 msgstr ""
 
-#: bika/lims/validators.py:401
+#: bika/lims/validators.py:403
 msgid "Invalid wildcards found: ${wildcards}"
 msgstr "發現無效通配符/萬用字元: ${wildcards}"
 
@@ -2831,7 +2827,7 @@ msgstr "多個關鍵詞"
 msgid "Lab"
 msgstr "實驗室"
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:570
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:588
 #: bika/lims/config.py:29
 msgid "Lab Analyses"
 msgstr "實驗室分析"
@@ -2882,7 +2878,7 @@ msgstr ""
 msgid "Last Login Time"
 msgstr ""
 
-#: bika/lims/browser/bika_listing.py:389
+#: bika/lims/browser/bika_listing.py:393
 msgid "Last modified"
 msgstr "上次/對上一次更改"
 
@@ -3021,7 +3017,7 @@ msgstr "經度"
 msgid "Lot Number"
 msgstr "批號"
 
-#: bika/lims/content/analysisservice.py:286
+#: bika/lims/content/analysisservice.py:287
 msgid "Lower Detection Limit (LDL)"
 msgstr "檢測下限（LDL）"
 
@@ -3045,6 +3041,10 @@ msgstr "男"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:42
 msgid "Manage Analysis Request Form Fields"
+msgstr ""
+
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:329
+msgid "Manage Form Fields"
 msgstr ""
 
 #: bika/lims/browser/templates/login_details.pt:41
@@ -3124,13 +3124,13 @@ msgstr "每個結果的電子郵件最大列數"
 msgid "Maximum possible size or volume of samples."
 msgstr "最大可能的樣品尺碼或體積。"
 
-#: bika/lims/content/analysis.py:115
-#: bika/lims/content/analysisservice.py:716
+#: bika/lims/content/analysis.py:129
+#: bika/lims/content/analysisservice.py:717
 msgid "Maximum time allowed for completion of the analysis. A late analysis alert is raised when this period elapses"
 msgstr "允許完成分析的最長時間。當此期限結束而逾期分析，會發出警報"
 
-#: bika/lims/content/analysis.py:114
-#: bika/lims/content/analysisservice.py:715
+#: bika/lims/content/analysis.py:128
+#: bika/lims/content/analysisservice.py:716
 msgid "Maximum turn-around time"
 msgstr "最大周轉時間"
 
@@ -3179,7 +3179,7 @@ msgstr "方法: ${method_name}"
 msgid "Method: None"
 msgstr "方法: 没有"
 
-#: bika/lims/content/analysisservice.py:554
+#: bika/lims/content/analysisservice.py:555
 #: bika/lims/content/instrument.py:137
 #: bika/lims/content/methods.py:36
 msgid "Methods"
@@ -3254,7 +3254,7 @@ msgstr ""
 msgid "More"
 msgstr "更多"
 
-#: bika/lims/content/analysisservice.py:470
+#: bika/lims/content/analysisservice.py:471
 msgid "More than one instrument can be used in a test of this type of analysis. A selection list with the instruments selected here is populated in the results manage view for each test of this type of analysis. The available instruments in the selection list will change in accordance with the method selected by the user for that test in the manage results view. Although a method can have more than one instrument assigned, the selection list is only populated with the instruments that are both set here and allowed for the selected method."
 msgstr ""
 
@@ -3283,11 +3283,11 @@ msgstr "新文件"
 
 #: bika/lims/browser/analysisservice.py:104
 #: bika/lims/browser/header_table.py:86
-#: bika/lims/content/analysisservice.py:1560
+#: bika/lims/content/analysisservice.py:1569
 msgid "No"
 msgstr "否"
 
-#: bika/lims/browser/analysisrequest/add2.py:1728
+#: bika/lims/browser/analysisrequest/add2.py:1777
 msgid "No Analysis Requests could be created."
 msgstr ""
 
@@ -3316,7 +3316,7 @@ msgid "No actions found for user ${user}"
 msgstr "未找到用戶$ {用戶}"
 
 #: bika/lims/browser/analysisrequest/workflow.py:126
-#: bika/lims/browser/bika_listing.py:137
+#: bika/lims/browser/bika_listing.py:143
 msgid "No analyses have been selected"
 msgstr "沒有被選定的分析"
 
@@ -3384,7 +3384,7 @@ msgstr "沒有歷史行為符合您的查詢"
 msgid "No items have been selected"
 msgstr "沒有項目被選中"
 
-#: bika/lims/browser/bika_listing.py:125
+#: bika/lims/browser/bika_listing.py:131
 msgid "No items selected"
 msgstr "沒有選擇的項目"
 
@@ -3433,7 +3433,7 @@ msgid "No valid instruments found: ${invalid_list}"
 msgstr ""
 
 #: bika/lims/browser/analyses.py:207
-#: bika/lims/content/analysisservice.py:1271
+#: bika/lims/content/analysisservice.py:1272
 #: bika/lims/content/bikasetup.py:93
 msgid "None"
 msgstr "没有"
@@ -3526,7 +3526,7 @@ msgstr ""
 msgid "Number of requests"
 msgstr "請求數目"
 
-#: bika/lims/content/analysisservice.py:1092
+#: bika/lims/content/analysisservice.py:1093
 #: bika/lims/content/bikasetup.py:421
 msgid "Number of required verifications"
 msgstr ""
@@ -3535,7 +3535,7 @@ msgstr ""
 msgid "Number of required verifications before a given result being considered as 'verified'. This setting can be overrided for any Analysis in Analysis Service edit view. By default, 1"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1093
+#: bika/lims/content/analysisservice.py:1094
 msgid "Number of required verifications from different users with enough privileges before a given result for this analysis being considered as 'verified'. The option set here has priority over the option set in Bika Setup"
 msgstr ""
 
@@ -3643,7 +3643,7 @@ msgstr "PDF"
 msgid "Parent"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:535
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:553
 msgid "Part"
 msgstr ""
 
@@ -3746,7 +3746,7 @@ msgstr "實際地址"
 msgid "Please correct the indicated errors."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:979
+#: bika/lims/content/analysisservice.py:980
 msgid "Please list all options for the analysis result if you want to restrict it to specific options only, e.g. 'Positive', 'Negative' and 'Indeterminable'.  The option's result value must be a number"
 msgstr "請列出分析結果所有的選項，如果你想它只是限制在特定的選項，例如“積極” ， “負”和“不確定的” 。該選項的結果值必須是數字"
 
@@ -3754,7 +3754,7 @@ msgstr "請列出分析結果所有的選項，如果你想它只是限制在特
 msgid "Please select a User from the list"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1047
+#: bika/lims/content/analysisservice.py:1048
 msgid "Please specify preservations that differ from the analysis service's default preservation per sample type here."
 msgstr "如默認保存方法不正確, 請按這裡每件樣品的分析服務類型來註明保存方法"
 
@@ -3762,7 +3762,7 @@ msgstr "如默認保存方法不正確, 請按這裡每件樣品的分析服務�
 msgid "Please upload the logo you are authorised to use on your website and results reports by your accreditation body. Maximum size is 175 x 175 pixels."
 msgstr "請上傳認證機構授權你在你的網站和結果報告中使用的標誌。最大尺寸是175點¯x 175像素"
 
-#: bika/lims/content/analysisservice.py:754
+#: bika/lims/content/analysisservice.py:755
 msgid "Point of Capture"
 msgstr "捕獲點"
 
@@ -3798,7 +3798,7 @@ msgstr "已預留"
 msgid "Precision as number of decimals"
 msgstr "小數位精度"
 
-#: bika/lims/content/analysisservice.py:927
+#: bika/lims/content/analysisservice.py:928
 msgid "Precision as the number of significant digits according to the uncertainty. The decimal position will be given by the first number different from zero in the uncertainty, at that position the system will round up the uncertainty and results. For example, with a result of 5.243 and an uncertainty of 0.22, the system will display correctly as 5.2+-0.2. If no uncertainty range is set for the result, the system will use the fixed precision set."
 msgstr "當數值不不確定時之小數位。小數點位置將通過從不確定數的零之後的第一個數字給出，在該位，在該位置，系統將四捨五入的不確定性和結果。例如，具有5.243的結果和0.22的不確定性，則系統將正確地為5.2 ±0.2顯示量。如果沒有不確定性範圍被設定為結果，系統將使用固定精度集。"
 
@@ -3904,7 +3904,7 @@ msgid "Price"
 msgstr "價錢"
 
 #: bika/lims/content/analysisprofile.py:97
-#: bika/lims/content/analysisservice.py:787
+#: bika/lims/content/analysisservice.py:788
 msgid "Price (excluding VAT)"
 msgstr "價錢(不含增值税)"
 
@@ -3989,7 +3989,7 @@ msgstr "多個數據圖表/簡要介紹"
 msgid "Proforma (Not yet invoiced)"
 msgstr "備考（尚未開票）"
 
-#: bika/lims/content/analysisservice.py:1119
+#: bika/lims/content/analysisservice.py:1120
 msgid "Protocol ID"
 msgstr "協議/草案ID"
 
@@ -4069,11 +4069,11 @@ msgstr "範圍註釋"
 msgid "Range comment"
 msgstr "範圍註釋"
 
-#: bika/lims/content/analysisservice.py:890
+#: bika/lims/content/analysisservice.py:891
 msgid "Range max"
 msgstr "範圍最大值"
 
-#: bika/lims/content/analysisservice.py:889
+#: bika/lims/content/analysisservice.py:890
 msgid "Range min"
 msgstr "範圍最小值"
 
@@ -4288,7 +4288,7 @@ msgid "Report Type"
 msgstr "報告類型"
 
 #: bika/lims/content/analysisrequest.py:1257
-#: bika/lims/content/analysisservice.py:372
+#: bika/lims/content/analysisservice.py:373
 #: bika/lims/content/artemplate.py:96
 msgid "Report as Dry Matter"
 msgstr "乾物質報告"
@@ -4390,11 +4390,11 @@ msgstr "結果"
 msgid "Result Footer"
 msgstr "結果頁腳"
 
-#: bika/lims/content/analysisservice.py:978
+#: bika/lims/content/analysisservice.py:979
 msgid "Result Options"
 msgstr "結果選項"
 
-#: bika/lims/content/analysisservice.py:966
+#: bika/lims/content/analysisservice.py:967
 msgid "Result Value"
 msgstr "結果值"
 
@@ -4509,7 +4509,7 @@ msgid "Same as the above, but sets the default on analysis services. This settin
 msgstr "與上述相同，但在設定分析服務的默認設置。此設置可以為每個單獨的分析設置自己的配置"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:84
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:318
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:336
 #: bika/lims/browser/reports/templates/productivity_dataentrydaybook.pt:93
 msgid "Sample"
 msgstr "樣品"
@@ -4765,7 +4765,7 @@ msgstr ""
 
 #: bika/lims/browser/analysisrequest/manage_analyses.py:100
 #: bika/lims/browser/analysisrequest/templates/ar_add.pt:125
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:800
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:818
 msgid "Save"
 msgstr "保存"
 
@@ -4821,7 +4821,7 @@ msgstr "選擇包括AR模板"
 msgid "Select a data interface"
 msgstr "選擇一個數據接口"
 
-#: bika/lims/content/analysisservice.py:1010
+#: bika/lims/content/analysisservice.py:1011
 msgid "Select a default preservation for this analysis service. If the preservation depends on the sample type combination, specify a preservation per sample type in the table below"
 msgstr "為此分析服務選擇默認保存。如果保存取決於樣品類型組合，指定下表中每個樣品類型保存"
 
@@ -4865,7 +4865,7 @@ msgstr ""
 msgid "Select if is an in-house calibration certificate"
 msgstr "選擇這是否是一個內部校準證書"
 
-#: bika/lims/content/analysisservice.py:614
+#: bika/lims/content/analysisservice.py:615
 msgid "Select if the calculation to be used is the calculation set by default in the default method. If unselected, the calculation can be selected manually"
 msgstr "如這個將使用的計算情式是默認設置的計算方法。如果沒有選擇，計算可手動選擇"
 
@@ -4873,11 +4873,11 @@ msgstr "如這個將使用的計算情式是默認設置的計算方法。如果
 msgid "Select if the descriptions should be included"
 msgstr "選擇是否應包括描述"
 
-#: bika/lims/content/analysisservice.py:441
+#: bika/lims/content/analysisservice.py:442
 msgid "Select if the results for tests of this type of analysis can be set by using an instrument. If disabled, no instruments will be available for tests of this type of analysis in manage results view, even though the method selected for the test has instruments assigned."
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:419
+#: bika/lims/content/analysisservice.py:420
 msgid "Select if the results for tests of this type of analysis can be set manually. If selected, the user will be able to set a result for a test of this type of analysis in manage results view without the need of selecting an instrument, even though the method selected for the test has instruments assigned."
 msgstr ""
 
@@ -4903,7 +4903,7 @@ msgstr "選擇一個國家, 該國的網站將默認顯示"
 msgid "Select the currency the site will use to display prices."
 msgstr "選擇網站將用於顯示價格的幣種。"
 
-#: bika/lims/content/analysisservice.py:1031
+#: bika/lims/content/analysisservice.py:1032
 msgid "Select the default container to be used for this analysis service. If the container to be used depends on the sample type and preservation combination, specify the container in the sample type table below"
 msgstr "選擇默認的容器被用於此分析服務。如果要使用的容器取決於樣品類型與保存的組合，指定在下面的示例類型表的容器"
 
@@ -4963,7 +4963,7 @@ msgstr ""
 msgid "Select which sticker to print when automatic sticker printing is enabled"
 msgstr "當選擇啟用自動貼紙印刷時, 要打印那貼紙"
 
-#: bika/lims/content/analysisservice.py:1074
+#: bika/lims/content/analysisservice.py:1075
 msgid "Self-verification of results"
 msgstr ""
 
@@ -4989,7 +4989,7 @@ msgstr "序列號"
 msgid "Service"
 msgstr "服務"
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:458
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:476
 msgid "Service cannot be deselected. Please click the info button for further details"
 msgstr ""
 
@@ -5129,7 +5129,7 @@ msgstr "多個規範"
 msgid "Specify the size of the Worksheet, e.g. corresponding to a specific instrument's tray size. Then select an Analysis 'type' per Worksheet position. Where QC samples are selected, also select which Reference Sample should be used. If a duplicate analysis is selected, indicate which sample position it should be a duplicate of"
 msgstr "指出工作表的大小,如相應儀器的樣品盤大小, 就按工作表位置選擇分析'類型'. 選擇質量控制樣品的位置也需要選擇使用参考樣品. 如果選擇了重複樣品, 指明需要重複哪一個位置的樣品."
 
-#: bika/lims/content/analysisservice.py:900
+#: bika/lims/content/analysisservice.py:901
 msgid "Specify the uncertainty value for a given range, e.g. for results in a range with minimum of 0 and maximum of 10, where the uncertainty value is 0.5 - a result of 6.67 will be reported as 6.67 +- 0.5. You can also specify the uncertainty value as a percentage of the result value, by adding a '%' to the value entered in the 'Uncertainty Value' column, e.g. for results in a range with minimum of 10.01 and a maximum of 100, where the uncertainty value is 2% - a result of 100 will be reported as 100 +- 2. Please ensure successive ranges are continuous, e.g. 0.00 - 10.00 is followed by 10.01 - 20.00, 20.01 - 30 .00 etc."
 msgstr "在所給的範圍內指定不確定性的數值，例如於與0的最小和最大的10的範圍內，其中所述不確定性值是0.5結果 - 6.67結果將被報告為6.67 + -  0.5 。您也可以作為結果值的百分比，通過添加“％”在“不確定性的價值”一欄，例如輸入值指定的不確定性值於與10.01最小和一個最大的100，其中的不確定性值是2 ％的範圍內的結果 - 100結果將被報告為100 + - 2，請確保連續範圍是連續的，例如0.00  - 10.00其次是10.01 - 20.00 ， 20.01 - 30 .00等。"
 
@@ -5139,7 +5139,7 @@ msgstr "在所給的範圍內指定不確定性的數值，例如於與0的最�
 msgid "Start Date"
 msgstr "開始日期"
 
-#: bika/lims/validators.py:168
+#: bika/lims/validators.py:170
 msgid "Start date must be before End Date"
 msgstr ""
 
@@ -5207,7 +5207,7 @@ msgstr ""
 msgid "Submitting AR Import"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:756
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:774
 #: bika/lims/browser/invoicebatch.py:47
 #: bika/lims/browser/reports/templates/productivity_analysesperdepartment.pt:122
 msgid "Subtotal"
@@ -5246,7 +5246,7 @@ msgstr ""
 msgid "System Dashboard"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:1561
+#: bika/lims/content/analysisservice.py:1570
 msgid "System default"
 msgstr ""
 
@@ -5306,11 +5306,11 @@ msgstr "實驗室為用户樣品分配了此ID"
 msgid "The Laboratory's web address"
 msgstr "實驗室網址"
 
-#: bika/lims/content/analysisservice.py:287
+#: bika/lims/content/analysisservice.py:288
 msgid "The Lower Detection Limit is the lowest value to which the measured parameter can be measured using the specified testing methodology. Results entered which are less than this value will be reported as < LDL"
 msgstr "檢測下限是指用來測試方法可用的測量最低值。如所輸入的結果小於< LDL,將被報告為"
 
-#: bika/lims/content/analysisservice.py:305
+#: bika/lims/content/analysisservice.py:306
 msgid "The Upper Detection Limit is the highest value to which the measured parameter can be measured using the specified testing methodology. Results entered which are greater than this value will be reported as > UDL"
 msgstr "檢測下限是指用來測試方法可用的測量最高值。如所輸入的結果大於< UDL,將被報告為"
 
@@ -5359,7 +5359,7 @@ msgstr ""
 msgid "The attachments linked to analysis requests and analyses"
 msgstr "附件鏈接到分析請求和分析"
 
-#: bika/lims/content/analysisservice.py:775
+#: bika/lims/content/analysisservice.py:776
 msgid "The category the analysis service belongs to"
 msgstr "分析服務所屬的類別"
 
@@ -5465,7 +5465,7 @@ msgid "The lab is not accredited, or accreditation has not been configured. "
 msgstr "該實驗室未經認証, 或者尚未設置認証信息."
 
 #: bika/lims/content/analysiscategory.py:53
-#: bika/lims/content/analysisservice.py:861
+#: bika/lims/content/analysisservice.py:862
 #: bika/lims/content/labcontact.py:59
 msgid "The laboratory department"
 msgstr "實驗室部門"
@@ -5576,7 +5576,7 @@ msgstr ""
 msgid "The predefined values of the AR template are set in the request"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:798
+#: bika/lims/content/analysisservice.py:799
 msgid "The price charged per analysis for clients who qualify for bulk discounts"
 msgstr "這個客戶的分析收費合資格享有量大折扣"
 
@@ -5604,7 +5604,7 @@ msgstr ""
 msgid "The results for the Analysis Services that use this method can be set manually"
 msgstr "用這方法做分析服務的結果可以手動進行設置"
 
-#: bika/lims/content/analysisservice.py:755
+#: bika/lims/content/analysisservice.py:756
 msgid "The results of field analyses are captured during sampling at the sample point, e.g. the temperature of a water sample in the river where it is sampled. Lab analyses are done in the laboratory"
 msgstr "分析結果是在採樣點採樣過程中捕獲，例如在河水在取樣的溫度。實驗室分析是在實驗室完成"
 
@@ -5624,11 +5624,11 @@ msgstr ""
 msgid "The serial number that uniquely identifies the instrument"
 msgstr "唯一標識文書的序列號"
 
-#: bika/lims/content/analysisservice.py:1120
+#: bika/lims/content/analysisservice.py:1121
 msgid "The service's analytical protocol ID"
 msgstr "該服務的解析協議ID"
 
-#: bika/lims/content/analysisservice.py:1109
+#: bika/lims/content/analysisservice.py:1110
 msgid "The service's commercial ID for accounting purposes"
 msgstr "為會計目的服務的商業ID"
 
@@ -5636,7 +5636,7 @@ msgstr "為會計目的服務的商業ID"
 msgid "The system wide default configuration to indicate whether file attachments are required, permitted or not per analysis request"
 msgstr "系统范围内的默认配置,表明是否要求,允许或禁止为分析请求添加附件."
 
-#: bika/lims/content/analysisservice.py:555
+#: bika/lims/content/analysisservice.py:556
 msgid "The tests of this type of analysis can be performed by using more than one method with the 'Manual entry of results' option enabled. A selection list with the methods selected here is populated in the manage results view for each test of this type of analysis. Note that only methods with 'Allow manual entry' option enabled are displayed here; if you want the user to be able to assign a method that requires instrument entry, enable the 'Instrument assignment is allowed' option."
 msgstr ""
 
@@ -5660,7 +5660,7 @@ msgstr "分析周转时间"
 msgid "The turnaround times of analyses plotted over time"
 msgstr "分析的周轉時間對時間作圖"
 
-#: bika/lims/content/analysisservice.py:400
+#: bika/lims/content/analysisservice.py:401
 msgid "The unique keyword used to identify the analysis service in import files of bulk AR requests and results imports from instruments. It is also used to identify dependent analysis services in user defined results calculations"
 msgstr "獨特的關鍵字用來識別AR請求和進口導入文件結果的分析服務。它也可以用來在用戶定義的結果計算，以確定相關的分析服務"
 
@@ -5677,7 +5677,7 @@ msgid "These reasons will be displayed for its selection during the rejection pr
 msgstr ""
 
 #: bika/lims/content/analysisrequest.py:1259
-#: bika/lims/content/analysisservice.py:373
+#: bika/lims/content/analysisservice.py:374
 #: bika/lims/content/artemplate.py:97
 msgid "These results can be reported as dry matter"
 msgstr "這些結果可以被報告為乾物質"
@@ -5698,15 +5698,15 @@ msgstr "該分析請求已因分析請求$ {retracted_request_id} 的回縮自�
 msgid "This Analysis Request has been withdrawn and is shown for trace-ability purposes only. Retest: ${retest_child_id}."
 msgstr "該分析請求已被撤回，並表示只跟踪的目的。複試： $ {retest_child_id }  。"
 
-#: bika/lims/content/analysisservice.py:1592
+#: bika/lims/content/analysisservice.py:1601
 msgid "This Analysis Service cannot be activated because it's calculation is inactive."
 msgstr "這種分析服務不能被激活，因為它的計算是無效的。"
 
-#: bika/lims/content/analysisservice.py:1608
+#: bika/lims/content/analysisservice.py:1617
 msgid "This Analysis Service cannot be deactivated because one or more active calculations list it as a dependency"
 msgstr "這種分析服務不能被停用，因為一個或多個活動列表計算依賴於它的"
 
-#: bika/lims/content/analysisservice.py:511
+#: bika/lims/content/analysisservice.py:512
 msgid "This is the instrument the system will assign by default to tests from this type of analysis in manage results view. The method associated to this instrument will be assigned as the default method too.Note the instrument's method will prevail over any of the methods choosen if the 'Instrument assignment is not required' option is enabled."
 msgstr ""
 
@@ -5748,7 +5748,7 @@ msgstr "提示. 添加文件不會被加載，除非它們是存在於實例。"
 
 #: bika/lims/browser/arimports.py:62
 #: bika/lims/browser/batchfolder.py:45
-#: bika/lims/browser/bika_listing.py:388
+#: bika/lims/browser/bika_listing.py:392
 msgid "Title"
 msgstr "標題"
 
@@ -5818,7 +5818,7 @@ msgstr ""
 msgid "Too few lines in CSV file"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:784
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:802
 #: bika/lims/browser/invoicebatch.py:51
 #: bika/lims/browser/reports/productivity_analysesattachments.py:116
 msgid "Total"
@@ -5842,7 +5842,7 @@ msgid "Total data points"
 msgstr "總數據點"
 
 #: bika/lims/content/analysisprofile.py:127
-#: bika/lims/content/analysisservice.py:818
+#: bika/lims/content/analysisservice.py:819
 #: bika/lims/content/labproduct.py:52
 msgid "Total price"
 msgstr "總價格"
@@ -5871,7 +5871,7 @@ msgstr "如果你想與樣品分區工作，就要打開這個"
 msgid "Turnaround time (h)"
 msgstr "周轉時間（h）"
 
-#: bika/lims/browser/bika_listing.py:386
+#: bika/lims/browser/bika_listing.py:390
 #: bika/lims/browser/reports/templates/administration_usershistory.pt:75
 #: bika/lims/controlpanel/bika_instruments.py:48
 msgid "Type"
@@ -5911,13 +5911,13 @@ msgstr "無法發送電子郵件，提醒該分析請求已被收回實驗室客
 msgid "Unassigned"
 msgstr "未分配"
 
-#: bika/lims/content/analysis.py:212
-#: bika/lims/content/analysisservice.py:899
+#: bika/lims/content/analysis.py:226
+#: bika/lims/content/analysisservice.py:900
 #: bika/lims/content/referenceanalysis.py:131
 msgid "Uncertainty"
 msgstr "不确定性"
 
-#: bika/lims/content/analysisservice.py:891
+#: bika/lims/content/analysisservice.py:892
 msgid "Uncertainty value"
 msgstr "不确定值"
 
@@ -5935,7 +5935,7 @@ msgstr ""
 msgid "Unit"
 msgstr "單位"
 
-#: bika/lims/validators.py:1025
+#: bika/lims/validators.py:1027
 msgid "Unknown IBAN country %s"
 msgstr "未知IBAN 國家％S"
 
@@ -5982,7 +5982,7 @@ msgstr ""
 msgid "Upload a scanned signature to be used on printed analysis results reports. Ideal size is 250 pixels wide by 150 high"
 msgstr "上傳一張可用於打印分析報告的簽名掃描檔, 理想尺寸為250像素寬, 150像素高"
 
-#: bika/lims/content/analysisservice.py:304
+#: bika/lims/content/analysisservice.py:305
 msgid "Upper Detection Limit (UDL)"
 msgstr "檢測上限(UDL)"
 
@@ -5994,7 +5994,7 @@ msgstr "使用分析簡介價格"
 msgid "Use Dashboard as default front page"
 msgstr ""
 
-#: bika/lims/content/analysisservice.py:613
+#: bika/lims/content/analysisservice.py:614
 msgid "Use default calculation"
 msgstr "使用默認計算"
 
@@ -6034,14 +6034,14 @@ msgstr "用戶歷史"
 msgid "Using too few data points does not make statistical sense. Set an acceptable minimum number of results before QC statistics will be calculated and plotted"
 msgstr "取样点太少时分析结果无意义. 请在质量控制统计处理前设置可接受的最小样品量."
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:770
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:788
 #: bika/lims/browser/invoicebatch.py:49
 #: bika/lims/browser/templates/supplyorder_edit.pt:41
 msgid "VAT"
 msgstr "增值税"
 
 #: bika/lims/content/analysisprofile.py:107
-#: bika/lims/content/analysisservice.py:828
+#: bika/lims/content/analysisservice.py:829
 #: bika/lims/content/bikasetup.py:209
 msgid "VAT %"
 msgstr "增值税%"
@@ -6078,177 +6078,177 @@ msgstr ""
 msgid "Validation"
 msgstr "驗證"
 
-#: bika/lims/validators.py:292
+#: bika/lims/validators.py:294
 msgid "Validation failed: '${keyword}': duplicate keyword"
 msgstr "驗證失敗: '${keyword}': 重複關鍵字"
 
-#: bika/lims/validators.py:220
+#: bika/lims/validators.py:222
 msgid "Validation failed: '${title}': This keyword is already in use by calculation '${used_by}'"
 msgstr "驗證失敗: '${title}': 這個關鍵字已有計算在使用 '${used_by}' "
 
-#: bika/lims/validators.py:201
+#: bika/lims/validators.py:203
 msgid "Validation failed: '${title}': This keyword is already in use by service '${used_by}'"
 msgstr "驗證失敗: '${title}': 這個關鍵字已有服務在使用 '${used_by}' "
 
-#: bika/lims/validators.py:297
+#: bika/lims/validators.py:299
 msgid "Validation failed: '${title}': duplicate title"
 msgstr "驗證失敗: '${title}': 重複標題"
 
-#: bika/lims/validators.py:141
+#: bika/lims/validators.py:143
 msgid "Validation failed: '${value}' is not unique"
 msgstr "驗證失敗: '${value}' 不是唯一的"
 
-#: bika/lims/validators.py:490
+#: bika/lims/validators.py:492
 msgid "Validation failed: Bearing must be E/W"
 msgstr "驗證失敗: 方向必须是E（東）/W（西）"
 
-#: bika/lims/validators.py:473
+#: bika/lims/validators.py:475
 msgid "Validation failed: Bearing must be N/S"
 msgstr "驗證失敗: 方向必须是N（北）/S（南）"
 
-#: bika/lims/validators.py:715
+#: bika/lims/validators.py:717
 msgid "Validation failed: Error percentage must be between 0 and 100"
 msgstr "驗證失敗：錯誤的百分比必須在0到100之間"
 
-#: bika/lims/validators.py:797
+#: bika/lims/validators.py:799
 msgid "Validation failed: Error value must be 0 or greater"
 msgstr "驗證失敗：錯誤值必須大於等於0"
 
-#: bika/lims/validators.py:777
+#: bika/lims/validators.py:779
 msgid "Validation failed: Error values must be numeric"
 msgstr "驗證失敗：錯誤值必須是數字"
 
-#: bika/lims/validators.py:898
+#: bika/lims/validators.py:900
 msgid "Validation failed: Expected values must be between Min and Max values"
 msgstr "驗證失敗：預期值必須是最小和最大值之間"
 
-#: bika/lims/validators.py:872
+#: bika/lims/validators.py:874
 msgid "Validation failed: Expected values must be numeric"
 msgstr "驗證失敗：預期值必須是數字"
 
-#: bika/lims/validators.py:381
+#: bika/lims/validators.py:383
 msgid "Validation failed: Keyword '${keyword}' is invalid"
 msgstr "驗證失敗：關鍵字 '${keyword}' 無效"
 
-#: bika/lims/validators.py:708
+#: bika/lims/validators.py:710
 msgid "Validation failed: Max values must be greater than Min values"
 msgstr "驗證失敗：最大值必須大於最小值更大"
 
-#: bika/lims/validators.py:696
+#: bika/lims/validators.py:698
 msgid "Validation failed: Max values must be numeric"
 msgstr "驗證失敗：最大值必須是數字"
 
-#: bika/lims/validators.py:690
+#: bika/lims/validators.py:692
 msgid "Validation failed: Min values must be numeric"
 msgstr "驗證失敗：最小值必須是數字"
 
-#: bika/lims/validators.py:904
+#: bika/lims/validators.py:906
 msgid "Validation failed: Percentage error values must be between 0 and 100"
 msgstr "驗證失敗：百分比誤差值必須在0到100之間"
 
-#: bika/lims/validators.py:701
+#: bika/lims/validators.py:703
 msgid "Validation failed: Percentage error values must be numeric"
 msgstr "驗證失敗：百分比誤差值必須是數字"
 
-#: bika/lims/validators.py:610
+#: bika/lims/validators.py:612
 msgid "Validation failed: PrePreserved containers must have a preservation selected."
 msgstr "驗證失敗：預前處厘的容器必須有選擇的保存。"
 
-#: bika/lims/validators.py:529
+#: bika/lims/validators.py:531
 msgid "Validation failed: Result Text cannot be blank"
 msgstr "驗證失敗：結果欄不能為空"
 
-#: bika/lims/validators.py:525
+#: bika/lims/validators.py:527
 msgid "Validation failed: Result Values must be numbers"
 msgstr "驗證失敗：結果值必須是數字"
 
-#: bika/lims/validators.py:571
+#: bika/lims/validators.py:573
 msgid "Validation failed: The selection requires the following categories to be selected: ${categories}"
 msgstr "驗證失敗：選擇需要進行選擇以下幾類： ${categories}"
 
-#: bika/lims/validators.py:827
+#: bika/lims/validators.py:829
 msgid "Validation failed: Values must be numbers"
 msgstr "驗證失敗：值必須是數字"
 
-#: bika/lims/validators.py:330
+#: bika/lims/validators.py:332
 msgid "Validation failed: column title '${title}' must have keyword '${keyword}'"
 msgstr "驗證失敗：列標題“ $ { 標題}”必須有關鍵字“ $ { 關鍵字}”"
 
-#: bika/lims/validators.py:482
+#: bika/lims/validators.py:484
 msgid "Validation failed: degrees is 180; minutes must be zero"
 msgstr "驗證失敗：度為180 ;分必須為零"
 
-#: bika/lims/validators.py:486
+#: bika/lims/validators.py:488
 msgid "Validation failed: degrees is 180; seconds must be zero"
 msgstr "驗證失敗：度為180 ;秒必須為零"
 
-#: bika/lims/validators.py:465
+#: bika/lims/validators.py:467
 msgid "Validation failed: degrees is 90; minutes must be zero"
 msgstr "驗證失敗：度為90;分必須為零"
 
-#: bika/lims/validators.py:469
+#: bika/lims/validators.py:471
 msgid "Validation failed: degrees is 90; seconds must be zero"
 msgstr "驗證失敗：度為90;秒必須為零"
 
-#: bika/lims/validators.py:478
+#: bika/lims/validators.py:480
 msgid "Validation failed: degrees must be 0 - 180"
 msgstr "验证失败: 度必须在0-180之间"
 
-#: bika/lims/validators.py:461
+#: bika/lims/validators.py:463
 msgid "Validation failed: degrees must be 0 - 90"
 msgstr "驗證失敗: 度必須為0 - 90"
 
-#: bika/lims/validators.py:434
+#: bika/lims/validators.py:436
 msgid "Validation failed: degrees must be numeric"
 msgstr "驗證失敗: 度必須是數字"
 
-#: bika/lims/validators.py:340
+#: bika/lims/validators.py:342
 msgid "Validation failed: keyword '${keyword}' must have column title '${title}'"
 msgstr "驗證失敗: 關鍵字“ $ {關鍵字}”必須有列標題“ '${title}'"
 
-#: bika/lims/validators.py:192
+#: bika/lims/validators.py:194
 msgid "Validation failed: keyword contains invalid characters"
 msgstr "驗證失敗: 關鍵字包含無效字符"
 
 #: bika/lims/controlpanel/bika_analysisservices.py:115
-#: bika/lims/validators.py:270
+#: bika/lims/validators.py:272
 msgid "Validation failed: keyword is required"
 msgstr "驗證失敗: 關鍵字是必需的"
 
-#: bika/lims/validators.py:450
+#: bika/lims/validators.py:452
 msgid "Validation failed: minutes must be 0 - 59"
 msgstr "驗證失敗: 分必須是0 -  59"
 
-#: bika/lims/validators.py:440
+#: bika/lims/validators.py:442
 msgid "Validation failed: minutes must be numeric"
 msgstr "驗證失敗: 分鐘必須是數字"
 
-#: bika/lims/validators.py:935
+#: bika/lims/validators.py:937
 msgid "Validation failed: percent values must be between 0 and 100"
 msgstr "驗證失敗: 百分比值必須是0和100之間"
 
-#: bika/lims/validators.py:931
+#: bika/lims/validators.py:933
 msgid "Validation failed: percent values must be numbers"
 msgstr "驗證失敗: 百分比值必須是數字"
 
-#: bika/lims/validators.py:454
+#: bika/lims/validators.py:456
 msgid "Validation failed: seconds must be 0 - 59"
 msgstr "驗證失敗: 秒必須為0 - 59"
 
-#: bika/lims/validators.py:446
+#: bika/lims/validators.py:448
 msgid "Validation failed: seconds must be numeric"
 msgstr "驗證失敗: 秒必須是數字"
 
 #: bika/lims/controlpanel/bika_analysisservices.py:109
-#: bika/lims/validators.py:266
+#: bika/lims/validators.py:268
 msgid "Validation failed: title is required"
 msgstr "驗證失敗: 標題是必需的"
 
-#: bika/lims/validators.py:1128
+#: bika/lims/validators.py:1130
 msgid "Validation failed: value must be between 0 and 1000"
 msgstr ""
 
-#: bika/lims/validators.py:1124
+#: bika/lims/validators.py:1126
 msgid "Validation failed: value must be float"
 msgstr ""
 
@@ -6267,7 +6267,7 @@ msgstr "驗證"
 msgid "Value"
 msgstr "值"
 
-#: bika/lims/content/analysisservice.py:705
+#: bika/lims/content/analysisservice.py:706
 msgid "Values can be entered here which will override the defaults specified in the Calculation Interim Fields."
 msgstr "值可以在此輸入，將覆蓋在計算臨時字段中指定的默認值。"
 
@@ -6321,11 +6321,11 @@ msgstr "兩週後過期"
 msgid "When it's set, the system uses the analysis profile's price to quote and the system's VAT is overridden by the analysis profile's specific VAT"
 msgstr "當它被設置，系統使用的分析配置文件的價格報價和系統的增值稅由分析配置文件的特殊增值稅覆蓋"
 
-#: bika/lims/content/analysisservice.py:727
+#: bika/lims/content/analysisservice.py:728
 msgid "When the results of duplicate analyses on worksheets, carried out on the same sample, differ with more than this percentage, an alert is raised"
 msgstr "當重複的結果在工作表上，對同一樣品進行分析，不同的比這個比例更多，引發警報"
 
-#: bika/lims/validators.py:394
+#: bika/lims/validators.py:396
 msgid "Wildcards for interims are not allowed: ${wildcards}"
 msgstr "臨時萬用字元不允許使： $ {萬用字元}"
 
@@ -6359,7 +6359,7 @@ msgstr "工作表模板"
 msgid "Worksheets"
 msgstr "多個工作表"
 
-#: bika/lims/validators.py:1032
+#: bika/lims/validators.py:1034
 msgid "Wrong IBAN length by %s: %sshort by %i"
 msgstr "錯IBAN長度由%s: %sshort by %i"
 
@@ -6369,7 +6369,7 @@ msgstr ""
 
 #: bika/lims/browser/analysisservice.py:104
 #: bika/lims/browser/header_table.py:86
-#: bika/lims/content/analysisservice.py:1560
+#: bika/lims/content/analysisservice.py:1569
 msgid "Yes"
 msgstr "是"
 
@@ -6480,7 +6480,7 @@ msgstr ""
 msgid "deactivate"
 msgstr "關閉"
 
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:515
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:533
 msgid "err%"
 msgstr ""
 
@@ -6605,7 +6605,7 @@ msgid "time_format"
 msgstr ""
 
 #. Default: "Required"
-#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:334
+#: bika/lims/browser/analysisrequest/templates/ar_add2.pt:352
 #: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:89
 #: bika/lims/browser/templates/header_table.pt:39
 msgid "title_required"

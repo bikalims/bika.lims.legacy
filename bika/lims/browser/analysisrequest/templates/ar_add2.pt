@@ -274,7 +274,7 @@
       <h1 id="ar-header">
         <img tal:condition="view/icon | nothing" tal:attributes="src view/icon"/>
         <span i18n:translate="">Request new analyses</span>
-        <div style="display:inline-block;padding-left:0.5em;">
+        <span style="display:inline-block;padding-left:0.5em;">
           <form method="GET" class="form-inline">
             <input type="hidden"
                    name="copy_from" tal:attributes="value request/copy_from|nothing"/>
@@ -290,7 +290,7 @@
                    tal:attributes="src string:${context/absolute_url}/++resource++bika.lims.images/add.png"/>
             </button>
           </form>
-        </div>
+        </span>
       </h1>
     </metal:title>
     <metal:description fill-slot="content-description">
