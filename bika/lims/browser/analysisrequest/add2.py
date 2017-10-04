@@ -1640,13 +1640,34 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         # Validate required fields
         for n, record in enumerate(records):
 
-            # required fields and their values
+            # Process UID fields first and set their values to the linked field
+            uid_fields = filter(lambda f: f.endswith("_uid"), record)
+            for field in uid_fields:
+                name = field.replace("_uid", "")
+                value = record.get(field)
+                if "," in value:
+                    value = value.split(",")
+                record[name] = value
+
+            # Extract file uploads (fields ending with _file)
+            # These files will be added later as attachments
+            file_fields = filter(lambda f: f.endswith("_file"), record)
+            attachments[n] = map(lambda f: record.pop(f), file_fields)
+
+            # Process Specifications field (dictionary like records instance).
+            # -> Convert to a standard Python dictionary.
+            specifications = map(lambda x: dict(x), record.pop("Specifications", []))
+            record["Specifications"] = specifications
+
+            # Required fields and their values
             required_keys = [field.getName() for field in fields if field.required]
             required_values = [record.get(key) for key in required_keys]
             required_fields = dict(zip(required_keys, required_values))
 
-            # We only need the Client UID
-            if record.get("Client_uid", False):
+            # Client field is required but hidden in the AR Add form. We remove
+            # it therefore from the list of required fields to let empty
+            # columns pass the required check below.
+            if record.get("Client", False):
                 required_fields.pop('Client', None)
 
             # None of the required fields are filled, skip this record
@@ -1661,27 +1682,6 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
                 fieldname = "{}-{}".format(field, n)
                 msg = _("Field '{}' is required".format(field))
                 errors[fieldname] = msg
-
-            # Extract file uploads (fields ending with _file)
-            # These files will be added later as attachments
-            file_fields = filter(lambda f: f.endswith("_file"), record)
-            attachments[n] = map(lambda f: record.pop(f), file_fields)
-
-            # Process UID fields
-            uid_fields = filter(lambda f: f.endswith("_uid"), record)
-            for field in uid_fields:
-                name = field.replace("_uid", "")
-                value = record.get(field)
-                if "," in value:
-                    value = value.split(",")
-                record[name] = value
-
-            # Process Specifications field (dictionary like records instance).
-            # -> Convert to a standard Python dictionary.
-            specifications = map(lambda x: dict(x), record.pop("Specifications", []))
-            record["Specifications"] = specifications
-
-            # Prepare Partitions for this AR
 
             # Selected Analysis UIDs
             selected_analysis_uids = record.get("Analyses", [])
