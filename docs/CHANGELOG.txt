@@ -1,3 +1,9 @@
+3.2.1 (unreleased)
+------------------
+
+- Issue-2258: New AR Add Form: Required reference fields are flagged as missing and the form does not proceed
+
+
 3.2.1rc3 (2017-10-02)
 ---------------------
 
