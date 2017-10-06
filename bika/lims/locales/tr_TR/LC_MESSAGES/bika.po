@@ -9,8 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-10-02 17:42+0000\n"
-"PO-Revision-Date: 2017-09-19 23:27+0000\n"
+"POT-Creation-Date: 2017-10-06 07:54+0000\n"
+"PO-Revision-Date: 2017-10-02 17:43+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Turkish (Turkey) (http://www.transifex.com/bikalabs/bika-lims/language/tr_TR/)\n"
 "MIME-Version: 1.0\n"
@@ -2245,7 +2245,7 @@ msgstr "Bayan"
 msgid "Field"
 msgstr "Saha"
 
-#: bika/lims/browser/analysisrequest/add2.py:1662
+#: bika/lims/browser/analysisrequest/add2.py:1683
 msgid "Field '{}' is required"
 msgstr ""
 

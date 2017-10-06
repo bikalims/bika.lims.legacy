@@ -30,8 +30,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-10-02 17:42+0000\n"
-"PO-Revision-Date: 2017-09-23 18:07+0000\n"
+"POT-Creation-Date: 2017-10-06 07:54+0000\n"
+"PO-Revision-Date: 2017-10-02 19:55+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: German (http://www.transifex.com/bikalabs/bika-lims/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -194,7 +194,7 @@ msgstr "<input type=\"checkbox\" class=\"rejectionwidget-checkbox-other rejectio
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:527
 msgid "<max"
-msgstr ""
+msgstr "<max"
 
 msgid "<p>${service} requires the following services to be selected:</p><br/><p>${deps}</p><br/><p>Do you want to apply these selections now?</p>"
 msgstr "<p>${service} benötigt die folgenden ausgewählten Dienste: </p><br/><p>${deps}</p><br/><p>Wollen Sie diese Auswahl zuweisen?</p>"
@@ -222,7 +222,7 @@ msgstr "> Max"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:521
 msgid ">min"
-msgstr ""
+msgstr ">min"
 
 #: bika/lims/content/samplinground.py:143
 msgid "A short name that describes the Round for it to be easily identified on forms and drop-down menus"
@@ -250,7 +250,7 @@ msgstr "Analyseauftrag Import Optionen"
 
 #: bika/lims/content/analysisrequest.py:452
 msgid "AR Template"
-msgstr ""
+msgstr "Analyseauftragsvorlage"
 
 #: bika/lims/browser/srtemplate/artemplates.py:40
 msgid "AR Template Title"
@@ -384,7 +384,7 @@ msgstr "Neu hinzufügen"
 
 #: bika/lims/content/analysisrequest.py:217
 msgid "Additional email addresses to be notified"
-msgstr ""
+msgstr "Zusätzliche Email Adresse für Benachrichtigungen"
 
 #: bika/lims/browser/analysisrequest/workflow.py:534
 msgid "Additional remarks:"
@@ -688,7 +688,7 @@ msgstr "Analysekategorie"
 
 #: bika/lims/content/analysisrequest.py:494
 msgid "Analysis profiles apply a certain set of analyses"
-msgstr ""
+msgstr "Analyseprofile setzen ein Set von Analysen"
 
 #: bika/lims/browser/analysisrequest/add.py:468
 #: bika/lims/browser/analysisrequest/add2.py:1783
@@ -959,7 +959,7 @@ msgstr "Batchetiketten"
 
 #: bika/lims/content/analysisrequest.py:403
 msgid "Batch Sub-group"
-msgstr ""
+msgstr "Batch Untergruppe"
 
 #: bika/lims/browser/batchfolder.py:36
 msgid "Batches"
@@ -1245,7 +1245,7 @@ msgstr "Zum Herunterladen klicken"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:420
 msgid "Click to expand this category"
-msgstr ""
+msgstr "Klicken um diese Kategorie zu erweitern"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:88
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_retract_pdf.pt:78
@@ -1896,7 +1896,7 @@ msgstr "Beschreibung der Einrichtung"
 
 #: bika/lims/content/analysisrequest.py:1037
 msgid "Deviation between the sample and how it was sampled"
-msgstr ""
+msgstr "Abweichung zwischen der Probe und der Probenahme"
 
 #: bika/lims/config.py:125
 msgid "Disable multi-verification for the same user"
@@ -1908,7 +1908,7 @@ msgstr "Datumsfilter entfernen"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:759
 msgid "Discount"
-msgstr ""
+msgstr "Rabatt"
 
 #: bika/lims/content/pricelist.py:43
 msgid "Discount %"
@@ -2271,9 +2271,9 @@ msgstr "Weiblich"
 msgid "Field"
 msgstr "Feld"
 
-#: bika/lims/browser/analysisrequest/add2.py:1662
+#: bika/lims/browser/analysisrequest/add2.py:1683
 msgid "Field '{}' is required"
-msgstr ""
+msgstr "Das Feld '{}' ist erforderlich"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:411
 #: bika/lims/config.py:28
@@ -3070,11 +3070,11 @@ msgstr "Männlich"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:42
 msgid "Manage Analysis Request Form Fields"
-msgstr ""
+msgstr "Formularfelder für Analyseaufträge verwalten"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:329
 msgid "Manage Form Fields"
-msgstr ""
+msgstr "Formularfelder verwalten"
 
 #: bika/lims/browser/templates/login_details.pt:41
 msgid "Manage linked User"
@@ -3082,7 +3082,7 @@ msgstr "Verknüpfte Benutzer verwalten"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:47
 msgid "Manage the order and visibility of the fields displayed in analysis request add forms."
-msgstr ""
+msgstr "Verwalten Sie die Reihenfolge und Sichtbarkeit der Felder in Analyseauftragsformularen."
 
 #: bika/lims/content/department.py:30
 #: bika/lims/controlpanel/bika_departments.py:51
@@ -3318,7 +3318,7 @@ msgstr "Nein"
 
 #: bika/lims/browser/analysisrequest/add2.py:1777
 msgid "No Analysis Requests could be created."
-msgstr ""
+msgstr "Es konnte kein Analyseauftrag erzeugt werden."
 
 #: bika/lims/browser/reports/productivity_dataentrydaybook.py:46
 msgid "No Analysis Requests matched your query"
@@ -3330,7 +3330,7 @@ msgstr "Keine Analyseleistungen definiert"
 
 #: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:36
 msgid "No Reference Definitions for Blanks available.<br />To add a Blank in this Worksheet Template, create a Reference Definition for a Blank sample first."
-msgstr ""
+msgstr "Keine Referenzdefinitionen für Blindproben verfügbar.<br />Um eine Blindprobe in dieser Arbeitsblattvorlage hinzuzufügen, müssen Sie zuerst eine Referenzdefinition für eine Blindprobe erstellen."
 
 #: bika/lims/skins/bika/bika_widgets/worksheettemplatelayoutwidget.pt:37
 msgid "No Reference Definitions for Controls available.<br />To add a Control in this Worksheet Template, create a Reference Definition for a Control sample first."
@@ -3490,7 +3490,7 @@ msgstr "Nicht gesetzt"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add_manage.pt:51
 msgid "Note: The settings apply to all AR Add forms; Required fields can not be deselected."
-msgstr ""
+msgstr "Hinweis: Diese Einstellungen gelten für alle Analyseauftragsformulare; Obligatorische Felder können nicht versteckt werden."
 
 #: bika/lims/browser/worksheet/templates/print.pt:128
 msgid "Num columns"
@@ -3674,7 +3674,7 @@ msgstr "Übergeordnet"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:553
 msgid "Part"
-msgstr ""
+msgstr "Teil"
 
 #: bika/lims/browser/analyses.py:72
 #: bika/lims/browser/analysisrequest/manage_analyses.py:72
@@ -4264,7 +4264,7 @@ msgstr "Bemerkungen"
 
 #: bika/lims/content/analysisrequest.py:1437
 msgid "Remarks and comments for this request"
-msgstr ""
+msgstr "Bemerkungen und Kommentare für diesen Analyseauftrag"
 
 #: bika/lims/content/instrumentcalibration.py:106
 msgid "Remarks to take into account before calibration"
@@ -4693,7 +4693,7 @@ msgstr "Proben entnommen"
 
 #: bika/lims/content/analysisrequest.py:1187
 msgid "Sampled AdHoc"
-msgstr ""
+msgstr "Ad-hoc Probenahme"
 
 #: bika/lims/browser/analysisrequest/analysisrequests.py:124
 #: bika/lims/browser/sample/view.py:119
@@ -5020,7 +5020,7 @@ msgstr "Service"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:476
 msgid "Service cannot be deselected. Please click the info button for further details"
-msgstr ""
+msgstr "Diese Analyse kann nicht entfernt werden. Bitte klicken Sie auf den Info Button für weitere Details."
 
 # ../browser/js/analysisrequest.js
 msgid "Service dependencies"
@@ -5079,7 +5079,7 @@ msgstr "Kurztitel"
 
 #: bika/lims/content/analysisrequest.py:1291
 msgid "Should the analyses be excluded from the invoice?"
-msgstr ""
+msgstr "Soll die Analyse von der Rechnung ausgeschlossen werden?"
 
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_publish.pt:54
 msgid "Show Hidden Analyses"
@@ -5369,19 +5369,19 @@ msgstr "Der zuständige Prüfer für die Validierung"
 
 #: bika/lims/content/analysisrequest.py:329
 msgid "The assigned batch of this request"
-msgstr ""
+msgstr "Der zugewiesene Batch für diesen Analyseauftrag"
 
 #: bika/lims/content/analysisrequest.py:404
 msgid "The assigned batch sub group of this request"
-msgstr ""
+msgstr "Die zugewiesene Batch Untergruppe für diesen Analyseauftrag"
 
 #: bika/lims/content/analysisrequest.py:251
 msgid "The assigned client of this request"
-msgstr ""
+msgstr "Der zugewiesene Kunde für diesen Analyseauftrag"
 
 #: bika/lims/content/analysisrequest.py:367
 msgid "The assigned sampling round of this request"
-msgstr ""
+msgstr "Die zugewiesene Probenahmerunde für diesen Analyseauftrag"
 
 #: bika/lims/browser/reports/productivity_analysesattachments.py:35
 #: bika/lims/browser/reports/templates/productivity.pt:455
@@ -5394,23 +5394,23 @@ msgstr "Die Kategorie, zu der der Analyse-Service gehört"
 
 #: bika/lims/content/analysisrequest.py:1000
 msgid "The client side identifier of the sample"
-msgstr ""
+msgstr "Die kundenseitige Identifikationsnummer für diese Probe"
 
 #: bika/lims/content/analysisrequest.py:929
 msgid "The client side order number for this request"
-msgstr ""
+msgstr "Die Kundenbestellnummer für diesen Analyseauftrag"
 
 #: bika/lims/content/analysisrequest.py:964
 msgid "The client side reference for this request"
-msgstr ""
+msgstr "Die Kundenreferenz für diesen Analyseauftrag"
 
 #: bika/lims/content/analysisrequest.py:173
 msgid "The contacts used in CC for email notifications"
-msgstr ""
+msgstr "Die Kontakte, welche bei Email Benachrichtigungen in CC genommen werden"
 
 #: bika/lims/content/analysisrequest.py:1078
 msgid "The current condition of the sample"
-msgstr ""
+msgstr "Der derzeitige Zustand der Probe"
 
 #: bika/lims/content/instrument.py:319
 msgid "The date the instrument was installed"
@@ -5422,19 +5422,19 @@ msgstr "Das Datum an dem der Probennahmeprozess ausgeführt werden soll"
 
 #: bika/lims/content/analysisrequest.py:1400
 msgid "The date when the request was published"
-msgstr ""
+msgstr "Das Datum an dem der Analyseauftrag veröffentlicht wurde"
 
 #: bika/lims/content/analysisrequest.py:1370
 msgid "The date when the sample was received"
-msgstr ""
+msgstr "Das Datum an dem die Probe empfangen wurde"
 
 #: bika/lims/content/analysisrequest.py:553
 msgid "The date when the sample was taken"
-msgstr ""
+msgstr "Das Datum an dem die Probe entnommen wurde"
 
 #: bika/lims/content/analysisrequest.py:648
 msgid "The date when the sample will be taken"
-msgstr ""
+msgstr "Das Datum wann die Probe entnommen werden soll"
 
 #: bika/lims/content/client.py:120
 msgid "The decimal mark selected in Bika Setup will be used."
@@ -5454,7 +5454,7 @@ msgstr "Rabatt für Kunden mit Mitglieder Status. Für gewöhnlich handelt es si
 
 #: bika/lims/content/analysisrequest.py:1115
 msgid "The environmental condition during sampling"
-msgstr ""
+msgstr "Die Umweltbedingungen während der Probenahme"
 
 #: bika/lims/content/bikasetup.py:710
 msgid "The full URL: http://URL/path:port"
@@ -5537,7 +5537,7 @@ msgstr "Die Mindestmenge, die für die Analyse benötigt wird, z.B. \"10 ml\" od
 
 #: bika/lims/content/analysisrequest.py:1563
 msgid "The needed preparation workflow for the sample in this request"
-msgstr ""
+msgstr "Der benötigte Konservierungsworkflow der Probe für diesen Analyseauftrag"
 
 #: bika/lims/content/bikasetup.py:678
 msgid "The number from which the next id should start. This is set only if it is greater than existing id numbers. Note that the resultant gap between IDs cannot be filled."
@@ -5599,11 +5599,11 @@ msgstr "Die Person beim Lieferanten, die das Zertifikat ausarbeitete"
 
 #: bika/lims/content/analysisrequest.py:589
 msgid "The person who took the sample"
-msgstr ""
+msgstr "Die Person die die Probe entnommen hat"
 
 #: bika/lims/content/analysisrequest.py:453
 msgid "The predefined values of the AR template are set in the request"
-msgstr ""
+msgstr "Die vorher definierten Werte aus der Analyseauftragsvorlage werden dem Analyseauftrag zugewiesen"
 
 #: bika/lims/content/analysisservice.py:799
 msgid "The price charged per analysis for clients who qualify for bulk discounts"
@@ -5611,7 +5611,7 @@ msgstr "Preis pro Analyse für Kunden mit Mengenrabatt."
 
 #: bika/lims/content/analysisrequest.py:127
 msgid "The primary contact of this analysis request, who will receive notifications and publications via email"
-msgstr ""
+msgstr "Der primäre Kontakt dieses Analyseauftrags, welcher Benachrichtigungen und Veröffentlichungen via Email erhält"
 
 #: bika/lims/content/analysisprofile.py:77
 msgid "The profile's commercial ID for accounting purposes."
@@ -5695,7 +5695,7 @@ msgstr "Das Kennwort zur Identifikation von Analyseleistungen für den Datenimpo
 
 #: bika/lims/content/analysisrequest.py:1596
 msgid "The urgency of this request"
-msgstr ""
+msgstr "Die Dringlichkeit dieser Anfrage"
 
 #: bika/lims/browser/analysisrequest/templates/analysisrequest_analyses_not_requested.pt:49
 msgid "There are no results."
@@ -6324,11 +6324,11 @@ msgstr "Volumen"
 
 #: bika/lims/content/analysisrequest.py:1224
 msgid "Was the sample put together from multiple Samples?"
-msgstr ""
+msgstr "Wurde die Probe zusammengemischt?"
 
 #: bika/lims/content/analysisrequest.py:1188
 msgid "Was the sample taken in non-scheduled matter, e.g. out of a recurring sampling schedule?"
-msgstr ""
+msgstr "Wurde die Probe außerhalb eines Zeitplans genommen, z.B. nicht innerhalb eines wiederholenden Probenahmezeitplans?"
 
 #: bika/lims/content/laboratory.py:59
 msgid "Web address for the accreditation body"
@@ -6512,7 +6512,7 @@ msgstr "deaktivieren"
 
 #: bika/lims/browser/analysisrequest/templates/ar_add2.pt:533
 msgid "err%"
-msgstr ""
+msgstr "err%"
 
 #. Default: "Analysis Request Priority"
 #: bika/lims/browser/templates/arpriority_add_form.pt:15

@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-10-02 17:42+0000\n"
-"PO-Revision-Date: 2017-09-23 18:07+0000\n"
+"POT-Creation-Date: 2017-10-06 07:54+0000\n"
+"PO-Revision-Date: 2017-10-02 17:43+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Afrikaans (http://www.transifex.com/bikalabs/bika-lims/language/af/)\n"
 "MIME-Version: 1.0\n"
@@ -2244,7 +2244,7 @@ msgstr "Vroulik"
 msgid "Field"
 msgstr "Veld"
 
-#: bika/lims/browser/analysisrequest/add2.py:1662
+#: bika/lims/browser/analysisrequest/add2.py:1683
 msgid "Field '{}' is required"
 msgstr ""
 

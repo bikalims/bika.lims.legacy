@@ -12,8 +12,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-10-02 17:42+0000\n"
-"PO-Revision-Date: 2017-09-19 11:21+0000\n"
+"POT-Creation-Date: 2017-10-06 07:54+0000\n"
+"PO-Revision-Date: 2017-10-02 17:43+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Italian (http://www.transifex.com/bikalabs/bika-lims/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -2250,7 +2250,7 @@ msgstr "Femmina"
 msgid "Field"
 msgstr "Campo"
 
-#: bika/lims/browser/analysisrequest/add2.py:1662
+#: bika/lims/browser/analysisrequest/add2.py:1683
 msgid "Field '{}' is required"
 msgstr ""
 
