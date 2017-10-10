@@ -1,6 +1,7 @@
 3.2.1 (unreleased)
 ------------------
 
+- Issue-2225: Worksheet "Show More" Button in Listing View breaks the whole Layout
 - Issue-2258: New AR Add Form: Required reference fields are flagged as missing and the form does not proceed
 
 
