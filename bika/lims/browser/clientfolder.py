@@ -160,6 +160,49 @@ class ClientFolderContentsView(BikaListingView):
 
         return clients
 
+    def column_EmailAddress(self, item, obj):
+        if "obj" in item:
+            obj = item['obj']
+            item['EmailAddress'] = obj.getEmailAddress()
+            item['replace']['EmailAddress'] = "<a href='%s'>%s</a>" % \
+                ('mailto:%s' % obj.getEmailAddress(), obj.getEmailAddress())
+
+    def column_Phone(self, item, obj):
+        if "obj" in item:
+            obj = item['obj']
+            item['Phone'] = obj.getPhone()
+
+    def column_ClientID(self, item, obj):
+        if "obj" in item:
+            obj = item['obj']
+            item['ClientID'] = obj.getClientID()
+
+    def column_Fax(self, item, obj):
+        if "obj" in item:
+            obj = item['obj']
+            item['Fax'] = obj.getFax()
+
+    def column_BulkDiscount(self, item, obj):
+        if "obj" in item:
+            obj = item['obj']
+            item['BulkDiscount'] = obj.getBulkDiscount() and 'Y' or 'N'
+
+    def column_title(self, item, obj):
+        registry = getUtility(IRegistry)
+        if 'bika.lims.client.default_landing_page' in registry:
+            landing_page = registry['bika.lims.client.default_landing_page']
+        else:
+            landing_page = 'analysisrequests'
+
+        item['replace']['title'] = "<a href='%s/%s'>%s</a>" % \
+            (item['url'], landing_page.encode('ascii'), item['title'])
+
+    def column_MemberDiscountApplies(self, item, obj):
+        if "obj" in item:
+            obj = item['obj']
+            item['MemberDiscountApplies'] = obj.getMemberDiscountApplies() and 'Y' or 'N'
+
+
     def folderitems(self):
         self.contentsMethod = self.getClientList
         items = BikaListingView.folderitems(self)
@@ -168,23 +211,6 @@ class ClientFolderContentsView(BikaListingView):
             landing_page = registry['bika.lims.client.default_landing_page']
         else:
             landing_page = 'analysisrequests'
-
-        for item in items:
-            if "obj" not in item:
-                continue
-            obj = item['obj']
-
-            item['replace']['title'] = "<a href='%s/%s'>%s</a>" % \
-                (item['url'], landing_page.encode('ascii'), item['title'])
-
-            item['EmailAddress'] = obj.getEmailAddress()
-            item['replace']['EmailAddress'] = "<a href='%s'>%s</a>" % \
-                ('mailto:%s' % obj.getEmailAddress(), obj.getEmailAddress())
-            item['Phone'] = obj.getPhone()
-            item['Fax'] = obj.getFax()
-            item['ClientID'] = obj.getClientID()
-            item['BulkDiscount'] = obj.getBulkDiscount() and 'Y' or 'N'
-            item['MemberDiscountApplies'] = obj.getMemberDiscountApplies() and 'Y' or 'N'
 
         return items
 

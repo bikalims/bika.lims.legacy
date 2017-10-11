@@ -142,8 +142,7 @@
                                         href python:view.bika_listing.GET_url(review_state=state['id']);
                                         value state_id;
                                         id state/id;
-                                        class python:request.get(form_id + '_review_state', 'default') == state_id
-                                        and 'selected' or ''"
+                                        class python:request.get(form_id + '_review_state', 'default') == state_id and 'state-'+state_id+' selected' or 'state-'+state_id"
                         tal:content="structure state/title"/>
                   </tal:review_states>
                 </td>

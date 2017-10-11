@@ -151,6 +151,38 @@ class AnalysisRequestsView(BikaListingView):
         }
         self.review_states = [
             {'id': 'default',
+             'title': _('None'),
+             'contentFilter': {'review_state': 'impossible'},
+             'custom_actions': [],
+             'columns': ['getRequestID',
+                        'getSample',
+                        'BatchID',
+                        'SubGroup',
+                        'Client',
+                        'Creator',
+                        'Created',
+                        'getClientOrderNumber',
+                        'getClientReference',
+                        'ClientContact',
+                        'getClientSampleID',
+                        'getProfilesTitle',
+                        'getTemplateTitle',
+                        'getSampleTypeTitle',
+                        'getSamplePointTitle',
+                        'getStorageLocation',
+                        'SamplingDeviation',
+                        'Priority',
+                        'AdHoc',
+                        'SamplingDate',
+                        'getDateSampled',
+                        'getSampler',
+                        'getDatePreserved',
+                        'getPreserver',
+                        'getDateReceived',
+                        'getAnalysesNum',
+                        'getDateVerified',
+                        'state_title']},
+            {'id': 'active',
              'title': _('Active'),
              'contentFilter': {'sort_on': 'created',
                                'sort_order': 'reverse'},
@@ -711,15 +743,7 @@ class AnalysisRequestsView(BikaListingView):
             result = len(matches) > 0
         return result
 
-    def folderitem(self, obj, item, index):
-        # Additional info from AnalysisRequest to be added in the item generated
-        # by default by bikalisting.
-
-        # Call the folderitem method from the base class
-        item = BikaListingView.folderitem(self, obj, item, index)
-        if not item:
-            return None
-
+    def column_Client(self, item, obj):
         member = self.mtool.getAuthenticatedMember()
         roles = member.getRoles()
         hideclientlink = 'RegulatoryInspector' in roles \
@@ -727,7 +751,6 @@ class AnalysisRequestsView(BikaListingView):
             and 'LabManager' not in roles \
             and 'LabClerk' not in roles
 
-        sample = obj.getSample()
         url = obj.absolute_url()
         if getSecurityManager().checkPermission(EditResults, obj):
             url += "/manage_results"
@@ -736,23 +759,30 @@ class AnalysisRequestsView(BikaListingView):
         if (hideclientlink == False):
             item['replace']['Client'] = "<a href='%s'>%s</a>" % \
                 (obj.aq_parent.absolute_url(), obj.aq_parent.Title())
-        item['Creator'] = self.user_fullname(obj.Creator())
+
+    def column_getRequestID(self, item, obj):
+        url = obj.absolute_url()
         item['getRequestID'] = obj.getRequestID()
         item['replace']['getRequestID'] = "<a href='%s'>%s</a>" % \
              (url, item['getRequestID'])
+
+    def column_Creator(self, item, obj):
+        item['Creator'] = self.user_fullname(obj.Creator())
+
+    def column_getSample(self, item, obj):
+        sample = obj.getSample()
         item['getSample'] = sample
         item['replace']['getSample'] = \
             "<a href='%s'>%s</a>" % (sample.absolute_url(), sample.Title())
 
-        item['replace']['getProfilesTitle'] = ", ".join(
-            [p.Title() for p in obj.getProfiles()])
-
+    def column_getAnalysesNum(self, item, obj):
         analysesnum = obj.getAnalysesNum()
         if analysesnum:
             item['getAnalysesNum'] = str(analysesnum[0]) + '/' + str(analysesnum[1])
         else:
             item['getAnalysesNum'] = ''
 
+    def column_BatchID(self, item, obj):
         batch = obj.getBatch()
         if batch:
             item['BatchID'] = batch.getBatchID()
@@ -761,52 +791,48 @@ class AnalysisRequestsView(BikaListingView):
         else:
             item['BatchID'] = ''
 
+    def column_SubGroup(self, item, obj):
         val = obj.Schema().getField('SubGroup').get(obj)
         item['SubGroup'] = val.Title() if val else ''
 
+    def column_getAnalysesNum(self, item, obj):
         sd = obj.getSample().getSamplingDate()
         item['SamplingDate'] = \
             self.ulocalized_time(sd, long_format=1) if sd else ''
+
+    def column_getDateReceived(self, item, obj):
         item['getDateReceived'] = \
             self.ulocalized_time(obj.getDateReceived())
+
+    def column_getDatePublished(self, item, obj):
         item['getDatePublished'] = \
             self.ulocalized_time(getTransitionDate(obj, 'publish'))
+
+    def column_getDateVerified(self, item, obj):
         item['getDateVerified'] = \
             self.ulocalized_time(getTransitionDate(obj, 'verify'))
 
+    def column_SamplingDeviation(self, item, obj):
+        sample = obj.getSample()
         deviation = sample.getSamplingDeviation()
         item['SamplingDeviation'] = deviation and deviation.Title() or ''
+
+    def column_Priority(self, item, obj):
         priority = obj.getPriority()
         item['Priority'] = '' # priority.Title()
 
+    def column_getStorageLocation(self, item, obj):
+        sample = obj.getSample()
         item['getStorageLocation'] = sample.getStorageLocation() and sample.getStorageLocation().Title() or ''
+
+    def column_Adhoc(self, item, obj):
+        sample = obj.getSample()
         item['AdHoc'] = sample.getAdHoc() and True or ''
 
-        after_icons = ""
-        state = self.workflow.getInfoFor(obj, 'worksheetanalysis_review_state')
-        if state == 'assigned':
-            after_icons += "<img src='%s/++resource++bika.lims.images/worksheet.png' title='%s'/>" % \
-                (self.portal_url, t(_("All analyses assigned")))
-        if self.workflow.getInfoFor(obj, 'review_state') == 'invalid':
-            after_icons += "<img src='%s/++resource++bika.lims.images/delete.png' title='%s'/>" % \
-                (self.portal_url, t(_("Results have been withdrawn")))
-        if obj.getLate():
-            after_icons += "<img src='%s/++resource++bika.lims.images/late.png' title='%s'>" % \
-                (self.portal_url, t(_("Late Analyses")))
-        if sd and sd > DateTime():
-            after_icons += "<img src='%s/++resource++bika.lims.images/calendar.png' title='%s'>" % \
-                (self.portal_url, t(_("Future dated sample")))
-        if obj.getInvoiceExclude():
-            after_icons += "<img src='%s/++resource++bika.lims.images/invoice_exclude.png' title='%s'>" % \
-                (self.portal_url, t(_("Exclude from invoice")))
-        if sample.getSampleType().getHazardous():
-            after_icons += "<img src='%s/++resource++bika.lims.images/hazardous.png' title='%s'>" % \
-                (self.portal_url, t(_("Hazardous")))
-        if after_icons:
-            item['after']['getRequestID'] = after_icons
-
+    def column_Created(self, item, obj):
         item['Created'] = self.ulocalized_time(obj.created())
 
+    def column_ClientContact(self, item, obj):
         contact = obj.getContact()
         if contact:
             item['ClientContact'] = contact.Title()
@@ -815,6 +841,10 @@ class AnalysisRequestsView(BikaListingView):
         else:
             item['ClientContact'] = ""
 
+    def column_getDateSampled(self, item, obj):
+        sd = obj.getSample().getSamplingDate()
+        sample = obj.getSample()
+        member = self.mtool.getAuthenticatedMember()
         SamplingWorkflowEnabled = sample.getSamplingWorkflowEnabled()
         if SamplingWorkflowEnabled and (not sd or not sd > DateTime()):
             datesampled = self.ulocalized_time(
@@ -852,6 +882,48 @@ class AnalysisRequestsView(BikaListingView):
                 (username in samplers.keys() and username) or ''
             item['getSampler'] = Sampler
 
+    def column_Sampler(self, item, obj):
+        sd = obj.getSample().getSamplingDate()
+        sample = obj.getSample()
+        SamplingWorkflowEnabled = sample.getSamplingWorkflowEnabled()
+        if SamplingWorkflowEnabled and (not sd or not sd > DateTime()):
+            datesampled = self.ulocalized_time(
+                sample.getDateSampled(), long_format=True)
+            if not datesampled:
+                datesampled = self.ulocalized_time(
+                    DateTime(), long_format=True)
+                item['class']['getDateSampled'] = 'provisional'
+            sampler = sample.getSampler().strip()
+            if sampler:
+                item['replace']['getSampler'] = self.user_fullname(sampler)
+            if 'Sampler' in member.getRoles() and not sampler:
+                sampler = member.id
+                item['class']['getSampler'] = 'provisional'
+        else:
+            datesampled = ''
+            sampler = ''
+        item['getDateSampled'] = datesampled
+        item['getSampler'] = sampler
+
+        # sampling workflow - inline edits for Sampler and Date Sampled
+        checkPermission = self.context.portal_membership.checkPermission
+        state = self.workflow.getInfoFor(obj, 'review_state')
+        if state == 'to_be_sampled' \
+                and checkPermission(SampleSample, obj) \
+                and (not sd or not sd > DateTime()):
+            item['required'] = ['getSampler', 'getDateSampled']
+            item['allow_edit'] = ['getSampler', 'getDateSampled']
+            samplers = getUsers(sample, ['Sampler', 'LabManager', 'Manager'])
+            username = member.getUserName()
+            users = [({'ResultValue': u, 'ResultText': samplers.getValue(u)})
+                     for u in samplers]
+            item['choices'] = {'getSampler': users}
+            Sampler = sampler and sampler or \
+                (username in samplers.keys() and username) or ''
+            item['getSampler'] = Sampler
+
+    def column_getDatePreserved(self, item, obj):
+        member = self.mtool.getAuthenticatedMember()
         # These don't exist on ARs
         # XXX This should be a list of preservers...
         item['getPreserver'] = ''
@@ -874,6 +946,71 @@ class AnalysisRequestsView(BikaListingView):
                 long_format=1)
             item['class']['getPreserver'] = 'provisional'
             item['class']['getDatePreserved'] = 'provisional'
+
+    def column_getDatePreserved(self, item, obj):
+        member = self.mtool.getAuthenticatedMember()
+        # These don't exist on ARs
+        # XXX This should be a list of preservers...
+        item['getPreserver'] = ''
+        item['getDatePreserved'] = ''
+
+        # inline edits for Preserver and Date Preserved
+        checkPermission = self.context.portal_membership.checkPermission
+        if checkPermission(PreserveSample, obj):
+            item['required'] = ['getPreserver', 'getDatePreserved']
+            item['allow_edit'] = ['getPreserver', 'getDatePreserved']
+            preservers = getUsers(obj, ['Preserver', 'LabManager', 'Manager'])
+            username = member.getUserName()
+            users = [({'ResultValue': u, 'ResultText': preservers.getValue(u)})
+                     for u in preservers]
+            item['choices'] = {'getPreserver': users}
+            preserver = username in preservers.keys() and username or ''
+            item['getPreserver'] = preserver
+            item['getDatePreserved'] = self.ulocalized_time(
+                DateTime(),
+                long_format=1)
+            item['class']['getPreserver'] = 'provisional'
+            item['class']['getDatePreserved'] = 'provisional'
+
+
+    def folderitem(self, obj, item, index):
+        # Additional info from AnalysisRequest to be added in the item generated
+        # by default by bikalisting.
+
+        # Call the folderitem method from the base class
+        item = BikaListingView.folderitem(self, obj, item, index)
+        if not item:
+            return None
+
+        member = self.mtool.getAuthenticatedMember()
+        item['replace']['getProfilesTitle'] = ", ".join(
+            [p.Title() for p in obj.getProfiles()])
+
+        sd = obj.getSample().getSamplingDate()
+        sample = obj.getSample()
+
+        after_icons = ""
+        state = self.workflow.getInfoFor(obj, 'worksheetanalysis_review_state')
+        if state == 'assigned':
+            after_icons += "<img src='%s/++resource++bika.lims.images/worksheet.png' title='%s'/>" % \
+                (self.portal_url, t(_("All analyses assigned")))
+        if self.workflow.getInfoFor(obj, 'review_state') == 'invalid':
+            after_icons += "<img src='%s/++resource++bika.lims.images/delete.png' title='%s'/>" % \
+                (self.portal_url, t(_("Results have been withdrawn")))
+        if obj.getLate():
+            after_icons += "<img src='%s/++resource++bika.lims.images/late.png' title='%s'>" % \
+                (self.portal_url, t(_("Late Analyses")))
+        if sd and sd > DateTime():
+            after_icons += "<img src='%s/++resource++bika.lims.images/calendar.png' title='%s'>" % \
+                (self.portal_url, t(_("Future dated sample")))
+        if obj.getInvoiceExclude():
+            after_icons += "<img src='%s/++resource++bika.lims.images/invoice_exclude.png' title='%s'>" % \
+                (self.portal_url, t(_("Exclude from invoice")))
+        if sample.getSampleType().getHazardous():
+            after_icons += "<img src='%s/++resource++bika.lims.images/hazardous.png' title='%s'>" % \
+                (self.portal_url, t(_("Hazardous")))
+        if after_icons:
+            item['after']['getRequestID'] = after_icons
 
         # Submitting user may not verify results
         if item['review_state'] == 'to_be_verified':

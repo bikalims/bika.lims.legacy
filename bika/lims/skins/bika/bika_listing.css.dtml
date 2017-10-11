@@ -201,6 +201,7 @@ table.bika-listing-table {
   background: #fff;
   padding:5px 3px 5px 3px !important;
 }
+.state-default{display:none}
 
 table.bika-listing-table thead tr td.listing-filter-row {
    background-attachment: scroll !important;
