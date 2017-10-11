@@ -1,6 +1,7 @@
 3.2.1 (unreleased)
 ------------------
 
+- Issue-2270: Setting 2 or more CCContacts in AR view produces a Traceback on Save
 - Issue-2264: Bika Listing: Instrument Calibration Table only shows 30 Items w/o pagination controls
 - Issue-2263: Bika Listing: Clicking on the sorting-header of Instrument Calibrations re-renders the entire page recursively
 - Issue-2225: Worksheet "Show More" Button in Listing View breaks the whole Layout
