@@ -1099,6 +1099,8 @@ class BikaListingView(BrowserView):
             item = self.folderitem(obj, results_dict, idx)
             if item:
                 results.append(item)
+                # Populate column values using self.column_* methods
+                self._call_column_getters(item, obj)
                 idx += 1
 
         # Need manual_sort?
@@ -1109,6 +1111,22 @@ class BikaListingView(BrowserView):
                                           y.get(self.manual_sort_on, '')))
 
         return results
+
+    def _call_column_getters(self, item, obj):
+        """Populate column values using self.column_* methods.  These methods
+        are called if the column is displayed.
+        """
+        # columns to display combines defaults and cookie value
+        cookie_cols = self.get_toggle_cols()
+        for col_title, col in self.columns.items():
+            if not (col_title in cookie_cols or col['toggle']):
+                continue
+            if not hasattr(self, "column_%s" % col_title):
+                continue
+            fun = getattr(self, "column_%s" % col_title)
+            # call each column_* function
+            if callable(fun):
+                fun(item, obj)
 
     def contents_table(self, table_only=False):
         """ If you set table_only to true, then nothing outside of the

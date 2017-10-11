@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- LIMS-2696: bika_listing performance: refactor folderitem to use column_* methods
 - BC-147: Default empty WS view should list on due date
 - Issue-2103: WS Templates not offered for selection
 - Instrument selection for creating WSs does not work
