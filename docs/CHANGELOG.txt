@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- BC-110: Bulk Upload to Attach Images to Result by Matching Sample ID
 - BC-147: Default empty WS view should list on due date
 - Issue-2103: WS Templates not offered for selection
 - Instrument selection for creating WSs does not work

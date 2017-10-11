@@ -560,6 +560,14 @@ schema = BikaFolderSchema.copy() + Schema((
             base_query={'review_state': 'published'},
         ),
     ),
+    StringField(
+        'PhotosFolder',
+        schemata="Sampling and COC",
+        widget=StringWidget(
+            label=_("Photo's Folder"),
+            description=_("Path on the file system where the photo's are stored")
+        )
+    ),
     BooleanField(
         'SamplingWorkflowEnabled',
         schemata="Sampling and COC",
