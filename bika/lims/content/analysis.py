@@ -47,7 +47,7 @@ from Products.CMFPlone.utils import safe_unicode
 
 from bika.lims import bikaMessageFactory as _
 from bika.lims import logger
-from bika.lims.browser.fields import DurationField
+from bika.lims.browser.fields import DurationField, UIDReferenceField
 from bika.lims.browser.fields import HistoryAwareReferenceField
 from bika.lims.browser.fields import InterimFieldsField
 from bika.lims.browser.widgets import DurationWidget
@@ -125,12 +125,10 @@ schema = BikaSchema.copy() + Schema((
         referenceClass=HoldingReference,
     ),
 
-    ReferenceField(
+    UIDReferenceField(
         'Attachment',
         multiValued=1,
-        allowed_types=('Attachment',),
-        referenceClass=HoldingReference,
-        relationship='AnalysisAttachment',
+        allowed_types=('Attachment',)
     ),
 
     InterimFieldsField(
@@ -210,28 +208,22 @@ schema = BikaSchema.copy() + Schema((
         'Remarks',
     ),
 
-    ReferenceField(
+    UIDReferenceField(
         'Instrument',
         required=0,
         allowed_types=('Instrument',),
-        relationship='AnalysisInstrument',
-        referenceClass=HoldingReference,
     ),
 
-    ReferenceField(
+    UIDReferenceField(
         'Method',
         required=0,
         allowed_types=('Method',),
-        relationship='AnalysisMethod',
-        referenceClass=HoldingReference,
     ),
 
-    ReferenceField(
+    UIDReferenceField(
         'SamplePartition',
         required=0,
         allowed_types=('SamplePartition',),
-        relationship='AnalysisSamplePartition',
-        referenceClass=HoldingReference,
     ),
 
     ComputedField(

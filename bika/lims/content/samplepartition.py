@@ -82,13 +82,6 @@ class SamplePartition(BaseContent, HistoryAwareMixin):
         """ Return the Sample ID as title """
         return safe_unicode(self.getId()).encode('utf-8')
 
-    security.declarePublic('getAnalyses')
-
-    def getAnalyses(self):
-        """ return list of titles of analyses linked to this sample Partition """
-        analyses = sorted(self.getBackReferences("AnalysisSamplePartition"))
-        return analyses
-
     security.declarePublic('current_date')
 
     def current_date(self):
@@ -151,7 +144,7 @@ class SamplePartition(BaseContent, HistoryAwareMixin):
         sample = self.aq_parent
         workflow = getToolByName(self, 'portal_workflow')
         # Transition our analyses
-        analyses = self.getBackReferences('AnalysisSamplePartition')
+        analyses = self.getAnalyses()
         for analysis in analyses:
             doActionFor(analysis, "sample")
         # if all our siblings are now up to date, promote sample and ARs.
@@ -174,7 +167,7 @@ class SamplePartition(BaseContent, HistoryAwareMixin):
         sample = self.aq_parent
         workflow = getToolByName(self, 'portal_workflow')
         # Transition our analyses
-        analyses = self.getBackReferences('AnalysisSamplePartition')
+        analyses = self.getAnalyses()
         for analysis in analyses:
             doActionFor(analysis, "to_be_preserved")
         # if all our siblings are now up to date, promote sample and ARs.
@@ -196,7 +189,7 @@ class SamplePartition(BaseContent, HistoryAwareMixin):
         sample = self.aq_parent
         workflow = getToolByName(self, 'portal_workflow')
         # Transition our analyses
-        analyses = self.getBackReferences('AnalysisSamplePartition')
+        analyses = self.getAnalyses()
         for analysis in analyses:
             doActionFor(analysis, "sample_due")
         # if all our siblings are now up to date, promote sample and ARs.
@@ -222,7 +215,7 @@ class SamplePartition(BaseContent, HistoryAwareMixin):
         self.setDateReceived(DateTime())
         self.reindexObject(idxs=["getDateReceived", ])
         # Transition our analyses
-        analyses = self.getBackReferences('AnalysisSamplePartition')
+        analyses = self.getAnalyses()
         for analysis in analyses:
             doActionFor(analysis, "receive")
         # if all sibling partitions are received, promote sample

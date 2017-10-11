@@ -37,7 +37,8 @@ from bika.lims.browser.widgets.durationwidget import DurationWidget
 from bika.lims.browser.widgets.partitionsetupwidget import PartitionSetupWidget
 from bika.lims.browser.widgets.recordswidget import RecordsWidget
 from bika.lims.browser.widgets.referencewidget import ReferenceWidget
-from bika.lims.browser.fields import HistoryAwareReferenceField
+from bika.lims.browser.fields import HistoryAwareReferenceField, \
+    UIDReferenceField
 from bika.lims.browser.fields import InterimFieldsField
 from bika.lims.browser.fields import DurationField
 from bika.lims.config import ATTACHMENT_OPTIONS
@@ -996,33 +997,29 @@ schema = BikaSchema.copy() + Schema((
         ),
     ),
 
-    ReferenceField(
+    UIDReferenceField(
         'Preservation',
         schemata='Container and Preservation',
         allowed_types=('Preservation',),
-        relationship='AnalysisServicePreservation',
-        referenceClass=HoldingReference,
         vocabulary='getPreservations',
         required=0,
         multiValued=0,
         widget=ReferenceWidget(
             checkbox_bound=0,
             label=_("Default Preservation"),
-            description=_("Select a default preservation for this " + \
-                          "analysis service. If the preservation depends on " + \
-                          "the sample type combination, specify a preservation " + \
-                          "per sample type in the table below"),
+            description=_(
+                "Select a default preservation for this analysis service. If "
+                "the preservation depends on the sample type combination, "
+                "specify a preservation per sample type in the table below"),
             catalog_name='bika_setup_catalog',
             base_query={'inactive_state': 'active'},
-        ),
+        )
     ),
 
-    ReferenceField(
+    UIDReferenceField(
         'Container',
         schemata='Container and Preservation',
         allowed_types=('Container', 'ContainerType'),
-        relationship='AnalysisServiceContainer',
-        referenceClass=HoldingReference,
         vocabulary='getContainers',
         required=0,
         multiValued=0,

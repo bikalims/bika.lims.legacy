@@ -14,3 +14,4 @@ from .referenceresultsfield import ReferenceResultsField
 from .historyawarereferencefield import HistoryAwareReferenceField
 from .coordinatefield import CoordinateField
 from .proxyfield import ProxyField
+from .uidreferencefield import UIDReferenceField
