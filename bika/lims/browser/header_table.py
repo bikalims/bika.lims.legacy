@@ -5,14 +5,18 @@
 # Copyright 2011-2017 by it's authors.
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
+"""ARs and Samples use HeaderTable to display object fields in their custom
+view and edit screens.
+"""
+
+from zope.component import getAdapter
+from zope.component.interfaces import ComponentLookupError
+
 from AccessControl.Permissions import view
 from AccessControl import getSecurityManager
 
 from Products.CMFPlone import PloneMessageFactory as _p
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-from zope.component import getAdapter
-from zope.component.interfaces import ComponentLookupError
 
 from bika.lims.utils import t
 from bika.lims.browser import BrowserView
@@ -36,9 +40,14 @@ class HeaderTableView(BrowserView):
             for field in fields:
                 fieldname = field.getName()
                 if fieldname in form:
-                    if fieldname + "_uid" in form:
-                        # references (process_form would normally do *_uid trick)
-                        field.getMutator(self.context)(form[fieldname + "_uid"])
+                    # Handle (multiValued) reference fields
+                    # https://github.com/bikalims/bika.lims/issues/2270
+                    uid_fieldname = "{}_uid".format(fieldname)
+                    if uid_fieldname in form:
+                        value = form[uid_fieldname]
+                        if field.multiValued:
+                            value = value.split(",")
+                        field.getMutator(self.context)(value)
                     else:
                         # other fields
                         field.getMutator(self.context)(form[fieldname])
@@ -86,6 +95,7 @@ class HeaderTableView(BrowserView):
                     'mode': 'structure',
                     'html': t(_('Yes')) if value else t(_('No'))
                 }
+
             elif field.getType().find("Reference") > -1:
                 # Prioritize method retrieval over schema's field
                 targets = None

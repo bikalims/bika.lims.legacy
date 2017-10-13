@@ -130,6 +130,8 @@ class AddAnalysesView(BikaListingView):
 
         if self.request.get('table_only', '') == self.form_id:
             return self.contents_table()
+        elif self.request.get('rows_only', '') == self.form_id:
+            return self.contents_table()
         else:
             return self.template()
 

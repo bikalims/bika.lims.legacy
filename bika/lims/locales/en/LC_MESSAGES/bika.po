@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-10-02 17:42+0000\n"
+"POT-Creation-Date: 2017-10-06 07:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2236,7 +2236,7 @@ msgstr ""
 msgid "Field"
 msgstr ""
 
-#: bika/lims/browser/analysisrequest/add2.py:1662
+#: bika/lims/browser/analysisrequest/add2.py:1683
 msgid "Field '{}' is required"
 msgstr ""
 

@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Bika-LIMS\n"
-"POT-Creation-Date: 2017-10-02 17:42+0000\n"
-"PO-Revision-Date: 2017-09-19 11:05+0000\n"
+"POT-Creation-Date: 2017-10-06 07:54+0000\n"
+"PO-Revision-Date: 2017-10-02 17:43+0000\n"
 "Last-Translator: Ramon Bartl <rb@ridingbytes.com>\n"
 "Language-Team: Chinese (http://www.transifex.com/bikalabs/bika-lims/language/zh/)\n"
 "MIME-Version: 1.0\n"
@@ -2244,7 +2244,7 @@ msgstr "女/雌"
 msgid "Field"
 msgstr "场地"
 
-#: bika/lims/browser/analysisrequest/add2.py:1662
+#: bika/lims/browser/analysisrequest/add2.py:1683
 msgid "Field '{}' is required"
 msgstr ""
 
