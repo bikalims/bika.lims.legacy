@@ -60,7 +60,9 @@ class Test_ShowPrices(BikaFunctionalTestCase):
         super(Test_ShowPrices, self).tearDown()
 
     def test_default_view_does_not_show_cancelled_items(self):
-        url = self.portal.analysisrequests.absolute_url()
+        ars_url = self.portal.analysisrequests.absolute_url()
+        active_ars = '/base_view?analysisrequests_review_state=active'
+        url = '{}{}'.format(ars_url, active_ars)
         browser = self.getBrowser()
         browser.open(url)
         if "H2O-0001-R01" in browser.contents:
