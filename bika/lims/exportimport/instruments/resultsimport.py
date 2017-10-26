@@ -562,7 +562,8 @@ class AnalysisResultsImporter(Logger):
                 initial_result = analysis.getResult()
                 calc_passed = analysis.calculateResult(override=True,
                                                        cascade=True)
-                analysis.Analyst = self.user._id
+                if not analysis.Analyst:
+                    analysis.Analyst = self.user._id
                 if self.advance_to_state:
                     try:
                         api.do_transition_for(analysis, self.advance_to_state)
@@ -827,7 +828,8 @@ class AnalysisResultsImporter(Logger):
             #                   "result": str(res)})
             #TODO incorporar per veure detall d'importacio
             analysis.setResult(res)
-            analysis.Analyst = self.user._id
+            if not analysis.Analyst:
+                analysis.Analyst = self.user._id
             if capturedate:
                 analysis.setResultCaptureDate(capturedate)
             if self.advance_to_state:

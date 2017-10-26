@@ -6,7 +6,7 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from bika.lims import logger
-from bika.lims.content.analysis import Analysis
+#from bika.lims.content.analysis import Analysis
 from bika.lims.testing import BIKA_FUNCTIONAL_TESTING
 from bika.lims.tests.base import BikaFunctionalTestCase
 from bika.lims.utils.analysisrequest import create_analysisrequest
