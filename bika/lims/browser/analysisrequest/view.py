@@ -17,6 +17,7 @@ from zope.interface import implements
 from plone.app.layout.globals.interfaces import IViewView
 
 from bika.lims import bikaMessageFactory as _
+from bika.lims import api
 from bika.lims.utils import t
 from bika.lims.browser import BrowserView
 from bika.lims.browser.analyses import AnalysesView
@@ -358,10 +359,19 @@ class AnalysisRequestViewView(BrowserView):
         cats = self.getDefaultCategories()
         return [cat.UID() for cat in cats]
 
+    def is_ar_specs_allowed(self):
+        """Checks if AR Specs are allowed
+        """
+        bika_setup = api.get_bika_setup()
+        return bika_setup.getEnableARSpecs()
+
     def getDefaultSpec(self):
         """ Returns 'lab' or 'client' to set the initial value of the
             specification radios
         """
+        if not self.is_ar_specs_allowed():
+            return []
+
         mt = getToolByName(self.context, 'portal_membership')
         pg = getToolByName(self.context, 'portal_groups')
         member = mt.getAuthenticatedMember()
