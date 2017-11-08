@@ -123,6 +123,9 @@ class AnalysesView(BikaListingView):
                 'index': 'getDueDate',
                 'sortable': False},
         }
+        if not self.is_ar_specs_allowed():
+            if 'Specification' in self.columns:
+                del self.columns['Specification']
 
         self.review_states = [
             {
@@ -145,6 +148,10 @@ class AnalysesView(BikaListingView):
                 ]
             },
         ]
+        if not self.is_ar_specs_allowed():
+            if 'Specification' in self.review_states[0]['columns']:
+                self.review_states[0]['columns'].remove('Specification')
+
         if not context.bika_setup.getShowPartitions():
             self.review_states[0]['columns'].remove('Partition')
 
@@ -152,6 +159,12 @@ class AnalysesView(BikaListingView):
                                            request,
                                            show_categories=context.bika_setup.getCategoriseAnalysisServices(),
                                            expand_all_categories=True)
+
+    def is_ar_specs_allowed(self):
+        """Checks if AR Specs are allowed
+        """
+        bika_setup = api.get_bika_setup()
+        return bika_setup.getEnableARSpecs()
 
     def get_analysis_spec(self, analysis):
         if hasattr(analysis, 'getResultsRange'):
