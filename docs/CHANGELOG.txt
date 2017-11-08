@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- AN-155: Dormant Specifications are used. Even if Specifications are all off
 - Issue-2268: Show the Unit in Manage Analyses View
 - BC-147: Default empty WS view should list on due date
 - Issue-2103: WS Templates not offered for selection

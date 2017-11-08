@@ -23,6 +23,7 @@ DOCTESTS = [
     "../docs/Instruments.rst",
     "../docs/Versioning.rst",
     "../docs/AnalysisRequests.rst",
+    "../docs/AnalysisRequestsSpecifications.rst",
     "../docs/Calculations.rst",
     "../docs/IDServer.rst",
     "../docs/Rolemap.rst",
