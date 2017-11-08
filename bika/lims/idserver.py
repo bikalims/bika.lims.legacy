@@ -154,7 +154,7 @@ def generateUniqueId(context, parent=False, portal_type=''):
             raise RuntimeError(msg)
     variables_map['seq'] = new_seq + 1
     result = form.format(**variables_map)
-    return result
+    return api.normalize_id(result)
 
 
 def renameAfterCreation(obj):
