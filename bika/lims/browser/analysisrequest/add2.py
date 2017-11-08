@@ -473,6 +473,9 @@ class AnalysisRequestAddView(BrowserView):
             visible = self.is_field_visible(field)
             if visible is False and visibility != "hidden":
                 continue
+            if field.getName() == 'Specification':
+                if not self.is_ar_specs_allowed():
+                    continue
             out.append(field)
         return out
 
@@ -981,6 +984,9 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
                 "getClientUID": [uid],
             },
         }
+        if bika_setup.getDefaultARSpecs() == 'ar_specs':
+            del filter_queries['analysisspecs']
+
         info["filter_queries"] = filter_queries
 
         return info

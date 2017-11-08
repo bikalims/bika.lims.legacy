@@ -6,6 +6,7 @@
 # Some rights reserved. See LICENSE.txt, AUTHORS.txt.
 
 from AccessControl import ClassSecurityInfo
+from bika.lims import api
 from bika.lims import bikaMessageFactory as _
 from bika.lims.utils import t
 from bika.lims.browser import BrowserView
@@ -116,6 +117,12 @@ class ReferenceWidget(StringWidget):
         }
         return json.dumps(options)
 
+    def is_client_spects_used(self):
+        """Checks if AR Specs are allowed
+        """
+        bika_setup = api.get_bika_setup()
+        return bika_setup.getEnableARSpecs()
+
     def get_base_query(self, context, fieldName):
         base_query = self.base_query
         if callable(base_query):
@@ -125,6 +132,19 @@ class ReferenceWidget(StringWidget):
 
         # portal_type: use field allowed types
         field = context.Schema().getField(fieldName)
+        if 'Specification' in fieldName:
+            bika_setup = api.get_bika_setup()
+            base_query['inactive_state'] =  'active'
+            if self.is_client_spects_used():
+                if bika_setup.getDefaultARSpecs() == 'client_sampletype_specs':
+                    path = "/".join(context.aq_parent.getPhysicalPath())
+                    base_query['path'] = {'query': path}
+                elif bika_setup.getDefaultARSpecs() == 'lab_sampletype_specs':
+                    bika_analysisspecs = bika_setup.bika_analysisspecs
+                    path = "/".join(bika_analysisspecs.getPhysicalPath())
+                    base_query['path'] = {'query': path}
+
+
         allowed_types = getattr(field, 'allowed_types', None)
         allowed_types_method = getattr(field, 'allowed_types_method', None)
         if allowed_types_method:

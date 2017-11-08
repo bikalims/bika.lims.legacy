@@ -2464,6 +2464,12 @@ class AnalysisRequest(BaseFolder):
         else:
             return ''
 
+    def is_ar_specs_allowed(self):
+        """Checks if AR Specs are allowed
+        """
+        bika_setup = api.get_bika_setup()
+        return bika_setup.getEnableARSpecs()
+
     def setResultsRange(self, value=None):
         """Sets the spec values for this AR.
         1 - Client specs where (spec.Title) matches (ar.SampleType.Title)
@@ -2481,6 +2487,8 @@ class AnalysisRequest(BaseFolder):
 
         Value will be stored in ResultsRange field as list of dictionaries
         """
+        if not self.is_ar_specs_allowed():
+            return []
         rr = {}
         sample = self.getSample()
         if not sample:
@@ -2493,7 +2501,8 @@ class AnalysisRequest(BaseFolder):
         for folder in self.aq_parent, self.bika_setup.bika_analysisspecs:
             proxies = bsc(portal_type='AnalysisSpec',
                           getSampleTypeTitle=stt,
-                          ClientUID=folder.UID())
+                          ClientUID=folder.UID(),
+                          inactive_state='active')
             if proxies:
                 rr = dicts_to_dict(proxies[0].getObject().getResultsRange(),
                                    'keyword')

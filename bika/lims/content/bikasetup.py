@@ -349,7 +349,7 @@ schema = BikaFolderSchema.copy() + Schema((
         schemata="Analyses",
         default=True,
         widget=BooleanWidget(
-            label=_("Enable AR Specifications"),
+            label=_("Enable Analysis Specifications"),
             description=_(
                 "Analysis specifications which are edited directly on the "
                 "Analysis Request."),
@@ -361,7 +361,7 @@ schema = BikaFolderSchema.copy() + Schema((
         default='ar_specs',
         vocabulary=DEFAULT_AR_SPECS,
         widget=SelectionWidget(
-            label=_("Default AR Specifications"),
+            label=_("Default Analysis Specifications"),
             description=_(
                 "Choose the default specifications used for all AR views "
                 "to display alerts and notifications.  These will also be "
