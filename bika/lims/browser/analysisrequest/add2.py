@@ -473,7 +473,7 @@ class AnalysisRequestAddView(BrowserView):
             visible = self.is_field_visible(field)
             if visible is False and visibility != "hidden":
                 continue
-            if field.__name__ == 'Specification':
+            if field.getName() == 'Specification':
                 if not self.is_ar_specs_allowed():
                     continue
             out.append(field)

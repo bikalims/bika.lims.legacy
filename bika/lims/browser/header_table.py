@@ -18,6 +18,7 @@ from AccessControl import getSecurityManager
 from Products.CMFPlone import PloneMessageFactory as _p
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+from bika.lims import api
 from bika.lims.utils import t
 from bika.lims.browser import BrowserView
 from bika.lims import bikaMessageFactory as _
@@ -139,6 +140,10 @@ class HeaderTableView(BrowserView):
         prominent = []
         for field in self.context.Schema().fields():
             fieldname = field.getName()
+            if fieldname == 'Specification':
+                if not self.is_ar_specs_allowed():
+                    continue
+
             state = field.widget.isVisible(self.context, 'header_table', default='invisible', field=field)
             if state == 'invisible':
                 continue
@@ -153,3 +158,9 @@ class HeaderTableView(BrowserView):
                 elif field.widget.isVisible(self.context, 'view', default='invisible', field=field) == 'visible':
                     ret.append(self.render_field_view(field))
         return prominent, self.three_column_list(ret)
+
+    def is_ar_specs_allowed(self):
+        """Checks if AR Specs are allowed
+        """
+        bika_setup = api.get_bika_setup()
+        return bika_setup.getEnableARSpecs()
