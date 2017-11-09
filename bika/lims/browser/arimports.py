@@ -142,31 +142,55 @@ class ARImportsView(BikaListingView):
                          'state_title']},
         ]
 
+    def column_Title(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            item['Title'] = obj.title_or_id()
+            if item['review_state'] == 'invalid':
+                item['replace']['Title'] = "<a href='%s/edit'>%s</a>" % (
+                    obj.absolute_url(), item['Title'])
+            else:
+                item['replace']['Title'] = "<a href='%s/view'>%s</a>" % (
+                    obj.absolute_url(), item['Title'])
+
+    def column_Creator(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            item['Creator'] = obj.Creator()
+
+    def column_Filename(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            item['Filename'] = obj.getFilename()
+
+    def column_Client(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            parent = obj.aq_parent
+            item['Client'] = parent if IClient.providedBy(parent) else ''
+            item['replace']['Client'] = "<a href='%s'>%s/arimports</a>" % (
+                parent.absolute_url(), parent.Title())
+
+    def column_DateCreated(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            item['DateCreated'] = ulocalized_time(
+                obj.created(), long_format=True, time_only=False, context=obj)
+
+    def column_DateValidated(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            date = getTransitionDate(obj, 'validate')
+            item['DateValidated'] = date if date else ''
+
+    def column_DateImported(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
+            date = getTransitionDate(obj, 'import')
+            item['DateImported'] = date if date else ''
+
     def folderitems(self, **kwargs):
         items = super(ARImportsView, self).folderitems()
-        for x in range(len(items)):
-            if 'obj' not in items[x]:
-                continue
-            obj = items[x]['obj']
-            items[x]['Title'] = obj.title_or_id()
-            if items[x]['review_state'] == 'invalid':
-                items[x]['replace']['Title'] = "<a href='%s/edit'>%s</a>" % (
-                    obj.absolute_url(), items[x]['Title'])
-            else:
-                items[x]['replace']['Title'] = "<a href='%s/view'>%s</a>" % (
-                    obj.absolute_url(), items[x]['Title'])
-            items[x]['Creator'] = obj.Creator()
-            items[x]['Filename'] = obj.getFilename()
-            parent = obj.aq_parent
-            items[x]['Client'] = parent if IClient.providedBy(parent) else ''
-            items[x]['replace']['Client'] = "<a href='%s'>%s/arimports</a>" % (
-                parent.absolute_url(), parent.Title())
-            items[x]['DateCreated'] = ulocalized_time(
-                obj.created(), long_format=True, time_only=False, context=obj)
-            date = getTransitionDate(obj, 'validate')
-            items[x]['DateValidated'] = date if date else ''
-            date = getTransitionDate(obj, 'import')
-            items[x]['DateImported'] = date if date else ''
 
         return items
 

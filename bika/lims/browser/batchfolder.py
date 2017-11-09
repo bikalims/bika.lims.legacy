@@ -132,34 +132,41 @@ class BatchFolderContentsView(BikaListingView):
                 return True
         return False
 
-    def folderitems(self):
-        self.filter_indexes = None
-
-        items = BikaListingView.folderitems(self)
-        for x in range(len(items)):
-            if 'obj' not in items[x]:
-                continue
-            obj = items[x]['obj']
-
+    def column_BatchID(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
             bid = obj.getBatchID()
-            items[x]['BatchID'] = bid
-            items[x]['replace']['BatchID'] = "<a href='%s/%s'>%s</a>" % (items[x]['url'], 'analysisrequests', bid)
+            item['BatchID'] = bid
+            item['replace']['BatchID'] = "<a href='%s/%s'>%s</a>" % (item['url'], 'analysisrequests', bid)
 
+    def column_Title(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
             title = obj.Title()
-            items[x]['Title'] = title
-            items[x]['replace']['Title'] = "<a href='%s/%s'>%s</a>" % (items[x]['url'], 'analysisrequests', title)
+            item['Title'] = title
+            item['replace']['Title'] = "<a href='%s/%s'>%s</a>" % (item['url'], 'analysisrequests', title)
 
+    def column_Client(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
             if obj.getClient():
-                items[x]['Client'] = obj.getClient().Title()
-                items[x]['replace']['Client'] = "<a href='%s'>%s</a>" % ( obj.getClient().absolute_url(), obj.getClient().Title())
+                item['Client'] = obj.getClient().Title()
+                item['replace']['Client'] = "<a href='%s'>%s</a>" % ( obj.getClient().absolute_url(), obj.getClient().Title())
             else:
-                items[x]['Client'] = ''
+                item['Client'] = ''
 
+    def column_Client(self, item, obj):
+        if 'obj' in item:
+            obj = item['obj']
             date = obj.Schema().getField('BatchDate').get(obj)
             if callable(date):
                 date = date()
-            items[x]['BatchDate'] = date
-            items[x]['replace']['BatchDate'] = self.ulocalized_time(date)
+            item['BatchDate'] = date
+            item['replace']['BatchDate'] = self.ulocalized_time(date)
+
+    def folderitems(self):
+        self.filter_indexes = None
+        items = BikaListingView.folderitems(self)
 
         return items
 

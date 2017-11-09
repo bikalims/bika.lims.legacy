@@ -1,6 +1,8 @@
 3.4.0 (unreleased)
 ------------------
 
+- LIMS-2696: bika_listing performance: Used refactor on other(mostly used) Listings
+- LIMS-2696: bika_listing performance: refactor folderitem to use column_* methods
 - Issue-2268: Show the Unit in Manage Analyses View
 - BC-147: Default empty WS view should list on due date
 - Issue-2103: WS Templates not offered for selection

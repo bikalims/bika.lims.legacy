@@ -152,16 +152,27 @@ class ReferenceAnalysesView(AnalysesView):
         allowed = super(ReferenceAnalysesView, self).isItemAllowed(obj)
         return allowed if not allowed else obj.getResult() != ''
 
+    def column_Category(self, item, obj):
+        service = obj.getService()
+        item['Category'] = service.getCategoryTitle()
+
+    def column_Service(self, item, obj):
+        service = obj.getService()
+        item['Service'] = service.Title()
+
+    def column_Captured(self, item, obj):
+        service = obj.getService()
+        item['Captured'] = self.ulocalized_time(obj.getResultCaptureDate())
+
+    def column_Worksheet(self, item, obj):
+        brefs = obj.getBackReferences("WorksheetAnalysis")
+        item['Worksheet'] = brefs and brefs[0].Title() or ''
+
     def folderitem(self, obj, item, index):
         item = super(ReferenceAnalysesView, self).folderitem(obj, item, index)
         if not item:
             return None
         service = obj.getService()
-        item['Category'] = service.getCategoryTitle()
-        item['Service'] = service.Title()
-        item['Captured'] = self.ulocalized_time(obj.getResultCaptureDate())
-        brefs = obj.getBackReferences("WorksheetAnalysis")
-        item['Worksheet'] = brefs and brefs[0].Title() or ''
         # The following item keywords are required for the
         # JSON return value below, which is used to render graphs.
         # they are not actually used in the table rendering.
