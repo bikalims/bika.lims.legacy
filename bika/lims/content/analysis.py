@@ -407,7 +407,7 @@ class Analysis(BaseContent):
         Some silliness here, for premature indexing, when the service
         is not yet configured.
         """
-        if getattr(self, "_Title", None) is None:
+        if not getattr(self, "_Title", None):
             s = ""
             try:
                 s = self.getService()
