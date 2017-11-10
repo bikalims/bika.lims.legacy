@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- Issue-2299: Low performance on retrieving analysis data
 - Issue-2268: Show the Unit in Manage Analyses View
 - BC-147: Default empty WS view should list on due date
 - Issue-2103: WS Templates not offered for selection

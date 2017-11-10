@@ -79,17 +79,14 @@ def Priority(instance):
 
 @indexer(IAnalysis)
 def sortable_title_with_sort_key(instance):
-    service = instance.getService()
-    if service:
-        sort_key = service.getSortKey()
-        if sort_key:
-            return "{:010.3f}{}".format(sort_key, service.Title())
-        return service.Title()
+    service_title = instance.getServiceTitle()
+    sort_key = instance.getSortKey()
+    return "{:010.3f}{}".format(sort_key, service_title)
 
 
 @indexer(IAnalysis)
 def getDepartmentUID(instance):
-    return instance.getService().getDepartment().UID()
+    return instance.getDepartmentUID()
 
 
 schema = BikaSchema.copy() + Schema((
@@ -333,6 +330,49 @@ class Analysis(BaseContent):
     displayContentsTab = False
     schema = schema
 
+    def getSortKey(self):
+        if getattr(self, "_SortKey", None) is None:
+            service = self.getService()
+            self._SortKey = service.getSortKey() or 0
+        return self._SortKey
+
+    def getDepartmentUID(self):
+        if getattr(self, "_DepartmentUID", None) is None:
+            service = self.getService()
+            self._DepartmentUID = service.getDepartment().UID()
+        return self._DepartmentUID
+
+    # Hard caching attributes coming from the Service
+    def getKeyword(self):
+        if getattr(self, "_Keyword", None) is None:
+            self._Keyword = self.Schema().getField("Keyword").get(self)
+        return self._Keyword
+
+    def getServiceTitle(self):
+        if getattr(self, "_ServiceTitle", None) is None:
+            self._ServiceTitle = self.Schema().getField("ServiceTitle").get(self)
+        return self._ServiceTitle
+
+    def getServiceUID(self):
+        if getattr(self, "_ServiceUID", None) is None:
+            self._ServiceUID = self.Schema().getField("ServiceUID").get(self)
+        return self._ServiceUID
+
+    def getCategoryUID(self):
+        if getattr(self, "_CategoryUID", None) is None:
+            self._CategoryUID = self.Schema().getField("CategoryUID").get(self)
+        return self._CategoryUID
+
+    def getCategoryTitle(self):
+        if getattr(self, "_CategoryTitle", None) is None:
+            self._CategoryTitle = self.Schema().getField("CategoryTitle").get(self)
+        return self._CategoryTitle
+
+    def getPointOfCapture(self):
+        if getattr(self, "_PointOfCapture", None) is None:
+            self._PointOfCapture = self.Schema().getField("PointOfCapture").get(self)
+        return self._PointOfCapture
+
     def _getCatalogTool(self):
         from bika.lims.catalog import getCatalog
         return getCatalog(self)
@@ -367,15 +407,18 @@ class Analysis(BaseContent):
         Some silliness here, for premature indexing, when the service
         is not yet configured.
         """
-        try:
-            s = self.getService()
-            if s:
-                s = s.Title()
-            if not s:
+        if getattr(self, "_Title", None) is None:
+            s = ""
+            try:
+                s = self.getService()
+                if s:
+                    s = s.Title()
+                if not s:
+                    s = ''
+            except ArchivistRetrieveError:
                 s = ''
-        except ArchivistRetrieveError:
-            s = ''
-        return safe_unicode(s).encode('utf-8')
+            self._Title = safe_unicode(s).encode('utf-8')
+        return self._Title
 
     def updateDueDate(self):
         # set the max hours allowed
