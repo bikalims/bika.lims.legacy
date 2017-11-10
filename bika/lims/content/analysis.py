@@ -69,19 +69,6 @@ from bika.lims.utils.analysis import get_significant_digits
 from bika.lims.workflow import getTransitionActor
 from bika.lims.workflow import skip
 
-from bika.lims import api
-from plone.memoize.volatile import cache
-from plone.memoize.volatile import DontCache
-
-
-def cache_key(method, self):
-    creation_flag = self.checkCreationFlag()
-    if creation_flag:
-        raise DontCache
-    uid = api.get_uid(self)
-    modified = self.modified().ISO8601()
-    return "{}-{}".format(uid, modified)
-
 
 @indexer(IAnalysis)
 def Priority(instance):
@@ -682,11 +669,6 @@ class Analysis(BaseContent):
             return self.getAnalysis().aq_parent.getSample()
         return self.aq_parent.getSample()
 
-    @cache(cache_key)
-    def getKeyword(self):
-        return self.getService().getKeyword()
-
-    @cache(cache_key)
     def getClientTitle(self):
         return self.aq_parent.aq_parent.Title()
 
