@@ -225,6 +225,16 @@ class WorkflowAction:
         dest = None
         transitioned = []
         workflow = getToolByName(self.context, 'portal_workflow')
+        # NOTE:Calculated result are on the top of the list and because of that
+        # they cannot be transitioned from to_be_verified to verified
+        # because their dependencies have not been transition
+        # so we transition the dependencies first by putting the
+        # calculated results at the end of the list
+        items = sorted(items,
+                key=lambda x: (
+                    hasattr(x, 'calculateResult')
+                    and x.calculateResult(override=True, cascade=True)
+                    is True, x))
 
         # transition selected items from the bika_listing/Table.
         for item in items:

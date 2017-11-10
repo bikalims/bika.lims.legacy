@@ -2682,29 +2682,33 @@ class AnalysisRequest(BaseFolder):
 
         # Check if the analysis request state is to_be_verified
         review_state = workflow.getInfoFor(self, "review_state")
-        if review_state == 'to_be_verified':
-            # This means that all the analyses from this analysis request have
-            # already been transitioned to a 'verified' state, and so the
-            # analysis request itself
-            return True
-        else:
-            # Check if the analyses contained in this analysis request are
-            # verifiable. Only check those analyses not cancelled and that
-            # are not in a kind-of already verified state
-            canbeverified = True
-            omit = ['published', 'retracted', 'rejected', 'verified']
-            for a in self.getAnalyses(full_objects=True):
-                st = workflow.getInfoFor(a, 'cancellation_state', 'active')
-                if st == 'cancelled':
-                    continue
-                st = workflow.getInfoFor(a, 'review_state')
-                if st in omit:
-                    continue
-                # Can the analysis be verified?
-                if not a.isVerifiable(self):
-                    canbeverified = False
-                    break
-            return canbeverified
+        #NOTE: We've commented-out the code below because if the analyses
+        # on the are AR are not all Verified, the Verify transition is
+        # available on the AR, whereas it should not be available
+
+        #if review_state == 'to_be_verified':
+        #    # This means that all the analyses from this analysis request have
+        #    # already been transitioned to a 'verified' state, and so the
+        #    # analysis request itself
+        #    return True
+        #else:
+        #    # Check if the analyses contained in this analysis request are
+        #    # verifiable. Only check those analyses not cancelled and that
+        #    # are not in a kind-of already verified state
+        canbeverified = True
+        omit = ['published', 'retracted', 'rejected', 'verified']
+        for a in self.getAnalyses(full_objects=True):
+            st = workflow.getInfoFor(a, 'cancellation_state', 'active')
+            if st == 'cancelled':
+                continue
+            st = workflow.getInfoFor(a, 'review_state')
+            if st in omit:
+                continue
+            # Can the analysis be verified?
+            if not a.isVerifiable():
+                canbeverified = False
+                break
+        return canbeverified
 
     def isUserAllowedToVerify(self, member):
         """Checks if the specified user has enough privileges to verify the
