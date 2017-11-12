@@ -123,7 +123,7 @@ class UniqueFieldValidator:
             parent_objects = map(api.get_object, catalog(catalog_query))
         elif field_index and field_index in catalog.indexes():
             # We use the field index to reduce the results list
-            catalog_query[field_index] = valuesafe_unicode(value)
+            catalog_query[field_index] = safe_unicode(value)
             parent_objects = map(api.get_object, catalog(catalog_query))
         else:
             # fall back to the objectValues :(
