@@ -69,19 +69,6 @@ from bika.lims.utils.analysis import get_significant_digits
 from bika.lims.workflow import getTransitionActor
 from bika.lims.workflow import skip
 
-from bika.lims import api
-from plone.memoize.volatile import cache
-from plone.memoize.volatile import DontCache
-
-
-def cache_key(method, self):
-    creation_flag = self.checkCreationFlag()
-    if creation_flag:
-        raise DontCache
-    uid = api.get_uid(self)
-    modified = self.modified().ISO8601()
-    return "{}-{}".format(uid, modified)
-
 
 @indexer(IAnalysis)
 def Priority(instance):
@@ -92,17 +79,14 @@ def Priority(instance):
 
 @indexer(IAnalysis)
 def sortable_title_with_sort_key(instance):
-    service = instance.getService()
-    if service:
-        sort_key = service.getSortKey()
-        if sort_key:
-            return "{:010.3f}{}".format(sort_key, service.Title())
-        return service.Title()
+    service_title = instance.getServiceTitle()
+    sort_key = instance.getSortKey()
+    return "{:010.3f}{}".format(sort_key, service_title)
 
 
 @indexer(IAnalysis)
 def getDepartmentUID(instance):
-    return instance.getService().getDepartment().UID()
+    return instance.getDepartmentUID()
 
 
 schema = BikaSchema.copy() + Schema((
@@ -346,6 +330,62 @@ class Analysis(BaseContent):
     displayContentsTab = False
     schema = schema
 
+    # Custom Analysis Getters
+    #
+    # N.B.: These copy the original values from the Analysis Service on first access.
+    #
+    # The values from a created analysis should never change and always be the
+    # same as the original attributes from the service in the according version.
+    #
+    # XXX: Set on get -> not good and shouldn't be done
+    #
+    #      I'm doing this here to fix the expensive calls to `getService` on
+    #      multiple places. The architecture on Analysis -> AnalysisService is
+    #      completely reworked in SENAITE (https://github.com/senaite/bika.lims)
+    #      which should supersede this code in near future.
+    def getSortKey(self):
+        if getattr(self, "_SortKey", None) is None:
+            service = self.getService()
+            self._SortKey = service.getSortKey() or 0
+        return self._SortKey
+
+    def getDepartmentUID(self):
+        if getattr(self, "_DepartmentUID", None) is None:
+            service = self.getService()
+            self._DepartmentUID = service.getDepartment().UID()
+        return self._DepartmentUID
+
+    def getKeyword(self):
+        if getattr(self, "_Keyword", None) is None:
+            self._Keyword = self.Schema().getField("Keyword").get(self)
+        return self._Keyword
+
+    def getServiceTitle(self):
+        if getattr(self, "_ServiceTitle", None) is None:
+            self._ServiceTitle = self.Schema().getField("ServiceTitle").get(self)
+        return self._ServiceTitle
+
+    def getServiceUID(self):
+        if getattr(self, "_ServiceUID", None) is None:
+            self._ServiceUID = self.Schema().getField("ServiceUID").get(self)
+        return self._ServiceUID
+
+    def getCategoryUID(self):
+        if getattr(self, "_CategoryUID", None) is None:
+            self._CategoryUID = self.Schema().getField("CategoryUID").get(self)
+        return self._CategoryUID
+
+    def getCategoryTitle(self):
+        if getattr(self, "_CategoryTitle", None) is None:
+            self._CategoryTitle = self.Schema().getField("CategoryTitle").get(self)
+        return self._CategoryTitle
+
+    def getPointOfCapture(self):
+        if getattr(self, "_PointOfCapture", None) is None:
+            self._PointOfCapture = self.Schema().getField("PointOfCapture").get(self)
+        return self._PointOfCapture
+    # /Custom Analysis Getter
+
     def _getCatalogTool(self):
         from bika.lims.catalog import getCatalog
         return getCatalog(self)
@@ -380,15 +420,18 @@ class Analysis(BaseContent):
         Some silliness here, for premature indexing, when the service
         is not yet configured.
         """
-        try:
-            s = self.getService()
-            if s:
-                s = s.Title()
-            if not s:
+        if not getattr(self, "_Title", None):
+            s = ""
+            try:
+                s = self.getService()
+                if s:
+                    s = s.Title()
+                if not s:
+                    s = ''
+            except ArchivistRetrieveError:
                 s = ''
-        except ArchivistRetrieveError:
-            s = ''
-        return safe_unicode(s).encode('utf-8')
+            self._Title = safe_unicode(s).encode('utf-8')
+        return self._Title
 
     def updateDueDate(self):
         # set the max hours allowed
@@ -682,11 +725,6 @@ class Analysis(BaseContent):
             return self.getAnalysis().aq_parent.getSample()
         return self.aq_parent.getSample()
 
-    @cache(cache_key)
-    def getKeyword(self):
-        return self.getService().getKeyword()
-
-    @cache(cache_key)
     def getClientTitle(self):
         return self.aq_parent.aq_parent.Title()
 
