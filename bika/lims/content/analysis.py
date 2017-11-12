@@ -330,6 +330,19 @@ class Analysis(BaseContent):
     displayContentsTab = False
     schema = schema
 
+    # Custom Analysis Getters
+    #
+    # N.B.: These copy the original values from the Analysis Service on first access.
+    #
+    # The values from a created analysis should never change and always be the
+    # same as the original attributes from the service in the according version.
+    #
+    # XXX: Set on get -> not good and shouldn't be done
+    #
+    #      I'm doing this here to fix the expensive calls to `getService` on
+    #      multiple places. The architecture on Analysis -> AnalysisService is
+    #      completely reworked in SENAITE (https://github.com/senaite/bika.lims)
+    #      which should supersede this code in near future.
     def getSortKey(self):
         if getattr(self, "_SortKey", None) is None:
             service = self.getService()
@@ -342,7 +355,6 @@ class Analysis(BaseContent):
             self._DepartmentUID = service.getDepartment().UID()
         return self._DepartmentUID
 
-    # Hard caching attributes coming from the Service
     def getKeyword(self):
         if getattr(self, "_Keyword", None) is None:
             self._Keyword = self.Schema().getField("Keyword").get(self)
@@ -372,6 +384,7 @@ class Analysis(BaseContent):
         if getattr(self, "_PointOfCapture", None) is None:
             self._PointOfCapture = self.Schema().getField("PointOfCapture").get(self)
         return self._PointOfCapture
+    # /Custom Analysis Getter
 
     def _getCatalogTool(self):
         from bika.lims.catalog import getCatalog
