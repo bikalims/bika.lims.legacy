@@ -97,6 +97,9 @@ class InstrumentMaintenanceView(BikaListingView):
                          'getMaintainer']},
         ]
 
+    def contentsMethod(self, *args, **kw):
+        return self.context.getMaintenanceTasks()
+
     def folderitems(self):
         items = BikaListingView.folderitems(self)
         outitems = []
@@ -173,6 +176,9 @@ class InstrumentCalibrationsView(BikaListingView):
                          'getCalibrator']},
         ]
 
+    def contentsMethod(self, *args, **kw):
+        return self.context.getCalibrations()
+
     def folderitems(self):
         items = BikaListingView.folderitems(self)
         outitems = []
@@ -229,6 +235,9 @@ class InstrumentValidationsView(BikaListingView):
                          'getDownTo',
                          'getValidator']},
         ]
+
+    def contentsMethod(self, *args, **kw):
+        return self.context.getValidations()
 
     def folderitems(self):
         items = BikaListingView.folderitems(self)
@@ -310,6 +319,9 @@ class InstrumentScheduleView(BikaListingView):
                          'creator',
                          'created']},
         ]
+
+    def contentsMethod(self, *args, **kw):
+        return self.context.getSchedule()
 
     def folderitems(self):
         items = BikaListingView.folderitems(self)

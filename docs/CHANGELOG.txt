@@ -1,6 +1,7 @@
 3.4.0 (unreleased)
 ------------------
 
+- Issue-2308: Folderitems methods of Instrument Calibrations, Certifications and Validations are missing some objects
 - Issue-2304: Bika Listing for Analysis Specifications fails on category expansion
 - Issue-2302: UnicodeDecodeError if title field validator
 - Issue-2299: Low performance on retrieving analysis data
