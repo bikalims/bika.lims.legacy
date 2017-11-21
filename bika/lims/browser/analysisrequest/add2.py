@@ -1665,7 +1665,9 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
         # extract records from request
         records = self.get_records()
 
-        errors = {}
+        fielderrors = {}
+        errors = {"message": "", "fielderrors": {}}
+
         attachments = {}
         valid_records = []
 
@@ -1720,7 +1722,7 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
             for field in missing:
                 fieldname = "{}-{}".format(field, n)
                 msg = _("Field '{}' is required".format(field))
-                errors[fieldname] = msg
+                fielderrors[fieldname] = msg
 
             # Selected Analysis UIDs
             selected_analysis_uids = record.get("Analyses", [])
@@ -1776,7 +1778,9 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
             # append the valid record to the list of valid records
             valid_records.append(valid_record)
 
-        if errors:
+        # return immediately with an error response if some field checks failed
+        if fielderrors:
+            errors["fielderrors"] = fielderrors
             return {'errors': errors}
 
         # Process Form
@@ -1792,12 +1796,11 @@ class ajaxAnalysisRequestAddView(AnalysisRequestAddView):
             specifications = record.pop("Specifications", {})
 
             # Create the Analysis Request
-            ar = crar(
-                client,
-                self.request,
-                record,
-                specifications=specifications,
-            )
+            try:
+                ar = crar(client, self.request, record, specifications=specifications)
+            except (KeyError, RuntimeError) as e:
+                errors["message"] = e.message
+                return {"errors": errors}
             ARs.append(ar.Title())
 
             _attachments = []
