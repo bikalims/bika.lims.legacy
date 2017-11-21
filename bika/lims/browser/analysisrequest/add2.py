@@ -524,7 +524,8 @@ class AnalysisRequestAddView(BrowserView):
 
         for brain in services:
             category = brain.getCategoryTitle
-            analyses[category].append(brain)
+            if category in analyses:
+                analyses[category].append(brain)
         return analyses
 
     @cache(cache_key)
