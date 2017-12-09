@@ -149,7 +149,7 @@ This allows the user to see the client in the clients folder::
     >>> "client-1" in browser.contents
     True
 
-But not any other client in the clients folder
+But not any other client in the clients folder::
 
     >>> "client-2" not in browser.contents
     True
