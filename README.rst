@@ -1,13 +1,21 @@
-Bika LIMS development stops. Long live
+Bika code moved to Senaite
+==========================
 
-Reports on the passing of Bika Open Source LIMS are premature
-=============================================================
+Bika 1,2 and 3, from 2002 to 2017, established the foundation Senaite rests on. Senaite 1's initial design analysis went under the Bika 4 moniker, with an emphasis on performance and maintainability
 
-The repos here, like the wiki, are for now maintained for historic purposes only
----------------------------------------------------------------------------------
+The Bika team assisted in upgrading Bika 3 code top the Senaite repos where we continue to contribute code, as well as developing add-ons, see the main folder here, https://github.com/bikalims
 
-**Please use the latest Senaite code**
+After going global and attracting a wider group of participants, Bika LIMS suffered from a naming issue - the project and Cape Town founding company were both using Bika in their titles, unfair to other contributors
 
-Bika add-ons to be released, use Senaite as core, and Bika continues to contribute our code to the Senaite repos. Full story: https://www.bikalims.org/news/Bika_LIMS_death_premature.
+With so much invested, the Bika brand is maintained independently from Cape Town
+
+See https://www.bikalims.org/frequently-asked-bika-lims-questions/how-does-senaite-lims-relate-to-bika
+
+The bika.lims repo here, like the wiki, are for now maintained for historic purposes only
+-----------------------------------------------------------------------------------------
+
+Basix workflow and objects were maintained and the wiki will ingeneral still hold true - the Bika Senaite user manual is being kept up to date, https://www.bikalims.org/manual
+
+**Please use the latest Senaite code for your core installation**
 
 Thanks, Lemoene
